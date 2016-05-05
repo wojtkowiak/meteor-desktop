@@ -1,0 +1,78 @@
+{
+    "name": "My Meteor App",
+    "projectName": "MyMeteorApp",
+    "devTools": true,
+    "devtron": true,
+    "desktopHCP": true,
+    "desktopHCPSettings": {
+        "ignoreCompatibilityVersion": false,
+        "blockAppUpdateOnDesktopIncompatibility": true
+    },
+    "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
+    "autoUpdateFeedHeaders": null,
+    "webAppStartupTimeout": 60000,
+    "window": {
+        "fullscreen": false,
+        "kiosk": false,
+        "alwaysOnTop": false,
+        "icon": "@assets/meteor.png",
+        "_windows": {
+            "icon": "@assets/meteor.ico"
+        }
+    },
+    "windowDev": {
+    },
+    "packageJsonFields": {
+        "description": "My Meteor App",
+        "author": "Me, Myself And I",
+        "private": true
+    },
+    "builderOptions": {
+        "win": {
+            "title": "My Meteor App",
+            "authors": "Me, Myself And I",
+            "target": "squirrel"
+        },
+        "squirrelWindows": {
+            "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
+            "loadingGif": ".desktop/assets/install.gif"
+        },
+        "icon": ".desktop/assets/meteor.ico",
+        "appId": "meteor.app",
+        "productName": "My Meteor App",
+        "compression": "maximum",
+        "mac": {
+            "icon": ".desktop/assets/meteor.icns"
+        },
+        "dmg": {
+            "icon": ".desktop/assets/meteor.icns",
+            "background": ".desktop/assets/splashScreen.png"
+        }
+    },
+    "packagerOptions": {
+        "icon": "meteor.ico",
+        "_osx": {
+            "icon": "meteor.icns"
+        },
+        "version-string": {
+            "CompanyName": "My Company",
+            "LegalCopyright": "Copyright 2016 My Company - All rights reserved.",
+            "FileDescription": "MyMeteorApp",
+            "OriginalFilename": "MyMeteorApp.exe",
+            "FileVersion": "@version",
+            "ProductVersion": "@version",
+            "ProductName": "MyMeteorApp",
+            "InternalName": "MyMeteorApp.exe"
+        }
+    },
+    "plugins": {
+        "meteor-desktop-splash-screen": {
+            "version": "0.0.22"
+        }
+    },
+    "uglify": true,
+    "version": "0.0.1",
+    "dependencies": {
+        "some-package": "1.2.3"
+    }
+}

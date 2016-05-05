@@ -1,0 +1,12 @@
+{
+    "presets": ["es2015", "stage-1"],
+    "sourceMaps": true,
+    "plugins": [
+        "transform-runtime"
+    ],
+    "env": {
+        "test": {
+            "plugins": ["istanbul"]
+        }
+    }
+}

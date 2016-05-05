@@ -1,0 +1,123 @@
+{
+  "name": "meteor-desktop",
+  "version": "0.0.77",
+  "bin": {
+    "meteor-desktop": "dist/bin/cli.js"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "description": "Build a Meteor's desktop client with hot code push.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
+    "test2": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/integration/prepare.js \"tests/+(integration)/**/*.test.js\"",
+    "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
+    "test-watch2": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(integration)/**/*.test.js\" --watch",
+    "lint": "eslint -c .eslintrc **/*.js",
+    "prepare-integration-tests": "",
+    "coverage-html": "nyc report --reporter=lcov",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "version": "node dist/scripts/propagateVersion.js && git add plugins",
+    "postversion": "npm run publish-all",
+    "postinstall": "node dist/scripts/addToScripts || echo",
+    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish || echo) && cd ../watcher && (meteor publish || echo)",
+    "prepublish": "npm run build || echo",
+    "publish-all": "npm run publish-plugins && npm publish",
+    "build": "babel lib --out-dir dist --source-maps inline --copy-files",
+    "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
+    "develop": "npm-run-all --parallel build-watch test-watch",
+    "desktop": "meteor-desktop"
+  },
+  "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-plugin-istanbul": "^2.0.3",
+    "chai": "^3.5.0",
+    "codecov": "^1.0.1",
+    "connect": "3.5.0",
+    "connect-modrewrite": "0.9.0",
+    "coveralls": "^2.11.14",
+    "cross-env": "^3.1.3",
+    "dirty-chai": "^1.2.2",
+    "eslint": "^3.9.0",
+    "eslint-config-airbnb-base": "^9.0.0",
+    "eslint-plugin-import": "^2.0.1",
+    "find-port": "2.0.1",
+    "fs-plus": "^2.9.3",
+    "merge-stream": "^1.0.0",
+    "mocha": "^2.5.3",
+    "mockery": "^2.0.0",
+    "npm-run-all": "^3.1.1",
+    "nyc": "8.4.0-candidate",
+    "proxyquire": "^1.7.10",
+    "queue": "4.0.0",
+    "reify": "^0.3.8",
+    "request": "^2.76.0",
+    "rewire": "^2.5.2",
+    "run-sequence": "^1.2.2",
+    "serve-static": "1.11.1",
+    "server-destroy": "1.0.1",
+    "sha1-file": "^1.0.0",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
+    "watch": "^1.0.1"
+  },
+  "dependencies": {
+    "asar": "0.12.3",
+    "babel-core": "6.18.0",
+    "babel-plugin-transform-runtime": "6.15.0",
+    "babel-preset-es2015": "6.18.0",
+    "babel-preset-node6": "11.0.0",
+    "babel-preset-stage-1": "6.16.0",
+    "babel-runtime": "6.18.0",
+    "commander": "2.9.0",
+    "cross-spawn": "5.0.0",
+    "del": "2.2.2",
+    "electron": "1.4.4",
+    "electron-builder": "7.15.2",
+    "electron-packager": "8.2.0",
+    "glob": "7.1.1",
+    "hash-files": "1.1.1",
+    "lodash": "4.16.4",
+    "node-fetch": "1.6.3",
+    "npm": "3.10.9",
+    "semver": "5.3.0",
+    "semver-regex": "1.0.0",
+    "shelljs": "0.7.5",
+    "single-line-log": "1.1.2",
+    "uglify-js": "2.7.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wojtkowiak/meteor-desktop"
+  },
+  "keywords": [
+    "electron",
+    "meteor",
+    "packager",
+    "desktop"
+  ],
+  "nyc": {
+    "exclude": [
+      "dist",
+      "node_modules",
+      "plugins",
+      "tests",
+      "scaffold",
+      "lib/scripts/propagateVersion.js"
+    ],
+    "require": [
+      "babel-core/register"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "all": true
+  },
+  "bugs": {
+    "url": "https://github.com/wojtkowiak/meteor-desktop/issues"
+  },
+  "homepage": "https://github.com/wojtkowiak/meteor-desktop"
+}

@@ -1,0 +1,6 @@
+{
+    "name": "someModule2",
+    "dependencies": {
+        "dependency2": "0.0.5"
+    }
+}

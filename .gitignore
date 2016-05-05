@@ -1,0 +1,10 @@
+node_modules
+.idea
+dist
+tests/_tmp_
+.npm
+.versions
+npm-debug*
+coverage
+.nyc_output
+*.lcov

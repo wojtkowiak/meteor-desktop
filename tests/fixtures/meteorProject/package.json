@@ -1,0 +1,11 @@
+{
+  "name": "test-desktop",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "e": "node ../meteor-desktop-client/bin/cli.js"
+  },
+  "dependencies": {
+    "meteor-node-stubs": "~0.2.0"
+  }
+}

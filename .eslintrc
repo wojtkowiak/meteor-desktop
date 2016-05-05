@@ -1,0 +1,62 @@
+{
+    "extends": "airbnb-base",
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true,
+        "meteor": true,
+        "mocha": true
+    },
+    "globals": {
+        "Meteor": true,
+        "WebAppLocalServer": true,
+        "Desktop": true,
+        "Profile": true,
+        "__METEOR_DESKTOP_BUNDLER": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+    },
+    "settings": {
+        "import/core-modules": [
+            "winston",
+            "original-fs",
+            "electron",
+            "electron-debug",
+            "rimraf",
+            "process",
+            "devtron"
+        ]
+    },
+    "rules": {
+        "indent": [
+            2,
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "comma-dangle": [
+            0
+        ],
+        "no-bitwise": [
+            2,
+            {
+                "allow": [
+                    "~"
+                ]
+            }
+        ],
+        "import/no-extraneous-dependencies": [
+            2,
+            {
+                "devDependencies": [
+                    "**/*.test.js",
+                    "**/helpers/**/*.js",
+                    "**/skeleton/**/*.js"
+                ]
+            }
+        ]
+    }
+}
