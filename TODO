@@ -7,4 +7,6 @@
 - test installers, test new initialbundlever
 - tests
 - hcp for modules
+- handle medc version change and potential incompatibiliy in builds
+
 - support input
