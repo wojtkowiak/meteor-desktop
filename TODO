@@ -1,0 +1,10 @@
+- support output
+- support app modules
+- clear code
+- inject isDesktop on hcp
+- startup timer and fallback strategy
+- generate installer
+- test installers, test new initialbundlever
+- tests
+- hcp for modules
+- support input

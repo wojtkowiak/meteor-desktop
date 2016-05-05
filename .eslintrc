@@ -1,0 +1,31 @@
+{
+    "extends": "airbnb/legacy",
+    "env": {
+        "browser": true,
+        "node": true,
+        "meteor": true,
+        "mocha": true
+    },
+    "globals": {
+        "config": true,
+        "Electron": true,
+        "WebAppLocalServer": true
+    },
+    "rules": {
+        "indent": [
+            2,
+            4
+        ],
+        "no-multi-spaces": [
+            2,
+            {
+                "exceptions": {
+                    "VariableDeclarator": true
+                }
+            }
+        ],
+        "comma-dangle": [
+            0
+        ]
+    }
+}
