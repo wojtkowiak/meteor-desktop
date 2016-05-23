@@ -1,0 +1,12 @@
+- support output
+- support app modules
+- clear code
+- inject isDesktop on hcp
+- startup timer and fallback strategy
+- generate installer
+- test installers, test new initialbundlever
+- tests
+- hcp for modules
+- handle medc version change and potential incompatibiliy in builds
+
+- support input

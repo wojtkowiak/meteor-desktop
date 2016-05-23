@@ -1,0 +1,45 @@
+{
+  "name": "meteor-electron-desktop-client",
+  "version": "0.0.10",
+  "bin": {
+    "meteor-desktop": "bin/cli.js"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "description": "Build a Meteor's desktop client with hot code push.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "preinstall": "npm i -g electron-prebuilt"
+  },
+  "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint-config-airbnb": "^6.1.0",
+    "eslint": "^2.8.0"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "electron-packager": "^7.0.0",
+    "electron-prebuilt": "^0.37.6",
+    "lodash": "^4.11.1",
+    "semver": "^5.1.0",
+    "shelljs": "^0.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wojtkowiak/meteor-electron-desktop-client"
+  },
+  "keywords": [
+    "electron",
+    "meteor",
+    "packager",
+    "desktop"
+  ],
+  "bugs": {
+    "url": "https://github.com/wojtkowiak/meteor-electron-desktop-client/issues"
+  },
+  "homepage": "https://github.com/wojtkowiak/meteor-electron-desktop-client"
+}
+
