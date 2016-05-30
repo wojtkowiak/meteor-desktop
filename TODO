@@ -1,12 +1,22 @@
-- support output
-- support app modules
+HOLD - use es6 in main app
+
+- generate .desktop scaffold
+
+- support npm plugins
+
+- move splashscreen to npm
+- move toaster to npm
+- es6
 - clear code
 - inject isDesktop on hcp
 - startup timer and fallback strategy
+- desktop compatibility version (win/lin/osx)
+- support modules from npm
 - generate installer
 - test installers, test new initialbundlever
 - tests
 - hcp for modules
 - handle medc version change and potential incompatibiliy in builds
 
+// Optional
 - support input

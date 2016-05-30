@@ -1,0 +1,16 @@
+{
+    "name": "My Meteor App",
+    "projectName": "MyMeteorApp",
+    "splashScreen": true,
+    "devTools": true,
+    "window": {
+        "fullscreen": false,
+        "kiosk": false,
+        "alwaysOnTop": false
+    },
+    "packageJsonFields": {
+        "description": "My Meteor App",
+        "private": true
+    },
+    "version": "0.0.1"
+}

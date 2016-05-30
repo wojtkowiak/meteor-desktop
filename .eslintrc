@@ -1,27 +1,22 @@
 {
-    "extends": "airbnb/legacy",
+    "extends": "airbnb-base",
     "env": {
+        "es6": true,
         "browser": true,
         "node": true,
         "meteor": true,
         "mocha": true
     },
     "globals": {
-        "config": true,
-        "Electron": true,
-        "WebAppLocalServer": true
+        "Meteor": true
     },
+    "parser": "babel-eslint",
     "rules": {
         "indent": [
             2,
-            4
-        ],
-        "no-multi-spaces": [
-            2,
+            4,
             {
-                "exceptions": {
-                    "VariableDeclarator": true
-                }
+                "SwitchCase": 1
             }
         ],
         "comma-dangle": [
