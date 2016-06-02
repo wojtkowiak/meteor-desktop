@@ -1,0 +1,16 @@
+/**
+ * Dummy module which is called on the renderer process startup, so that the Module can save a
+ * reference to the renderer.
+ *
+ * @type {Module}
+ */
+
+var Module = require('./module.js');
+var dummy = new Module('dummyModule');
+
+dummy.on('setRendererReference', function setRendererReference() {
+  // Nothing to do here since Module is already setting this reference for us.
+});
+
+module.exports = function Dummy() {};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1vZHVsZXMvZHVtbXkuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7OztBQU9BLElBQUksU0FBUyxRQUFRLGFBQVIsQ0FBYjtBQUNBLElBQUksUUFBUSxJQUFJLE1BQUosQ0FBVyxhQUFYLENBQVo7O0FBRUEsTUFBTSxFQUFOLENBQVMsc0JBQVQsRUFBaUMsU0FBUyxvQkFBVCxHQUFnQzs7QUFFaEUsQ0FGRDs7QUFJQSxPQUFPLE9BQVAsR0FBaUIsU0FBUyxLQUFULEdBQWlCLENBQUUsQ0FBcEMiLCJmaWxlIjoibW9kdWxlcy9kdW1teS5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogRHVtbXkgbW9kdWxlIHdoaWNoIGlzIGNhbGxlZCBvbiB0aGUgcmVuZGVyZXIgcHJvY2VzcyBzdGFydHVwLCBzbyB0aGF0IHRoZSBNb2R1bGUgY2FuIHNhdmUgYVxuICogcmVmZXJlbmNlIHRvIHRoZSByZW5kZXJlci5cbiAqXG4gKiBAdHlwZSB7TW9kdWxlfVxuICovXG5cbnZhciBNb2R1bGUgPSByZXF1aXJlKCcuL21vZHVsZS5qcycpO1xudmFyIGR1bW15ID0gbmV3IE1vZHVsZSgnZHVtbXlNb2R1bGUnKTtcblxuZHVtbXkub24oJ3NldFJlbmRlcmVyUmVmZXJlbmNlJywgZnVuY3Rpb24gc2V0UmVuZGVyZXJSZWZlcmVuY2UoKSB7XG4gICAgLy8gTm90aGluZyB0byBkbyBoZXJlIHNpbmNlIE1vZHVsZSBpcyBhbHJlYWR5IHNldHRpbmcgdGhpcyByZWZlcmVuY2UgZm9yIHVzLlxufSk7XG5cbm1vZHVsZS5leHBvcnRzID0gZnVuY3Rpb24gRHVtbXkoKSB7fTtcbiJdLCJzb3VyY2VSb290IjoiL3NvdXJjZS8ifQ==

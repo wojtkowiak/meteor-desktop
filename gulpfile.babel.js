@@ -6,7 +6,7 @@ import path from 'path';
 const { join } = path;
 const $ = require('gulp-load-plugins')();
 $.merge = require('merge-stream');
-import paths from './tests/paths';
+import paths from './tests/helpers/paths';
 
 
 function wrap(stream) {
