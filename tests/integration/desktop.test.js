@@ -24,7 +24,7 @@ describe('desktop', () => {
             MeteorDesktop.app.init();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.root)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.settings)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.desktop.index)).to.be.true();
+            expect(fs.existsSync(MeteorDesktop.env.paths.desktop.desktop)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.assets)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.splashScreen)).to.be.true();
         });
@@ -38,6 +38,20 @@ describe('desktop', () => {
         });
     });
 
+    describe('#getDependencies', () => {
+        it('should get all dependencies from .desktop', () => {
+            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            const deps = MeteorDesktop.desktop.getDependencies();
+            expect(deps).to.have.a.deep.property('fromSettings.some-package', '1.2.3');
+            expect(deps).to.have.a.deep.property('plugins.meteor-desktop-splash-screen', '0.0.2');
+            expect(deps).to.have.a.deep.property('modules.someModule.dependency', '1.0.1');
+            expect(deps).to.have.a.deep.property('modules.someModule2.dependency2', '0.0.5');
+        });
+
+
+    });
+
+    /*
     describe('#mergeDependencies', () => {
         it('should get all dependencies from .desktop', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
@@ -93,5 +107,5 @@ describe('desktop', () => {
             }).to.throw(/Another version/);
         });
 
-    });
+    });*/
 });

@@ -41,4 +41,20 @@ describe('electronApp', () => {
             expect(packageJson.private).to.be.true();
         });
     });
+    describe('#updateDependencies', () => {
+        it('should update dependencies list', () => {
+            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            shell.cp('-rf', paths.fixtures.electronApp, paths.fixtures.testProjectInstall);
+            MeteorDesktop.electronApp.packageJson = {};
+            MeteorDesktop.electronApp.updateDependencies();
+            const packageJson = JSON.parse(
+                fs.readFileSync(MeteorDesktop.env.paths.electronApp.packageJson, 'UTF-8')
+            );
+            expect(packageJson.dependencies).to.have.a.property('some-package', '1.2.3');
+            expect(packageJson.dependencies).to.have.a.property('meteor-desktop-splash-screen', '0.0.2');
+            expect(packageJson.dependencies).to.have.a.property('dependency', '1.0.1');
+            expect(packageJson.dependencies).to.have.a.property('dependency2', '0.0.5');
+
+        });
+    });
 });
