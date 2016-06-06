@@ -62,6 +62,14 @@ app.on('ready', function onReady() {
         settings.window = {};
     }
 
+    if ('plugins' in settings) {
+        Object.keys(settings.plugins).forEach((plugin) => {
+            l.debug('loading plugin: ', plugin);
+            modules[plugin] = require(plugin);
+            modules[plugin] = new modules[plugin](l, app, settings, systemEvents, modules, settings.plugins[plugin]);
+        });
+    }
+
     shell.ls(join(__dirname, 'modules', '*.js')).forEach(function loadModule(file) {
         if (!~file.indexOf('module.js')) {
             moduleName = path.parse(file).name;

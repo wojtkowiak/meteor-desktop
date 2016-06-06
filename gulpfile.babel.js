@@ -51,5 +51,6 @@ gulp.task('test', ['transpile'], callback => {
         callback);
 });
 
-gulp.task('watch', ['test'], () => gulp.watch(['./lib/**/*.js', './tests/**/*.js'], ['test']));
 
+gulp.task('watch-test', ['test'], () => gulp.watch(['./lib/**/*.js', './tests/**/*.js'], ['test']));
+gulp.task('watch', ['transpile'], () => gulp.watch(['./lib/**/*.js'], ['transpile']));
