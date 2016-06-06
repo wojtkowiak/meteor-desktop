@@ -13,10 +13,10 @@ export function createTestInstance() {
     return meteorDesktop(
         paths.fixtures.testProjectInstall,
         paths.fixtures.testProjectInstall,
-        false
+        { ddpUrl: 'http://127.0.0.1:3000' }
     );
 }
 
-export default function (input, output, runFromDist) {
-    return meteorDesktop(input, output, runFromDist);
+export default function (input, output, options) {
+    return meteorDesktop(input, output, options);
 }

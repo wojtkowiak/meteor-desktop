@@ -10,9 +10,11 @@
     "description": "Build a Meteor's desktop client with hot code push.",
     "main": "dist/index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "npm run build && mocha --compilers js:babel-core/register \"tests/integration/**/*.test.js\"",
+        "test-watch": "watch \"npm run test\" lib tests/integration",
         "prepublish": "npm run build",
-        "build": "babel lib --out-dir dist"
+        "build": "babel lib --out-dir dist --source-maps inline --copy-files",
+        "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files"
     },
     "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
     "license": "MIT",
@@ -40,7 +42,8 @@
         "private-decorator": "^0.1.5",
         "run-sequence": "^1.2.1",
         "sinon": "^1.17.4",
-        "sinon-chai": "^2.8.0"
+        "sinon-chai": "^2.8.0",
+        "watch": "^0.18.0"
     },
     "dependencies": {
         "commander": "2.9.0",
@@ -52,7 +55,8 @@
         "semver": "5.1.0",
         "semver-regex": "1.0.0",
         "shelljs": "0.7.0",
-        "extfs": "0.0.7"
+        "extfs": "0.0.7",
+        "single-line-log": "^1.1.1"
     },
     "repository": {
         "type": "git",

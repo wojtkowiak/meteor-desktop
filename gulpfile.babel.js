@@ -31,7 +31,7 @@ gulp.task('transpile', ['copyHtml'], () => gulp.src('./lib/**/*.js')
 
 gulp.task('test:clean', () => del([paths.testsTmpPath]));
 
-gulp.task('test:test', () => gulp.src('./tests/integration/**/*.js', { read: false })
+gulp.task('test', ['test:prepare'], () => gulp.src('./tests/integration/**/*.js', { read: false })
     .pipe($.mocha({ reporter: 'spec', compilers: 'js:babel-core/register' }))
     .on('error', $.util.log)
 );
@@ -43,11 +43,10 @@ gulp.task('test:createEmptyMeteorProject', done => {
     done();
 });
 
-gulp.task('test', ['transpile'], callback => {
+gulp.task('test:prepare', ['transpile'], callback => {
     runSequence(
         'test:clean',
         'test:createEmptyMeteorProject',
-        'test:test',
         callback);
 });
 
