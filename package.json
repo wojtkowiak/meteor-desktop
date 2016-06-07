@@ -10,8 +10,8 @@
     "description": "Build a Meteor's desktop client with hot code push.",
     "main": "dist/index.js",
     "scripts": {
-        "test": "npm run build && mocha --compilers js:babel-core/register \"tests/integration/**/*.test.js\"",
-        "test-watch": "watch \"npm run test\" lib tests/integration",
+        "test": "npm run build && mocha --compilers js:babel-core/register \"tests/+(integration|unit)/**/*.test.js\"",
+        "test-watch": "watch \"npm run test\" lib tests/integration tests/unit",
         "prepublish": "npm run build",
         "build": "babel lib --out-dir dist --source-maps inline --copy-files",
         "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files"

@@ -1,4 +1,4 @@
-HOLD - use es6 in main app
+- move autoupdate to npm
 
 - generate .desktop scaffold
 - support npm plugins

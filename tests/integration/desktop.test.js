@@ -6,53 +6,14 @@ chai.use(dirty);
 import sinon from 'sinon';
 const { describe, it } = global;
 const { expect } = chai;
-import { createTestInstance } from '../helpers/meteorDesktop';
+import { createTestInstance, stubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
 import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
 import paths from '../helpers/paths';
 
-function getModuleJson(module) {
-    const moduleJsonPath = path.join(
-        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
-    );
-    return JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
-}
-
-function saveModuleJson(module, moduleJson) {
-    const moduleJsonPath = path.join(
-        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
-    );
-    fs.writeFileSync(
-        moduleJsonPath, JSON.stringify(moduleJson, null, 2)
-    );
-}
-
 describe('desktop', () => {
     let MeteorDesktop;
-
-    function stubLog(object, methods, stubProcessExit) {
-        const stubs = {};
-
-        if (stubProcessExit) {
-            sinon.stub(process, 'exit');
-        }
-
-        methods.forEach(method => {
-            stubs[method] = sinon.stub(object.log, method);
-        });
-
-        this.restore = () => {
-            Object.keys(stubs).forEach(method => stubs[method].restore());
-            if (stubProcessExit) {
-                process.exit.restore();
-            }
-        };
-
-        this.stubs = stubs;
-
-        return this;
-    }
 
     beforeEach(() => {
         MeteorDesktop = createTestInstance();
@@ -160,62 +121,4 @@ describe('desktop', () => {
             logStub.restore();
         });
     });
-
-    /*
-     describe('#mergeDependencies', () => {
-     it('should get all dependencies from .desktop', () => {
-     shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-     const deps = MeteorDesktop.desktop.mergeDependencies(
-     MeteorDesktop.electronApp.scaffold.getDefaultPackageJson().dependencies
-     );
-     expect(deps).to.have.a.property('dependency', '0.0.5');
-     expect(deps).to.have.a.property('dependency2', '1.0.1');
-     });
-
-     it('should throw on dependency range', () => {
-     shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-     const moduleJsonPath = path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', 'someModule', 'module.json');
-     const moduleJson = JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
-     moduleJson.dependencies.someDep = '^1.2.0';
-     fs.writeFileSync(
-     moduleJsonPath, JSON.stringify(moduleJson, null, 2)
-     );
-     expect(() => {
-     const deps = MeteorDesktop.desktop.mergeDependencies(
-     MeteorDesktop.electronApp.scaffold.getDefaultPackageJson().dependencies
-     );
-     }).to.throw(/version range/);
-     });
-
-     it('should throw on dependency conflict', () => {
-     shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-     const moduleJsonPath = path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', 'someModule', 'module.json');
-     const moduleJson = JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
-     moduleJson.dependencies.dependency = '0.2.0';
-     fs.writeFileSync(
-     moduleJsonPath, JSON.stringify(moduleJson, null, 2)
-     );
-     expect(() => {
-     const deps = MeteorDesktop.desktop.mergeDependencies(
-     MeteorDesktop.electronApp.scaffold.getDefaultPackageJson().dependencies
-     );
-     }).to.throw(/Another version/);
-     });
-
-     it('should throw on dependency conflict with core', () => {
-     shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-     const moduleJsonPath = path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', 'someModule', 'module.json');
-     const moduleJson = JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
-     moduleJson.dependencies.shelljs = '0.2.0';
-     fs.writeFileSync(
-     moduleJsonPath, JSON.stringify(moduleJson, null, 2)
-     );
-     expect(() => {
-     const deps = MeteorDesktop.desktop.mergeDependencies(
-     MeteorDesktop.electronApp.scaffold.getDefaultPackageJson().dependencies
-     );
-     }).to.throw(/Another version/);
-     });
-
-     });*/
 });
