@@ -13,12 +13,16 @@ import shell from 'shelljs';
 import paths from '../helpers/paths';
 
 function getModuleJson(module) {
-    const moduleJsonPath = path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json');
+    const moduleJsonPath = path.join(
+        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
+    );
     return JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
 }
 
 function saveModuleJson(module, moduleJson) {
-    const moduleJsonPath = path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json');
+    const moduleJsonPath = path.join(
+        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
+    );
     fs.writeFileSync(
         moduleJsonPath, JSON.stringify(moduleJson, null, 2)
     );
@@ -27,14 +31,27 @@ function saveModuleJson(module, moduleJson) {
 describe('desktop', () => {
     let MeteorDesktop;
 
-    function stubLogAndProcessExit(method) {
-        sinon.stub(process, 'exit');
-        return sinon.spy(MeteorDesktop.desktop.log, method);
-    }
+    function stubLog(object, methods, stubProcessExit) {
+        const stubs = {};
 
-    function restoreStubs(method) {
-        MeteorDesktop.desktop.log[method].restore();
-        process.exit.restore();
+        if (stubProcessExit) {
+            sinon.stub(process, 'exit');
+        }
+
+        methods.forEach(method => {
+            stubs[method] = sinon.stub(object.log, method);
+        });
+
+        this.restore = () => {
+            Object.keys(stubs).forEach(method => stubs[method].restore());
+            if (stubProcessExit) {
+                process.exit.restore();
+            }
+        };
+
+        this.stubs = stubs;
+
+        return this;
     }
 
     beforeEach(() => {
@@ -43,20 +60,22 @@ describe('desktop', () => {
 
     describe('#init', () => {
         it('should create .desktop scaffold', () => {
+            const logStub = stubLog(MeteorDesktop.desktop, ['info']);
             MeteorDesktop.init();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.root)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.settings)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.desktop)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.assets)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.splashScreen)).to.be.true();
+            logStub.restore();
         });
 
         it('should warn about .desktop that already exists', () => {
             shell.mkdir(MeteorDesktop.env.paths.desktop.root);
-            sinon.spy(MeteorDesktop.desktop.log, 'warn');
+            const logStub = stubLog(MeteorDesktop.desktop, ['info', 'warn']);
             MeteorDesktop.init();
-            expect(MeteorDesktop.desktop.log.warn).to.have.been.calledOnce();
-            MeteorDesktop.desktop.log.warn.restore();
+            expect(logStub.stubs.warn).to.have.been.calledOnce();
+            logStub.restore();
         });
     });
 
@@ -69,8 +88,6 @@ describe('desktop', () => {
             expect(deps).to.have.a.deep.property('modules.someModule.dependency', '1.0.1');
             expect(deps).to.have.a.deep.property('modules.someModule2.dependency2', '0.0.5');
         });
-
-
     });
 
     describe('#getSettings', () => {
@@ -82,11 +99,11 @@ describe('desktop', () => {
         });
 
         it('should report error on missing file', () => {
-            sinon.spy(MeteorDesktop.desktop.log, 'error');
+            const logStub = stubLog(MeteorDesktop.desktop, ['error']);
             sinon.stub(process, 'exit');
             MeteorDesktop.desktop.getSettings();
-            expect(MeteorDesktop.desktop.log.error).to.have.been.calledOnce();
-            MeteorDesktop.desktop.log.error.restore();
+            expect(logStub.stubs.error).to.have.been.calledOnce();
+            logStub.restore();
             process.exit.restore();
         });
     });
@@ -110,18 +127,22 @@ describe('desktop', () => {
             const moduleJson = getModuleJson('someModule');
             moduleJson.name = 'someModule2';
             saveModuleJson('someModule', moduleJson);
-            const spy = stubLogAndProcessExit('error');
+            const logStub = stubLog(MeteorDesktop.desktop, ['error'], true);
             MeteorDesktop.desktop.getDependencies();
-            expect(spy).to.have.been.calledWithMatch(sinon.match(/already registered/));
-            restoreStubs('error');
+            expect(logStub.stubs.error).to.have.been.calledWithMatch(
+                sinon.match(/already registered/)
+            );
+            logStub.restore();
         });
     });
     describe('#getModuleConfig', () => {
         it('should report error on missing module.json', () => {
-            const spy = stubLogAndProcessExit('error');
+            const logStub = stubLog(MeteorDesktop.desktop, ['error'], true);
             MeteorDesktop.desktop.getModuleConfig('nonExistingModule');
-            expect(spy).to.have.been.calledWithMatch(sinon.match(/error while trying to read/));
-            restoreStubs('error');
+            expect(logStub.stubs.error).to.have.been.calledWithMatch(
+                sinon.match(/error while trying to read/)
+            );
+            logStub.restore();
         });
 
         it('should report error on missing name field in module.json', () => {
@@ -129,10 +150,14 @@ describe('desktop', () => {
             const moduleJson = getModuleJson('someModule');
             delete moduleJson.name;
             saveModuleJson('someModule', moduleJson);
-            const spy = stubLogAndProcessExit('error');
-            MeteorDesktop.desktop.getModuleConfig(path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', 'someModule'));
-            expect(spy).to.have.been.calledWithMatch(sinon.match(/field defined in/));
-            restoreStubs('error');
+            const logStub = stubLog(MeteorDesktop.desktop, ['error'], true);
+            MeteorDesktop.desktop.getModuleConfig(
+                path.join(paths.fixtures.testProjectInstall, '.desktop', 'modules', 'someModule')
+            );
+            expect(logStub.stubs.error).to.have.been.calledWithMatch(
+                sinon.match(/field defined in/)
+            );
+            logStub.restore();
         });
     });
 

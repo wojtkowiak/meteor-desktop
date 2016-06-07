@@ -1,6 +1,7 @@
 import meteorDesktop from '../../dist/index';
 import shell from 'shelljs';
 import paths from './paths';
+import sinon from 'sinon';
 
 export function createTestInstance() {
     shell.rm('-rf', paths.testsTmpPath);
@@ -13,7 +14,8 @@ export function createTestInstance() {
     return meteorDesktop(
         paths.fixtures.testProjectInstall,
         paths.fixtures.testProjectInstall,
-        { ddpUrl: 'http://127.0.0.1:3000' }
+        { ddpUrl: 'http://127.0.0.1:3000' },
+        { log: class { constructor() { this.info = sinon.stub(); } } }
     );
 }
 
