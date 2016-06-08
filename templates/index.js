@@ -7,6 +7,7 @@ var fs = require('fs');
 var shell = require('shelljs');
 var Events = require('events').EventEmitter;
 var systemEvents = new Events();
+const assignIn = require('lodash/assignIn');
 
 var winston = require('winston');
 var l = new winston.Logger({
@@ -23,6 +24,12 @@ var settings = {
     devTools: false
 };
 var modules = {};
+
+const os = {
+    isWindows: (process.platform === 'win32'),
+    isLinux: (process.platform === 'linux'),
+    isOsx: (process.platform === 'darwin')
+};
 
 process.on('uncaughtException', function uncaughtException(error) {
     l.error(error);
@@ -48,6 +55,24 @@ require('electron-debug')({
     enabled: (settings.devTools !== undefined) ? settings.devTools : true
 });
 
+if (!('window' in settings)) {
+    settings.window = {};
+}
+
+['windows', 'linux', 'osx'].forEach(system => {
+    if (
+        os[`is${system[0].toUpperCase()}${system.substring(1)}`] &&
+        (`_${system}`) in settings.window
+    ) {
+        assignIn(settings.window, settings.window[`_${system}`]);
+    }
+});
+
+if (settings.window.icon) {
+    settings.window.icon = join(__dirname, 'assets', settings.window.icon);
+}
+
+app.mainWindow = null;
 
 app.on('ready', function onReady() {
     var localServer;
@@ -58,9 +83,6 @@ app.on('ready', function onReady() {
 
     l.info('ready fired');
 
-    if (settings.window === undefined) {
-        settings.window = {};
-    }
 
     if ('plugins' in settings) {
         Object.keys(settings.plugins).forEach((plugin) => {
@@ -75,7 +97,7 @@ app.on('ready', function onReady() {
             moduleName = path.parse(file).name;
             l.debug('loading module: ' + file);
             modules[moduleName] = require(file);
-            modules[moduleName] = new modules[moduleName](l, app, settings, systemEvents);
+            modules[moduleName] = new modules[moduleName](l, app, settings, systemEvents, modules);
         }
     });
 
@@ -83,8 +105,20 @@ app.on('ready', function onReady() {
         if (fs.existsSync(path.join(file, 'index.js'))) {
             moduleName = path.parse(file).name;
             l.debug('loading module: ' + file, moduleName);
+            let settings = {};
+            if (fs.existsSync(path.join(file, 'module.json'))) {
+                let moduleJson = {};
+                try {
+                    moduleJson = require(path.join(file, 'module.json'));
+                } catch (e) {
+                    l.warn(`could not load ${path.join(file, 'module.json')}`);
+                }
+                if ('settings' in moduleJson) {
+                    settings = moduleJson.settings;
+                }
+            }
             modules[moduleName] = require(path.join(file, 'index.js'));
-            modules[moduleName] = new modules[moduleName](l, app, settings, systemEvents);
+            modules[moduleName] = new modules[moduleName](l, app, settings, systemEvents, modules, settings);
         }
     });
 
@@ -110,14 +144,18 @@ app.on('ready', function onReady() {
             app.quit();
         },
         function onServerReady(port) {
-            window = new BrowserWindow({
+            const windowSettings = {
                 width: 800, height: 600,
                 webPreferences: {
                     nodeIntegration: false, // node integration must to be off
                     preload: join(__dirname, 'preload.js')
                 },
                 show: false
-            });
+            };
+
+            assignIn(windowSettings, settings.window);
+
+            window = new BrowserWindow(windowSettings);
 
             webContents = window.webContents;
 

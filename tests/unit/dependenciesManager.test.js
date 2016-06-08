@@ -19,7 +19,7 @@ describe('dependenciesManager', () => {
             const stub1 = sinon.stub(instance, 'validateDependenciesVersions');
             stub1.returns(true);
             const stub2 = sinon.stub(instance, 'detectDuplicatedDependencies');
-            stub2.returns(true);
+            
             instance.mergeDependencies('test', { testDep3: '1.2.3', testDep4: '2.4.3' });
             expect(instance.getDependencies()).be.deep.equal(
                 {
@@ -29,7 +29,8 @@ describe('dependenciesManager', () => {
                     testDep4: '2.4.3'
                 }
             );
-
+            stub1.restore();
+            stub2.restore();
         });
     });
 });

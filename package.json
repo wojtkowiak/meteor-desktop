@@ -48,8 +48,8 @@
     "dependencies": {
         "commander": "2.9.0",
         "cross-spawn": "3.0.1",
-        "electron-packager": "7.0.2",
-        "electron-prebuilt": "1.1.2",
+        "electron-packager": "7.0.3",
+        "electron-prebuilt": "1.2.2",
         "lodash": "4.13.1",
         "private-decorator": "0.1.5",
         "semver": "5.1.0",

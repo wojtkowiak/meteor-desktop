@@ -1,3 +1,4 @@
+
 - move autoupdate to npm
 
 - generate .desktop scaffold
@@ -5,6 +6,8 @@
 - move splashscreen to npm
 
 - move toaster to npm
+
+- remove version ranges
 
 - es6
 - clear code
@@ -17,6 +20,12 @@
 - tests
 - hcp for modules
 - handle medc version change and potential incompatibiliy in builds
+
+- write about events
+- write how to modify main window
+- write about settings in moduleJson
+- write about icon in window
+- write about passing diferrent things for platforms
 
 // Optional
 - support input
