@@ -21,6 +21,7 @@ describe('electronAppScaffold', () => {
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.root)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.cordova)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.index)).to.be.true();
+            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.app)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.preload)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.modules)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.packageJson)).to.be.true();

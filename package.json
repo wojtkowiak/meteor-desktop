@@ -56,7 +56,7 @@
         "semver-regex": "1.0.0",
         "shelljs": "0.7.0",
         "extfs": "0.0.7",
-        "single-line-log": "^1.1.1"
+        "single-line-log": "1.1.1"
     },
     "repository": {
         "type": "git",

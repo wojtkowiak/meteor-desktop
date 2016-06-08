@@ -61,7 +61,7 @@ function HCPClient(l, app, settings, systemEvents) {
 
     this._l = new Log('HCPClient', log);
 
-    systemEvents.on('initialization', this._init.bind(this));
+    systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
 
     this._config = {
         appId: null,
