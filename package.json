@@ -10,11 +10,12 @@
     "description": "Build a Meteor's desktop client with hot code push.",
     "main": "dist/index.js",
     "scripts": {
-        "test": "npm run build && mocha --compilers js:babel-core/register \"tests/+(integration|unit)/**/*.test.js\"",
-        "test-watch": "watch \"npm run test\" lib tests/integration tests/unit",
+        "test": "mocha --compilers js:babel-core/register \"tests/+(integration|unit)/**/*.test.js\"",
+        "test-watch": "watch \"npm run test\" --wait 2 dist tests/integration tests/unit modules scaffold skeleton",
         "prepublish": "npm run build",
         "build": "babel lib --out-dir dist --source-maps inline --copy-files",
-        "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files"
+        "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
+        "develop": "npm-run-all --parallel build-watch test-watch"
     },
     "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
     "license": "MIT",
@@ -40,6 +41,10 @@
         "gulp-util": "^3.0.7",
         "merge-stream": "^1.0.0",
         "private-decorator": "^0.1.5",
+        "rewire": "^2.5.1",
+        "proxyquire": "^1.7.9",
+        "mockery": "^1.7.0",
+        "npm-run-all": "^2.1.1",
         "run-sequence": "^1.2.1",
         "sinon": "^1.17.4",
         "sinon-chai": "^2.8.0",
@@ -56,7 +61,8 @@
         "semver-regex": "1.0.0",
         "shelljs": "0.7.0",
         "extfs": "0.0.7",
-        "single-line-log": "1.1.1"
+        "single-line-log": "1.1.1",
+        "npm3": "^1.1.0"
     },
     "repository": {
         "type": "git",

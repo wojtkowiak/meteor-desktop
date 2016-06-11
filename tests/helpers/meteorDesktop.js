@@ -34,7 +34,7 @@ export function createTestInstance() {
     shell.rm('-rf', paths.testsTmpPath);
 
     // Copy test meteor app.
-    shell.mkdir(paths.testsTmpPath);
+    shell.mkdir('-p', paths.testsTmpPath);
     shell.mkdir(paths.fixtures.testProjectInstall);
     shell.cp('-r', paths.fixtures.testProject, paths.testsTmpPath);
 

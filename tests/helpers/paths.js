@@ -2,7 +2,8 @@ import path from 'path';
 const { join, resolve } = path;
 
 const testsPath = path.resolve('tests');
-const testsTmpPath = join(testsPath, '_tmp_');
+const testsTmpPath = path.resolve(path.join(testsPath, '_tmp_'));
+
 const fixturesPath = 'fixtures';
 const projectDir = 'meteorProject';
 const fixtures = {

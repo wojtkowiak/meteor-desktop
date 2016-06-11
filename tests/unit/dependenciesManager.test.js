@@ -9,10 +9,6 @@ const { expect } = chai;
 import DependenciesManager from '../../lib/dependenciesManager';
 
 describe('dependenciesManager', () => {
-    /*   let instance;
-     beforeEach(() => {
-     instance = new DependenciesManager($)
-     });*/
     describe('#mergeDependencies', () => {
         it('should merge dependencies', () => {
             const instance = new DependenciesManager({}, { testDep: '1.0.0', testDep2: '2.1.2' });

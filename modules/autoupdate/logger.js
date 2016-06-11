@@ -5,7 +5,6 @@
  * @param {Object} loggerInstance - Instance of the logger.
  */
 function logger(entityName, loggerInstance) {
-
     /**
      * Logs message.
      *

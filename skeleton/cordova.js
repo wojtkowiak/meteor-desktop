@@ -6,30 +6,30 @@
 WebAppLocalServer = {
     _onNewVersionReady: null,
 
-    startupDidComplete: function startupDidComplete(callback) {
+    startupDidComplete(callback) {
         // TODO: implement fallback startegy
         console.log('startupDidComplete() fired');
     },
 
-    checkForUpdates: function checkForUpdates(callback) {
-        Electron.send('autoupdateModule', 'checkForUpdates');
+    checkForUpdates(callback) {
+        Desktop.send('autoupdateModule', 'checkForUpdates');
     },
 
-    onNewVersionReady: function onNewVersionReady(callback) {
+    onNewVersionReady(callback) {
         this._onNewVersionReady = callback;
     },
 
-    onError: function onError(callback) {
+    onError(callback) {
         console.log('onError called');
     }
 };
 
-Electron.on('autoupdateModule', 'error', function error(event, args) {
+Desktop.on('autoupdateModule', 'error', function error(event, args) {
     console.log('received');
     console.error(args);
 });
 
-Electron.on('autoupdateModule', 'onNewVersionReady', function onNewVersionReady(event, args) {
+Desktop.on('autoupdateModule', 'onNewVersionReady', function onNewVersionReady(event, args) {
     console.log('new version ready', args);
     if (WebAppLocalServer._onNewVersionReady) {
         WebAppLocalServer._onNewVersionReady(args);
@@ -37,4 +37,4 @@ Electron.on('autoupdateModule', 'onNewVersionReady', function onNewVersionReady(
 });
 
 // Set the reference, so that the desktop side will be able to communicate with us asap.
-Electron.send('dummyModule', 'setRendererReference');
+Desktop.send('dummyModule', 'setRendererReference');

@@ -8,7 +8,9 @@
         "mocha": true
     },
     "globals": {
-        "Meteor": true
+        "Meteor": true,
+        "WebAppLocalServer": true,
+        "Desktop": true,
     },
     "parser": "babel-eslint",
     "rules": {

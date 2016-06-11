@@ -15,9 +15,9 @@ var enableDestroy = require('server-destroy');
  * @constructor
  */
 function LocalServer(log, app) {
-    this._log = log;
-    this._app = app;
-    this._serverInstance = null;
+    this.log = log;
+    this.app = app;
+    this.serverInstance = null;
 
     this.errors = [];
     this.errors[0] = 'Could not find free port.';
@@ -25,9 +25,9 @@ function LocalServer(log, app) {
 }
 
 LocalServer.prototype.setCallbacks = function setCallbacks(onStartupFailed, onServerReady, onServerRestarted) {
-    this._onStartupFailed = onStartupFailed;
-    this._onServerReady = onServerReady;
-    this._onServerRestarted = onServerRestarted;
+    this.onStartupFailed = onStartupFailed;
+    this.onServerReady = onServerReady;
+    this.onServerRestarted = onServerRestarted;
 };
 
 LocalServer.prototype.init = function init(serverDir, parentServerDir, restart) {
@@ -35,11 +35,11 @@ LocalServer.prototype.init = function init(serverDir, parentServerDir, restart) 
     var server = connect();
 
     if (restart) {
-        if (this._serverInstance) {
-            this._serverInstance.destroy();
+        if (this.serverInstance) {
+            this.serverInstance.destroy();
         }
     }
-    this._log.info('serve: ', serverDir, parentServerDir);
+    this.log.info('serve: ', serverDir, parentServerDir);
 
     /**
      * Everything that is:
@@ -55,7 +55,7 @@ LocalServer.prototype.init = function init(serverDir, parentServerDir, restart) 
     server.use(serveStatic(serverDir), { index: ['index.html'], fallthrough: true });
 
     if (parentServerDir) {
-        this._log.info('use ', parentServerDir);
+        this.log.info('use ', parentServerDir);
         // Server files from the parent directory as the main bundle has only changed files.
         server.use(serveStatic(parentServerDir), { index: ['index.html'], fallthrough: true });
     }
@@ -74,25 +74,25 @@ LocalServer.prototype.init = function init(serverDir, parentServerDir, restart) 
 
 LocalServer.prototype._findPortCallback = function _findPortCallback(ports, restart) {
     if (ports.length === 0) {
-        this._log.error('could not find free port');
-        this._onStartupFailed(0);
+        this.log.error('could not find free port');
+        this.onStartupFailed(0);
         return;
     }
 
     this._port = ports[0];
-    this._log.info('assigned port ' + this._port);
+    this.log.info('assigned port ' + this._port);
     try {
-        this._serverInstance = http.createServer(this._server).listen(this._port);
-        enableDestroy(this._serverInstance);
+        this.serverInstance = http.createServer(this._server).listen(this._port);
+        enableDestroy(this.serverInstance);
 
         if (restart) {
-            this._onServerRestarted(this._port);
+            this.onServerRestarted(this._port);
         } else {
-            this._onServerReady(this._port);
+            this.onServerReady(this._port);
         }
     } catch (e) {
-        this._log.error(e);
-        this._onStartupFailed(1);
+        this.log.error(e);
+        this.onStartupFailed(1);
     }
 };
 

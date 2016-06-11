@@ -89,6 +89,8 @@ function HCPClient(l, app, settings, systemEvents) {
         self._assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
         self._event = null;
     });
+
+    this.systemEvents = systemEvents;
 }
 
 /**
@@ -275,10 +277,12 @@ HCPClient.prototype.onFinishedDownloadingAssetBundle =
  * @private
  */
 HCPClient.prototype._notifyNewVersionReady = function _notifyNewVersionReady(version) {
+    this.systemEvents.emit('newVersionReady');
     this._module.send(
         'onNewVersionReady',
         version
     );
+
 };
 
 /**

@@ -15,7 +15,7 @@ function SplashScreen(log, app, settings, systemEvents) {
     var join = path.join;
     var self = this;
 
-    this._log = log;
+    this.log = log;
     this._settings = settings;
     this._splashHtml = join(__dirname, '..', '..', 'splash.html');
     this._splashHtmlAbsolute = path.resolve(this._splashHtml);
@@ -34,28 +34,28 @@ function SplashScreen(log, app, settings, systemEvents) {
     systemEvents.on('startupFailed', this.close.bind(this));
     systemEvents.on('unhandledException', this.close.bind(this));
 
-    this._log.debug('registered event');
+    this.log.debug('registered event');
 }
 
 SplashScreen.prototype._prepare = function _prepare() {
     var splashHTML;
     if (!this._settings.splashScreen) return;
 
-    this._log.info('writing splashscreen');
+    this.log.info('writing splashscreen');
 
     splashHTML = this._fs.readFileSync(this._splashHtmlTemplate, 'UTF-8');
     splashHTML = splashHTML.replace('{title}', this._settings.name);
     splashHTML = splashHTML.replace('{splash}', 'splashScreen.png');
     this._fs.writeFileSync(this._splashHtml, splashHTML);
 
-    this._log.info('wrote splashscreen');
+    this.log.info('wrote splashscreen');
 };
 
 SplashScreen.prototype.show = function show() {
     var self = this;
     if (!this._settings.splashScreen) return;
 
-    this._log.info('displaying splashscreen from file://' + this._splashHtmlAbsolute);
+    this.log.info('displaying splashscreen from file://' + this._splashHtmlAbsolute);
 
     this._splashWindow = new Browser({
         width: 1024, height: 768,

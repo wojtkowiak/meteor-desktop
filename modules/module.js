@@ -1,9 +1,8 @@
-var ipcMain = require('electron').ipcMain;
+import electron from 'electron';
+const { ipcMain } = electron;
 
-var globals = {
-    // Place to store the reference to the renderer process.
-    renderer: null
-};
+// Place to store the reference to the renderer process.
+let renderer = null;
 
 /**
  * Simple abstraction over electron's IPC. Ensures modules will not conflict with each other by
@@ -13,78 +12,101 @@ var globals = {
  * @param {string} name - Name of the module.
  * @constructor
  */
-function Module(name) {
-    this._name = name;
-    this._eventsCallbacks = {};
+export default class Module {
+
+    constructor(name) {
+        this.name = name;
+    }
+
+    /**
+     * Sends an general IPC event with data.
+     *
+     * @param {string} event - Event name.
+     * @param {...*=}     data  - Data to send.
+     */
+    sendGlobalEvent(event, ...data) {
+        this.sendInternal(event, ...data);
+    }
+
+    /**
+     * Sends and IPC event with data.
+     *
+     * @param {string} event - Event name.
+     * @param {...*=}     data  - Data to send.
+     */
+    send(event, ...data) {
+        this.sendInternal(this.getEventName(event), ...data);
+    }
+
+    /**
+     * Registers a callback to a IPC event.
+     *
+     * @param {string}   event    - Event name.
+     * @param {function} callback - Callback to fire.
+     */
+    on(event, callback) {
+        ipcMain.on(this.getEventName(event), (receivedEvent, ...args) => {
+            renderer = receivedEvent.sender;
+            callback(receivedEvent, ...args);
+        });
+    }
+
+    /**
+     * Unregisters a callback.
+     *
+     * @param {string} module     - Module name.
+     * @param {string} event      - The name of an event.
+     * @param {function} callback - Listener to unregister.
+     */
+    removeListener(module, event, callback) {
+        ipcMain.removeListener(this.getEventName(event), callback);
+    }
+
+    /**
+     * Unregisters all callbacks.
+     *
+     * @param {string} module     - Module name.
+     * @param {string} event      - The name of an event.
+     */
+    removeAllListeners(module, event) {
+        ipcMain.removeAllListeners(this.getEventName(event));
+    }
+
+    /**
+     * Registers a once fired callback to a IPC event.
+     *
+     * @param {string}   event    - Event name.
+     * @param {function} callback - Callback to fire.
+     */
+    once(event, callback) {
+        ipcMain.once(this.getEventName(event), (receivedEvent, args) => {
+            renderer = receivedEvent.sender;
+            callback(receivedEvent, args);
+        });
+    }
+
+    /**
+     * Concatenates module name with event name.
+     *
+     * @param {string} event - Event name.
+     * @returns {string}
+     * @private
+     */
+    getEventName(event) {
+        return `${this.name}__${event}`;
+    }
+
+    /**
+     * Sends an IPC event.
+     *
+     * @param {string} event - Event name.
+     * @param {*=}     data  - Data to send.
+     * @private
+     */
+    sendInternal(event, ...data) {
+        if (!renderer) throw new Error('No reference to renderer process (meteor) yet.');
+        renderer.send(event, ...data);
+    }
 }
-
-/**
- * Sends an IPC event.
- *
- * @param {string} event - Event name.
- * @param {*=}     data  - Data to send.
- */
-Module.prototype._send = function send(event, data) {
-    if (!globals.renderer) throw new Error('No reference to renderer process (meteor) yet.');
-    globals.renderer.send(event, data);
-};
-
-/**
- * Sends an general IPC event with data.
- *
- * @param {string} event - Event name.
- * @param {*=}     data  - Data to send.
- */
-Module.prototype.sendGlobalEvent = function sendGlobalEvent(event, data) {
-    this._send(event, data);
-};
-
-/**
- * Sends and IPC event with data.
- *
- * @param {string} event - Event name.
- * @param {*=}     data  - Data to send.
- */
-Module.prototype.send = function send(event, data) {
-    this._send(this._getEventName(event), data);
-};
-
-/**
- * Registers a callback to a IPC event.
- *
- * @param {string}   event    - Event name.
- * @param {function} callback - Callback to fire.
- */
-Module.prototype.on = function on(event, callback) {
-    ipcMain.on(this._getEventName(event), function onEvent(receivedEvent, args) {
-        globals.renderer = receivedEvent.sender;
-        callback(receivedEvent, args);
-    });
-};
-
-/**
- * Registers a callback to a IPC event.
- *
- * @param {string}   event    - Event name.
- * @param {function} callback - Callback to fire.
- */
-Module.prototype.on = function on(event, callback) {
-    ipcMain.on(this._getEventName(event), function onEvent(receivedEvent, args) {
-        globals.renderer = receivedEvent.sender;
-        callback(receivedEvent, args);
-    });
-};
-
-
-/**
- * Concatenates module name with event name.
- *
- * @param {string} event - Event name.
- * @returns {string}
- * @private
- */
-Module.prototype._getEventName = function _getEventName(event) {
-    return this._name + '__' + event;
-};
 
 module.exports = Module;

@@ -6,7 +6,8 @@ chai.use(dirty);
 import sinon from 'sinon';
 const { describe, it } = global;
 const { expect } = chai;
-import { createTestInstance, stubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
+import {
+    createTestInstance, stubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
 import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';

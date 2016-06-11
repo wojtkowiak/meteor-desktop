@@ -1,17 +1,5 @@
-
-- move autoupdate to npm
-
-- generate .desktop scaffold
-- support npm plugins
-- move splashscreen to npm
-
-- move toaster to npm
-
-- remove version ranges
-
-- es6
-- clear code
 - inject isDesktop on hcp
+
 - startup timer and fallback strategy
 - desktop compatibility version (win/lin/osx)
 
@@ -20,12 +8,17 @@
 - tests
 - hcp for modules
 - handle medc version change and potential incompatibiliy in builds
+- tests for app
+- hcp tests
 
 - write about events
+- write that projectName is the name in package.json and the name of the dir
 - write how to modify main window
 - write about settings in moduleJson
 - write about icon in window
 - write about passing diferrent things for platforms
 
 // Optional
+- create toaster plugin
 - support input
+- move autoupdate to npm plugin
