@@ -10,7 +10,9 @@ const fixtures = {
     testProject: join(testsPath, fixturesPath, projectDir),
     testProjectInstall: join(testsTmpPath, projectDir),
     desktop: join(testsPath, fixturesPath, '.desktop'),
-    electronApp: join(testsPath, fixturesPath, '.meteor-desktop')
+    electronApp: join(testsPath, fixturesPath, '.meteor-desktop'),
+    bundledWww: join(testsPath, fixturesPath, 'localServer', 'bundledWww')
+
 };
 
 const cli = resolve(join(__dirname, '..', 'bin', 'cli.js'));

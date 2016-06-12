@@ -16,9 +16,8 @@ import enableDestroy from 'server-destroy';
  */
 export default class LocalServer {
 
-    constructor(log, app) {
+    constructor(log) {
         this.log = log;
-        this.app = app;
         this.httpServerInstance = null;
         this.server = null;
 
@@ -58,6 +57,13 @@ export default class LocalServer {
         }
         this.log.info('serve: ', serverPath, parentServerPath);
 
+        // Here, instead of reading the manifest and serving assets based on urls defined there,
+        // we are making a shortcut implementation which is just doing a simple regex rewrite to
+        // the urls.
+
+        // TODO: is serving on actual manifest better in any way? or faster?
+        // TODO: is there any case not supported here?
+
         /**
          * Everything that is:
          * - not starting with `app` or `packages`
@@ -67,19 +73,20 @@ export default class LocalServer {
          * should be taken from /app/ path.
          */
         server.use(modRewrite([
+            '^/favicon.ico [R=404,L,NS]',
             '^/(?!($|app|packages|.*css|.*meteor_js_resource|cordova.js))(.*) /app/$2'
         ]));
 
         // Serve files as static from the main directory.
         server.use(serveStatic(serverPath),
-            { index: ['index.html'], fallthrough: true });
+            { fallthrough: true, etag: false });
 
         if (parentServerPath) {
             this.log.info('use ', parentServerPath);
 
             // Server files from the parent directory as the main bundle has only changed files.
             server.use(serveStatic(parentServerPath),
-                { index: ['index.html'], fallthrough: true });
+                { fallthrough: true, etag: false });
         }
 
         // As last resort we will serve index.html.
@@ -88,7 +95,7 @@ export default class LocalServer {
         ]));
 
         server.use(serveStatic(serverPath),
-            { index: ['index.html'] });
+            { etag: false });
 
         this.server = server;
 
