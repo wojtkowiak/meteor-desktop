@@ -61,27 +61,30 @@ function HCPClient(log, app, appSettings, systemEvents, modules, settings, Modul
         lastDownloadedVersion: null
     };
 
-    this._configFile = join(this.settings.dataPath, 'autoupdateModule.json');
+    this._configFile = join(this.settings.dataPath, 'autoupdate.json');
     this._versionsDir = join(this.settings.bundleStorePath, 'versions');
 
     this._module = autoupdateModule;
 
-    this._module.on('checkForUpdates', function checkForUpdates() {
-        var rootUrl = self._currentAssetBundle.getRootUrlString();
-        if (rootUrl === null) {
-            module.send(
-                'error',
-                'checkForUpdates requires a rootURL to be configured'
-            );
-            return;
-        }
-
-        self._assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
-        self._event = null;
-    });
+    this._module.on('checkForUpdates', this.checkForUpdates.bind(this));
 
     this.systemEvents = systemEvents;
 }
+
+
+HCPClient.prototype.checkForUpdates = function checkForUpdates() {
+    var rootUrl = this._currentAssetBundle.getRootUrlString();
+    if (rootUrl === null) {
+        this._module.send(
+            'error',
+            'checkForUpdates requires a rootURL to be configured'
+        );
+        return;
+    }
+
+    this._assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
+    this._event = null;
+};
 
 /**
  * Performs initialization.
@@ -94,7 +97,7 @@ HCPClient.prototype._init = function _init() {
 
     if (!fs.existsSync(this._configFile)) {
         this._saveConfig();
-        this._l.info('Created empty autoupdateModule.json');
+        this._l.info('Created empty autoupdate.json');
     }
 
     this._readConfig();

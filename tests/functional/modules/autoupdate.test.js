@@ -9,10 +9,11 @@ chai.use(dirty);
 const { describe, it } = global;
 const { expect } = chai;
 import paths from '../../helpers/paths';
-import LocalServer from '../../../modules/localServer';
+import LocalServer from '../../helpers/meteorServer';
 import HCPClient from '../../../modules/autoupdate.js';
 import fetch from 'node-fetch';
 import path from 'path';
+import shell from 'shelljs';
 
 
 let localPort;
@@ -46,6 +47,8 @@ describe('localServer', () => {
     describe("when updating from the bundled app version to a downloaded version", function() {
         beforeEach(async () => {
             localServer = await serveVersion('version2');
+            shell.rm(path.join(paths.fixtures.autoUpdate, 'autoupdate.json'));
+            shell.rm('-rf', path.join(paths.fixtures.autoUpdate, 'versions'));
         });
 
         afterEach(() => {
@@ -53,10 +56,10 @@ describe('localServer', () => {
             //WebAppLocalServer.resetToInitialState(done);
         });
 
-        it("should only serve the new version after a page reload", function () {
+        it("should only serve the new version after a page reload", function (done) {
             const logger = {
-                info() {},
-                debug() {},
+                info(msg) { console.log(msg);},
+                debug(msg) { console.log(msg); },
                 warn() {},
                 error(...args) { console.error(...args); },
                 clone() { return this; }
@@ -66,14 +69,17 @@ describe('localServer', () => {
                 logger,
                 {},
                 {},
-                { on() {} },
+                { on() {}, emit(event) {
+                 console.log(event); done();
+                } },
                 { },
                 {
                     dataPath: paths.fixtures.autoUpdate,
                     bundleStorePath: paths.fixtures.autoUpdate,
-                    initialBundlePath: path.join(paths.fixtures.downloadableVersions, 'version1')
+                    initialBundlePath: path.join(paths.fixtures.bundledWww)
                 },
-                class Module { on() {} }
+                class Module { on() {}
+                    send() {} }
             );
 
             autoupdate._init();
@@ -85,8 +91,9 @@ describe('localServer', () => {
              });
              });
              });
+*/
+            autoupdate.checkForUpdates();
 
-             WebAppLocalServer.checkForUpdates();*/
         });
     });
 });

@@ -80,7 +80,7 @@ function ManifestEntry(manifestEntry) {
  * @constructor
  */
 function AssetManifest(logger, manifestSource) {
-    var l = l.clone('AssetManifest');
+    var l = logger.clone('AssetManifest');
     var json;
     var format;
 

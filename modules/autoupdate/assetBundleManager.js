@@ -94,6 +94,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
     var downloadedAssetBundle;
     var manifestUrl = url.resolve(baseUrl, 'manifest.json');
 
+    this._l.info('Trying to query ' + manifestUrl);
     this._httpClient(manifestUrl, function onHttpResponse(error, response, body) {
         if (!error) {
             if (response.statusCode !== 200) {
@@ -103,6 +104,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
                 return;
             }
 
+            console.log(body);
             try {
                 manifest = new AssetManifest(self._l, body);
             } catch (e) {
