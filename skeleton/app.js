@@ -25,6 +25,7 @@ import desktop from './desktop.js';
 class App {
 
     constructor() {
+        this.initLogger();
         this.l = this.getLogger();
 
         // System events emitter.
@@ -41,6 +42,7 @@ class App {
         this.settings = {
             devTools: false
         };
+
         this.catchUncaughtExceptions();
 
         this.getOsSpecificValues();
@@ -231,12 +233,15 @@ class App {
                 this.l.debug(`loading module: ${file}`);
                 this.modules[moduleName] = require(file);
                 const InternalModule = this.modules[moduleName];
+                const settings = {};
                 this.modules[moduleName] = new InternalModule(
                     this.getLogger(moduleName),
                     this.app,
                     this.settings,
                     this.systemEvents,
-                    this.modules
+                    this.modules,
+                    settings,
+                    Module
                 );
             }
         });
@@ -355,25 +360,38 @@ class App {
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
 
+
+    initLogger() {
+        const fileLogConfiguration = { filename: join(this.userDataDir, 'run.log') };
+        winston.loggers.options.transports = [
+            new (winston.transports.Console)(),
+            new (winston.transports.File)(fileLogConfiguration)
+        ];
+    }
+
     /**
      * Returns a new logger instance.
      * @param {string} entityName
      * @returns {Logger}
      */
     getLogger(entityName) {
-        const consoleConfiguration = {};
-        const fileConfiguration = { filename: join(__dirname, 'run.log') };
+        const transports = [];
+        const filters = [];
         if (entityName) {
-            consoleConfiguration.label = entityName;
-            fileConfiguration.label = entityName;
+            transports.push(new (winston.transports.File)({ filename: join(this.userDataDir, `${entityName}.log`) }));
+            filters.push((level, msg) => `[${entityName}] ${msg}`);
         }
-        return new winston.Logger({
+        const logger = new winston.Logger({
             level: 'debug',
-            transports: [
-                new (winston.transports.Console)(consoleConfiguration),
-                new (winston.transports.File)(fileConfiguration)
-            ]
+            transports,
+            filters
         });
+        logger.clone = (subEntityName) => new winston.Logger({
+            level: 'debug',
+            transports,
+            filters: [ (level, msg) => `[${subEntityName}] ${msg}` ]
+        });
+        return logger;
     }
 }
 

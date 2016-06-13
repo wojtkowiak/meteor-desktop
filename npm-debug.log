@@ -1,0 +1,49 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\node.exe',
+1 verbose cli   'D:\\projekty\\meteor-desktop-client\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run',
+1 verbose cli   'test' ]
+2 info using npm@3.9.5
+3 info using node@v4.4.0
+4 verbose run-script [ 'pretest', 'test', 'posttest' ]
+5 info lifecycle meteor-electron-desktop-client@0.0.25~pretest: meteor-electron-desktop-client@0.0.25
+6 silly lifecycle meteor-electron-desktop-client@0.0.25~pretest: no script for pretest, continuing
+7 info lifecycle meteor-electron-desktop-client@0.0.25~test: meteor-electron-desktop-client@0.0.25
+8 verbose lifecycle meteor-electron-desktop-client@0.0.25~test: unsafe-perm in lifecycle true
+9 verbose lifecycle meteor-electron-desktop-client@0.0.25~test: PATH: D:\projekty\meteor-desktop-client\node_modules\npm\bin\node-gyp-bin;D:\projekty\meteor-desktop-client\node_modules\.bin;C:\Program Files (x86)\nodejs;D:\projekty\meteor-desktop-client\node_modules\npm\bin\node-gyp-bin;D:\projekty\meteor-desktop-client\node_modules\.bin;C:\Program Files (x86)\nodejs;C:\Program Files (x86)\nodejs\node_modules\npm\bin\node-gyp-bin;D:\projekty\meteor-desktop-client\node_modules\.bin;C:\Program Files (x86)\nodejs;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Cuminas\Document Express DjVu Plug-in\;C:\Program Files\Broadcom\Broadcom 802.11;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\maven\bin;C:\Program Files (x86)\Paragon Software\Paragon ExtFS for Windows;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\OpenVPN\bin;C:\Python27\;C:\ant\bin;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x86;C:\Program Files (x86)\Intel\OpenCL SDK\2.0\bin\x64;C:\Program Files (x86)\Skype\Phone\;C:\Users\xyz\AppData\Local\Android\android-sdk\tools;C:\Users\xyz\AppData\Local\Android\android-sdk\platform-tools;C:\Program Files\Git\cmd;C:\Program Files (x86)\nodejs\;C:\Program Files (x86)\Java\jdk1.7.0_71\bin;C:\Program Files (x86)\Windows Live\Shared;C:\Ruby21\bin;C:\Users\xyz\AppData\Local\.meteor\;C:\Program Files\Docker Toolbox;C:\Users\xyz\AppData\Roaming\npm
+10 verbose lifecycle meteor-electron-desktop-client@0.0.25~test: CWD: D:\projekty\meteor-desktop-client
+11 silly lifecycle meteor-electron-desktop-client@0.0.25~test: Args: [ '/d /s /c',
+11 silly lifecycle   'mocha --compilers js:babel-core/register "tests/+(functional|unit)/**/*.test.js"' ]
+12 silly lifecycle meteor-electron-desktop-client@0.0.25~test: Returned: code: 1  signal: null
+13 info lifecycle meteor-electron-desktop-client@0.0.25~test: Failed to exec test script
+14 verbose stack Error: meteor-electron-desktop-client@0.0.25 test: `mocha --compilers js:babel-core/register "tests/+(functional|unit)/**/*.test.js"`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (D:\projekty\meteor-desktop-client\node_modules\npm\lib\utils\lifecycle.js:245:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (D:\projekty\meteor-desktop-client\node_modules\npm\lib\utils\spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:827:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid meteor-electron-desktop-client@0.0.25
+16 verbose cwd D:\projekty\meteor-desktop-client
+17 error Windows_NT 10.0.10586
+18 error argv "C:\\Program Files (x86)\\nodejs\\node.exe" "D:\\projekty\\meteor-desktop-client\\node_modules\\npm\\bin\\npm-cli.js" "run" "test"
+19 error node v4.4.0
+20 error npm  v3.9.5
+21 error code ELIFECYCLE
+22 error meteor-electron-desktop-client@0.0.25 test: `mocha --compilers js:babel-core/register "tests/+(functional|unit)/**/*.test.js"`
+22 error Exit status 1
+23 error Failed at the meteor-electron-desktop-client@0.0.25 test script 'mocha --compilers js:babel-core/register "tests/+(functional|unit)/**/*.test.js"'.
+23 error Make sure you have the latest version of node.js and npm installed.
+23 error If you do, this is most likely a problem with the meteor-electron-desktop-client package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     mocha --compilers js:babel-core/register "tests/+(functional|unit)/**/*.test.js"
+23 error You can get information on how to open an issue for this project with:
+23 error     npm bugs meteor-electron-desktop-client
+23 error Or if that isn't available, you can get their info via:
+23 error     npm owner ls meteor-electron-desktop-client
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]

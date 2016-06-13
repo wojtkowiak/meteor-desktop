@@ -4,6 +4,18 @@ import serveStatic from 'serve-static';
 import modRewrite from 'connect-modrewrite';
 import findPort from 'find-port';
 import enableDestroy from 'server-destroy';
+import url from 'url';
+import path from 'path';
+import fs from 'fs';
+
+function exists(path) {
+    try {
+        fs.accessSync(path);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 
 /**
  * Simple local HTTP server tailored for meteor app bundle.
@@ -62,31 +74,54 @@ export default class LocalServer {
         // the urls.
 
         // TODO: is serving on actual manifest better in any way? or faster?
+        // Answer 1: It would be better to have it so we would not have to check for a sourcemap
+        // file existence.
+        // Answer 2: We can not set a proper Cache header without manifest.
+
         // TODO: is there any case not supported here?
 
         /**
          * Everything that is:
          * - not starting with `app` or `packages`
-         * - not with `css` extension
+         * - not a merged-stylesheets.css
          * - not with `meteor_js_resource` in the name
          * - not a cordova.js file
          * should be taken from /app/ path.
          */
         server.use(modRewrite([
             '^/favicon.ico [R=404,L,NS]',
-            '^/(?!($|app|packages|.*css|.*meteor_js_resource|cordova.js))(.*) /app/$2'
+            '^/(?!($|app|packages|merged-stylesheets.css|.*meteor_js_resource|cordova.js))(.*) ' +
+            '/app/$2'
         ]));
+
+        function setSourceMapHeader(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+            const ext = path.extname(parsedUrl.pathname);
+            // Now here it would be very useful to actually read the manifest and server sourcemaps
+            // according to it. For now just checking if a sourcemap for a file exits.
+            if ((ext === '.js' || ext === '.css') && (
+                    exists(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
+                    (parentServerPath &&
+                    exists(path.join(parentServerPath, `${parsedUrl.pathname}.map`)))
+                )
+            ) {
+                res.setHeader('X-SourceMap', `${parsedUrl.pathname}.map?${parsedUrl.query}`);
+            }
+            next();
+        }
+
+        server.use(setSourceMapHeader);
 
         // Serve files as static from the main directory.
         server.use(serveStatic(serverPath),
-            { fallthrough: true, etag: false });
+            {});
 
         if (parentServerPath) {
             this.log.info('use ', parentServerPath);
 
             // Server files from the parent directory as the main bundle has only changed files.
             server.use(serveStatic(parentServerPath),
-                { fallthrough: true, etag: false });
+                {});
         }
 
         // As last resort we will serve index.html.
@@ -94,8 +129,7 @@ export default class LocalServer {
             '^(.*) /index.html'
         ]));
 
-        server.use(serveStatic(serverPath),
-            { etag: false });
+        server.use(serveStatic(serverPath), {});
 
         this.server = server;
 

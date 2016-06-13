@@ -29,25 +29,14 @@
 
  */
 
-var Module = require('./module.js');
 var path = require('path');
 var join = path.join;
 var shell = require('shelljs');
 var fs = require('fs');
 var url = require('url');
-var Log = require('./autoupdate/logger');
 
 var AssetBundle = require('./autoupdate/assetBundle');
 var AssetBundleManager = require('./autoupdate/assetBundleManager');
-
-var winston = require('winston');
-var log = new winston.Logger({
-    level: 'debug',
-    transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.File)({ filename: join(__dirname, '..', 'autoupdateModule.log') })
-    ]
-});
 
 /**
  * Represents the hot code push client.
@@ -55,11 +44,12 @@ var log = new winston.Logger({
  *
  * @constructor
  */
-function HCPClient(l, app, settings, systemEvents) {
+function HCPClient(log, app, appSettings, systemEvents, modules, settings, Module) {
+    this.settings = settings;
     var self = this;
     var autoupdateModule = new Module('autoupdateModule');
 
-    this._l = new Log('HCPClient', log);
+    this._l = log;
 
     systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
 
@@ -71,8 +61,8 @@ function HCPClient(l, app, settings, systemEvents) {
         lastDownloadedVersion: null
     };
 
-    this._configFile = join(__dirname, '..', 'autoupdateModule.json');
-    this._versionsDir = join(__dirname, '..', 'versions');
+    this._configFile = join(this.settings.dataPath, 'autoupdateModule.json');
+    this._versionsDir = join(this.settings.bundleStorePath, 'versions');
 
     this._module = autoupdateModule;
 
@@ -104,15 +94,15 @@ HCPClient.prototype._init = function _init() {
 
     if (!fs.existsSync(this._configFile)) {
         this._saveConfig();
-        this._l.log('info', 'Created empty autoupdateModule.json');
+        this._l.info('Created empty autoupdateModule.json');
     }
 
     this._readConfig();
 
-    this._l.log('debug', 'Reading initial version');
+    this._l.debug('Reading initial version');
     initialAssetBundle = new AssetBundle(
-        this._l.getUnwrappedLogger(),
-        join(__dirname, '..', 'meteor')
+        this._l,
+        this.settings.initialBundlePath
     );
 
     // If the last seen initial version is different from the currently bundled
@@ -134,13 +124,13 @@ HCPClient.prototype._init = function _init() {
 
     // If the versions directory does not exist, we create it
     if (!fs.existsSync(this._versionsDir)) {
-        this._l.log('info', 'Created versions dir.');
+        this._l.info('Created versions dir.');
         // TODO: try/catch
         shell.mkdir(this._versionsDir);
     }
 
     this._assetBundleManager = new AssetBundleManager(
-        this._l.getUnwrappedLogger(),
+        this._l,
         this._config,
         initialAssetBundle,
         this._versionsDir
@@ -204,7 +194,7 @@ HCPClient.prototype.onReset = function onReset() {
         this._pendingAssetBundle = null;
     }
 
-    this._l.log('info', 'Serving asset bundle with version: '
+    this._l.info('Serving asset bundle with version: '
         + this._currentAssetBundle.getVersion());
 
     this._config.appId = this._currentAssetBundle.getAppId();
@@ -241,7 +231,7 @@ HCPClient.prototype._readConfig = function _readConfig() {
  * @param cause
  */
 HCPClient.prototype.onError = function onError(cause) {
-    this._l.log('error', 'Download failure: ' + cause);
+    this._l.error('Download failure: ' + cause);
     this._notifyError(cause);
 };
 
@@ -252,7 +242,7 @@ HCPClient.prototype.onError = function onError(cause) {
  * @private
  */
 HCPClient.prototype._notifyError = function _notifyError(cause) {
-    this._l.log('error', 'Download failure: ' + cause);
+    this._l.error('Download failure: ' + cause);
     this._module.send(
         'error',
         '[autoupdate] Download failure: ' + cause
@@ -297,14 +287,14 @@ HCPClient.prototype.shouldDownloadBundleForManifest =
 
         // No need to redownload the current version
         if (this._currentAssetBundle.getVersion() === version) {
-            this._l.log('info', 'Skipping downloading current version: ' + version);
+            this._l.info('Skipping downloading current version: ' + version);
             return false;
         }
 
         // No need to redownload the pending version
         if (this._pendingAssetBundle !== null &&
             this._pendingAssetBundle.getVersion() === version) {
-            this._l.log('info', 'Skipping downloading pending version: ' + version);
+            this._l.info('Skipping downloading pending version: ' + version);
             return false;
         }
 

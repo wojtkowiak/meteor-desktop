@@ -52,7 +52,7 @@ shellJsConfig = config;
  * @constructor
  */
 function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirectory) {
-    this._l = new Log('AssetBundleManager', l);
+    this._l = l.clone('AssetBundleManager');
 
     this._configuration = configuration;
     this._initialAssetBundle = initialAssetBundle;
@@ -104,7 +104,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
             }
 
             try {
-                manifest = new AssetManifest(self._l.getUnwrappedLogger(), body);
+                manifest = new AssetManifest(self._l, body);
             } catch (e) {
                 self._didFail(e.message);
                 return;
@@ -112,13 +112,13 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             version = manifest.version;
 
-            self._l.log('debug', 'Downloaded asset manifest for version: ' + version);
+            self._l.debug('Downloaded asset manifest for version: ' + version);
 
             if (
                 self._assetBundleDownloader !== null &&
                 self._assetBundleDownloader.getAssetBundle().getVersion() === version
             ) {
-                self._l.log('info', 'Already downloading asset bundle version: ' + version);
+                self._l.info('Already downloading asset bundle version: ' + version);
                 return;
             }
 
@@ -138,7 +138,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             // There is no need to redownload the initial version.
             if (self._initialAssetBundle.getVersion() === version) {
-                self._l.log('debug', 'No redownload of initial version.');
+                self._l.debug('No redownload of initial version.');
                 self._didFinishDownloadingAssetBundle(self._initialAssetBundle);
                 return;
             }
@@ -170,13 +170,13 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
                 self._didFail(e.message);
                 return;
             }
-            self._l.log('debug', 'Manifest copied to new Download dir');
+            self._l.debug('Manifest copied to new Download dir');
 
 
             assetBundle = null;
             try {
                 assetBundle = new AssetBundle(
-                    self._l.getUnwrappedLogger(),
+                    self._l,
                     self._downloadDirectory,
                     manifest,
                     self._initialAssetBundle
@@ -225,13 +225,13 @@ AssetBundleManager.prototype._makeDownloadDirectory = function _makeDownloadDire
     shellJsConfig.fatal = true;
     try {
         if (!fs.existsSync(this._downloadDirectory)) {
-            this._l.log('info', 'Created download dir.');
+            this._l.info('Created download dir.');
             shell.mkdir(this._downloadDirectory);
         }
         shellJsConfig.fatal = false;
         return true;
     } catch (e) {
-        this._l.log('debug', 'Creating download dir failed: ' + e.message);
+        this._l.debug('Creating download dir failed: ' + e.message);
     }
     shellJsConfig.fatal = false;
     return false;
@@ -252,12 +252,12 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
             && fs.lstatSync(file).isDirectory()
         ) {
             assetBundle = new AssetBundle(
-                self._l.getUnwrappedLogger(),
+                self._l,
                 file,
                 undefined,
                 self._initialAssetBundle
             );
-            self._l.log('info', 'Got version: ' + assetBundle.getVersion() + ' in ' + file);
+            self._l.info('Got version: ' + assetBundle.getVersion() + ' in ' + file);
             self._downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
         }
     });
@@ -271,7 +271,7 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
  */
 AssetBundleManager.prototype._didFail = function _didFail(cause) {
     this._assetBundleDownloader = null;
-    this._l.log('debug', 'Fail: ' + cause);
+    this._l.debug('Fail: ' + cause);
 
     if (this._callback !== null) {
         this._callback.onError(cause);
@@ -394,7 +394,7 @@ AssetBundleManager.prototype._downloadAssetBundle =
         }
 
         assetBundleDownloader = new AssetBundleDownloader(
-            this._l.getUnwrappedLogger(),
+            this._l,
             this._configuration,
             assetBundle,
             baseUrl,
@@ -445,7 +445,7 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
                 try {
                     shell.rm('-Rf', this._partialDownloadDirectory);
                 } catch (e) {
-                    this._l.log('error', 'Could not delete partial download directory.');
+                    this._l.error('Could not delete partial download directory.');
                 }
             }
 
@@ -454,7 +454,7 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
             try {
                 shell.mv(this._downloadDirectory, this._partialDownloadDirectory);
             } catch (e) {
-                this._l.log('error', 'Could not rename existing download directory');
+                this._l.error('Could not rename existing download directory');
                 shellJsConfig.fatal = false;
                 return;
             }
@@ -462,13 +462,13 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
             try {
                 this._partiallyDownloadedAssetBundle =
                     new AssetBundle(
-                        this._l.getUnwrappedLogger(),
+                        this._l,
                         this._partialDownloadDirectory,
                         undefined,
                         this._initialAssetBundle
                     );
             } catch (e) {
-                this._l.log('warn', 'Could not load partially downloaded asset bundle.');
+                this._l.warn('Could not load partially downloaded asset bundle.');
             }
         }
         shellJsConfig.fatal = false;

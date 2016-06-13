@@ -46,8 +46,8 @@ var Log = require('./logger');
  * @constructor
  */
 function AssetBundleDownloader(l, configuration, assetBundle, baseUrl, missingAssets) {
-    this._l = new Log('AssetBundleDownloader', l);
-    this._l.log('debug', 'AssetBundle downloader created for ' + assetBundle.directoryUri);
+    this._l = l.clone('AssetBundleDownloader');
+    this._l.debug('AssetBundle downloader created for ' + assetBundle.directoryUri);
 
     this._configuration = configuration;
     this._assetBundle = assetBundle;
@@ -90,8 +90,7 @@ AssetBundleDownloader.prototype.setCallback = function setCallback(onFinished, o
 AssetBundleDownloader.prototype.resume = function resume() {
     var self = this;
 
-    this._l.log(
-        'debug',
+    this._l.debug(
         'Start downloading assets from bundle with version: ' + this._assetBundle.getVersion()
     );
 
@@ -144,8 +143,7 @@ AssetBundleDownloader.prototype.resume = function resume() {
         self._missingAssets.splice(self._missingAssets.indexOf(asset), 1);
 
         if (self._missingAssets.length === 0) {
-            self._l.log(
-                'debug',
+            self._l.debug(
                 'Finished downloading new asset bundle version: ' + self._assetBundle.getVersion()
             );
 
@@ -256,7 +254,7 @@ AssetBundleDownloader.prototype._verifyResponse = function _verifyResponse(respo
                 } else {
                     if (asset.entrySize !== body.length) {
                         // TODO: should we fail here?
-                        this._l.log('debug', 'Wrong size for :' + asset.filePath + ' Expected: '
+                        this._l.debug('Wrong size for :' + asset.filePath + ' Expected: '
                             + asset.entrySize + ' != ' + body.length);
                     }
                 }
@@ -276,7 +274,7 @@ AssetBundleDownloader.prototype._didFail = function _didFail(cause) {
 
     this.cancel();
 
-    this._l.log('debug', 'Failure: ' + cause);
+    this._l.debug('Failure: ' + cause);
     if (this._onFailure !== null) {
         this._onFailure(cause);
     }

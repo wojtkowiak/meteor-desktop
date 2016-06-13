@@ -78,8 +78,8 @@ function AssetBundle(l, directoryUri, manifest, parentAssetBundle) {
     var self = this;
     var indexFile;
 
-    this._l = new Log('AssetBundle', l);
-    this._l.log('debug', 'Creating bundle object for ' + directoryUri);
+    this._l = l.clone('AssetBundle');
+    this._l.debug('Creating bundle object for ' + directoryUri);
 
     this.directoryUri = directoryUri;
 
@@ -93,7 +93,7 @@ function AssetBundle(l, directoryUri, manifest, parentAssetBundle) {
     this._parentAssetBundle = parentAssetBundle;
 
     if (manifest === undefined) {
-        this._l.log('debug', 'Loading my manifest from ' + directoryUri);
+        this._l.debug('Loading my manifest from ' + directoryUri);
         this.manifest = this._loadAssetManifest();
     } else {
         this.manifest = manifest;
@@ -228,7 +228,7 @@ AssetBundle.prototype.getAppId = function getAppId() {
         runtimeConfig = this.getRuntimeConfig();
         if (runtimeConfig !== null) {
             if (!('appId' in runtimeConfig)) {
-                this._l.log('error', 'Error reading APP_ID from runtime config');
+                this._l.error('Error reading APP_ID from runtime config');
             } else {
                 this._appId = runtimeConfig.appId;
             }
@@ -248,7 +248,7 @@ AssetBundle.prototype.getRootUrlString = function getRootUrlString() {
         runtimeConfig = this.getRuntimeConfig();
         if (runtimeConfig !== null) {
             if (!('ROOT_URL' in runtimeConfig)) {
-                this._l.log('error', 'Error reading ROOT_URL from runtime config');
+                this._l.error('Error reading ROOT_URL from runtime config');
             } else {
                 this._rootUrlString = runtimeConfig.ROOT_URL;
             }
@@ -298,13 +298,13 @@ AssetBundle.prototype._loadAssetManifest = function _loadAssetManifest() {
     var manifestPath = path.join(this.directoryUri, 'program.json');
     try {
         return new AssetManifest(
-            this._l.getUnwrappedLogger(),
+            this._l,
             fs.readFileSync(manifestPath, 'UTF-8')
         );
     } catch (e) {
         msg = 'Error loading asset manifest: ' + e.message;
-        this._l.log('error', msg);
-        this._l.log('debug', e);
+        this._l.error(msg);
+        this._l.debug(e);
         throw new Error(msg);
     }
 };
@@ -324,12 +324,12 @@ AssetBundle.prototype._loadRuntimeConfig = function _loadRuntimeConfig(index) {
     try {
         content = fs.readFileSync(index, 'UTF-8');
     } catch (e) {
-        this._l.log('error', 'Error loading index file: ' + e.message);
+        this._l.error('Error loading index file: ' + e.message);
         return null;
     }
 
     if (!this._matcher.test(content)) {
-        this._l.log('error', 'Could not find runtime config in index file');
+        this._l.error('Could not find runtime config in index file');
         return null;
     }
 
@@ -337,7 +337,7 @@ AssetBundle.prototype._loadRuntimeConfig = function _loadRuntimeConfig(index) {
         matches = content.match(this._matcher);
         return JSON.parse(decodeURIComponent(matches[1]));
     } catch (e) {
-        this._l.log('error', 'Could not find runtime config in index file');
+        this._l.error('Could not find runtime config in index file');
         return null;
     }
 };

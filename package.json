@@ -56,7 +56,9 @@
         "server-destroy": "1.0.1",
         "connect-modrewrite": "0.9.0",
         "find-port": "2.0.1",
-        "node-fetch": "1.5.3"
+        "node-fetch": "1.5.3",
+        "request": "2.72.0",
+        "queue": "4.0.0"
     },
     "dependencies": {
         "commander": "2.9.0",

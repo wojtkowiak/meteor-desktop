@@ -80,12 +80,12 @@ function ManifestEntry(manifestEntry) {
  * @constructor
  */
 function AssetManifest(logger, manifestSource) {
-    var l = new Log('AssetManifest', logger);
+    var l = l.clone('AssetManifest');
     var json;
     var format;
 
     function error(msg) {
-        l.log('error', msg);
+        l.error(msg);
         throw new Error(msg);
     }
     try {
@@ -131,7 +131,7 @@ function AssetManifest(logger, manifestSource) {
                     return new ManifestEntry(manifestEntry);
                 });
 
-        l.log('debug', this.entries.length + ' entries. (Version: ' + this.version + ' compVer: '
+        l.debug(this.entries.length + ' entries. (Version: ' + this.version + ' compVer: '
             + this.cordovaCompatibilityVersion + ')');
     } catch (e) {
         error('Error parsing asset manifest: ' + e.message);

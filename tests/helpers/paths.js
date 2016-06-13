@@ -11,8 +11,10 @@ const fixtures = {
     testProjectInstall: join(testsTmpPath, projectDir),
     desktop: join(testsPath, fixturesPath, '.desktop'),
     electronApp: join(testsPath, fixturesPath, '.meteor-desktop'),
-    bundledWww: join(testsPath, fixturesPath, 'localServer', 'bundledWww')
-
+    bundledWww: join(testsPath, fixturesPath, 'localServer', 'bundledWww'),
+    downloadableVersions: join(testsPath, fixturesPath, 'autoUpdate', 'downloadableVersions'),
+    autoUpdate: join(testsPath, fixturesPath, 'autoUpdate'),
+    partiallyDownloadableVersions: join(testsPath, fixturesPath, 'autoUpdate', 'partiallyDownloadableVersions')
 };
 
 const cli = resolve(join(__dirname, '..', 'bin', 'cli.js'));
