@@ -104,7 +104,6 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
                 return;
             }
 
-            console.log(body);
             try {
                 manifest = new AssetManifest(self._l, body);
             } catch (e) {

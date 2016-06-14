@@ -8,9 +8,9 @@ import url from 'url';
 import path from 'path';
 import fs from 'fs';
 
-function exists(path) {
+function exists(checkPath) {
     try {
-        fs.accessSync(path);
+        fs.accessSync(checkPath);
         return true;
     } catch (e) {
         return false;
@@ -18,7 +18,8 @@ function exists(path) {
 }
 
 /**
- * Simple local HTTP server tailored for meteor app bundle.
+ * Copy of localServer.js slightly adapted to mimick real metoer server.
+ * It has a hardcoded port set to 3000.
  *
  * @param {Object} log - Logger instance.
  * @param app
@@ -28,14 +29,9 @@ function exists(path) {
  */
 export default class MeteorServer {
 
-    constructor(log) {
-        this.log = log;
+    constructor() {
         this.httpServerInstance = null;
         this.server = null;
-
-        this.errors = [];
-        this.errors[0] = 'Could not find free port.';
-        this.errors[1] = 'Could not start http server.';
     }
 
     /**
@@ -52,7 +48,7 @@ export default class MeteorServer {
     }
 
     /**
-     * Initializes the module. Configures `connect` and searches for free port.
+     * Initializes the module. Configures `connect`.
      *
      * @param {string} serverPath       - Path for the resources to serve.
      * @param {string} parentServerPath - Path for the parent resources.
@@ -67,39 +63,19 @@ export default class MeteorServer {
                 this.httpServerInstance.destroy();
             }
         }
-        this.log.info('serve: ', serverPath, parentServerPath);
-
-        // Here, instead of reading the manifest and serving assets based on urls defined there,
-        // we are making a shortcut implementation which is just doing a simple regex rewrite to
-        // the urls.
-
-        // TODO: is serving on actual manifest better in any way? or faster?
-        // Answer 1: It would be better to have it so we would not have to check for a sourcemap
-        // file existence.
-        // Answer 2: We can not set a proper Cache header without manifest.
-
-        // TODO: is there any case not supported here?
 
         /**
-         * Everything that is:
-         * - not starting with `app` or `packages`
-         * - not a merged-stylesheets.css
-         * - not with `meteor_js_resource` in the name
-         * - not a cordova.js file
-         * should be taken from /app/ path.
+         * Listen on `__cordova` path.
          */
         server.use(modRewrite([
-            '^/__cordova/(?!($|manifest.json|app|packages|merged-stylesheets.css|.*meteor_js_resource|cordova.js))(.*) ' +
-            '/app/$2',
+            '^/__cordova/(?!($|manifest.json|app|packages|merged-stylesheets.css|.*meteor_js_' +
+            'resource|cordova.js))(.*) /app/$2',
             '^/__cordova/(.*) /$1'
         ]));
 
         function setSourceMapHeader(req, res, next) {
             const parsedUrl = url.parse(req.url);
-            console.log(req.url);
             const ext = path.extname(parsedUrl.pathname);
-            // Now here it would be very useful to actually read the manifest and server sourcemaps
-            // according to it. For now just checking if a sourcemap for a file exits.
             if ((ext === '.js' || ext === '.css') && (
                     exists(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
                     (parentServerPath &&
@@ -134,32 +110,9 @@ export default class MeteorServer {
 
         this.server = server;
 
+        // The port is hardcoded to 3000.
         this.port = 3000;
         this.startHttpServer(restart);
-
-    }
-
-    /**
-     * Checks if we have a free port.
-     * @returns {Promise}
-     */
-    findPort() {
-        return new Promise((resolve, reject) => {
-            findPort(
-                '127.0.0.1',
-                8034,
-                8063,
-                ports => {
-                    if (ports.length === 0) {
-                        reject();
-                    }
-
-                    this.port = ports[0];
-                    this.log.info(`assigned port ${this.port}`);
-                    resolve();
-                }
-            );
-        });
     }
 
     /**
@@ -170,14 +123,12 @@ export default class MeteorServer {
         try {
             this.httpServerInstance = http.createServer(this.server).listen(this.port);
             enableDestroy(this.httpServerInstance);
-
             if (restart) {
                 this.onServerRestarted(this.port);
             } else {
                 this.onServerReady(this.port);
             }
         } catch (e) {
-            this.log.error(e);
             this.onStartupFailed(1);
         }
     }

@@ -52,6 +52,34 @@ export function createTestInstance() {
     );
 }
 
+export function getFakeLogger(show) {
+    return {
+        info(...args) {
+            if (show) {
+                console.log(...args);
+            }
+        },
+        debug(...args) {
+            if (show) {
+                console.log(...args);
+            }
+        },
+        warn(...args) {
+            if (show) {
+                console.log(...args);
+            }
+        },
+        error(...args) {
+            if (show) {
+                console.error(...args);
+            }
+        },
+        clone() {
+            return this;
+        }
+    };
+}
+
 export function getModuleJson(module) {
     const moduleJsonPath = path.join(
         paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
