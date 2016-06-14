@@ -13,7 +13,7 @@
         "test":
         "mocha --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
         "test-watch":
-        "watch \"npm run test\" --wait 2 dist tests/functional tests/unit modules scaffold skeleton",
+        "watch \"npm run test\" --wait 1 dist tests/functional tests/unit modules scaffold skeleton",
         "prepublish": "npm run build",
         "build": "babel lib --out-dir dist --source-maps inline --copy-files",
         "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",

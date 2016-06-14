@@ -77,9 +77,10 @@ export default class LocalServer {
         // Answer 1: It would be better to have it so we would not have to check for a sourcemap
         // file existence.
         // Answer 2: We can not set a proper Cache header without manifest.
+        // Answer 3: We will still serve files that have been deleted in the new version - hard
+        // to say if that is a real problem.
 
         // TODO: is there any case not supported here?
-
         /**
          * Everything that is:
          * - not starting with `app` or `packages`

@@ -81,6 +81,12 @@ AssetBundleManager.prototype.setCallback = function setCallback(callback) {
     this._callback = callback;
 };
 
+
+AssetBundleManager.prototype.downloadedAssetBundleWithVersion =
+    function downloadedAssetBundleWithVersion(version) {
+        return this._downloadedAssetBundlesByVersion[version];
+    }
+
 /**
  * Starts checking for available update.
  *

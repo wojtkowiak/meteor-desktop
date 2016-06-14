@@ -32,6 +32,7 @@ export default class MeteorServer {
     constructor() {
         this.httpServerInstance = null;
         this.server = null;
+        this.receivedRequests = [];
     }
 
     /**
@@ -55,6 +56,7 @@ export default class MeteorServer {
      * @param {bool}   restart          - Are we restarting the server?
      */
     init(serverPath, parentServerPath, restart) {
+        const self = this;
         // `connect` will do the job!
         const server = connect();
 
@@ -63,6 +65,13 @@ export default class MeteorServer {
                 this.httpServerInstance.destroy();
             }
         }
+        function saveRequests(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+            self.receivedRequests.push(parsedUrl.pathname);
+            next();
+        }
+
+        server.use(saveRequests);
 
         /**
          * Listen on `__cordova` path.

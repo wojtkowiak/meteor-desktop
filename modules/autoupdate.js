@@ -50,6 +50,7 @@ function HCPClient(log, app, appSettings, systemEvents, modules, settings, Modul
     var autoupdateModule = new Module('autoupdateModule');
 
     this._l = log;
+    this._startupTimer = null;
 
     systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
 
@@ -92,8 +93,7 @@ HCPClient.prototype.checkForUpdates = function checkForUpdates() {
  * @private
  */
 HCPClient.prototype._init = function _init() {
-    var initialAssetBundle;
-    var lastDownloadedVersion;
+
 
     if (!fs.existsSync(this._configFile)) {
         this._saveConfig();
@@ -101,6 +101,19 @@ HCPClient.prototype._init = function _init() {
     }
 
     this._readConfig();
+
+    this.initializeAssetBundles();
+
+    this._config.appId = this._currentAssetBundle.getAppId();
+    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
+    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
+
+    this._saveConfig();
+};
+
+HCPClient.prototype.initializeAssetBundles = function initializeAssetBundles() {
+    var initialAssetBundle;
+    var lastDownloadedVersion;
 
     this._l.debug('Reading initial version');
     initialAssetBundle = new AssetBundle(
@@ -153,14 +166,9 @@ HCPClient.prototype._init = function _init() {
         this._currentAssetBundle = initialAssetBundle;
     }
 
-    this._config.appId = this._currentAssetBundle.getAppId();
-    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
-    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
-
-    this._saveConfig();
-
     this._pendingAssetBundle = null;
-};
+
+}
 
 HCPClient.prototype.getPendingVersion = function getPendingVersion() {
     if (this._pendingAssetBundle !== null) {
@@ -186,6 +194,38 @@ HCPClient.prototype.getParentDirectory = function getParentDirectory() {
         this._currentAssetBundle.getParentAssetBundle().getDirectoryUri() : null;
 };
 
+
+HCPClient.prototype.startStartupTimer = function startStartupTimer() {
+    this.removeStartupTimer();
+
+    // TODO: make startup time configurable
+    this._startupTimer = setTimeout(() => {
+        this.revertToLastKnownGoodVersion();
+    }, 20000);
+
+};
+
+HCPClient.prototype.removeStartupTimer = function removeStartupTimer() {
+    if (this._startupTimer) {
+        clearTimeout(this._startupTimer);
+        this._startupTimer = null;
+    }
+};
+
+HCPClient.prototype.startupDidComplete = function startupDidComplete(onVersionsCleanedUp = Function.prototype) {
+    this.removeStartupTimer();
+
+    // If startup completed successfully, we consider a version good
+    this._config.lastKnownGoodVersion = this._currentAssetBundle.getVersion();
+
+    this._saveConfig();
+    console.log(this._config);
+
+    setImmediate(() => {
+        this._assetBundleManager.removeAllDownloadedAssetBundlesExceptForVersion(this._currentAssetBundle.getVersion());
+        onVersionsCleanedUp();
+    });
+}
 
 /**
  * This is fired when a new version is ready and we need to reset (reload) the Browser.

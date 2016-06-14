@@ -1,6 +1,11 @@
 // These test were ported and adapted from here
 // https://github.com/meteor/cordova-plugin-meteor-webapp/blob/master/tests/www/tests.js
 
+/**
+ * Here we are only testing if the localServer is able to serve the meteor app from one path
+ * correctly (the situation after app install where we have a bundled meteor app version).
+ */
+
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
