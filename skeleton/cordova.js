@@ -3,9 +3,10 @@
  * https://github.com/meteor/cordova-plugin-meteor-webapp/blob/master/www/webapp_local_server.js
  */
 
+
 WebAppLocalServer = {
     _onNewVersionReady: null,
-
+    _onError: null,
     startupDidComplete(callback) {
         // TODO: implement fallback startegy
         console.log('startupDidComplete() fired');
@@ -20,6 +21,7 @@ WebAppLocalServer = {
     },
 
     onError(callback) {
+        this._onError = callback;
         console.log('onError called');
     }
 };
@@ -27,6 +29,7 @@ WebAppLocalServer = {
 Desktop.on('autoupdateModule', 'error', function error(event, args) {
     console.log('received');
     console.error(args);
+    WebAppLocalServer._onError();
 });
 
 Desktop.on('autoupdateModule', 'onNewVersionReady', function onNewVersionReady(event, args) {

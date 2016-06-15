@@ -159,7 +159,7 @@ HCPClient.prototype.initializeAssetBundles = function initializeAssetBundles() {
         this._currentAssetBundle = this._assetBundleManager
             ._downloadedAssetBundlesByVersion[lastDownloadedVersion];
 
-        if (this._currentAssetBundle === null) {
+        if (!this._currentAssetBundle) {
             this._currentAssetBundle = initialAssetBundle;
         }
     } else {
@@ -167,7 +167,6 @@ HCPClient.prototype.initializeAssetBundles = function initializeAssetBundles() {
     }
 
     this._pendingAssetBundle = null;
-
 }
 
 HCPClient.prototype.getPendingVersion = function getPendingVersion() {

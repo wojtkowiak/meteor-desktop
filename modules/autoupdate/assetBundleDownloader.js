@@ -258,7 +258,11 @@ AssetBundleDownloader.prototype._verifyResponse = function _verifyResponse(respo
                             + asset.entrySize + ' != ' + body.length);
                     }
                 }
+            } else {
+                this._l.warn(`invalid etag format for ${asset.urlPath}: ${eTag}`);
             }
+        } else {
+            this._l.warn(`no eTag served for ${asset.urlPath}`);
         }
     }
 };

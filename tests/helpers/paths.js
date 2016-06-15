@@ -9,6 +9,7 @@ const projectDir = 'meteorProject';
 const fixtures = {
     testProject: join(testsPath, fixturesPath, projectDir),
     testProjectInstall: join(testsTmpPath, projectDir),
+    autoUpdateVersionsInstall: join(testsTmpPath, 'autoupdate'),
     desktop: join(testsPath, fixturesPath, '.desktop'),
     electronApp: join(testsPath, fixturesPath, '.meteor-desktop'),
     bundledWww: join(testsPath, fixturesPath, 'localServer', 'bundledWww'),

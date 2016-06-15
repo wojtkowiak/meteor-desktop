@@ -79,6 +79,7 @@ export async function expectVersionServedToEqual(expectedVersion) {
 
 
 export function shutdownLocalServer() {
+    localServer.httpServerInstance.close();
     localServer.httpServerInstance.destroy();
     localServer = null;
 }

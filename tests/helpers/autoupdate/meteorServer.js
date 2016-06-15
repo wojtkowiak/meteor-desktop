@@ -7,6 +7,7 @@ import enableDestroy from 'server-destroy';
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
+import sha1File from 'sha1-file';
 
 let meteorServer;
 
@@ -100,6 +101,32 @@ export default class MeteorServer {
 
         server.use(setSourceMapHeader);
 
+        function setETag(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+            //console.log(parsedUrl.pathname);
+            let pathname = parsedUrl.pathname;
+            if (pathname === '/') {
+                pathname = '/index.html';
+            }
+            if (
+                exists(path.join(serverPath, pathname))
+            ) {
+                //console.log(path.join(serverPath, pathname));
+                console.log(pathname, sha1File(path.join(serverPath, pathname)));
+
+                res.setHeader('ETag', '"' + sha1File(path.join(serverPath, pathname)) + '"');
+            }
+            if (parentServerPath &&
+                exists(path.join(parentServerPath, pathname))) {
+                console.log(pathname, sha1File(path.join(parentServerPath, pathname)));
+
+                res.setHeader('ETag', '"' + sha1File(path.join(parentServerPath, pathname)) + '"');
+            }
+            next();
+        }
+
+        server.use(setETag);
+
         // Serve files as static from the main directory.
         server.use(serveStatic(serverPath),
             {});
@@ -123,7 +150,7 @@ export default class MeteorServer {
 
         // The port is hardcoded to 3000.
         this.port = 3000;
-        console.log(';eee');
+
         this.startHttpServer(restart);
     }
 
@@ -133,16 +160,20 @@ export default class MeteorServer {
      */
     startHttpServer(restart) {
         try {
-            this.httpServerInstance = http.createServer(this.server).listen(this.port);
+            this.httpServerInstance = http.createServer(this.server);
+            this.httpServerInstance.on('error', (e) => {
+                throw new Error(e);
+            });
+            this.httpServerInstance.on('listening', () => {
+                if (restart) {
+                    this.onServerRestarted(this.port);
+                } else {
+                    this.onServerReady(this.port);
+                }
+            });
+            this.httpServerInstance.listen(this.port);
             enableDestroy(this.httpServerInstance);
-            console.log('here');
-            if (restart) {
-                this.onServerRestarted(this.port);
-            } else {
-                this.onServerReady(this.port);
-            }
         } catch (e) {
-            console.log('Failed!!1');
             this.onStartupFailed(1);
         }
     }
@@ -165,11 +196,14 @@ export function serveVersion(version) {
             function onStartupFailed() {
                 reject();
             }
+
             function onServerReady() {
                 resolve(meteorServer);
             }
+
             function onServerRestarted() {
             }
+
             meteorServer.setCallbacks(onStartupFailed, onServerReady, onServerRestarted);
             meteorServer.init(path.join(paths.fixtures.downloadableVersions, version));
         });

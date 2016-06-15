@@ -173,14 +173,20 @@ export default class LocalServer {
      */
     startHttpServer(restart) {
         try {
-            this.httpServerInstance = http.createServer(this.server).listen(this.port);
+            this.httpServerInstance = http.createServer(this.server);
+            this.httpServerInstance.on('error', () => {
+                this.log.error(e);
+                this.onStartupFailed(1);
+            });
+            this.httpServerInstance.on('listening', () => {
+                if (restart) {
+                    this.onServerRestarted(this.port);
+                } else {
+                    this.onServerReady(this.port);
+                }
+            });
+            this.httpServerInstance.listen(this.port);
             enableDestroy(this.httpServerInstance);
-
-            if (restart) {
-                this.onServerRestarted(this.port);
-            } else {
-                this.onServerReady(this.port);
-            }
         } catch (e) {
             this.log.error(e);
             this.onStartupFailed(1);

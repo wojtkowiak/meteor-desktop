@@ -46,6 +46,7 @@
         "rewire": "^2.5.1",
         "proxyquire": "^1.7.9",
         "mockery": "^1.7.0",
+        "sha1-file": "1.0.0",
         "npm-run-all": "^2.1.1",
         "run-sequence": "^1.2.1",
         "sinon": "^1.17.4",
