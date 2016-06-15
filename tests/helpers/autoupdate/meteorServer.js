@@ -2,11 +2,13 @@ import http from 'http';
 import connect from 'connect';
 import serveStatic from 'serve-static';
 import modRewrite from 'connect-modrewrite';
-import findPort from 'find-port';
+import paths from '../paths';
 import enableDestroy from 'server-destroy';
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
+
+let meteorServer;
 
 function exists(checkPath) {
     try {
@@ -18,7 +20,7 @@ function exists(checkPath) {
 }
 
 /**
- * Copy of localServer.js slightly adapted to mimick real metoer server.
+ * Copy of localServer.js slightly adapted to mimic real meteor server.
  * It has a hardcoded port set to 3000.
  *
  * @param {Object} log - Logger instance.
@@ -121,6 +123,7 @@ export default class MeteorServer {
 
         // The port is hardcoded to 3000.
         this.port = 3000;
+        console.log(';eee');
         this.startHttpServer(restart);
     }
 
@@ -132,15 +135,47 @@ export default class MeteorServer {
         try {
             this.httpServerInstance = http.createServer(this.server).listen(this.port);
             enableDestroy(this.httpServerInstance);
+            console.log('here');
             if (restart) {
                 this.onServerRestarted(this.port);
             } else {
                 this.onServerReady(this.port);
             }
         } catch (e) {
+            console.log('Failed!!1');
             this.onStartupFailed(1);
         }
     }
 }
 
-module.exports = MeteorServer;
+/**
+ * Runs fake meteor server and serves a version from the fixtures.
+ * @param {string} version
+ * @returns {*}
+ */
+export function serveVersion(version) {
+    if (!meteorServer) {
+        return new Promise((resolve, reject) => {
+            meteorServer = new MeteorServer({
+                info() {
+                },
+                error() {
+                }
+            });
+            function onStartupFailed() {
+                reject();
+            }
+            function onServerReady() {
+                resolve(meteorServer);
+            }
+            function onServerRestarted() {
+            }
+            meteorServer.setCallbacks(onStartupFailed, onServerReady, onServerRestarted);
+            meteorServer.init(path.join(paths.fixtures.downloadableVersions, version));
+        });
+    }
+    meteorServer.init(path.join(paths.fixtures.downloadableVersions, version), undefined, true);
+    return Promise.resolve(meteorServer);
+}
+
+module.exports = { serveVersion };

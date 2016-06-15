@@ -4,6 +4,8 @@
 /**
  * Here we will test both localServer and autoupdate.
  *
+ * !!!You need to have a free port 3000!!!
+ *
  * In Cordova integration the local server is embedded in the autoupdate module. In this
  * Electron integration the localServer and autoupdate are decoupled. Of course it is crucial
  * to test both of them - so here we will also test the localServer's ability to serve meteor
@@ -28,18 +30,19 @@ chai.use(dirty);
 const { describe, it } = global;
 const { expect } = chai;
 import paths from '../../helpers/paths';
-import MeteorServer from '../../helpers/meteorServer';
+import { serveVersion } from '../../helpers/autoupdate/meteorServer';
+import {
+    setUpLocalServer, expectVersionServedToEqual,
+    shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed
+} from '../../helpers/autoupdate/localServer';
 import HCPClient from '../../../modules/autoupdate.js';
-import fetch from 'node-fetch';
 import path from 'path';
 import shell from 'shelljs';
-import LocalServer from '../../../modules/localServer';
+
 import fs from 'fs';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
 
 let meteorServer;
-let localServer;
-let localServerPort;
 
 function exists(checkPath) {
     try {
@@ -48,106 +51,6 @@ function exists(checkPath) {
     } catch (e) {
         return false;
     }
-}
-
-/**
- * Runs fake meteor server and serves a version from the fixtures.
- * @param {string} version
- * @returns {*}
- */
-function serveVersion(version) {
-    if (!meteorServer) {
-        return new Promise((resolve, reject) => {
-            meteorServer = new MeteorServer({
-                info() {
-                },
-                error() {
-                }
-            });
-            function onStartupFailed() {
-                reject();
-            }
-            function onServerReady() {
-                resolve(meteorServer);
-            }
-            function onServerRestarted() {
-            }
-            meteorServer.setCallbacks(onStartupFailed, onServerReady, onServerRestarted);
-            meteorServer.init(path.join(paths.fixtures.downloadableVersions, version));
-        });
-    }
-    meteorServer.init(path.join(paths.fixtures.downloadableVersions, version), undefined, true);
-    return Promise.resolve(meteorServer);
-}
-
-/**
- * Runs a local server - the one which is serving the app to builtin chrome in Electron.
- *
- * @param mainPath
- * @param parentPath
- * @returns {Promise}
- */
-function setUpLocalServer(mainPath, parentPath) {
-    let resolve;
-    let reject;
-
-    function onServerReady(port) {
-        localServerPort = port;
-        resolve(localServer);
-    }
-    if (!localServer) {
-        return new Promise((promiseResolve, promiseReject) => {
-            resolve = promiseResolve;
-            reject = promiseReject;
-            localServer = new LocalServer({
-                info() {
-                },
-                error() {
-                }
-            });
-            localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-            localServer.init(mainPath, parentPath);
-        });
-    }
-    return new Promise((promiseResolve, promiseReject) => {
-        resolve = promiseResolve;
-        reject = promiseReject;
-        localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-        localServer.init(mainPath, parentPath, true);
-    });
-}
-
-// Fetches from the local server.
-function fetchFromLocalServer(url) {
-    return fetch(`http://127.0.0.1:${localServerPort}${url}`);
-}
-
-/**
- * Extracts and returns runtime config from index.html.
- * @param html
- */
-function runtimeConfigFromHTML(html) {
-    const regex = /__meteor_runtime_config__ = JSON.parse\(decodeURIComponent\("([^"]*)"\)\)/;
-    const matches = html.match(regex);
-    if (!matches) {
-        throw new Error('Can\'t find __meteor_runtime_config__');
-    }
-    return JSON.parse(decodeURIComponent(matches[1]));
-}
-
-/**
- * Check for the expected version being served now from local server.
- * @param expectedVersion
- */
-async function expectVersionServedToEqual(expectedVersion) {
-    const response = await fetchFromLocalServer('/');
-    expect(response.status).to.equal(200);
-    expect(response.headers.get('Content-Type')).to.contain('text/html');
-    const body = await response.text();
-    const config = runtimeConfigFromHTML(body);
-    const version = config.autoupdateVersionCordova;
-    console.log(version, expectedVersion);
-    expect(version).to.equal(expectedVersion);
 }
 
 /**
@@ -183,7 +86,6 @@ async function setUpAutoupdate(showLogger = false, onNewVersionReady, expectVers
         class Module {
             on() {
             }
-
             send() {
             }
         }
@@ -200,36 +102,6 @@ async function setUpAutoupdate(showLogger = false, onNewVersionReady, expectVers
 }
 
 /**
- * Performs a fake reload and a local server restart.
- * Checks if after the restart an expected version is being served.
- * @param autoupdate
- * @param version
- */
-async function restartLocalServerAndExpectVersion(autoupdate, version) {
-    autoupdate.onReset();
-    try {
-        await setUpLocalServer(
-            autoupdate.getDirectory(), autoupdate.getParentDirectory());
-        await expectVersionServedToEqual(version);
-    } catch (e) {
-        throw new Error(e);
-    }
-}
-
-/**
- * Checks is a certain asset is currently served from the local server.
- * @param filename
- * @param content
- * @param done
- */
-async function expectAssetToBeServed(filename, content, done) {
-    const response = await fetchFromLocalServer("/" + filename);
-    expect(response.status).to.equal(200);
-    const body = await response.text();
-    expect(body).to.contain(filename);
-}
-
-/**
  * This runs a normal auto update cycle:
  *  - check for updates
  *  - download new version
@@ -242,10 +114,11 @@ async function expectAssetToBeServed(filename, content, done) {
  * @param versionExpectedAfter
  * @param versionExpectedBefore
  */
-async function runAutoUpdateTests(done, testCallback, versionExpectedAfter, versionExpectedBefore = 'version1') {
+async function runAutoUpdateTests(
+    done, testCallback, versionExpectedAfter, versionExpectedBefore = 'version1') {
     let autoupdate;
     try {
-        autoupdate = await setUpAutoupdate(true, async () => {
+        autoupdate = await setUpAutoupdate(false, async () => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, versionExpectedAfter);
                 await testCallback(autoupdate);
@@ -261,6 +134,35 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter, vers
     autoupdate.checkForUpdates();
 }
 
+/**
+ * Firstly serves `versionToDownload` on fake meteor server.
+ * Runs autoupdate cycle, so the app is updated to the version served.
+ * Then switches the fake meteor server to serve now the `versionToServeOnMeteorServer`.
+ *
+ * @param versionToDownload
+ * @param versionToServeOnMeteorServer
+ * @param done
+ */
+async function downloadAndServeVersionLocally(
+    versionToDownload, versionToServeOnMeteorServer, done) {
+    try {
+        meteorServer = await serveVersion(versionToDownload);
+    } catch (e) {
+        done(e);
+    }
+    cleanup();
+    await runAutoUpdateTests(done, async () => {
+        try {
+            meteorServer = await serveVersion(versionToServeOnMeteorServer);
+        } catch (e) {
+            throw new Error(e);
+        }
+    }, versionToDownload);
+}
+
+/**
+ * Cleans up the temporary version directory.
+ */
 function cleanup() {
     const autoupdateJson = path.join(paths.fixtures.autoUpdate, 'autoupdate.json');
     const versions = path.join(paths.fixtures.autoUpdate, 'versions');
@@ -273,18 +175,21 @@ function cleanup() {
 }
 
 describe('autoupdate', () => {
-
     describe('when updating from the bundled app version to a downloaded version', () => {
         beforeEach(async() => {
-            meteorServer = await serveVersion('version2');
+            try {
+                meteorServer = await serveVersion('version2');
+            } catch (e) {
+                console.log(e);
+                throw new Error(e);
+            }
             cleanup();
         });
 
         afterEach(() => {
             meteorServer.httpServerInstance.destroy();
-            localServer.httpServerInstance.destroy();
-            localServer = null;
             meteorServer = null;
+            shutdownLocalServer();
         });
 
         it('should only serve the new version after a page reload', async(done) => {
@@ -315,16 +220,7 @@ describe('autoupdate', () => {
                 await expectVersionServedToEqual('version2');
             }, 'version2');
         });
-
     });
-
-    async function downloadAndServeVersionLocally(versionToDownload, versionToServeOnMeteorServer, done) {
-        meteorServer = await serveVersion(versionToDownload);
-        cleanup();
-        await runAutoUpdateTests(done, async () => {
-            meteorServer = await serveVersion(versionToServeOnMeteorServer);
-        }, versionToDownload);
-    }
 
     describe('when updating from a downloaded app version to another downloaded version', () => {
 
@@ -332,11 +228,10 @@ describe('autoupdate', () => {
             await downloadAndServeVersionLocally('version2', 'version3', done);
         });
 
-        afterEach(function() {
+        afterEach(() => {
             meteorServer.httpServerInstance.destroy();
-            localServer.httpServerInstance.destroy();
-            localServer = null;
             meteorServer = null;
+            shutdownLocalServer();
         });
 
         it("should only serve the new verson after a page reload", async (done) => {
@@ -346,11 +241,11 @@ describe('autoupdate', () => {
         it('should only download changed files', async(done) => {
             await runAutoUpdateTests(done, () => {
                 expect(meteorServer.receivedRequests).to.include.members([
-                    "/__cordova/manifest.json",
-                    "/__cordova/",
-                    "/__cordova/app/template.mobileapp.js",
-                    "/__cordova/app/36e96c1d40459ae12164569599c9c0a203b36db7.map",
-                    "/__cordova/some-file"]);
+                    '/__cordova/manifest.json',
+                    '/__cordova/',
+                    '/__cordova/app/template.mobileapp.js',
+                    '/__cordova/app/36e96c1d40459ae12164569599c9c0a203b36db7.map',
+                    '/__cordova/some-file']);
             }, 'version3', 'version2');
         });
         it('should still serve assets that haven\'t changed', async(done) => {
@@ -359,9 +254,7 @@ describe('autoupdate', () => {
             }, 'version3', 'version2');
         });
 
-
-
-        it("should delete the old version after startup completes", async (done) => {
+        it('should delete the old version after startup completes', async (done) => {
 
             await runAutoUpdateTests(done, async(autoupdate) => {
                 expect(

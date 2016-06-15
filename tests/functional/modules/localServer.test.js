@@ -180,7 +180,7 @@ describe('localServer', () => {
 
 /*
 
-TODO: When we will switch to reading manifest in localServer, try also these:
+TODO: When we will switch to reading manifest in localServer, comply also to these:
 
 it("should set the ETag header based on the asset hash", function(done) {
     pendingOnAndroid();

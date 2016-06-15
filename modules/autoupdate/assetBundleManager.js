@@ -131,8 +131,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             // Give the callback a chance to decide whether the version should be downloaded.
             if (
-                self._callback !== null &&
-                !self._callback.shouldDownloadBundleForManifest(manifest)
+                self._callback !== null && !self._callback.shouldDownloadBundleForManifest(manifest)
             ) {
                 return;
             }
@@ -209,7 +208,6 @@ AssetBundleManager.prototype.removeAllDownloadedAssetBundlesExceptForVersion =
     function removeAllDownloadedAssetBundlesExceptForVersion(versionToKeep) {
         var self = this;
         Object.keys(this._downloadedAssetBundlesByVersion).forEach(
-
             function eachVersion(assetVersion) {
                 var assetBundle = self._downloadedAssetBundlesByVersion[assetVersion];
                 var version = assetBundle.getVersion();
@@ -253,14 +251,15 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
     var self = this;
     var assetBundle;
 
-    shell.ls('-d', path.join(this._versionsDirectory, '*')).forEach(function eachVersionDir(file) {
-        if (self._downloadDirectory !== path.normalize(file)
-            && self._partialDownloadDirectory !== path.normalize(file)
-            && fs.lstatSync(file).isDirectory()
+    shell.ls(this._versionsDirectory).forEach(function eachVersionDir(file) {
+        const directory = path.join(self._versionsDirectory, file);
+        if (self._downloadDirectory !== directory
+            && self._partialDownloadDirectory !== directory
+            && fs.lstatSync(directory).isDirectory()
         ) {
             assetBundle = new AssetBundle(
                 self._l,
-                file,
+                directory,
                 undefined,
                 self._initialAssetBundle
             );
@@ -268,6 +267,7 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
             self._downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
         }
     });
+
 };
 
 /**
