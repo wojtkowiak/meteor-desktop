@@ -28,9 +28,11 @@ export function setUpLocalServer(mainPath, parentPath) {
             resolve = promiseResolve;
             reject = promiseReject;
             localServer = new LocalServer({
-                info() {
-                },
-                error() {
+                loggers: {
+                    get: () => ({
+                        warn() {},
+                        info() {}
+                    })
                 }
             });
             localServer.setCallbacks(() => reject(), onServerReady, () => resolve());

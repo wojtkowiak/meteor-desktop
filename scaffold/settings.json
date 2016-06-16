@@ -23,7 +23,7 @@
     },
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.0.10"
+            "version": "0.0.13"
         }
     },
     "version": "0.0.1"

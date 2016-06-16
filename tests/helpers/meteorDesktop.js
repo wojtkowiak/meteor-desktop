@@ -52,32 +52,45 @@ export function createTestInstance() {
     );
 }
 
-export function getFakeLogger(show) {
-    return {
-        info(...args) {
-            if (show) {
-                console.log(...args);
-            }
-        },
-        debug(...args) {
-            if (show) {
-                console.log(...args);
-            }
-        },
-        warn(...args) {
-            if (show) {
-                console.log(...args);
-            }
-        },
-        error(...args) {
-            if (show) {
-                console.error(...args);
-            }
-        },
-        clone() {
-            return this;
+class Logger {
+    constructor(show) {
+        this.show = show;
+        this.loggers = {
+            get: () => new Logger(show)
+        };
+    }
+
+    info(...args) {
+        if (this.show) {
+            console.log(...args);
         }
-    };
+    }
+
+    debug(...args) {
+        if (this.show) {
+            console.log(...args);
+        }
+    }
+
+    warn(...args) {
+        if (this.show) {
+            console.log(...args);
+        }
+    }
+
+    error(...args) {
+        if (this.show) {
+            console.error(...args);
+        }
+    }
+
+    getLoggerFor() {
+        return new Logger(this.show);
+    }
+}
+
+export function getFakeLogger(show) {
+    return new Logger(show);
 }
 
 export function getModuleJson(module) {

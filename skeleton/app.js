@@ -30,6 +30,7 @@ class App {
         this.initLogger();
         this.configureLogger();
         this.l = winston.loggers.get('main');
+        this.l.info('app data dir is:', this.userDataDir);
 
         this.l.info('starting app');
         // System events emitter.
@@ -392,6 +393,7 @@ class App {
         winston.loggers.options.transports = this.loggerTransports;
     }
 
+
     /**
      * Returns a new logger instance.
      * @param {string} entityName
@@ -399,30 +401,25 @@ class App {
      */
     configureLogger(entityName = 'main') {
         const transports = [];
-        if (entityName !== 'main') {
-            transports.push(new (winston.transports.File)({ filename: join(this.userDataDir, `${entityName}.log`) }));
-            //transports = transports.map((transport) => { transport.name = entityName; return transport; });
-            winston.loggers.add(entityName, {
-                transports
-            });
-
-        } else {
-            winston.loggers.add(entityName, {
-            });
-
-        }
-
+        winston.loggers.add(entityName, {});
 
         const logger = winston.loggers.get(entityName);
+        if (entityName !== 'main') {
+            logger.add(winston.transports.File, { name: 'module', filename: join(this.userDataDir, `${entityName}.log`) });
+        }
+
         logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
         logger._name = entityName;
 
-        logger.getLoggerFor = (loggerInstance, subEntityName) => {
-            winston.loggers.add(`${loggerInstance._name}__${subEntityName}`, {
-                transports: loggerInstance.transports
+        logger.getLoggerFor = (subEntityName) => {
+            winston.loggers.add(`${logger._name}__${subEntityName}`, {
+
             });
-            const logger = winston.loggers.get(`${loggerInstance._name}__${subEntityName}`);
-            logger.filters.push((level, msg) => `[${loggerInstance._name}-${subEntityName}] ${msg}`);
+            const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
+            logger.add(winston.transports.File, { name: 'module', filename: join(this.userDataDir, `${entityName}.log`) });
+
+            newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
+            return newLogger;
         }
     }
 }

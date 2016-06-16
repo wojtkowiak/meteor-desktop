@@ -23,8 +23,12 @@ let localPort;
 function getLocalServer(path) {
     return new Promise((resolve, reject) => {
         const localServer = new LocalServer({
-            info() {},
-            error() {}
+            loggers: {
+                get: () => ({
+                    warn() {},
+                    info() {}
+                })
+            }
         });
         function onStartupFailed() {
             reject();
