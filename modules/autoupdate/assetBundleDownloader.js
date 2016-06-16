@@ -318,10 +318,10 @@ AssetBundleDownloader.prototype._verifyRuntimeConfig =
         rootUrl = url.parse(rootUrlString);
         previousRootUrl = url.parse(this._configuration.rootUrlString);
 
-        if (previousRootUrl.host !== 'localhost' && rootUrl.host === 'localhost') {
+        if (previousRootUrl.hostname !== 'localhost' && rootUrl.hostname === 'localhost') {
             throw new Error(
                 'ROOT_URL in downloaded asset bundle would change current ROOT_URL ' +
-                ' to localhost. Make sure ROOT_URL has been configured correctly on the server.'
+                'to localhost. Make sure ROOT_URL has been configured correctly on the server.'
             );
         }
 

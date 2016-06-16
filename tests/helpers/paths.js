@@ -15,7 +15,7 @@ const fixtures = {
     bundledWww: join(testsPath, fixturesPath, 'localServer', 'bundledWww'),
     downloadableVersions: join(testsPath, fixturesPath, 'autoUpdate', 'downloadableVersions'),
     autoUpdate: join(testsPath, fixturesPath, 'autoUpdate'),
-    partiallyDownloadableVersions: join(testsPath, fixturesPath, 'autoUpdate', 'partiallyDownloadableVersions')
+    partiallyDownloadableVersions: join(testsPath, fixturesPath, 'autoUpdate', 'partiallyDownloadedVersions')
 };
 
 const cli = resolve(join(__dirname, '..', 'bin', 'cli.js'));

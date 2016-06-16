@@ -104,16 +104,27 @@ export async function restartLocalServerAndExpectVersion(autoupdate, version) {
 /**
  * Checks is a certain asset is currently served from the local server.
  * @param filename
- * @param content
- * @param done
  */
-export async function expectAssetToBeServed(filename, content, done) {
+export async function expectAssetToBeServed(filename) {
     const response = await fetchFromLocalServer(`/${filename}`);
     expect(response.status).to.equal(200);
     const body = await response.text();
     expect(body).to.contain(filename);
 }
 
+/**
+ * Checks is a certain asset wit hspecified content is currently served from the local server.
+ * @param path
+ * @param expectedContents
+ */
+export async function expectAssetServedToContain(path, expectedContents) {
+    const response = await fetchFromLocalServer(`/${path}`);
+    expect(response.status).to.equal(200);
+    const body = await response.text();
+    expect(body).to.contain(expectedContents);
+}
+
 
 module.exports = { setUpLocalServer, fetchFromLocalServer, expectVersionServedToEqual,
-    shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed };
+    shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed,
+    expectAssetServedToContain };

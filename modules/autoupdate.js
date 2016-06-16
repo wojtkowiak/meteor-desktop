@@ -346,6 +346,14 @@ HCPClient.prototype.shouldDownloadBundleForManifest =
             return false;
         }
 
+        // Don't download versions potentially incompatible with the bundled native code
+        // This is commented out intentionally as we do not care about cordova compatibility version
+        // this should not affect us.
+        /*if (this._config.cordovaCompatibilityVersion !== manifest.cordovaCompatibilityVersion) {
+            this._notifyError("Skipping downloading new version because the Cordova platform version or plugin versions have changed and are potentially incompatible");
+            return false;
+        }*/
+
         // TODO: place for checking electron compatibility version
 
         return true;
