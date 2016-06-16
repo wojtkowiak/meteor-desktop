@@ -136,7 +136,7 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
                                   versionExpectedBefore = 'version1', doNotCallDone = false) {
     let autoupdate;
     try {
-        autoupdate = await setUpAutoupdate(true, async() => {
+        autoupdate = await setUpAutoupdate(showLogs, async() => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, versionExpectedAfter);
                 await testCallback(autoupdate);
@@ -153,7 +153,6 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
     }
     autoupdate.checkForUpdates();
 }
-
 
 /**
  * Cleans up the temporary version directory.
@@ -208,6 +207,12 @@ function shutdownMeteorServer() {
     meteorServer = null;
 }
 
+function waitForTestToFail(delay, done) {
+    setTimeout(function () {
+        done();
+    }, delay);
+}
+
 describe('autoupdate', () => {
     before(() => {
         shell.rm('-rf', paths.fixtures.autoUpdateVersionsInstall);
@@ -223,7 +228,6 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
@@ -263,19 +267,16 @@ describe('autoupdate', () => {
     });
 
     describe('when updating from a downloaded app version to another downloaded version', () => {
-
         beforeEach(async(done) => {
             await downloadAndServeVersionLocally('version2', 'version3', done);
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should only serve the new verson after a page reload", async(done) => {
-            await runAutoUpdateTests(done, () => {
-            }, 'version3', 'version2');
+        it('should only serve the new verson after a page reload', async(done) => {
+            await runAutoUpdateTests(done, Function.prototype, 'version3', 'version2');
         });
 
         it('should only download changed files', async(done) => {
@@ -290,6 +291,7 @@ describe('autoupdate', () => {
                 expect(meteorServer.receivedRequests).to.have.a.lengthOf(5);
             }, 'version3', 'version2');
         });
+
         it('should still serve assets that haven\'t changed', async(done) => {
             await runAutoUpdateTests(done, async() => {
                 await expectAssetToBeServed('some-text.txt');
@@ -297,7 +299,6 @@ describe('autoupdate', () => {
         });
 
         it('should delete the old version after startup completes', async(done) => {
-
             await runAutoUpdateTests(done, async(autoupdate) => {
                 expect(
                     autoupdate
@@ -315,6 +316,7 @@ describe('autoupdate', () => {
                 });
             }, 'version3', 'version2', true);
         });
+
         it('should remember the new version after a restart', async(done) => {
             await runAutoUpdateTests(done, async(autoupdate) => {
                 autoupdate.initializeAssetBundles();
@@ -324,39 +326,35 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when updating from a downloaded app version to the bundled version", () => {
+    describe('when updating from a downloaded app version to the bundled version', () => {
         beforeEach(async(done) => {
-            await downloadAndServeVersionLocally("version2", "version1", done);
+            await downloadAndServeVersionLocally('version2', 'version1', done);
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should only serve the new verson after a page reload", async(done) => {
-            await runAutoUpdateTests(done, () => {
-            }, 'version1', 'version2');
+        it('should only serve the new verson after a page reload', async(done) => {
+            await runAutoUpdateTests(done, Function.prototype, 'version1', 'version2');
         });
 
-        it("should only download the manifest", async(done) => {
+        it('should only download the manifest', async(done) => {
             meteorServer.receivedRequests = [];
             await runAutoUpdateTests(done, () => {
                 expect(meteorServer.receivedRequests).to.deep.equal([
                     '/__cordova/manifest.json'
                 ]);
             }, 'version1', 'version2');
-
         });
 
-        it("should still serve assets that haven't changed", async(done) => {
+        it('should still serve assets that haven\'t changed', async(done) => {
             await runAutoUpdateTests(done, async() => {
                 await expectAssetToBeServed('some-text.txt');
             }, 'version1', 'version2');
-
         });
 
-        it("should not redownload the bundled version", async(done) => {
+        it('should not redownload the bundled version', async(done) => {
             await runAutoUpdateTests(done, (autoupdate) => {
                 expect(
                     autoupdate
@@ -367,7 +365,6 @@ describe('autoupdate', () => {
         });
 
         it('should delete the old version after startup completes', async(done) => {
-
             await runAutoUpdateTests(done, async(autoupdate) => {
                 expect(
                     autoupdate
@@ -384,7 +381,6 @@ describe('autoupdate', () => {
                     done();
                 });
             }, 'version1', 'version2', true);
-
         });
 
         it('should remember the new version after a restart', async(done) => {
@@ -394,31 +390,26 @@ describe('autoupdate', () => {
                 await expectVersionServedToEqual('version1');
             }, 'version1', 'version2');
         });
-
     });
 
-    describe("when checking for updates while there is no new version", function () {
+    describe('when checking for updates while there is no new version', () => {
         beforeEach(async(done) => {
-            await downloadAndServeVersionLocally("version2", "version2", done);
+            await downloadAndServeVersionLocally('version2', 'version2', done);
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should not invoke the onNewVersionReady callback", async(done) => {
-
+        it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
             }, 'version2', 'version2');
-
             waitForTestToFail(1000, done);
-
         });
 
-        it("should not download any files except for the manifest", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should not download any files except for the manifest', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version2');
             meteorServer.receivedRequests = [];
             setTimeout(() => {
@@ -427,13 +418,11 @@ describe('autoupdate', () => {
                 ]);
                 done();
             }, 500);
-
             autoupdate.checkForUpdates();
         });
     });
 
-    describe("when downloading a missing asset", function () {
-
+    describe('when downloading a missing asset', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('version2_with_missing_asset');
@@ -442,14 +431,13 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Non-success status code 404 for asset:' +
                     ' app/template.mobileapp.js');
@@ -458,19 +446,15 @@ describe('autoupdate', () => {
             autoupdate.checkForUpdates();
         });
 
-        it("should not invoke the onNewVersionReady callback", async(done) => {
-
+        it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
             }, 'version2_with_missing_asset', 'version1');
-
             waitForTestToFail(1000, done);
-
         });
     });
 
-
-    describe("when downloading an invalid asset", function () {
+    describe('when downloading an invalid asset', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('version2_with_invalid_asset');
@@ -479,14 +463,13 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Hash mismatch for asset: ' +
                     'app/template.mobileapp.js');
@@ -503,8 +486,7 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when downloading an index page with the wrong version", function () {
-
+    describe('when downloading an index page with the wrong version', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('version2_with_version_mismatch');
@@ -513,14 +495,13 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Version mismatch for index page, expected: version2,' +
                     ' actual: version3');
@@ -537,8 +518,7 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when downloading an index page with a missing ROOT_URL", function () {
-
+    describe('when downloading an index page with a missing ROOT_URL', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('missing_root_url');
@@ -547,14 +527,13 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Could not find ROOT_URL in downloaded asset bundle');
                 done();
@@ -570,19 +549,17 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when downloading an index page with the wrong ROOT_URL", function () {
-
+    describe('when downloading an index page with the wrong ROOT_URL', () => {
         beforeEach(async(done) => {
             await downloadAndServeVersionLocally('127.0.0.1_root_url', 'wrong_root_url', done);
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, '127.0.0.1_root_url', (error) => {
                 expect(error).to.include('ROOT_URL in downloaded asset bundle would change current ROOT_URL to localhost.');
                 done();
@@ -598,7 +575,7 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when downloading an index page with a missing appId", function () {
+    describe('when downloading an index page with a missing appId', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('missing_app_id');
@@ -607,21 +584,19 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Could not find appId in downloaded asset bundle');
                 done();
             });
             autoupdate.checkForUpdates();
         });
-
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
@@ -631,8 +606,7 @@ describe('autoupdate', () => {
         });
     });
 
-    describe("when downloading an index page with the wrong appId", function () {
-
+    describe('when downloading an index page with the wrong appId', () => {
         beforeEach(async() => {
             try {
                 meteorServer = await serveVersion('wrong_app_id');
@@ -641,14 +615,13 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
                 expect(error).to.include('appId in downloaded asset bundle does not match current appId');
                 done();
@@ -673,16 +646,16 @@ describe('autoupdate', () => {
             }
             cleanup();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-        it("should invoke the onError callback with an error", async(done) => {
-            const autoupdate = await setUpAutoupdate(false, () => {
+        it('should invoke the onError callback with an error', async(done) => {
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Asset manifest does not have a cordovaCompatibilityVersion');
+                expect(error).to.include('Asset manifest does not have a ' +
+                    'cordovaCompatibilityVersion');
                 done();
             });
             autoupdate.checkForUpdates();
@@ -694,7 +667,6 @@ describe('autoupdate', () => {
             }, 'missing_cordova_compatibility_version', 'version1');
             waitForTestToFail(1000, done);
         });
-
     });
 
     // Commented out as the cordova compatibility check is disabled in this autoupdate integration.
@@ -733,21 +705,23 @@ describe('autoupdate', () => {
      });
      */
 
-    describe("when resuming a partial download with the same version", function () {
+    describe('when resuming a partial download with the same version', () => {
         let autoupdate;
         beforeEach(async(done) => {
             cleanup();
-            const downloadingPath = path.join(paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
+            const downloadingPath = path.join(
+                paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
             if (exists(downloadingPath)) {
                 shell.rm('-rf', downloadingPath);
             }
             shell.mkdir(downloadingPath);
-            shell.cp('-r', path.join(paths.fixtures.partiallyDownloadableVersions, 'version2', '*'), downloadingPath);
+            shell.cp('-r', path.join(
+                paths.fixtures.partiallyDownloadableVersions, 'version2', '*'), downloadingPath);
             meteorServer = await serveVersion('version2');
             meteorServer.receivedRequests = [];
 
             try {
-                autoupdate = await setUpAutoupdate(true, async() => {
+                autoupdate = await setUpAutoupdate(showLogs, async() => {
                     done();
                 }, 'version1');
             } catch (e) {
@@ -755,19 +729,17 @@ describe('autoupdate', () => {
             }
             autoupdate.checkForUpdates();
         });
-
         afterEach(() => {
             shutdownMeteorServer();
             shutdownLocalServer();
         });
 
-
-        it("should only download the manifest, the index page, and the remaining assets", function () {
+        it('should only download the manifest, the index page, and the remaining assets', () => {
             expect(meteorServer.receivedRequests).to.include.members([
-                "/__cordova/manifest.json",
-                "/__cordova/",
-                "/__cordova/app/template.mobileapp.js",
-                "/__cordova/app/3f6275657e6db3a21acb37d0f6c207cf83871e90.map"]);
+                '/__cordova/manifest.json',
+                '/__cordova/',
+                '/__cordova/app/template.mobileapp.js',
+                '/__cordova/app/3f6275657e6db3a21acb37d0f6c207cf83871e90.map']);
         });
 
         it('should only serve the new version after a page reload', async(done) => {
@@ -780,7 +752,7 @@ describe('autoupdate', () => {
             done();
         });
 
-        it("should serve assets that have been downloaded before", async(done) => {
+        it('should serve assets that have been downloaded before', async(done) => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, 'version2');
                 await expectAssetServedToContain('some-file', 'some-file (changed)');
@@ -793,21 +765,23 @@ describe('autoupdate', () => {
 
     });
 
-    describe("when resuming a partial download with a different version", function () {
+    describe('when resuming a partial download with a different version', () => {
         let autoupdate;
         beforeEach(async(done) => {
             cleanup();
-            const downloadingPath = path.join(paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
+            const downloadingPath = path.join(
+                paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
             if (exists(downloadingPath)) {
                 shell.rm('-rf', downloadingPath);
             }
             shell.mkdir(downloadingPath);
-            shell.cp('-r', path.join(paths.fixtures.partiallyDownloadableVersions, 'version2', '*'), downloadingPath);
+            shell.cp('-r', path.join(
+                paths.fixtures.partiallyDownloadableVersions, 'version2', '*'), downloadingPath);
             meteorServer = await serveVersion('version3');
             meteorServer.receivedRequests = [];
 
             try {
-                autoupdate = await setUpAutoupdate(true, async() => {
+                autoupdate = await setUpAutoupdate(showLogs, async() => {
                     done();
                 }, 'version1');
             } catch (e) {
@@ -821,16 +795,16 @@ describe('autoupdate', () => {
             shutdownLocalServer();
         });
 
-        it("should only download the manifest, the index page, and the remaining assets", function () {
+        it('should only download the manifest, the index page, and the remaining assets', () => {
             expect(meteorServer.receivedRequests).to.include.members([
-                "/__cordova/manifest.json",
-                "/__cordova/",
-                "/__cordova/app/template.mobileapp.js",
-                "/__cordova/app/36e96c1d40459ae12164569599c9c0a203b36db7.map",
-                "/__cordova/some-file"]);
+                '/__cordova/manifest.json',
+                '/__cordova/',
+                '/__cordova/app/template.mobileapp.js',
+                '/__cordova/app/36e96c1d40459ae12164569599c9c0a203b36db7.map',
+                '/__cordova/some-file']);
         });
 
-        it("should only serve the new verson after a page reload", async (done) =>{
+        it('should only serve the new verson after a page reload', async(done) => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, 'version3');
             } catch (e) {
@@ -840,10 +814,10 @@ describe('autoupdate', () => {
             done();
         });
 
-        it("should serve assets that have been downloaded before", async (done) => {
+        it('should serve assets that have been downloaded before', async(done) => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, 'version3');
-                await expectAssetToBeServed("some-other-file");
+                await expectAssetToBeServed('some-other-file');
             } catch (e) {
                 done(e);
                 return;
@@ -851,10 +825,10 @@ describe('autoupdate', () => {
             done();
         });
 
-        it("should serve changed assets even if they have been downloaded before", async (done) => {
+        it('should serve changed assets even if they have been downloaded before', async(done) => {
             try {
                 await restartLocalServerAndExpectVersion(autoupdate, 'version3');
-                await expectAssetServedToContain("some-file", "some-file (changed again)");
+                await expectAssetServedToContain('some-file', 'some-file (changed again)');
             } catch (e) {
                 done(e);
                 return;
@@ -862,11 +836,4 @@ describe('autoupdate', () => {
             done();
         });
     });
-
 });
-
-function waitForTestToFail(delay, done) {
-    setTimeout(function () {
-        done();
-    }, delay);
-}

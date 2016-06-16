@@ -29,7 +29,7 @@ function exists(path) {
 export default class LocalServer {
 
     constructor(log) {
-        this.log = log;
+        this.log = log.loggers.get('localServer');
         this.httpServerInstance = null;
         this.server = null;
 

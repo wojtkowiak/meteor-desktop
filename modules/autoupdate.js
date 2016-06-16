@@ -49,7 +49,7 @@ function HCPClient(log, app, appSettings, systemEvents, modules, settings, Modul
     var self = this;
     var autoupdateModule = new Module('autoupdateModule');
 
-    this._l = log;
+    this._l = log.loggers.get('autoupdate');
     this._startupTimer = null;
 
     systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
@@ -218,8 +218,6 @@ HCPClient.prototype.startupDidComplete = function startupDidComplete(onVersionsC
     this._config.lastKnownGoodVersion = this._currentAssetBundle.getVersion();
 
     this._saveConfig();
-    console.log(this._config);
-
     setImmediate(() => {
         this._assetBundleManager.removeAllDownloadedAssetBundlesExceptForVersion(this._currentAssetBundle.getVersion());
         onVersionsCleanedUp();

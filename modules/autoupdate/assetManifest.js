@@ -29,7 +29,6 @@
 
  */
 
-var Log = require('./logger');
 var assignIn = require('lodash/assignIn');
 
 /**
@@ -80,7 +79,7 @@ function ManifestEntry(manifestEntry) {
  * @constructor
  */
 function AssetManifest(logger, manifestSource) {
-    var l = logger.clone('AssetManifest');
+    var l = logger.getLoggerFor('AssetManifest');
     var json;
     var format;
 

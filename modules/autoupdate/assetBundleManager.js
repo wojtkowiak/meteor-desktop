@@ -38,7 +38,7 @@ var AssetBundleDownloader = require('./assetBundleDownloader');
 var fs = require('fs');
 var request = require('request');
 var url = require('url');
-var Log = require('./logger');
+
 var shellJsConfig;
 require('shelljs/global');
 shellJsConfig = config;
@@ -52,7 +52,7 @@ shellJsConfig = config;
  * @constructor
  */
 function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirectory) {
-    this._l = l.clone('AssetBundleManager');
+    this._l = l.getLoggerFor('AssetBundleManager');
 
     this._configuration = configuration;
     this._initialAssetBundle = initialAssetBundle;

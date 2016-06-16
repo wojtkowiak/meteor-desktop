@@ -25,9 +25,13 @@ import desktop from './desktop.js';
 class App {
 
     constructor() {
-        this.initLogger();
-        this.l = this.getLogger();
+        this.getOsSpecificValues();
 
+        this.initLogger();
+        this.configureLogger();
+        this.l = winston.loggers.get('main');
+
+        this.l.info('starting app');
         // System events emitter.
         this.systemEvents = new Events();
 
@@ -45,7 +49,6 @@ class App {
 
         this.catchUncaughtExceptions();
 
-        this.getOsSpecificValues();
 
         this.loadSettings();
 
@@ -207,8 +210,9 @@ class App {
                 this.l.debug(`loading plugin: ${plugin}`);
                 this.modules[plugin] = require(plugin);
                 const Plugin = this.modules[plugin];
+                this.configureLogger(plugin);
                 this.modules[plugin] = new Plugin(
-                    this.getLogger(plugin),
+                    winston,
                     this.app,
                     this.settings,
                     this.systemEvents,
@@ -234,8 +238,9 @@ class App {
                 this.modules[moduleName] = require(file);
                 const InternalModule = this.modules[moduleName];
                 const settings = {};
+                this.configureLogger(moduleName);
                 this.modules[moduleName] = new InternalModule(
-                    this.getLogger(moduleName),
+                    winston,
                     this.app,
                     this.settings,
                     this.systemEvents,
@@ -270,8 +275,9 @@ class App {
                     }
                     this.modules[moduleName] = require(path.join(dir, 'index.js'));
                     const AppModule = this.modules[moduleName];
+                    this.configureLogger(moduleName);
                     this.modules[moduleName] = new AppModule(
-                        this.getLogger(moduleName),
+                        winston,
                         this.app,
                         this.settings,
                         this.systemEvents,
@@ -362,11 +368,28 @@ class App {
 
 
     initLogger() {
-        const fileLogConfiguration = { filename: join(this.userDataDir, 'run.log') };
-        winston.loggers.options.transports = [
-            new (winston.transports.Console)(),
+        const fileLogConfiguration = {
+            level: 'debug',
+            filename: join(this.userDataDir, 'run.log'),
+            handleExceptions: true,
+            json: true,
+            maxsize: 5242880, //5MB
+            maxFiles: 5,
+            colorize: false
+        };
+        const consoleLogConfiguration = {
+            level: 'debug',
+            handleExceptions: true,
+            json: false,
+            colorize: true
+        };
+
+        this.loggerTransports = [
+            new (winston.transports.Console)(consoleLogConfiguration),
             new (winston.transports.File)(fileLogConfiguration)
         ];
+
+        winston.loggers.options.transports = this.loggerTransports;
     }
 
     /**
@@ -374,24 +397,33 @@ class App {
      * @param {string} entityName
      * @returns {Logger}
      */
-    getLogger(entityName) {
+    configureLogger(entityName = 'main') {
         const transports = [];
-        const filters = [];
-        if (entityName) {
+        if (entityName !== 'main') {
             transports.push(new (winston.transports.File)({ filename: join(this.userDataDir, `${entityName}.log`) }));
-            filters.push((level, msg) => `[${entityName}] ${msg}`);
+            //transports = transports.map((transport) => { transport.name = entityName; return transport; });
+            winston.loggers.add(entityName, {
+                transports
+            });
+
+        } else {
+            winston.loggers.add(entityName, {
+            });
+
         }
-        const logger = new winston.Logger({
-            level: 'debug',
-            transports,
-            filters
-        });
-        logger.clone = (subEntityName) => new winston.Logger({
-            level: 'debug',
-            transports,
-            filters: [ (level, msg) => `[${subEntityName}] ${msg}` ]
-        });
-        return logger;
+
+
+        const logger = winston.loggers.get(entityName);
+        logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
+        logger._name = entityName;
+
+        logger.getLoggerFor = (loggerInstance, subEntityName) => {
+            winston.loggers.add(`${loggerInstance._name}__${subEntityName}`, {
+                transports: loggerInstance.transports
+            });
+            const logger = winston.loggers.get(`${loggerInstance._name}__${subEntityName}`);
+            logger.filters.push((level, msg) => `[${loggerInstance._name}-${subEntityName}] ${msg}`);
+        }
     }
 }
 

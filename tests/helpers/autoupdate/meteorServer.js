@@ -103,7 +103,6 @@ export default class MeteorServer {
 
         function setETag(req, res, next) {
             const parsedUrl = url.parse(req.url);
-            //console.log(parsedUrl.pathname);
             let pathname = parsedUrl.pathname;
             if (pathname === '/') {
                 pathname = '/index.html';
@@ -111,16 +110,11 @@ export default class MeteorServer {
             if (
                 exists(path.join(serverPath, pathname))
             ) {
-                //console.log(path.join(serverPath, pathname));
-                console.log(pathname, sha1File(path.join(serverPath, pathname)));
-
-                res.setHeader('ETag', '"' + sha1File(path.join(serverPath, pathname)) + '"');
+                res.setHeader('ETag', `"${sha1File(path.join(serverPath, pathname))}"`);
             }
             if (parentServerPath &&
                 exists(path.join(parentServerPath, pathname))) {
-                console.log(pathname, sha1File(path.join(parentServerPath, pathname)));
-
-                res.setHeader('ETag', '"' + sha1File(path.join(parentServerPath, pathname)) + '"');
+                res.setHeader('ETag', `"${sha1File(path.join(parentServerPath, pathname))}"`);
             }
             next();
         }

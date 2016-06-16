@@ -33,7 +33,7 @@ var path = require('path');
 var fs = require('fs');
 var url = require('url');
 
-var Log = require('./logger');
+
 var AssetManifest = require('./assetManifest');
 
 /**
@@ -78,7 +78,7 @@ function AssetBundle(l, directoryUri, manifest, parentAssetBundle) {
     var self = this;
     var indexFile;
 
-    this._l = l.clone('AssetBundle');
+    this._l = l.getLoggerFor('AssetBundle');
     this._l.debug('Creating bundle object for ' + directoryUri);
 
     this.directoryUri = directoryUri;

@@ -33,7 +33,7 @@ var fs = require('fs');
 var request = require('request');
 var url = require('url');
 var queue = require('queue');
-var Log = require('./logger');
+
 
 /**
  * Assets downloader - responsible for downloading an asset version.
@@ -46,7 +46,7 @@ var Log = require('./logger');
  * @constructor
  */
 function AssetBundleDownloader(l, configuration, assetBundle, baseUrl, missingAssets) {
-    this._l = l.clone('AssetBundleDownloader');
+    this._l = l.getLoggerFor('AssetBundleDownloader');
     this._l.debug('AssetBundle downloader created for ' + assetBundle.directoryUri);
 
     this._configuration = configuration;
