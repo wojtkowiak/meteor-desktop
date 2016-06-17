@@ -47,12 +47,15 @@ var AssetBundleManager = require('./autoupdate/assetBundleManager');
 function HCPClient(log, app, appSettings, systemEvents, modules, settings, Module) {
     this.settings = settings;
     var self = this;
-    var autoupdateModule = new Module('autoupdateModule');
+    var autoupdateModule = new Module('autoupdate');
 
     this._l = log.loggers.get('autoupdate');
     this._startupTimer = null;
 
+    this._window = null;
+
     systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
+    systemEvents.on('windowOpened', (window) => this._window = window);
 
     this._config = {
         appId: null,
@@ -68,6 +71,7 @@ function HCPClient(log, app, appSettings, systemEvents, modules, settings, Modul
     this._module = autoupdateModule;
 
     this._module.on('checkForUpdates', this.checkForUpdates.bind(this));
+    this._module.on('startupDidComplete', this.startupDidComplete.bind(this));
 
     this.systemEvents = systemEvents;
 }
@@ -202,7 +206,41 @@ HCPClient.prototype.startStartupTimer = function startStartupTimer() {
         this.revertToLastKnownGoodVersion();
     }, 20000);
 
+    this._l.debug('started startup timer');
+
 };
+
+
+HCPClient.prototype.revertToLastKnownGoodVersion = function revertToLastKnownGoodVersion() {
+    // Blacklist the current version, so we don't update to it again right away
+    this._l.warn('startup timer expired, reverting to another version');
+
+    if (!~this._config.blacklistedVersions.indexOf(this._currentAssetBundle.getVersion())) {
+        this._config.blacklistedVersions.push(this._currentAssetBundle.getVersion());
+        this._saveConfig();
+    }
+
+    // If there is a last known good version and we can load the bundle, revert to it
+    const lastKnownGoodVersion = this._config.lastKnownGoodVersion;
+    if (lastKnownGoodVersion) {
+        const assetBundle = this._assetBundleManager.downloadedAssetBundleWithVersion(lastKnownGoodVersion);
+        if (assetBundle) {
+            this._l.debug('reverting to last known good version: ', assetBundle.getVersion());
+
+            this._pendingAssetBundle = assetBundle;
+        }
+    } else if (this._currentAssetBundle !== this._assetBundleManager._initialAssetBundle) {
+        // Else, revert to the initial asset bundle, unless that is what we are currently serving
+        this._l.debug('reverting to initial bundle');
+        this._pendingAssetBundle = this._assetBundleManager._initialAssetBundle;
+    }
+
+    // Only reload if we have a pending asset bundle to reload
+    if (this._pendingAssetBundle) {
+        this._l.warn('will try to revert to: ', this._pendingAssetBundle.getVersion());
+        this._window.reload();
+    }
+}
 
 HCPClient.prototype.removeStartupTimer = function removeStartupTimer() {
     if (this._startupTimer) {
@@ -216,13 +254,14 @@ HCPClient.prototype.startupDidComplete = function startupDidComplete(onVersionsC
 
     // If startup completed successfully, we consider a version good
     this._config.lastKnownGoodVersion = this._currentAssetBundle.getVersion();
-
     this._saveConfig();
+
     setImmediate(() => {
         this._assetBundleManager.removeAllDownloadedAssetBundlesExceptForVersion(this._currentAssetBundle.getVersion());
         onVersionsCleanedUp();
+        this._module.send('onVersionsCleanedUp');
     });
-}
+};
 
 /**
  * This is fired when a new version is ready and we need to reset (reload) the Browser.
@@ -244,9 +283,9 @@ HCPClient.prototype.onReset = function onReset() {
     this._saveConfig();
 
     // Don't start startup timer when running a test
-    // if (testingDelegate == null) {
-    //  startStartupTimer();
-    // }
+    if (!this.settings.test) {
+       this.startStartupTimer();
+    }
 };
 
 /**

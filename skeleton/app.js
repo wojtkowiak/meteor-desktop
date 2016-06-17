@@ -167,7 +167,7 @@ class App {
 
         try {
             this.desktop = desktop(
-                this.getLogger('desktop'),
+                winston,
                 this.app,
                 this.settings,
                 this.systemEvents,
@@ -239,6 +239,11 @@ class App {
                 this.modules[moduleName] = require(file);
                 const InternalModule = this.modules[moduleName];
                 const settings = {};
+                if (moduleName === 'autoupdate') {
+                    settings.dataPath = this.userDataDir;
+                    settings.bundleStorePath = this.userDataDir;
+                    settings.initialBundlePath = path.join(__dirname, 'meteor');
+                }
                 this.configureLogger(moduleName);
                 this.modules[moduleName] = new InternalModule(
                     winston,
@@ -255,7 +260,7 @@ class App {
         // Now go through each directory. If there is a index.js then it should be a module.
         shell.ls('-d', join(__dirname, 'modules', '*')).forEach(dir => {
             try {
-                if (fs.accessSync(path.join(dir, 'index.js'), fs.R_OK)) {
+                if (fs.lstatSync(dir).isDirectory() && fs.accessSync(path.join(dir, 'index.js'), fs.R_OK)) {
                     moduleName = path.parse(dir).name;
                     this.l.debug(`loading module: ${dir} => ${moduleName}`);
                     let settings = {};
@@ -373,7 +378,7 @@ class App {
             level: 'debug',
             filename: join(this.userDataDir, 'run.log'),
             handleExceptions: true,
-            json: true,
+            json: false,
             maxsize: 5242880, //5MB
             maxFiles: 5,
             colorize: false
@@ -405,21 +410,26 @@ class App {
 
         const logger = winston.loggers.get(entityName);
         if (entityName !== 'main') {
-            logger.add(winston.transports.File, { name: 'module', filename: join(this.userDataDir, `${entityName}.log`) });
+            logger.add(winston.transports.File, { name: entityName, filename: join(this.userDataDir, `${entityName}.log`) });
         }
 
         logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
         logger._name = entityName;
 
         logger.getLoggerFor = (subEntityName) => {
-            winston.loggers.add(`${logger._name}__${subEntityName}`, {
+            if (!winston.loggers.loggers[`${logger._name}__${subEntityName}`]) {
+                winston.loggers.add(`${logger._name}__${subEntityName}`, {});
+                const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
+                newLogger.add(winston.transports.File, {
+                    name: `${logger._name}__${subEntityName}`,
+                    filename: join(this.userDataDir, `${entityName}.log`)
+                });
 
-            });
-            const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
-            logger.add(winston.transports.File, { name: 'module', filename: join(this.userDataDir, `${entityName}.log`) });
-
-            newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
-            return newLogger;
+                newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
+                newLogger.getLoggerFor = logger.getLoggerFor;
+                return newLogger;
+            }
+            return winston.loggers.get(`${logger._name}__${subEntityName}`);
         }
     }
 }

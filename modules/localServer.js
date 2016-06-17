@@ -32,6 +32,10 @@ export default class LocalServer {
         this.log = log.loggers.get('localServer');
         this.httpServerInstance = null;
         this.server = null;
+        this.retries = 0;
+        this.maxRetries = 3;
+        this.serverPath = '';
+        this.parentServerPath = '';
 
         this.errors = [];
         this.errors[0] = 'Could not find free port.';
@@ -56,18 +60,22 @@ export default class LocalServer {
      *
      * @param {string} serverPath       - Path for the resources to serve.
      * @param {string} parentServerPath - Path for the parent resources.
-     * @param {bool}   restart          - Are we restarting the server?
+     * @param {boolean} restart         - Are we restarting the server?
+     * @param {boolean} randomPort      - Whether to choose a random port from those found
+     *                                    to be free.
      */
-    init(serverPath, parentServerPath, restart) {
+    init(serverPath, parentServerPath, restart, randomPort = true) {
         // `connect` will do the job!
         const server = connect();
+        this.serverPath = serverPath;
+        this.parentServerPath = parentServerPath;
 
         if (restart) {
             if (this.httpServerInstance) {
                 this.httpServerInstance.destroy();
             }
         }
-        this.log.info('serve: ', serverPath, parentServerPath);
+        this.log.info('will serve from: ', serverPath, parentServerPath);
 
         // Here, instead of reading the manifest and serving assets based on urls defined there,
         // we are making a shortcut implementation which is just doing a simple regex rewrite to
@@ -118,8 +126,6 @@ export default class LocalServer {
             {});
 
         if (parentServerPath) {
-            this.log.info('use ', parentServerPath);
-
             // Server files from the parent directory as the main bundle has only changed files.
             server.use(serveStatic(parentServerPath),
                 {});
@@ -134,7 +140,7 @@ export default class LocalServer {
 
         this.server = server;
 
-        this.findPort(restart)
+        this.findPort(randomPort)
             .then(() => {
                 this.startHttpServer(restart);
             })
@@ -148,7 +154,7 @@ export default class LocalServer {
      * Checks if we have a free port.
      * @returns {Promise}
      */
-    findPort() {
+    findPort(randomPort) {
         return new Promise((resolve, reject) => {
             findPort(
                 '127.0.0.1',
@@ -159,7 +165,12 @@ export default class LocalServer {
                         reject();
                     }
 
-                    this.port = ports[0];
+                    if (randomPort) {
+                        this.port = ports[Math.floor(Math.random() * (ports.length - 1))];
+                    } else {
+                        this.port = ports[0];
+                    }
+
                     this.log.info(`assigned port ${this.port}`);
                     resolve();
                 }
@@ -174,11 +185,17 @@ export default class LocalServer {
     startHttpServer(restart) {
         try {
             this.httpServerInstance = http.createServer(this.server);
-            this.httpServerInstance.on('error', () => {
+            this.httpServerInstance.on('error', (e) => {
                 this.log.error(e);
-                this.onStartupFailed(1);
+                this.retries++;
+                if (this.retries < this.maxRetries) {
+                    this.init(this.serverPath, this.parentServerPath, true);
+                } else {
+                    this.onStartupFailed(1);
+                }
             });
             this.httpServerInstance.on('listening', () => {
+                this.retries = 0;
                 if (restart) {
                     this.onServerRestarted(this.port);
                 } else {

@@ -36,14 +36,14 @@ export function setUpLocalServer(mainPath, parentPath) {
                 }
             });
             localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-            localServer.init(mainPath, parentPath);
+            localServer.init(mainPath, parentPath, false, false);
         });
     }
     return new Promise((promiseResolve, promiseReject) => {
         resolve = promiseResolve;
         reject = promiseReject;
         localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-        localServer.init(mainPath, parentPath, true);
+        localServer.init(mainPath, parentPath, true, false);
     });
 }
 

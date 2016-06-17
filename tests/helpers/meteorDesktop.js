@@ -53,10 +53,11 @@ export function createTestInstance() {
 }
 
 class Logger {
-    constructor(show) {
+    constructor(show, showErrors) {
         this.show = show;
+        this.showErrors = showErrors;
         this.loggers = {
-            get: () => new Logger(show)
+            get: () => new Logger(show, showErrors)
         };
     }
 
@@ -79,18 +80,18 @@ class Logger {
     }
 
     error(...args) {
-        if (this.show) {
+        if (this.show || this.showErrors) {
             console.error(...args);
         }
     }
 
     getLoggerFor() {
-        return new Logger(this.show);
+        return new Logger(this.show, this.showErrors);
     }
 }
 
-export function getFakeLogger(show) {
-    return new Logger(show);
+export function getFakeLogger(show, showErrors) {
+    return new Logger(show, showErrors);
 }
 
 export function getModuleJson(module) {

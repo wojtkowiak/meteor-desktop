@@ -7,13 +7,14 @@
 WebAppLocalServer = {
     _onNewVersionReady: null,
     _onError: null,
+    _onVersionsCleanedUp: null,
     startupDidComplete(callback) {
-        // TODO: implement fallback startegy
-        console.log('startupDidComplete() fired');
+        this._onVersionsCleanedUp = callback;
+        Desktop.send('autoupdate', 'startupDidComplete');
     },
 
     checkForUpdates(callback) {
-        Desktop.send('autoupdateModule', 'checkForUpdates');
+        Desktop.send('autoupdate', 'checkForUpdates');
     },
 
     onNewVersionReady(callback) {
@@ -22,17 +23,21 @@ WebAppLocalServer = {
 
     onError(callback) {
         this._onError = callback;
-        console.log('onError called');
     }
 };
 
-Desktop.on('autoupdateModule', 'error', function error(event, args) {
-    console.log('received');
+Desktop.on('autoupdate', 'error', function error(event, args) {
     console.error(args);
     WebAppLocalServer._onError();
 });
 
-Desktop.on('autoupdateModule', 'onNewVersionReady', function onNewVersionReady(event, args) {
+Desktop.on('autoupdate', 'onVersionsCleanedUp', function onVersionsCleanedUp(event, args) {
+    if (WebAppLocalServer._onVersionsCleanedUp) {
+        WebAppLocalServer._onVersionsCleanedUp();
+    }
+});
+
+Desktop.on('autoupdate', 'onNewVersionReady', function onNewVersionReady(event, args) {
     console.log('new version ready', args);
     if (WebAppLocalServer._onNewVersionReady) {
         WebAppLocalServer._onNewVersionReady(args);

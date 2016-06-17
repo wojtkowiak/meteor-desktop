@@ -49,6 +49,7 @@ import fs from 'fs';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
 
 const showLogs = false;
+let showErrors = true;
 
 let meteorServer;
 
@@ -70,12 +71,13 @@ function exists(checkPath) {
  * @param {Function} onNewVersionReady - Function to run on the `onNewVersionReady` system event.
  * @param {string} expectedVersion - The version we are expecting to serve from the start.
  * @param {Function} errorCallback - The callback which will be fired with autoupdate errors.
+ * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
  * @returns {HCPClient}
  */
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
-                               errorCallback = Function.prototype) {
+                               errorCallback = Function.prototype, printErrorLogs = false) {
     const autoupdate = new HCPClient(
-        getFakeLogger(printLogs),
+        getFakeLogger(printLogs, printErrorLogs),
         {}, {},
         // fake systemEvents
         {
@@ -91,7 +93,8 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
         {
             dataPath: paths.fixtures.autoUpdateVersionsInstall,
             bundleStorePath: paths.fixtures.autoUpdateVersionsInstall,
-            initialBundlePath: paths.fixtures.bundledWww
+            initialBundlePath: paths.fixtures.bundledWww,
+            test: true
         },
         class Module {
             on() {
@@ -131,9 +134,12 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
  * @param {string} versionExpectedAfter - Version to expect being served after the cycle.
  * @param {string} versionExpectedBefore - Version to expect being served before the cycle.
  * @param {boolean} doNotCallDone - Whether to not call the done callback.
+ * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
+ *
  */
 async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
-                                  versionExpectedBefore = 'version1', doNotCallDone = false) {
+                                  versionExpectedBefore = 'version1', doNotCallDone = false,
+                                  printErrorLogs = showErrors) {
     let autoupdate;
     try {
         autoupdate = await setUpAutoupdate(showLogs, async() => {
@@ -147,7 +153,7 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
             if (!doNotCallDone) {
                 done();
             }
-        }, versionExpectedBefore);
+        }, versionExpectedBefore, undefined, printErrorLogs);
     } catch (e) {
         done(e);
     }
@@ -208,7 +214,7 @@ function shutdownMeteorServer() {
 }
 
 function waitForTestToFail(delay, done) {
-    setTimeout(function () {
+    setTimeout(() => {
         done();
     }, delay);
 }
@@ -410,7 +416,7 @@ describe('autoupdate', () => {
 
         it('should not download any files except for the manifest', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
-            }, 'version2');
+            }, 'version2', undefined, showErrors);
             meteorServer.receivedRequests = [];
             setTimeout(() => {
                 expect(meteorServer.receivedRequests).to.deep.equal([
@@ -442,14 +448,14 @@ describe('autoupdate', () => {
                 expect(error).to.include('Non-success status code 404 for asset:' +
                     ' app/template.mobileapp.js');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'version2_with_missing_asset', 'version1');
+            }, 'version2_with_missing_asset', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -474,14 +480,14 @@ describe('autoupdate', () => {
                 expect(error).to.include('Hash mismatch for asset: ' +
                     'app/template.mobileapp.js');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'version2_with_invalid_asset', 'version1');
+            }, 'version2_with_invalid_asset', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -506,14 +512,14 @@ describe('autoupdate', () => {
                 expect(error).to.include('Version mismatch for index page, expected: version2,' +
                     ' actual: version3');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'version2_with_version_mismatch', 'version1');
+            }, 'version2_with_version_mismatch', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -537,14 +543,14 @@ describe('autoupdate', () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Could not find ROOT_URL in downloaded asset bundle');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'missing_root_url', 'version1');
+            }, 'missing_root_url', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -563,14 +569,14 @@ describe('autoupdate', () => {
             }, '127.0.0.1_root_url', (error) => {
                 expect(error).to.include('ROOT_URL in downloaded asset bundle would change current ROOT_URL to localhost.');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'wrong_root_url', '127.0.0.1_root_url');
+            }, 'wrong_root_url', '127.0.0.1_root_url', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -594,14 +600,14 @@ describe('autoupdate', () => {
             }, 'version1', (error) => {
                 expect(error).to.include('Could not find appId in downloaded asset bundle');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'missing_app_id', 'version1');
+            }, 'missing_app_id', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -625,14 +631,14 @@ describe('autoupdate', () => {
             }, 'version1', (error) => {
                 expect(error).to.include('appId in downloaded asset bundle does not match current appId');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'wrong_app_id', 'version1');
+            }, 'wrong_app_id', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -657,14 +663,14 @@ describe('autoupdate', () => {
                 expect(error).to.include('Asset manifest does not have a ' +
                     'cordovaCompatibilityVersion');
                 done();
-            });
+            }, false);
             autoupdate.checkForUpdates();
         });
 
         it('should not invoke the onNewVersionReady callback', async(done) => {
             await runAutoUpdateTests(done, () => {
                 done('onVersionReady invoked unexpectedly');
-            }, 'missing_cordova_compatibility_version', 'version1');
+            }, 'missing_cordova_compatibility_version', 'version1', false, false);
             waitForTestToFail(1000, done);
         });
     });
@@ -723,7 +729,7 @@ describe('autoupdate', () => {
             try {
                 autoupdate = await setUpAutoupdate(showLogs, async() => {
                     done();
-                }, 'version1');
+                }, 'version1', undefined, showErrors);
             } catch (e) {
                 done(e);
             }
@@ -783,7 +789,7 @@ describe('autoupdate', () => {
             try {
                 autoupdate = await setUpAutoupdate(showLogs, async() => {
                     done();
-                }, 'version1');
+                }, 'version1', undefined, showErrors);
             } catch (e) {
                 done(e);
             }
