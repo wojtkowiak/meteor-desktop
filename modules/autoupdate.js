@@ -258,7 +258,9 @@ HCPClient.prototype.startupDidComplete = function startupDidComplete(onVersionsC
 
     setImmediate(() => {
         this._assetBundleManager.removeAllDownloadedAssetBundlesExceptForVersion(this._currentAssetBundle.getVersion());
-        onVersionsCleanedUp();
+        if (typeof onVersionsCleanedUp === 'function') {
+            onVersionsCleanedUp();
+        }
         this._module.send('onVersionsCleanedUp');
     });
 };
