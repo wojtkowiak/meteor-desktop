@@ -1,4 +1,4 @@
-[Logo](meteor-desktop.png)
+![Logo](meteor-desktop.png)
 
 # Meteor Desktop
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
