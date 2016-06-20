@@ -1,6 +1,7 @@
 - inject isDesktop on hcp
 
 - startup timer and fallback strategy
+
 - desktop compatibility version (win/lin/osx)
 - make @ transleate to relative path
 - how to read local files in browser
@@ -12,7 +13,6 @@
 - hcp for modules
 - handle medc version change and potential incompatibiliy in builds
 - tests for app
-- hcp tests
 
 - write about events
 - write that projectName is the name in package.json and the name of the dir
