@@ -48,8 +48,8 @@ import shell from 'shelljs';
 import fs from 'fs';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
 
-const showLogs = false;
-let showErrors = true;
+const showLogs = true;
+const showErrors = true;
 
 let meteorServer;
 
@@ -72,10 +72,13 @@ function exists(checkPath) {
  * @param {string} expectedVersion - The version we are expecting to serve from the start.
  * @param {Function} errorCallback - The callback which will be fired with autoupdate errors.
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
+ * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
+ *                                   when true, autoupdate does not fire the startup timer.
  * @returns {HCPClient}
  */
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
-                               errorCallback = Function.prototype, printErrorLogs = false) {
+                               errorCallback = Function.prototype, printErrorLogs = false,
+                               testMode = true) {
     const autoupdate = new HCPClient(
         getFakeLogger(printLogs, printErrorLogs),
         {}, {},
@@ -94,7 +97,8 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             dataPath: paths.fixtures.autoUpdateVersionsInstall,
             bundleStorePath: paths.fixtures.autoUpdateVersionsInstall,
             initialBundlePath: paths.fixtures.bundledWww,
-            test: true
+            test: testMode,
+            webAppStartupTimeout: 200
         },
         class Module {
             on() {
@@ -110,7 +114,11 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             }
         }
     );
-    autoupdate._init();
+    autoupdate.init();
+    autoupdate.window = {
+        reload() {
+        }
+    };
     try {
         await setUpLocalServer(
             autoupdate.getDirectory(), autoupdate.getParentDirectory());
@@ -135,11 +143,12 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
  * @param {string} versionExpectedBefore - Version to expect being served before the cycle.
  * @param {boolean} doNotCallDone - Whether to not call the done callback.
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
- *
+ * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
+ *                                   when true, autoupdate does not fire the startup timer.
  */
 async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
                                   versionExpectedBefore = 'version1', doNotCallDone = false,
-                                  printErrorLogs = showErrors) {
+                                  printErrorLogs = showErrors, testMode = true) {
     let autoupdate;
     try {
         autoupdate = await setUpAutoupdate(showLogs, async() => {
@@ -153,7 +162,7 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
             if (!doNotCallDone) {
                 done();
             }
-        }, versionExpectedBefore, undefined, printErrorLogs);
+        }, versionExpectedBefore, undefined, printErrorLogs, testMode);
     } catch (e) {
         done(e);
     }
@@ -183,9 +192,10 @@ function cleanup() {
  * @param {string} versionToServeOnMeteorServerAfter - Version we want to serve on the fake meteor
  *                          server after the autoupdate cycle is finished.
  * @param {Function} done - Callback to fire when this is done.
+ * @param {boolean} confirmVersion - Whether to fire startupDidComplete.
  */
 async function downloadAndServeVersionLocally(versionToDownload, versionToServeOnMeteorServerAfter,
-                                              done) {
+                                              done, confirmVersion = true) {
     try {
         meteorServer = await serveVersion(versionToDownload);
         meteorServer.receivedRequests = [];
@@ -193,7 +203,10 @@ async function downloadAndServeVersionLocally(versionToDownload, versionToServeO
         done(e);
     }
     cleanup();
-    await runAutoUpdateTests(done, async() => {
+    await runAutoUpdateTests(done, async(autoupdate) => {
+        if (confirmVersion) {
+            autoupdate.startupDidComplete();
+        }
         try {
             meteorServer = await serveVersion(versionToServeOnMeteorServerAfter);
         } catch (e) {
@@ -217,6 +230,12 @@ function waitForTestToFail(delay, done) {
     setTimeout(() => {
         done();
     }, delay);
+}
+
+function wait(delay) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(), delay);
+    });
 }
 
 describe('autoupdate', () => {
@@ -308,14 +327,14 @@ describe('autoupdate', () => {
             await runAutoUpdateTests(done, async(autoupdate) => {
                 expect(
                     autoupdate
-                        ._assetBundleManager
+                        .assetBundleManager
                         .downloadedAssetBundleWithVersion('version2')
                 ).to.exist();
 
                 autoupdate.startupDidComplete(() => {
                     expect(
                         autoupdate
-                            ._assetBundleManager
+                            .assetBundleManager
                             .downloadedAssetBundleWithVersion('version2')
                     ).to.not.exist();
                     done();
@@ -364,7 +383,7 @@ describe('autoupdate', () => {
             await runAutoUpdateTests(done, (autoupdate) => {
                 expect(
                     autoupdate
-                        ._assetBundleManager
+                        .assetBundleManager
                         .downloadedAssetBundleWithVersion('version1')
                 ).to.not.exist();
             }, 'version1', 'version2');
@@ -374,14 +393,14 @@ describe('autoupdate', () => {
             await runAutoUpdateTests(done, async(autoupdate) => {
                 expect(
                     autoupdate
-                        ._assetBundleManager
+                        .assetBundleManager
                         .downloadedAssetBundleWithVersion('version2')
                 ).to.exist();
 
                 autoupdate.startupDidComplete(() => {
                     expect(
                         autoupdate
-                            ._assetBundleManager
+                            .assetBundleManager
                             .downloadedAssetBundleWithVersion('version2')
                     ).to.not.exist();
                     done();
@@ -567,7 +586,8 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, '127.0.0.1_root_url', (error) => {
-                expect(error).to.include('ROOT_URL in downloaded asset bundle would change current ROOT_URL to localhost.');
+                expect(error).to.include('ROOT_URL in downloaded asset bundle would change ' +
+                    'current ROOT_URL to localhost.');
                 done();
             }, false);
             autoupdate.checkForUpdates();
@@ -629,7 +649,8 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('appId in downloaded asset bundle does not match current appId');
+                expect(error).to.include('appId in downloaded asset bundle does not match ' +
+                    'current appId');
                 done();
             }, false);
             autoupdate.checkForUpdates();
@@ -768,7 +789,6 @@ describe('autoupdate', () => {
             }
             done();
         });
-
     });
 
     describe('when resuming a partial download with a different version', () => {
@@ -840,6 +860,61 @@ describe('autoupdate', () => {
                 return;
             }
             done();
+        });
+    });
+
+    /**
+     * Additional tests that are going beyond what is currently tested in the meteor cordova webapp.
+     */
+
+    describe('when startupDidComplete is not fired', () => {
+        afterEach(() => {
+            shutdownMeteorServer();
+            shutdownLocalServer();
+            cleanup();
+        });
+
+        it('should fallback to last known good version', async(done) => {
+            await (() =>
+                new Promise((resolve) =>
+                    downloadAndServeVersionLocally('version2', 'version3', resolve)
+                ))();
+
+            await runAutoUpdateTests(
+                done,
+                async(autoupdate) => {
+                    await wait(500);
+                    expect(autoupdate.getPendingVersion()).to.equal('version2');
+                    expect(autoupdate.config.blacklistedVersions).to.contain('version3');
+                    done();
+                },
+                'version3', 'version2', true, undefined, false);
+        });
+
+        it('should fallback to initial asset bundle', async(done) => {
+            meteorServer = await serveVersion('version2');
+            await runAutoUpdateTests(
+                done,
+                async(autoupdate) => {
+                    await wait(500);
+                    expect(autoupdate.getPendingVersion()).to.equal('version1');
+                    expect(autoupdate.config.blacklistedVersions).to.contain('version2');
+                    done();
+                },
+                'version2', 'version1', true, undefined, false);
+        });
+    });
+
+    describe('when version is blacklisted', () => {
+        it('should not download it', async(done) => {
+            meteorServer = await serveVersion('version2');
+            const autoupdate = await setUpAutoupdate(showLogs, () => {
+            }, 'version1', (error) => {
+                expect(error).to.include('skipping downloading blacklisted version');
+                done();
+            }, false);
+            autoupdate.config.blacklistedVersions = ['version2'];
+            autoupdate.checkForUpdates();
         });
     });
 });

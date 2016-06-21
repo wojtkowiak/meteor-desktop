@@ -1,6 +1,6 @@
 - inject isDesktop on hcp
 
-- startup timer and fallback strategy
+- startup timer and fallback strategy (startup timer should run on any run)
 
 - desktop compatibility version (win/lin/osx)
 - make @ transleate to relative path

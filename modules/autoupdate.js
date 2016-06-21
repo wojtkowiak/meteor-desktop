@@ -1,5 +1,5 @@
 /**
- This is a slightly modified JS port of hot code push android client from here:
+ This is a modified JS port of hot code push android client from here:
  https://github.com/meteor/cordova-plugin-meteor-webapp
 
  The MIT License (MIT)
@@ -24,378 +24,454 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 
- This is based on:
+ This file is based on:
  /cordova-plugin-meteor-webapp/blob/master/src/android/WebAppLocalServer.java
 
  */
 
-var path = require('path');
-var join = path.join;
-var shell = require('shelljs');
-var fs = require('fs');
-var url = require('url');
+import path from 'path';
+import shell from 'shelljs';
+import fs from 'fs';
+import url from 'url';
 
-var AssetBundle = require('./autoupdate/assetBundle');
-var AssetBundleManager = require('./autoupdate/assetBundleManager');
+const { join } = path;
+
+import AssetBundle from './autoupdate/assetBundle';
+import AssetBundleManager from './autoupdate/assetBundleManager';
+
+function exists(checkPath) {
+    try {
+        fs.accessSync(checkPath);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 
 /**
  * Represents the hot code push client.
- * Unlike the cordova implementation this does not have a builtin HTTP server.
+ * Unlike the Cordova implementation this does not have a builtin HTTP server.
  *
  * @constructor
  */
-function HCPClient(log, app, appSettings, systemEvents, modules, settings, Module) {
-    this.settings = settings;
-    var self = this;
-    var autoupdateModule = new Module('autoupdate');
+class HCPClient {
 
-    this._l = log.loggers.get('autoupdate');
-    this._startupTimer = null;
+    constructor(log, app, appSettings, systemEvents, modules, settings, Module) {
+        // Get the automtically predefined logger instance.
+        this.log = log.loggers.get('autoupdate');
 
-    this._window = null;
+        // Register this as a Meteor Desktop module.
+        this.module = new Module('autoupdate');
 
-    systemEvents.on('beforeDesktopLoaded', this._init.bind(this));
-    systemEvents.on('windowOpened', (window) => this._window = window);
+        this.settings = settings;
 
-    this._config = {
-        appId: null,
-        rootUrlString: null,
-        cordovaCompatibilityVersion: null,
-        blacklistedVersions: [],
-        lastDownloadedVersion: null
-    };
+        this.startupTimer = null;
+        this.window = null;
 
-    this._configFile = join(this.settings.dataPath, 'autoupdate.json');
-    this._versionsDir = join(this.settings.bundleStorePath, 'versions');
+        this.systemEvents = systemEvents;
 
-    this._module = autoupdateModule;
+        // We want this to be initialized before loading the desktop part.
+        this.systemEvents.on('beforeDesktopLoaded', this.init.bind(this));
 
-    this._module.on('checkForUpdates', this.checkForUpdates.bind(this));
-    this._module.on('startupDidComplete', this.startupDidComplete.bind(this));
+        // We will need a reference to the BrowserWindow object once it will be available.
+        this.systemEvents.on('windowOpened', window => (this.window = window));
 
-    this.systemEvents = systemEvents;
-}
+        // Lets register for some ICP events. You can treat this as public API.
+        this.module.on('checkForUpdates', this.checkForUpdates.bind(this));
+        this.module.on('startupDidComplete', this.startupDidComplete.bind(this));
 
+        this.resetConfig();
 
-HCPClient.prototype.checkForUpdates = function checkForUpdates() {
-    var rootUrl = this._currentAssetBundle.getRootUrlString();
-    if (rootUrl === null) {
-        this._module.send(
-            'error',
-            'checkForUpdates requires a rootURL to be configured'
+        this.configFile = join(this.settings.dataPath, 'autoupdate.json');
+        this.versionsDir = join(this.settings.bundleStorePath, 'versions');
+    }
+
+    /**
+     * Resets or sets and empty config object.
+     *
+     * @private
+     */
+    resetConfig() {
+        this.config = {
+            appId: null,
+            rootUrlString: null,
+            cordovaCompatibilityVersion: null,
+            blacklistedVersions: [],
+            lastDownloadedVersion: null
+        };
+    }
+
+    /**
+     * Performs autoupdate initialization.
+     *
+     * @private
+     */
+    init() {
+        this.log.verbose('initializing autoupdate module');
+        try {
+            fs.accessSync(this.configFile, fs.F_OK);
+        } catch (e) {
+            this.saveConfig();
+            this.log.info('created empty autoupdate.json');
+        }
+
+        this.readConfig();
+        this.initializeAssetBundles();
+
+        this.config.appId = this.currentAssetBundle.getAppId();
+        this.config.rootUrlString = this.currentAssetBundle.getRootUrlString();
+        this.config.cordovaCompatibilityVersion =
+            this.currentAssetBundle.cordovaCompatibilityVersion;
+
+        this.saveConfig();
+    }
+
+    /**
+     * Looks for available assets bundles. Chooses which version to use.
+     *
+     * @private
+     */
+    initializeAssetBundles() {
+        this.log.verbose('trying to read initial bundle version');
+        const initialAssetBundle = new AssetBundle(
+            this.log,
+            this.settings.initialBundlePath
         );
-        return;
-    }
 
-    this._assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
-    this._event = null;
-};
-
-/**
- * Performs initialization.
- *
- * @private
- */
-HCPClient.prototype._init = function _init() {
-
-
-    if (!fs.existsSync(this._configFile)) {
-        this._saveConfig();
-        this._l.info('Created empty autoupdate.json');
-    }
-
-    this._readConfig();
-
-    this.initializeAssetBundles();
-
-    this._config.appId = this._currentAssetBundle.getAppId();
-    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
-    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
-
-    this._saveConfig();
-};
-
-HCPClient.prototype.initializeAssetBundles = function initializeAssetBundles() {
-    var initialAssetBundle;
-    var lastDownloadedVersion;
-
-    this._l.debug('Reading initial version');
-    initialAssetBundle = new AssetBundle(
-        this._l,
-        this.settings.initialBundlePath
-    );
-
-    // If the last seen initial version is different from the currently bundled
-    // version, we delete the versions directory and unset lastDownloadedVersion
-    // and blacklistedVersions
-    /*
-     if (!initialAssetBundle.getVersion().equals(configuration.getLastSeenInitialVersion()))  {
-     Log.d(LOG_TAG, "Detected new bundled version, removing versions directory if it exists");
-     if (versionsDirectory.exists()) {
-     if (!IOUtils.deleteRecursively(versionsDirectory)) {
-     Log.w(LOG_TAG, "Could not remove versions directory");
-     }
-     }
-     configuration.reset();
-     }*/
-
-    // We keep track of the last seen initial version (see above)
-    this._config.lastSeenInitialVersion = initialAssetBundle.getVersion();
-
-    // If the versions directory does not exist, we create it
-    if (!fs.existsSync(this._versionsDir)) {
-        this._l.info('Created versions dir.');
-        // TODO: try/catch
-        shell.mkdir(this._versionsDir);
-    }
-
-    this._assetBundleManager = new AssetBundleManager(
-        this._l,
-        this._config,
-        initialAssetBundle,
-        this._versionsDir
-    );
-
-    this._assetBundleManager.setCallback(this);
-
-    lastDownloadedVersion = this._config.lastDownloadedVersion;
-    if (lastDownloadedVersion) {
-        this._currentAssetBundle = this._assetBundleManager
-            ._downloadedAssetBundlesByVersion[lastDownloadedVersion];
-
-        if (!this._currentAssetBundle) {
-            this._currentAssetBundle = initialAssetBundle;
+        // If the last seen initial version is different from the currently bundled
+        // version, we delete the versions directory and unset lastDownloadedVersion
+        // and blacklistedVersions.
+        if (initialAssetBundle.getVersion() !== this.config.lastSeenInitialVersion) {
+            this.log.info(
+                'detected new bundled version, removing versions directory if it exists');
+            if (exists(this.versionsDir)) {
+                shell.rm('-rf', this.versionsDir);
+                if (exists(this.versionsDir)) {
+                    this.log.warn('could not remove versions directory');
+                }
+            }
+            this.resetConfig();
         }
-    } else {
-        this._currentAssetBundle = initialAssetBundle;
-    }
 
-    this._pendingAssetBundle = null;
-}
+        // We keep track of the last seen initial version (see above).
+        this.config.lastSeenInitialVersion = initialAssetBundle.getVersion();
 
-HCPClient.prototype.getPendingVersion = function getPendingVersion() {
-    if (this._pendingAssetBundle !== null) {
-        return this._pendingAssetBundle.getVersion();
-    }
-    return null;
-}
-
-/**
- * Returns the current assets bundle's directory.
- * @returns {string}
- */
-HCPClient.prototype.getDirectory = function getDirectory() {
-    return this._currentAssetBundle.getDirectoryUri();
-};
-
-/**
- * Returns the parent asset bundle's directory.
- * @returns {string|null}
- */
-HCPClient.prototype.getParentDirectory = function getParentDirectory() {
-    return this._currentAssetBundle.getParentAssetBundle() ?
-        this._currentAssetBundle.getParentAssetBundle().getDirectoryUri() : null;
-};
-
-
-HCPClient.prototype.startStartupTimer = function startStartupTimer() {
-    this.removeStartupTimer();
-
-    // TODO: make startup time configurable
-    this._startupTimer = setTimeout(() => {
-        this.revertToLastKnownGoodVersion();
-    }, 20000);
-
-    this._l.debug('started startup timer');
-
-};
-
-
-HCPClient.prototype.revertToLastKnownGoodVersion = function revertToLastKnownGoodVersion() {
-    // Blacklist the current version, so we don't update to it again right away
-    this._l.warn('startup timer expired, reverting to another version');
-
-    if (!~this._config.blacklistedVersions.indexOf(this._currentAssetBundle.getVersion())) {
-        this._config.blacklistedVersions.push(this._currentAssetBundle.getVersion());
-        this._saveConfig();
-    }
-
-    // If there is a last known good version and we can load the bundle, revert to it
-    const lastKnownGoodVersion = this._config.lastKnownGoodVersion;
-    if (lastKnownGoodVersion) {
-        const assetBundle = this._assetBundleManager.downloadedAssetBundleWithVersion(lastKnownGoodVersion);
-        if (assetBundle) {
-            this._l.debug('reverting to last known good version: ', assetBundle.getVersion());
-
-            this._pendingAssetBundle = assetBundle;
+        // If the versions directory does not exist, we create it.
+        if (!exists(this.versionsDir)) {
+            this.log.info('created versions dir');
+            // TODO: what if this fails? We need to report this to the main app.
+            shell.mkdir(this.versionsDir);
         }
-    } else if (this._currentAssetBundle !== this._assetBundleManager._initialAssetBundle) {
-        // Else, revert to the initial asset bundle, unless that is what we are currently serving
-        this._l.debug('reverting to initial bundle');
-        this._pendingAssetBundle = this._assetBundleManager._initialAssetBundle;
-    }
 
-    // Only reload if we have a pending asset bundle to reload
-    if (this._pendingAssetBundle) {
-        this._l.warn('will try to revert to: ', this._pendingAssetBundle.getVersion());
-        this._window.reload();
-    }
-}
+        this.assetBundleManager = new AssetBundleManager(
+            this.log,
+            this.config,
+            initialAssetBundle,
+            this.versionsDir
+        );
 
-HCPClient.prototype.removeStartupTimer = function removeStartupTimer() {
-    if (this._startupTimer) {
-        clearTimeout(this._startupTimer);
-        this._startupTimer = null;
-    }
-};
+        this.assetBundleManager.setCallback(this);
 
-HCPClient.prototype.startupDidComplete = function startupDidComplete(onVersionsCleanedUp = Function.prototype) {
-    this.removeStartupTimer();
+        this.currentAssetBundle = null;
 
-    // If startup completed successfully, we consider a version good
-    this._config.lastKnownGoodVersion = this._currentAssetBundle.getVersion();
-    this._saveConfig();
+        const lastDownloadedVersion = this.config.lastDownloadedVersion;
+        if (lastDownloadedVersion) {
+            this.currentAssetBundle = this.assetBundleManager
+                .downloadedAssetBundleWithVersion(lastDownloadedVersion);
+            this.log.verbose(
+                `using last downloaded version (${lastDownloadedVersion})`);
 
-    setImmediate(() => {
-        this._assetBundleManager.removeAllDownloadedAssetBundlesExceptForVersion(this._currentAssetBundle.getVersion());
-        if (typeof onVersionsCleanedUp === 'function') {
-            onVersionsCleanedUp();
+            if (!this.currentAssetBundle) {
+                this.log.warn('seems that last downloaded version does not exists... ' +
+                    'using initial asset bundle');
+                this.currentAssetBundle = initialAssetBundle;
+            }
+        } else {
+            this.log.verbose('using initial asset bundle');
+            this.currentAssetBundle = initialAssetBundle;
         }
-        this._module.send('onVersionsCleanedUp');
-    });
-};
 
-/**
- * This is fired when a new version is ready and we need to reset (reload) the Browser.
- */
-HCPClient.prototype.onReset = function onReset() {
-    // If there is a pending asset bundle, we make it the current
-    if (this._pendingAssetBundle !== null) {
-        this._currentAssetBundle = this._pendingAssetBundle;
-        this._pendingAssetBundle = null;
+        this.pendingAssetBundle = null;
     }
 
-    this._l.info('Serving asset bundle with version: '
-        + this._currentAssetBundle.getVersion());
+    /**
+     * Start the checking for update procedure.
+     * @private
+     */
+    checkForUpdates() {
+        const rootUrl = this.currentAssetBundle.getRootUrlString();
+        if (!rootUrl) {
+            this.log.error('no rootUrl found in the current asset bundle');
+            this.module.send(
+                'error',
+                'checkForUpdates requires a rootURL to be configured'
+            );
+            return;
+        }
 
-    this._config.appId = this._currentAssetBundle.getAppId();
-    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
-    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
-
-    this._saveConfig();
-
-    // Don't start startup timer when running a test
-    if (!this.settings.test) {
-       this.startStartupTimer();
+        this.assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
     }
-};
 
-/**
- * Save the current config.
- * @private
- */
-HCPClient.prototype._saveConfig = function _saveConfig() {
-    fs.writeFileSync(this._configFile, JSON.stringify(this._config, null, '\t'));
-};
+    /**
+     * Returns version of the currently pending asset bundle.
+     * @returns {null|string}
+     */
+    getPendingVersion() {
+        if (this.pendingAssetBundle !== null) {
+            return this.pendingAssetBundle.getVersion();
+        }
+        return null;
+    }
 
-/**
- * Reads config json file.
- * @private
- */
-HCPClient.prototype._readConfig = function _readConfig() {
-    // TODO: try/catch
-    this._config = JSON.parse(fs.readFileSync(this._configFile, 'UTF-8'));
-};
+    /**
+     * Returns the current assets bundle's directory.
+     * @returns {string}
+     */
+    getDirectory() {
+        return this.currentAssetBundle.getDirectoryUri();
+    }
 
-/**
- * Error callback fired by assetBundleManager.
- * @param cause
- */
-HCPClient.prototype.onError = function onError(cause) {
-    this._l.error('Download failure: ' + cause);
-    this._notifyError(cause);
-};
+    /**
+     * Returns the parent asset bundle's directory.
+     * @returns {string|null}
+     */
+    getParentDirectory() {
+        return this.currentAssetBundle.getParentAssetBundle() ?
+            this.currentAssetBundle.getParentAssetBundle().getDirectoryUri() : null;
+    }
 
-/**
- * Fires error callback from the meteor's side.
- *
- * @param {string} cause - Error message.
- * @private
- */
-HCPClient.prototype._notifyError = function _notifyError(cause) {
-    this._l.error('Download failure: ' + cause);
-    this._module.send(
-        'error',
-        '[autoupdate] Download failure: ' + cause
-    );
-};
+    /**
+     * Starts the startup timer which is a fallback mechanism in case we received a faulty version.
+     * @private
+     */
+    startStartupTimer() {
+        this.removeStartupTimer();
 
-/**
- * Makes downloaded asset pending. Fired by assetBundleManager.
- * @param assetBundle
- */
-HCPClient.prototype.onFinishedDownloadingAssetBundle =
-    function onFinishedDownloadingAssetBundle(assetBundle) {
-        this._config.lastDownloadedVersion = assetBundle.getVersion();
-        this._saveConfig();
-        this._pendingAssetBundle = assetBundle;
-        this._notifyNewVersionReady(assetBundle.getVersion());
-    };
+        this.startupTimerStartTimestamp = Date.now();
+        this.startupTimer = setTimeout(() => {
+            this.revertToLastKnownGoodVersion();
+        }, this.settings.webAppStartupTimeout);
 
-/**
- * Notify meteor that a new version is ready.
- * @param {string} version - Version string.
- * @private
- */
-HCPClient.prototype._notifyNewVersionReady = function _notifyNewVersionReady(version) {
-    this.systemEvents.emit('newVersionReady');
-    this._module.send(
-        'onNewVersionReady',
-        version
-    );
+        this.log.verbose('started startup timer');
+        this.log.debug(`timer set to ${this.settings.webAppStartupTimeout}`);
+    }
 
-};
+    /**
+     * Reverts to last know good version in case we did not receive an event saying that the app
+     * has started successfully.
+     * @private
+     */
+    revertToLastKnownGoodVersion() {
+        // Blacklist the current version, so we don't update to it again right away.
+        this.log.warn('startup timer expired, reverting to another version');
 
-/**
- * Method that decides whether we are interested in the new bundle that we were notified about.
- *
- * @param {AssetManifest} manifest - Manifest of the new bundle.
- * @returns {boolean}
- */
-HCPClient.prototype.shouldDownloadBundleForManifest =
-    function shouldDownloadBundleForManifest(manifest) {
-        var version = manifest.version;
+        if (!~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
+            this.log.debug(`blacklisted version ${this.currentAssetBundle.getVersion()}`);
+            this.config.blacklistedVersions.push(this.currentAssetBundle.getVersion());
+            this.saveConfig();
+        }
 
-        // No need to redownload the current version
-        if (this._currentAssetBundle.getVersion() === version) {
-            this._l.info('Skipping downloading current version: ' + version);
+        // If there is a last known good version and we can load the bundle, revert to it.
+        const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
+        if (lastKnownGoodVersion) {
+            const assetBundle = this.assetBundleManager
+                .downloadedAssetBundleWithVersion(lastKnownGoodVersion);
+            if (assetBundle) {
+                this.log.info(`reverting to last known good version: ${assetBundle.getVersion()}`);
+                this.pendingAssetBundle = assetBundle;
+            }
+        } else if (this.currentAssetBundle !== this.assetBundleManager._initialAssetBundle) {
+            // Else, revert to the initial asset bundle, unless that is what we are currently
+            // serving.
+            this.log.info('reverting to initial bundle');
+            this.pendingAssetBundle = this.assetBundleManager._initialAssetBundle;
+        }
+
+        // Only reload if we have a pending asset bundle to reload.
+        if (this.pendingAssetBundle) {
+            this.log.warn(`will try to revert to ${this.pendingAssetBundle.getVersion()}`);
+            this.window.reload();
+        }
+    }
+
+    /**
+     * Stops the startup timer.
+     * @private
+     */
+    removeStartupTimer() {
+        if (this.startupTimer) {
+            clearTimeout(this.startupTimer);
+            this.startupTimer = null;
+        }
+    }
+
+    /**
+     * Fired from the Meteor app. Tells us that this version seems to be fine.
+     *
+     * @param {function} onVersionsCleanedUp - Callback to be called after versions dir cleanup.
+     *
+     * @private
+     */
+    startupDidComplete(onVersionsCleanedUp = Function.prototype) {
+        this.log.verbose('startup did complete, stopping startup timer (startup took ' +
+            `${Date.now() - this.startupTimerStartTimestamp}ms)`);
+        this.removeStartupTimer();
+
+        // If startup completed successfully, we consider a version good.
+        this.config.lastKnownGoodVersion = this.currentAssetBundle.getVersion();
+        this.saveConfig();
+
+        setImmediate(() => {
+            this.assetBundleManager
+                .removeAllDownloadedAssetBundlesExceptForVersion(
+                    this.currentAssetBundle.getVersion()
+                );
+
+            if (typeof onVersionsCleanedUp === 'function') {
+                onVersionsCleanedUp();
+            }
+            this.module.send('onVersionsCleanedUp');
+        });
+    }
+
+    /**
+     * This is fired when a new version is ready and we need to reset (reload) the BrowserWindow.
+     */
+    onReset() {
+        // If there is a pending asset bundle, we make it the current
+        if (this.pendingAssetBundle !== null) {
+            this.currentAssetBundle = this.pendingAssetBundle;
+            this.pendingAssetBundle = null;
+        }
+
+        this.log.info(`serving asset bundle with version: ${this.currentAssetBundle.getVersion()}`);
+
+        this.config.appId = this.currentAssetBundle.getAppId();
+        this.config.rootUrlString = this.currentAssetBundle.getRootUrlString();
+        this.config.cordovaCompatibilityVersion =
+            this.currentAssetBundle.cordovaCompatibilityVersion;
+
+        this.saveConfig();
+
+        // Don't start startup timer when running a test.
+        if (!this.settings.test) {
+            this.startStartupTimer();
+        }
+    }
+
+    /**
+     * Save the current config.
+     * @private
+     */
+    saveConfig() {
+        fs.writeFileSync(this.configFile, JSON.stringify(this.config, null, '\t'));
+    }
+
+    /**
+     * Reads config json file.
+     * @private
+     */
+    readConfig() {
+        try {
+            this.config = JSON.parse(fs.readFileSync(this.configFile, 'UTF-8'));
+        } catch (e) {
+            this.log.error('could not read the config.json');
+            this.resetConfig();
+            this.saveConfig();
+        }
+    }
+
+    /**
+     * Error callback fired by assetBundleManager.
+     * @param cause
+     */
+    onError(cause) {
+        this.notifyError(cause);
+    }
+
+    /**
+     * Fires error callback from the Meteor app side.
+     *
+     * @param {string} cause - Error message.
+     * @private
+     */
+    notifyError(cause) {
+        this.log.error(`download failure: ${cause}`);
+        this.module.send(
+            'error',
+            `[autoupdate] Download failure: ${cause}`
+        );
+    }
+
+    /**
+     * Makes downloaded asset pending. Fired by assetBundleManager.
+     * @param assetBundle
+     */
+    onFinishedDownloadingAssetBundle(assetBundle) {
+        this.log.verbose(
+            `setting last downloaded and pending version as ${assetBundle.getVersion()}`);
+        this.config.lastDownloadedVersion = assetBundle.getVersion();
+        this.saveConfig();
+        this.pendingAssetBundle = assetBundle;
+        this.notifyNewVersionReady(assetBundle.getVersion());
+    }
+
+    /**
+     * Notify meteor that a new version is ready.
+     * @param {string} version - Version string.
+     * @private
+     */
+    notifyNewVersionReady(version) {
+        this.systemEvents.emit('newVersionReady');
+        this.module.send(
+            'onNewVersionReady',
+            version
+        );
+    }
+
+    /**
+     * Method that decides whether we are interested in the new bundle that we were notified about.
+     * Called by assetBundleManager.
+     * @param {AssetManifest} manifest - Manifest of the new bundle.
+     * @returns {boolean}
+     */
+    shouldDownloadBundleForManifest(manifest) {
+        const version = manifest.version;
+
+        // No need to redownload the current version.
+        if (this.currentAssetBundle.getVersion() === version) {
+            this.log.info(`skipping downloading current version: ${version}`);
             return false;
         }
 
-        // No need to redownload the pending version
-        if (this._pendingAssetBundle !== null &&
-            this._pendingAssetBundle.getVersion() === version) {
-            this._l.info('Skipping downloading pending version: ' + version);
+        // No need to redownload the pending version.
+        if (this.pendingAssetBundle &&
+            this.pendingAssetBundle.getVersion() === version) {
+            this.log.info(`skipping downloading pending version: ${version}`);
             return false;
         }
 
-        // Don't download blacklisted versions
-        if (~this._config.blacklistedVersions.indexOf(version)) {
-            this._notifyError('Skipping downloading blacklisted version: ' + version);
+        // Don't download blacklisted versions.
+        if (~this.config.blacklistedVersions.indexOf(version)) {
+            this.log.warn(`skipping downloading blacklisted version: ${version}`);
+            this.notifyError(`skipping downloading blacklisted version: ${version}`);
             return false;
         }
 
         // Don't download versions potentially incompatible with the bundled native code
         // This is commented out intentionally as we do not care about cordova compatibility version
         // this should not affect us.
-        /*if (this._config.cordovaCompatibilityVersion !== manifest.cordovaCompatibilityVersion) {
-            this._notifyError("Skipping downloading new version because the Cordova platform version or plugin versions have changed and are potentially incompatible");
+        /*
+        if (this.config.cordovaCompatibilityVersion !== manifest.cordovaCompatibilityVersion) {
+            this.notifyError("Skipping downloading new version because the Cordova platform version
+             or plugin versions have changed and are potentially incompatible");
             return false;
-        }*/
-
+        }
+        */
         // TODO: place for checking electron compatibility version
 
         return true;
-    };
+    }
+}
 
 module.exports = HCPClient;

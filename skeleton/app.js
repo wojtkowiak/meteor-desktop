@@ -50,7 +50,6 @@ class App {
 
         this.catchUncaughtExceptions();
 
-
         this.loadSettings();
 
         electronDebug({
@@ -243,6 +242,9 @@ class App {
                     settings.dataPath = this.userDataDir;
                     settings.bundleStorePath = this.userDataDir;
                     settings.initialBundlePath = path.join(__dirname, 'meteor');
+                    settings.webAppStartupTimeout =
+                        this.settings.webAppStartupTimeout ?
+                            this.settings.webAppStartupTimeout : 20000;
                 }
                 this.configureLogger(moduleName);
                 this.modules[moduleName] = new InternalModule(
@@ -420,10 +422,10 @@ class App {
             if (!winston.loggers.loggers[`${logger._name}__${subEntityName}`]) {
                 winston.loggers.add(`${logger._name}__${subEntityName}`, {});
                 const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
-                newLogger.add(winston.transports.File, {
+                /*newLogger.add(winston.transports.File, {
                     name: `${logger._name}__${subEntityName}`,
                     filename: join(this.userDataDir, `${entityName}.log`)
-                });
+                });*/
 
                 newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
                 newLogger.getLoggerFor = logger.getLoggerFor;

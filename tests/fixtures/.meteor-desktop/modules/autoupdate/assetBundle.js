@@ -78,48 +78,48 @@ function AssetBundle(l, directoryUri, manifest, parentAssetBundle) {
     var self = this;
     var indexFile;
 
-    this._l = new Log('AssetBundle', l);
-    this._l.log('debug', 'Creating bundle object for ' + directoryUri);
+    this.log = new Log('AssetBundle', l);
+    this.log.log('debug', 'Creating bundle object for ' + directoryUri);
 
     this.directoryUri = directoryUri;
 
-    this._runtimeConfig = null;
-    this._appId = null;
-    this._rootUrlString = null;
-    this._matcher = new RegExp('__meteor_runtime_config__ = JSON.parse\\(decodeURIComponent\\("([^"]*)"\\)\\)');
+    this.runtimeConfig = null;
+    this.appId = null;
+    this.rootUrlString = null;
+    this.matcher = new RegExp('__meteor_runtime_config__ = JSON.parse\\(decodeURIComponent\\("([^"]*)"\\)\\)');
 
-    this._parentAssetBundle = parentAssetBundle;
+    this.parentAssetBundle = parentAssetBundle;
 
     if (manifest === undefined) {
-        this._l.log('debug', 'Loading my manifest from ' + directoryUri);
-        this.manifest = this._loadAssetManifest();
+        this.log.log('debug', 'Loading my manifest from ' + directoryUri);
+        this.manifest = this.loadAssetManifest();
     } else {
         this.manifest = manifest;
     }
 
-    this._version = this.manifest.version;
+    this.version = this.manifest.version;
     this.cordovaCompatibilityVersion = this.manifest.cordovaCompatibilityVersion;
 
-    this._ownAssetsByURLPath = {};
+    this.ownAssetsByURLPath = {};
 
     // Filter assets that are only in this bundle. Rest can be taken from the parent.
     this.manifest.entries.forEach(function filterDistinctAssets(entry) {
         var urlPath = url.parse(entry.urlPath).pathname;
 
         if (parentAssetBundle === undefined || parentAssetBundle.cachedAssetForUrlPath(urlPath, entry.hash) === null) {
-            self._addAsset(new Asset(entry.filePath, urlPath, entry.fileType, entry.cacheable, entry.hash, entry.sourceMapUrlPath, entry.size, self));
+            self.addAsset(new Asset(entry.filePath, urlPath, entry.fileType, entry.cacheable, entry.hash, entry.sourceMapUrlPath, entry.size, self));
         }
 
         if (entry.sourceMapFilePath !== null && entry.sourceMapUrlPath !== null) {
             if (parentAssetBundle === undefined || parentAssetBundle.cachedAssetForUrlPath(entry.sourceMapUrlPath, null) === null) {
-                self._addAsset(new Asset(entry.sourceMapFilePath, entry.sourceMapUrlPath, 'json', true, null, null, entry.size, self));
+                self.addAsset(new Asset(entry.sourceMapFilePath, entry.sourceMapUrlPath, 'json', true, null, null, entry.size, self));
             }
         }
     });
 
     indexFile = new Asset('index.html', '/', 'html', false, null, null, null, this);
-    this._addAsset(indexFile);
-    this._indexFile = indexFile;
+    this.addAsset(indexFile);
+    this.indexFile = indexFile;
 }
 
 /**
@@ -135,7 +135,7 @@ AssetBundle.prototype.getDirectoryUri = function getDirectoryUri() {
  * @returns {null|AssetBundle}
  */
 AssetBundle.prototype.getParentAssetBundle = function getParentAssetBundle() {
-    return this._parentAssetBundle;
+    return this.parentAssetBundle;
 };
 
 /**
@@ -148,8 +148,8 @@ AssetBundle.prototype.getParentAssetBundle = function getParentAssetBundle() {
 AssetBundle.prototype.cachedAssetForUrlPath = function cachedAssetForUrlPath(urlPath, hash) {
     var asset;
 
-    if (!(urlPath in this._ownAssetsByURLPath)) return null;
-    asset = this._ownAssetsByURLPath[urlPath];
+    if (!(urlPath in this.ownAssetsByURLPath)) return null;
+    asset = this.ownAssetsByURLPath[urlPath];
 
     // If the asset is not cacheable, we require a matching hash.
     if (asset.cacheable && hash === null || asset.hash !== null && asset.hash === hash) {
@@ -166,8 +166,8 @@ AssetBundle.prototype.cachedAssetForUrlPath = function cachedAssetForUrlPath(url
  */
 AssetBundle.prototype.getOwnAssets = function getOwnAssets() {
     var self = this;
-    return Object.keys(this._ownAssetsByURLPath).reduce(function reduceKeys(arr, key) {
-        arr.push(self._ownAssetsByURLPath[key]);
+    return Object.keys(this.ownAssetsByURLPath).reduce(function reduceKeys(arr, key) {
+        arr.push(self.ownAssetsByURLPath[key]);
         return arr;
     }, []);
 };
@@ -176,7 +176,7 @@ AssetBundle.prototype.getOwnAssets = function getOwnAssets() {
  * @returns {string}
  */
 AssetBundle.prototype.getVersion = function getVersion() {
-    return this._version;
+    return this.version;
 };
 
 /**
@@ -185,10 +185,10 @@ AssetBundle.prototype.getVersion = function getVersion() {
  * @returns {Object}
  */
 AssetBundle.prototype.getRuntimeConfig = function getRuntimeConfig() {
-    if (this._runtimeConfig === null) {
-        this._runtimeConfig = this._loadRuntimeConfig(path.join(this.directoryUri, this._indexFile.filePath));
+    if (this.runtimeConfig === null) {
+        this.runtimeConfig = this.loadRuntimeConfig(path.join(this.directoryUri, this.indexFile.filePath));
     }
-    return this._runtimeConfig;
+    return this.runtimeConfig;
 };
 
 /**
@@ -198,17 +198,17 @@ AssetBundle.prototype.getRuntimeConfig = function getRuntimeConfig() {
  */
 AssetBundle.prototype.getAppId = function getAppId() {
     var runtimeConfig;
-    if (this._appId === null) {
+    if (this.appId === null) {
         runtimeConfig = this.getRuntimeConfig();
         if (runtimeConfig !== null) {
             if (!('appId' in runtimeConfig)) {
-                this._l.log('error', 'Error reading APP_ID from runtime config');
+                this.log.log('error', 'Error reading APP_ID from runtime config');
             } else {
-                this._appId = runtimeConfig.appId;
+                this.appId = runtimeConfig.appId;
             }
         }
     }
-    return this._appId;
+    return this.appId;
 };
 
 /**
@@ -218,17 +218,17 @@ AssetBundle.prototype.getAppId = function getAppId() {
  */
 AssetBundle.prototype.getRootUrlString = function getRootUrlString() {
     var runtimeConfig;
-    if (this._rootUrlString === null) {
+    if (this.rootUrlString === null) {
         runtimeConfig = this.getRuntimeConfig();
         if (runtimeConfig !== null) {
             if (!('ROOT_URL' in runtimeConfig)) {
-                this._l.log('error', 'Error reading ROOT_URL from runtime config');
+                this.log.log('error', 'Error reading ROOT_URL from runtime config');
             } else {
-                this._rootUrlString = runtimeConfig.ROOT_URL;
+                this.rootUrlString = runtimeConfig.ROOT_URL;
             }
         }
     }
-    return this._rootUrlString;
+    return this.rootUrlString;
 };
 
 /**
@@ -248,14 +248,14 @@ AssetBundle.prototype.didMoveToDirectoryAtUri = function didMoveToDirectoryAtUri
  *
  * @returns {Asset}
  */
-AssetBundle.prototype._assetForUrlPath = function _assetForUrlPath(urlPath) {
+AssetBundle.prototype.assetForUrlPath = function _assetForUrlPath(urlPath) {
     var asset;
 
-    if (urlPath in this._ownAssetsByURLPath) {
-        asset = this._ownAssetsByURLPath[urlPath];
+    if (urlPath in this.ownAssetsByURLPath) {
+        asset = this.ownAssetsByURLPath[urlPath];
     } else {
-        if (this._parentAssetBundle !== null) {
-            asset = this._parentAssetBundle._assetForUrlPath(urlPath);
+        if (this.parentAssetBundle !== null) {
+            asset = this.parentAssetBundle.assetForUrlPath(urlPath);
         }
     }
     return asset;
@@ -271,11 +271,11 @@ AssetBundle.prototype._loadAssetManifest = function _loadAssetManifest() {
     var msg;
     var manifestPath = path.join(this.directoryUri, 'program.json');
     try {
-        return new AssetManifest(this._l.getUnwrappedLogger(), fs.readFileSync(manifestPath, 'UTF-8'));
+        return new AssetManifest(this.log.getUnwrappedLogger(), fs.readFileSync(manifestPath, 'UTF-8'));
     } catch (e) {
         msg = 'Error loading asset manifest: ' + e.message;
-        this._l.log('error', msg);
-        this._l.log('debug', e);
+        this.log.log('error', msg);
+        this.log.log('debug', e);
         throw new Error(msg);
     }
 };
@@ -295,20 +295,20 @@ AssetBundle.prototype._loadRuntimeConfig = function _loadRuntimeConfig(index) {
     try {
         content = fs.readFileSync(index, 'UTF-8');
     } catch (e) {
-        this._l.log('error', 'Error loading index file: ' + e.message);
+        this.log.log('error', 'Error loading index file: ' + e.message);
         return null;
     }
 
-    if (!this._matcher.test(content)) {
-        this._l.log('error', 'Could not find runtime config in index file');
+    if (!this.matcher.test(content)) {
+        this.log.log('error', 'Could not find runtime config in index file');
         return null;
     }
 
     try {
-        matches = content.match(this._matcher);
+        matches = content.match(this.matcher);
         return JSON.parse(decodeURIComponent(matches[1]));
     } catch (e) {
-        this._l.log('error', 'Could not find runtime config in index file');
+        this.log.log('error', 'Could not find runtime config in index file');
         return null;
     }
 };
@@ -320,7 +320,7 @@ AssetBundle.prototype._loadRuntimeConfig = function _loadRuntimeConfig(index) {
  * @private
  */
 AssetBundle.prototype._addAsset = function _addAsset(asset) {
-    this._ownAssetsByURLPath[asset.urlPath] = asset;
+    this.ownAssetsByURLPath[asset.urlPath] = asset;
 };
 
 module.exports = AssetBundle;

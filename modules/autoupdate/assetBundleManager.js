@@ -24,7 +24,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 
- This is based on:
+ This file is based on:
  /cordova-plugin-meteor-webapp/blob/master/src/android/AssetBundleManager.java
 
  */
@@ -52,9 +52,9 @@ shellJsConfig = config;
  * @constructor
  */
 function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirectory) {
-    this._l = l.getLoggerFor('AssetBundleManager');
+    this.log = l.getLoggerFor('AssetBundleManager');
 
-    this._configuration = configuration;
+    this.configuration = configuration;
     this._initialAssetBundle = initialAssetBundle;
     this._callback = null;
     this._versionsDirectory = versionsDirectory;
@@ -67,7 +67,7 @@ function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirect
 
     this._assetBundleDownloader = null;
 
-    this._httpClient = request;
+    this.httpClient = request;
 
     this._loadDownloadedAssetBundles();
 }
@@ -84,7 +84,10 @@ AssetBundleManager.prototype.setCallback = function setCallback(callback) {
 
 AssetBundleManager.prototype.downloadedAssetBundleWithVersion =
     function downloadedAssetBundleWithVersion(version) {
-        return this._downloadedAssetBundlesByVersion[version];
+        if (version in this._downloadedAssetBundlesByVersion) {
+            return this._downloadedAssetBundlesByVersion[version];
+        }
+        return null;
     }
 
 /**
@@ -100,8 +103,8 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
     var downloadedAssetBundle;
     var manifestUrl = url.resolve(baseUrl, 'manifest.json');
 
-    this._l.info('Trying to query ' + manifestUrl);
-    this._httpClient(manifestUrl, function onHttpResponse(error, response, body) {
+    this.log.info('Trying to query ' + manifestUrl);
+    this.httpClient(manifestUrl, function onHttpResponse(error, response, body) {
         if (!error) {
             if (response.statusCode !== 200) {
                 self._didFail(
@@ -111,7 +114,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
             }
 
             try {
-                manifest = new AssetManifest(self._l, body);
+                manifest = new AssetManifest(self.log, body);
             } catch (e) {
                 self._didFail(e.message);
                 return;
@@ -119,13 +122,13 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             version = manifest.version;
 
-            self._l.debug('Downloaded asset manifest for version: ' + version);
+            self.log.debug('Downloaded asset manifest for version: ' + version);
 
             if (
                 self._assetBundleDownloader !== null &&
                 self._assetBundleDownloader.getAssetBundle().getVersion() === version
             ) {
-                self._l.info('Already downloading asset bundle version: ' + version);
+                self.log.info('Already downloading asset bundle version: ' + version);
                 return;
             }
 
@@ -144,7 +147,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             // There is no need to redownload the initial version.
             if (self._initialAssetBundle.getVersion() === version) {
-                self._l.debug('No redownload of initial version.');
+                self.log.debug('No redownload of initial version.');
                 self._didFinishDownloadingAssetBundle(self._initialAssetBundle);
                 return;
             }
@@ -176,13 +179,13 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
                 self._didFail(e.message);
                 return;
             }
-            self._l.debug('Manifest copied to new Download dir');
+            self.log.debug('Manifest copied to new Download dir');
 
 
             assetBundle = null;
             try {
                 assetBundle = new AssetBundle(
-                    self._l,
+                    self.log,
                     self._downloadDirectory,
                     manifest,
                     self._initialAssetBundle
@@ -230,13 +233,13 @@ AssetBundleManager.prototype._makeDownloadDirectory = function _makeDownloadDire
     shellJsConfig.fatal = true;
     try {
         if (!fs.existsSync(this._downloadDirectory)) {
-            this._l.info('Created download dir.');
+            this.log.info('Created download dir.');
             shell.mkdir(this._downloadDirectory);
         }
         shellJsConfig.fatal = false;
         return true;
     } catch (e) {
-        this._l.debug('Creating download dir failed: ' + e.message);
+        this.log.debug('Creating download dir failed: ' + e.message);
     }
     shellJsConfig.fatal = false;
     return false;
@@ -258,12 +261,12 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
             && fs.lstatSync(directory).isDirectory()
         ) {
             assetBundle = new AssetBundle(
-                self._l,
+                self.log,
                 directory,
                 undefined,
                 self._initialAssetBundle
             );
-            self._l.info('Got version: ' + assetBundle.getVersion() + ' in ' + file);
+            self.log.info('Got version: ' + assetBundle.getVersion() + ' in ' + file);
             self._downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
         }
     });
@@ -278,7 +281,7 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
  */
 AssetBundleManager.prototype._didFail = function _didFail(cause) {
     this._assetBundleDownloader = null;
-    this._l.debug('Fail: ' + cause);
+    this.log.debug('Fail: ' + cause);
 
     if (this._callback !== null) {
         this._callback.onError(cause);
@@ -401,8 +404,8 @@ AssetBundleManager.prototype._downloadAssetBundle =
         }
 
         assetBundleDownloader = new AssetBundleDownloader(
-            this._l,
-            this._configuration,
+            this.log,
+            this.configuration,
             assetBundle,
             baseUrl,
             missingAssets
@@ -452,7 +455,7 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
                 try {
                     shell.rm('-Rf', this._partialDownloadDirectory);
                 } catch (e) {
-                    this._l.error('Could not delete partial download directory.');
+                    this.log.error('Could not delete partial download directory.');
                 }
             }
 
@@ -461,7 +464,7 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
             try {
                 shell.mv(this._downloadDirectory, this._partialDownloadDirectory);
             } catch (e) {
-                this._l.error('Could not rename existing download directory');
+                this.log.error('Could not rename existing download directory');
                 shellJsConfig.fatal = false;
                 return;
             }
@@ -469,13 +472,13 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
             try {
                 this._partiallyDownloadedAssetBundle =
                     new AssetBundle(
-                        this._l,
+                        this.log,
                         this._partialDownloadDirectory,
                         undefined,
                         this._initialAssetBundle
                     );
             } catch (e) {
-                this._l.warn('Could not load partially downloaded asset bundle.');
+                this.log.warn('Could not load partially downloaded asset bundle.');
             }
         }
         shellJsConfig.fatal = false;

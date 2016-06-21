@@ -156,7 +156,7 @@ export default class MeteorServer {
         try {
             this.httpServerInstance = http.createServer(this.server);
             this.httpServerInstance.on('error', (e) => {
-                throw new Error(e);
+                this.onStartupFailed(1);
             });
             this.httpServerInstance.on('listening', () => {
                 if (restart) {

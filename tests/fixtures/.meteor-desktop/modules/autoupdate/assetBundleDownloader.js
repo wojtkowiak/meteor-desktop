@@ -46,8 +46,8 @@ var Log = require('./logger');
  * @constructor
  */
 function AssetBundleDownloader(l, configuration, assetBundle, baseUrl, missingAssets) {
-    this._l = new Log('AssetBundleDownloader', l);
-    this._l.log('debug', 'AssetBundle downloader created for ' + assetBundle.directoryUri);
+    this.log = new Log('AssetBundleDownloader', l);
+    this.log.log('debug', 'AssetBundle downloader created for ' + assetBundle.directoryUri);
 
     this._configuration = configuration;
     this._assetBundle = assetBundle;
@@ -90,7 +90,7 @@ AssetBundleDownloader.prototype.setCallback = function setCallback(onFinished, o
 AssetBundleDownloader.prototype.resume = function resume() {
     var self = this;
 
-    this._l.log('debug', 'Start downloading assets from bundle with version: ' + this._assetBundle.getVersion());
+    this.log.log('debug', 'Start downloading assets from bundle with version: ' + this._assetBundle.getVersion());
 
     /**
      * @param {Asset} asset
@@ -141,7 +141,7 @@ AssetBundleDownloader.prototype.resume = function resume() {
         self._missingAssets.splice(self._missingAssets.indexOf(asset), 1);
 
         if (self._missingAssets.length === 0) {
-            self._l.log('debug', 'Finished downloading new asset bundle version: ' + self._assetBundle.getVersion());
+            self.log.log('debug', 'Finished downloading new asset bundle version: ' + self._assetBundle.getVersion());
 
             if (self._onFinished) {
                 self._onFinished();
@@ -243,7 +243,7 @@ AssetBundleDownloader.prototype._verifyResponse = function _verifyResponse(respo
                 } else {
                     if (asset.entrySize !== body.length) {
                         // TODO: should we fail here?
-                        this._l.log('debug', 'Wrong size for :' + asset.filePath + ' Expected: ' + asset.entrySize + ' != ' + body.length);
+                        this.log.log('debug', 'Wrong size for :' + asset.filePath + ' Expected: ' + asset.entrySize + ' != ' + body.length);
                     }
                 }
             }
@@ -262,7 +262,7 @@ AssetBundleDownloader.prototype._didFail = function _didFail(cause) {
 
     this.cancel();
 
-    this._l.log('debug', 'Failure: ' + cause);
+    this.log.log('debug', 'Failure: ' + cause);
     if (this._onFailure !== null) {
         this._onFailure(cause);
     }

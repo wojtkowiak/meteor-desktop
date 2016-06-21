@@ -51,7 +51,7 @@ shellJsConfig = config;
  * @constructor
  */
 function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirectory) {
-    this._l = new Log('AssetBundleManager', l);
+    this.log = new Log('AssetBundleManager', l);
 
     this._configuration = configuration;
     this._initialAssetBundle = initialAssetBundle;
@@ -101,7 +101,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
             }
 
             try {
-                manifest = new AssetManifest(self._l.getUnwrappedLogger(), body);
+                manifest = new AssetManifest(self.log.getUnwrappedLogger(), body);
             } catch (e) {
                 self._didFail(e.message);
                 return;
@@ -109,10 +109,10 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             version = manifest.version;
 
-            self._l.log('debug', 'Downloaded asset manifest for version: ' + version);
+            self.log.log('debug', 'Downloaded asset manifest for version: ' + version);
 
             if (self._assetBundleDownloader !== null && self._assetBundleDownloader.getAssetBundle().getVersion() === version) {
-                self._l.log('info', 'Already downloading asset bundle version: ' + version);
+                self.log.log('info', 'Already downloading asset bundle version: ' + version);
                 return;
             }
 
@@ -129,7 +129,7 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
 
             // There is no need to redownload the initial version.
             if (self._initialAssetBundle.getVersion() === version) {
-                self._l.log('debug', 'No redownload of initial version.');
+                self.log.log('debug', 'No redownload of initial version.');
                 self._didFinishDownloadingAssetBundle(self._initialAssetBundle);
                 return;
             }
@@ -161,11 +161,11 @@ AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl)
                 self._didFail(e.message);
                 return;
             }
-            self._l.log('debug', 'Manifest copied to new Download dir');
+            self.log.log('debug', 'Manifest copied to new Download dir');
 
             assetBundle = null;
             try {
-                assetBundle = new AssetBundle(self._l.getUnwrappedLogger(), self._downloadDirectory, manifest, self._initialAssetBundle);
+                assetBundle = new AssetBundle(self.log.getUnwrappedLogger(), self._downloadDirectory, manifest, self._initialAssetBundle);
             } catch (e) {
                 self._didFail(e.message);
                 return;
@@ -207,13 +207,13 @@ AssetBundleManager.prototype._makeDownloadDirectory = function _makeDownloadDire
     shellJsConfig.fatal = true;
     try {
         if (!fs.existsSync(this._downloadDirectory)) {
-            this._l.log('info', 'Created download dir.');
+            this.log.log('info', 'Created download dir.');
             shell.mkdir(this._downloadDirectory);
         }
         shellJsConfig.fatal = false;
         return true;
     } catch (e) {
-        this._l.log('debug', 'Creating download dir failed: ' + e.message);
+        this.log.log('debug', 'Creating download dir failed: ' + e.message);
     }
     shellJsConfig.fatal = false;
     return false;
@@ -230,8 +230,8 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
 
     shell.ls('-d', path.join(this._versionsDirectory, '*')).forEach(function eachVersionDir(file) {
         if (self._downloadDirectory !== path.normalize(file) && self._partialDownloadDirectory !== path.normalize(file) && fs.lstatSync(file).isDirectory()) {
-            assetBundle = new AssetBundle(self._l.getUnwrappedLogger(), file, undefined, self._initialAssetBundle);
-            self._l.log('info', 'Got version: ' + assetBundle.getVersion() + ' in ' + file);
+            assetBundle = new AssetBundle(self.log.getUnwrappedLogger(), file, undefined, self._initialAssetBundle);
+            self.log.log('info', 'Got version: ' + assetBundle.getVersion() + ' in ' + file);
             self._downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
         }
     });
@@ -245,7 +245,7 @@ AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloa
  */
 AssetBundleManager.prototype._didFail = function _didFail(cause) {
     this._assetBundleDownloader = null;
-    this._l.log('debug', 'Fail: ' + cause);
+    this.log.log('debug', 'Fail: ' + cause);
 
     if (this._callback !== null) {
         this._callback.onError(cause);
@@ -360,7 +360,7 @@ AssetBundleManager.prototype._downloadAssetBundle = function _downloadAssetBundl
         return;
     }
 
-    assetBundleDownloader = new AssetBundleDownloader(this._l.getUnwrappedLogger(), this._configuration, assetBundle, baseUrl, missingAssets);
+    assetBundleDownloader = new AssetBundleDownloader(this.log.getUnwrappedLogger(), this._configuration, assetBundle, baseUrl, missingAssets);
 
     assetBundleDownloader.setCallback(function onFinished() {
         assetBundleDownloader = null;
@@ -401,7 +401,7 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded = function _
             try {
                 shell.rm('-Rf', this._partialDownloadDirectory);
             } catch (e) {
-                this._l.log('error', 'Could not delete partial download directory.');
+                this.log.log('error', 'Could not delete partial download directory.');
             }
         }
 
@@ -410,15 +410,15 @@ AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded = function _
         try {
             shell.mv(this._downloadDirectory, this._partialDownloadDirectory);
         } catch (e) {
-            this._l.log('error', 'Could not rename existing download directory');
+            this.log.log('error', 'Could not rename existing download directory');
             shellJsConfig.fatal = false;
             return;
         }
 
         try {
-            this._partiallyDownloadedAssetBundle = new AssetBundle(this._l.getUnwrappedLogger(), this._partialDownloadDirectory, undefined, this._initialAssetBundle);
+            this._partiallyDownloadedAssetBundle = new AssetBundle(this.log.getUnwrappedLogger(), this._partialDownloadDirectory, undefined, this._initialAssetBundle);
         } catch (e) {
-            this._l.log('warn', 'Could not load partially downloaded asset bundle.');
+            this.log.log('warn', 'Could not load partially downloaded asset bundle.');
         }
     }
     shellJsConfig.fatal = false;

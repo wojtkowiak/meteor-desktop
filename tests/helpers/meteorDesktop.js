@@ -67,6 +67,12 @@ class Logger {
         }
     }
 
+    verbose(...args) {
+        if (this.show) {
+            console.log(...args);
+        }
+    }
+
     debug(...args) {
         if (this.show) {
             console.log(...args);
@@ -75,7 +81,7 @@ class Logger {
 
     warn(...args) {
         if (this.show) {
-            console.log(...args);
+            console.warn(...args);
         }
     }
 

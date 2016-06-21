@@ -24,12 +24,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
 
- This is based on:
+ This file is based on:
  /cordova-plugin-meteor-webapp/blob/master/src/android/AssetManifest.java
 
  */
 
-var assignIn = require('lodash/assignIn');
+import assignIn from 'lodash/assignIn';
 
 /**
  * Represents single file in the manifest.
@@ -70,23 +70,24 @@ function ManifestEntry(manifestEntry) {
 /**
  * Represents a program.json app manifest.
  *
- * @param {Object} logger         - logger instance
- * @param {string} manifestSource - manifest source
+ * @param {Object} logger         - Logger instance.
+ * @param {string} manifestSource - Manifest source.
  *
  * @property {string} version
  * @property {string} cordovaCompatibilityVersion
  *
  * @constructor
  */
-function AssetManifest(logger, manifestSource) {
-    var l = logger.getLoggerFor('AssetManifest');
-    var json;
-    var format;
+export default function AssetManifest(logger, manifestSource) {
+    const log = logger.getLoggerFor('AssetManifest');
+    let json;
+    let format;
 
     function error(msg) {
-        l.error(msg);
+        log.error(msg);
         throw new Error(msg);
     }
+
     try {
         /**
          * @type object
@@ -101,7 +102,7 @@ function AssetManifest(logger, manifestSource) {
         format = json.format || null;
 
         if (format !== null && format !== 'web-program-pre1') {
-            error('The asset manifest format is incompatible: ' + format);
+            error(`The asset manifest format is incompatible: ${format}`);
         }
         if (!('version' in json) || json.version === null) {
             error('Asset manifest does not have a version.');
@@ -117,23 +118,13 @@ function AssetManifest(logger, manifestSource) {
 
         this.cordovaCompatibilityVersion = json.cordovaCompatibilityVersions.android;
 
-        this.entries = json.manifest.filter(
-            /**
-             * @param {object} manifestEntry
-             * @param {string} manifestEntry.where
-             * @returns {boolean}
-             */
-            function filterClientEntries(manifestEntry) {
-                return !(manifestEntry.where !== 'client');
-            })
-                .map(function mapEntry(manifestEntry) {
-                    return new ManifestEntry(manifestEntry);
-                });
+        this.entries = json.manifest
+            .filter(manifestEntry => manifestEntry.where === 'client')
+            .map(manifestEntry => new ManifestEntry(manifestEntry));
 
-        l.debug(this.entries.length + ' entries. (Version: ' + this.version + ' compVer: '
-            + this.cordovaCompatibilityVersion + ')');
+        log.debug(`${this.entries.length} entries. (Version: ${this.version})`);
     } catch (e) {
-        error('Error parsing asset manifest: ' + e.message);
+        error(`error parsing asset manifest: ${e.message}`);
     }
 }
 

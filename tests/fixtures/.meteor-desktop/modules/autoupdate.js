@@ -56,11 +56,11 @@ function HCPClient(l, app, settings, systemEvents) {
     var self = this;
     var autoupdateModule = new Module('autoupdateModule');
 
-    this._l = new Log('HCPClient', log);
+    this.log = new Log('HCPClient', log);
 
-    systemEvents.on('initialization', this._init.bind(this));
+    systemEvents.on('initialization', this.init.bind(this));
 
-    this._config = {
+    this.config = {
         appId: null,
         rootUrlString: null,
         cordovaCompatibilityVersion: null,
@@ -68,19 +68,19 @@ function HCPClient(l, app, settings, systemEvents) {
         lastDownloadedVersion: null
     };
 
-    this._configFile = join(__dirname, '..', 'autoupdateModule.json');
-    this._versionsDir = join(__dirname, '..', 'versions');
+    this.configFile = join(__dirname, '..', 'autoupdateModule.json');
+    this.versionsDir = join(__dirname, '..', 'versions');
 
     this._module = autoupdateModule;
 
     this._module.on('checkForUpdates', function checkForUpdates() {
-        var rootUrl = self._currentAssetBundle.getRootUrlString();
+        var rootUrl = self.currentAssetBundle.getRootUrlString();
         if (rootUrl === null) {
             module.send('error', 'checkForUpdates requires a rootURL to be configured');
             return;
         }
 
-        self._assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
+        self.assetBundleManager.checkForUpdates(url.resolve(rootUrl, '__cordova/'));
         self._event = null;
     });
 }
@@ -94,15 +94,15 @@ HCPClient.prototype._init = function _init() {
     var initialAssetBundle;
     var lastDownloadedVersion;
 
-    if (!fs.existsSync(this._configFile)) {
-        this._saveConfig();
-        this._l.log('info', 'Created empty autoupdateModule.json');
+    if (!fs.existsSync(this.configFile)) {
+        this.saveConfig();
+        this.log.log('info', 'Created empty autoupdateModule.json');
     }
 
-    this._readConfig();
+    this.readConfig();
 
-    this._l.log('debug', 'Reading initial version');
-    initialAssetBundle = new AssetBundle(this._l.getUnwrappedLogger(), join(__dirname, '..', 'meteor'));
+    this.log.log('debug', 'Reading initial version');
+    initialAssetBundle = new AssetBundle(this.log.getUnwrappedLogger(), join(__dirname, '..', 'meteor'));
 
     // If the last seen initial version is different from the currently bundled
     // version, we delete the versions directory and unset lastDownloadedVersion
@@ -119,42 +119,42 @@ HCPClient.prototype._init = function _init() {
      }*/
 
     // We keep track of the last seen initial version (see above)
-    this._config.lastSeenInitialVersion = initialAssetBundle.getVersion();
+    this.config.lastSeenInitialVersion = initialAssetBundle.getVersion();
 
     // If the versions directory does not exist, we create it
-    if (!fs.existsSync(this._versionsDir)) {
-        this._l.log('info', 'Created versions dir.');
+    if (!fs.existsSync(this.versionsDir)) {
+        this.log.log('info', 'Created versions dir.');
         // TODO: try/catch
-        shell.mkdir(this._versionsDir);
+        shell.mkdir(this.versionsDir);
     }
 
-    this._assetBundleManager = new AssetBundleManager(this._l.getUnwrappedLogger(), this._config, initialAssetBundle, this._versionsDir);
+    this.assetBundleManager = new AssetBundleManager(this.log.getUnwrappedLogger(), this.config, initialAssetBundle, this.versionsDir);
 
-    this._assetBundleManager.setCallback(this);
+    this.assetBundleManager.setCallback(this);
 
-    lastDownloadedVersion = this._config.lastDownloadedVersion;
+    lastDownloadedVersion = this.config.lastDownloadedVersion;
     if (lastDownloadedVersion) {
-        this._currentAssetBundle = this._assetBundleManager._downloadedAssetBundlesByVersion[lastDownloadedVersion];
+        this.currentAssetBundle = this.assetBundleManager._downloadedAssetBundlesByVersion[lastDownloadedVersion];
 
-        if (this._currentAssetBundle === null) {
-            this._currentAssetBundle = initialAssetBundle;
+        if (this.currentAssetBundle === null) {
+            this.currentAssetBundle = initialAssetBundle;
         }
     } else {
-        this._currentAssetBundle = initialAssetBundle;
+        this.currentAssetBundle = initialAssetBundle;
     }
 
-    this._config.appId = this._currentAssetBundle.getAppId();
-    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
-    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
+    this.config.appId = this.currentAssetBundle.getAppId();
+    this.config.rootUrlString = this.currentAssetBundle.getRootUrlString();
+    this.config.cordovaCompatibilityVersion = this.currentAssetBundle.cordovaCompatibilityVersion;
 
-    this._saveConfig();
+    this.saveConfig();
 
-    this._pendingAssetBundle = null;
+    this.pendingAssetBundle = null;
 };
 
 HCPClient.prototype.getPendingVersion = function getPendingVersion() {
-    if (this._pendingAssetBundle !== null) {
-        return this._pendingAssetBundle.getVersion();
+    if (this.pendingAssetBundle !== null) {
+        return this.pendingAssetBundle.getVersion();
     }
     return null;
 };
@@ -164,7 +164,7 @@ HCPClient.prototype.getPendingVersion = function getPendingVersion() {
  * @returns {string}
  */
 HCPClient.prototype.getDirectory = function getDirectory() {
-    return this._currentAssetBundle.getDirectoryUri();
+    return this.currentAssetBundle.getDirectoryUri();
 };
 
 /**
@@ -172,7 +172,7 @@ HCPClient.prototype.getDirectory = function getDirectory() {
  * @returns {string|null}
  */
 HCPClient.prototype.getParentDirectory = function getParentDirectory() {
-    return this._currentAssetBundle.getParentAssetBundle() ? this._currentAssetBundle.getParentAssetBundle().getDirectoryUri() : null;
+    return this.currentAssetBundle.getParentAssetBundle() ? this.currentAssetBundle.getParentAssetBundle().getDirectoryUri() : null;
 };
 
 /**
@@ -180,18 +180,18 @@ HCPClient.prototype.getParentDirectory = function getParentDirectory() {
  */
 HCPClient.prototype.onReset = function onReset() {
     // If there is a pending asset bundle, we make it the current
-    if (this._pendingAssetBundle !== null) {
-        this._currentAssetBundle = this._pendingAssetBundle;
-        this._pendingAssetBundle = null;
+    if (this.pendingAssetBundle !== null) {
+        this.currentAssetBundle = this.pendingAssetBundle;
+        this.pendingAssetBundle = null;
     }
 
-    this._l.log('info', 'Serving asset bundle with version: ' + this._currentAssetBundle.getVersion());
+    this.log.log('info', 'Serving asset bundle with version: ' + this.currentAssetBundle.getVersion());
 
-    this._config.appId = this._currentAssetBundle.getAppId();
-    this._config.rootUrlString = this._currentAssetBundle.getRootUrlString();
-    this._config.cordovaCompatibilityVersion = this._currentAssetBundle.cordovaCompatibilityVersion;
+    this.config.appId = this.currentAssetBundle.getAppId();
+    this.config.rootUrlString = this.currentAssetBundle.getRootUrlString();
+    this.config.cordovaCompatibilityVersion = this.currentAssetBundle.cordovaCompatibilityVersion;
 
-    this._saveConfig();
+    this.saveConfig();
 
     // Don't start startup timer when running a test
     // if (testingDelegate == null) {
@@ -204,7 +204,7 @@ HCPClient.prototype.onReset = function onReset() {
  * @private
  */
 HCPClient.prototype._saveConfig = function _saveConfig() {
-    fs.writeFileSync(this._configFile, JSON.stringify(this._config, null, '\t'));
+    fs.writeFileSync(this.configFile, JSON.stringify(this.config, null, '\t'));
 };
 
 /**
@@ -213,7 +213,7 @@ HCPClient.prototype._saveConfig = function _saveConfig() {
  */
 HCPClient.prototype._readConfig = function _readConfig() {
     // TODO: try/catch
-    this._config = JSON.parse(fs.readFileSync(this._configFile, 'UTF-8'));
+    this.config = JSON.parse(fs.readFileSync(this.configFile, 'UTF-8'));
 };
 
 /**
@@ -221,8 +221,8 @@ HCPClient.prototype._readConfig = function _readConfig() {
  * @param cause
  */
 HCPClient.prototype.onError = function onError(cause) {
-    this._l.log('error', 'Download failure: ' + cause);
-    this._notifyError(cause);
+    this.log.log('error', 'Download failure: ' + cause);
+    this.notifyError(cause);
 };
 
 /**
@@ -232,7 +232,7 @@ HCPClient.prototype.onError = function onError(cause) {
  * @private
  */
 HCPClient.prototype._notifyError = function _notifyError(cause) {
-    this._l.log('error', 'Download failure: ' + cause);
+    this.log.log('error', 'Download failure: ' + cause);
     this._module.send('error', '[autoupdate] Download failure: ' + cause);
 };
 
@@ -241,10 +241,10 @@ HCPClient.prototype._notifyError = function _notifyError(cause) {
  * @param assetBundle
  */
 HCPClient.prototype.onFinishedDownloadingAssetBundle = function onFinishedDownloadingAssetBundle(assetBundle) {
-    this._config.lastDownloadedVersion = assetBundle.getVersion();
-    this._saveConfig();
-    this._pendingAssetBundle = assetBundle;
-    this._notifyNewVersionReady(assetBundle.getVersion());
+    this.config.lastDownloadedVersion = assetBundle.getVersion();
+    this.saveConfig();
+    this.pendingAssetBundle = assetBundle;
+    this.notifyNewVersionReady(assetBundle.getVersion());
 };
 
 /**
@@ -266,20 +266,20 @@ HCPClient.prototype.shouldDownloadBundleForManifest = function shouldDownloadBun
     var version = manifest.version;
 
     // No need to redownload the current version
-    if (this._currentAssetBundle.getVersion() === version) {
-        this._l.log('info', 'Skipping downloading current version: ' + version);
+    if (this.currentAssetBundle.getVersion() === version) {
+        this.log.log('info', 'Skipping downloading current version: ' + version);
         return false;
     }
 
     // No need to redownload the pending version
-    if (this._pendingAssetBundle !== null && this._pendingAssetBundle.getVersion() === version) {
-        this._l.log('info', 'Skipping downloading pending version: ' + version);
+    if (this.pendingAssetBundle !== null && this.pendingAssetBundle.getVersion() === version) {
+        this.log.log('info', 'Skipping downloading pending version: ' + version);
         return false;
     }
 
     // Don't download blacklisted versions
-    if (~this._config.blacklistedVersions.indexOf(version)) {
-        this._notifyError('Skipping downloading blacklisted version: ' + version);
+    if (~this.config.blacklistedVersions.indexOf(version)) {
+        this.notifyError('Skipping downloading blacklisted version: ' + version);
         return false;
     }
 
