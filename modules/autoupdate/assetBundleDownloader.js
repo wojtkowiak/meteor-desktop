@@ -35,18 +35,17 @@ import url from 'url';
 import request from 'request';
 import queue from 'queue';
 
-
-/**
- * Assets downloader - responsible for downloading an asset version.
- *
- * @param {object}      log           - Logger instance.
- * @param {object}      configuration - Configuration object.
- * @param {AssetBundle} assetBundle   - Parent asset bundle.
- * @param {string}      baseUrl       - Url of the meteor server.
- * @param {[Asset]}     missingAssets - Array of assets to download.
- * @constructor
- */
-class AssetBundleDownloader {
+export default class AssetBundleDownloader {
+    /**
+     * Assets downloader - responsible for downloading an asset version.
+     *
+     * @param {object}      log           - Winston reference.
+     * @param {object}      configuration - Configuration object.
+     * @param {AssetBundle} assetBundle   - Parent asset bundle.
+     * @param {string}      baseUrl       - Url of the meteor server.
+     * @param {[Asset]}     missingAssets - Array of assets to download.
+     * @constructor
+     */
     constructor(log, configuration, assetBundle, baseUrl, missingAssets) {
         this.log = log.getLoggerFor('AssetBundleDownloader');
         this.log.debug(`downloader created for ${assetBundle.directoryUri}`);
@@ -63,7 +62,7 @@ class AssetBundleDownloader {
         this.assetsDownloading = [];
         this.onFinished = null;
         this.onFailure = null;
-        this.cancel = false;
+        this.cancelInvoked = false;
 
         this.queue = queue();
     }
@@ -81,7 +80,7 @@ class AssetBundleDownloader {
      * @param {function} onFinished - Callback for success.
      * @param {function} onFailure  - Callback for failure.
      */
-    setCallback(onFinished, onFailure) {
+    setCallbacks(onFinished, onFailure) {
         this.onFinished = onFinished;
         this.onFailure = onFailure;
     }
@@ -90,40 +89,43 @@ class AssetBundleDownloader {
      * Starts the download.
      */
     resume() {
-        var self = this;
+        const self = this;
 
-        this.log.debug(
-            'Start downloading assets from bundle with version: ' + this.assetBundle.getVersion()
+        this.log.verbose(
+            `started downloading assets from bundle with version: ${this.assetBundle.getVersion()}`
         );
 
         /**
-         * @param {Asset} asset
-         * @param {string} cause
+         * @param {Asset} asset  - Asset whose downloading failed.
+         * @param {string} cause - The cause.
          */
         function onFailure(asset, cause) {
             self.assetsDownloading.splice(self.assetsDownloading.indexOf(asset), 1);
 
-            if (!self.cancel) {
-                self._didFail('Error downloading asset: ' + asset.filePath + ': ' + cause);
+            if (!self.cancelInvoked) {
+                self.didFail(`error downloading asset: ${asset.filePath}: ${cause}`);
             }
         }
 
+        /**
+         * @param {Asset} asset - Asset that was downloaded.
+         * @param {Object} response - Response object from `request`.
+         * @param {string} body - Body of downloaded the file.
+         */
         function onResponse(asset, response, body) {
-            var runtimeConfig;
-
             self.assetsDownloading.splice(self.assetsDownloading.indexOf(asset), 1);
 
             try {
-                self._verifyResponse(response, asset, body);
+                self.verifyResponse(response, asset, body);
             } catch (e) {
-                self._didFail(e.message);
+                self.didFail(e.message);
                 return;
             }
 
             try {
                 fs.writeFileSync(asset.getFile(), body);
             } catch (e) {
-                self._didFail(e.message);
+                self.didFail(e.message);
                 return;
             }
 
@@ -131,22 +133,25 @@ class AssetBundleDownloader {
             // and compare autoupdateVersionCordova to the version in the manifest to verify
             // if we downloaded the expected version.
             if (asset.filePath === 'index.html') {
-                runtimeConfig = self.assetBundle.getRuntimeConfig();
+                const runtimeConfig = self.assetBundle.getRuntimeConfig();
                 if (runtimeConfig !== null) {
                     try {
-                        self._verifyRuntimeConfig(runtimeConfig);
+                        self.verifyRuntimeConfig(runtimeConfig);
                     } catch (e) {
-                        self._didFail(e);
+                        self.didFail(e);
                         return;
                     }
                 }
             }
 
+            self.log.verbose(`saving ${asset.urlPath}`);
+
             self.missingAssets.splice(self.missingAssets.indexOf(asset), 1);
 
             if (self.missingAssets.length === 0) {
-                self.log.debug(
-                    'Finished downloading new asset bundle version: ' + self.assetBundle.getVersion()
+                self.log.verbose(
+                    'finished downloading new asset bundle version:' +
+                    `${self.assetBundle.getVersion()}`
                 );
 
                 if (self.onFinished) {
@@ -155,16 +160,14 @@ class AssetBundleDownloader {
             }
         }
 
-        this.missingAssets.forEach(function eachAsset(asset) {
-            var downloadUrl;
+        this.missingAssets.forEach(asset => {
             if (!~self.assetsDownloading.indexOf(asset)) {
                 self.assetsDownloading.push(asset);
-                downloadUrl = self._downloadUrlForAsset(asset);
-
-                self.queue.push(function downloadFile(callback) {
+                const downloadUrl = self.downloadUrlForAsset(asset);
+                self.queue.push(callback => {
                     self.httpClient(
                         { uri: downloadUrl, encoding: null },
-                        function httpResult(error, response, body) {
+                        (error, response, body) => {
                             if (!error) {
                                 onResponse(asset, response, body);
                             } else {
@@ -176,15 +179,15 @@ class AssetBundleDownloader {
             }
         });
         self.queue.start();
-    };
+    }
 
     /**
      * Cancels downloading.
      */
     cancel() {
-        this.cancel = true;
+        this.cancelInvoked = true;
         this.queue.end();
-    };
+    }
 
     /**
      * Computes a download url for asset.
@@ -193,17 +196,16 @@ class AssetBundleDownloader {
      * @returns {string}
      * @private
      */
-    _downloadUrlForAsset(asset) {
-        var builder;
-        var urlPath = asset.urlPath;
+    downloadUrlForAsset(asset) {
+        let urlPath = asset.urlPath;
 
         // Remove leading / from URL path because the path should be
-        // interpreted relative to the base URL
+        // interpreted relative to the base URL.
         if (urlPath[0] === '/') {
             urlPath = urlPath.substring(1);
         }
 
-        builder = url.parse(url.resolve(this.baseUrl, urlPath));
+        const builder = url.parse(url.resolve(this.baseUrl, urlPath));
 
         // To avoid inadvertently downloading the default index page when an asset
         // is not found, we add meteor_dont_serve_index=true to the URL unless we
@@ -213,51 +215,48 @@ class AssetBundleDownloader {
         }
 
         return url.format(builder);
-    };
+    }
 
     /**
-     * Versifies response from the server.
+     * Verifies response from the server.
      *
      * @param {Object} response - Http response object.
      * @param {Asset}  asset    - Asset which was downloaded.
      * @param {Buffer} body     - Body of the file as a Buffer.
      * @private
      */
-    _verifyResponse(response, asset, body) {
-        var expectedHash;
-        var eTag;
-        var matches;
-        var actualHash;
-
+    verifyResponse(response, asset, body) {
         if (response.statusCode !== 200) {
             throw new Error(
-                'Non-success status code ' + response.statusCode + ' for asset: ' + asset.filePath
+                `non-success status code ${response.statusCode} for asset: ${asset.filePath}`
             );
         }
 
         // If we have a hash for the asset, and the ETag header also specifies
         // a hash, we compare these to verify if we received the expected asset version.
-        expectedHash = asset.hash;
+        const expectedHash = asset.hash;
 
         if (expectedHash !== null) {
-            eTag = response.headers.etag;
+            const eTag = response.headers.etag;
 
             if (eTag !== null) {
-                matches = eTag.match(this.eTagWithSha1HashPattern);
+                const matches = eTag.match(this.eTagWithSha1HashPattern);
 
                 if (this.eTagWithSha1HashPattern.test(eTag)) {
-                    actualHash = matches[1];
+                    const actualHash = matches[1];
 
                     if (actualHash !== expectedHash) {
                         throw new Error(
-                            'Hash mismatch for asset: ' + asset.filePath + ' Expected hash:'
-                            + expectedHash + ' != ' + actualHash
+                            `hash mismatch for asset: ${asset.filePath} - expected hash:` +
+                            `${expectedHash} != ${actualHash}`
                         );
                     } else {
                         if (asset.entrySize !== body.length) {
-                            // TODO: should we fail here?
-                            this.log.debug('Wrong size for :' + asset.filePath + ' Expected: '
-                                + asset.entrySize + ' != ' + body.length);
+                            // This check is specific to this integration. It is not present in
+                            // Cordova integration.
+                            // For now will not throw here as it is accepted on Cordova.
+                            this.log.debug(`wrong size for: ${asset.filePath} - expected: ` +
+                                `${asset.entrySize} != ${body.length}`);
                         }
                     }
                 } else {
@@ -267,7 +266,7 @@ class AssetBundleDownloader {
                 this.log.warn(`no eTag served for ${asset.urlPath}`);
             }
         }
-    };
+    }
 
     /**
      * Fail handler.
@@ -275,16 +274,16 @@ class AssetBundleDownloader {
      * @param {string} cause - Error message;
      * @private
      */
-    _didFail(cause) {
-        if (this.cancel) return;
+    didFail(cause) {
+        if (this.cancelInvoked) return;
 
         this.cancel();
 
-        this.log.debug('Failure: ' + cause);
+        this.log.debug(`failure: ${cause}`);
         if (this.onFailure !== null) {
             this.onFailure(cause);
         }
-    };
+    }
 
 
     /**
@@ -293,31 +292,26 @@ class AssetBundleDownloader {
      * @param {Object} runtimeConfig - Runtime config.
      * @private
      */
-    _verifyRuntimeConfig(runtimeConfig) {
-        var rootUrlString;
-        var rootUrl;
-        var previousRootUrl;
-        var appId;
-
-        var expectedVersion = this.assetBundle.getVersion();
-        var actualVersion = runtimeConfig.autoupdateVersionCordova;
+    verifyRuntimeConfig(runtimeConfig) {
+        const expectedVersion = this.assetBundle.getVersion();
+        const actualVersion = runtimeConfig.autoupdateVersionCordova;
 
         if (actualVersion) {
             if (actualVersion !== expectedVersion) {
                 throw new Error(
-                    'Version mismatch for index page, expected: ' + expectedVersion +
-                    ', actual: ' + actualVersion);
+                    `version mismatch for index page, expected: ${expectedVersion}` +
+                    `, actual: ${actualVersion}`);
             }
         }
 
         if (!('ROOT_URL' in runtimeConfig)) {
-            throw new Error('Could not find ROOT_URL in downloaded asset bundle');
+            throw new Error('could not find ROOT_URL in downloaded asset bundle');
         }
 
-        rootUrlString = runtimeConfig.ROOT_URL;
+        const rootUrlString = runtimeConfig.ROOT_URL;
 
-        rootUrl = url.parse(rootUrlString);
-        previousRootUrl = url.parse(this.configuration.rootUrlString);
+        const rootUrl = url.parse(rootUrlString);
+        const previousRootUrl = url.parse(this.configuration.rootUrlString);
 
         if (previousRootUrl.hostname !== 'localhost' && rootUrl.hostname === 'localhost') {
             throw new Error(
@@ -327,18 +321,18 @@ class AssetBundleDownloader {
         }
 
         if (!('appId' in runtimeConfig)) {
-            throw new Error('Could not find appId in downloaded asset bundle.');
+            throw new Error('could not find appId in downloaded asset bundle.');
         }
 
-        appId = runtimeConfig.appId;
+        const appId = runtimeConfig.appId;
 
         if (appId !== this.configuration.appId) {
             throw new Error(
                 'appId in downloaded asset bundle does not match current appId. Make sure the' +
-                ' server at ' + rootUrlString + ' is serving the right app.'
+                ` server at ${rootUrlString} is serving the right app.`
             );
         }
-    };
+    }
 }
 
 module.exports = AssetBundleDownloader;

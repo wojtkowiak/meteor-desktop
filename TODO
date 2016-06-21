@@ -1,11 +1,13 @@
 - inject isDesktop on hcp
 
+- https://github.com/jamielob/reloader/
 - startup timer and fallback strategy (startup timer should run on any run)
 
 - desktop compatibility version (win/lin/osx)
 - make @ transleate to relative path
 - how to read local files in browser
-- set up x-sourcemaps
+
+
 
 - generate installer
 - test installers, test new initialbundlever

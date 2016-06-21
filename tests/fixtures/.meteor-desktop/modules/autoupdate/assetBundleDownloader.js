@@ -79,7 +79,7 @@ AssetBundleDownloader.prototype.getAssetBundle = function getAssetBundle() {
  * @param {function} onFinished - Callback for success.
  * @param {function} onFailure  - Callback for failure.
  */
-AssetBundleDownloader.prototype.setCallback = function setCallback(onFinished, onFailure) {
+AssetBundleDownloader.prototype.setCallbacks = function setCallback(onFinished, onFailure) {
     this._onFinished = onFinished;
     this._onFailure = onFailure;
 };
@@ -100,7 +100,7 @@ AssetBundleDownloader.prototype.resume = function resume() {
         self._assetsDownloading.splice(self._assetsDownloading.indexOf(asset), 1);
 
         if (!self._cancel) {
-            self._didFail('Error downloading asset: ' + asset.filePath + ': ' + cause);
+            self.didFail('Error downloading asset: ' + asset.filePath + ': ' + cause);
         }
     }
 
@@ -110,16 +110,16 @@ AssetBundleDownloader.prototype.resume = function resume() {
         self._assetsDownloading.splice(self._assetsDownloading.indexOf(asset), 1);
 
         try {
-            self._verifyResponse(response, asset, body);
+            self.verifyResponse(response, asset, body);
         } catch (e) {
-            self._didFail(e.message);
+            self.didFail(e.message);
             return;
         }
 
         try {
             fs.writeFileSync(asset.getFile(), body);
         } catch (e) {
-            self._didFail(e.message);
+            self.didFail(e.message);
             return;
         }
 
@@ -130,9 +130,9 @@ AssetBundleDownloader.prototype.resume = function resume() {
             runtimeConfig = self._assetBundle.getRuntimeConfig();
             if (runtimeConfig !== null) {
                 try {
-                    self._verifyRuntimeConfig(runtimeConfig);
+                    self.verifyRuntimeConfig(runtimeConfig);
                 } catch (e) {
-                    self._didFail(e);
+                    self.didFail(e);
                     return;
                 }
             }
@@ -153,7 +153,7 @@ AssetBundleDownloader.prototype.resume = function resume() {
         var downloadUrl;
         if (! ~self._assetsDownloading.indexOf(asset)) {
             self._assetsDownloading.push(asset);
-            downloadUrl = self._downloadUrlForAsset(asset);
+            downloadUrl = self.downloadUrlForAsset(asset);
 
             self._q.push(function downloadFile(callback) {
                 self._httpClient({ uri: downloadUrl, encoding: null }, function httpResult(error, response, body) {

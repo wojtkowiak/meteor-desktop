@@ -464,7 +464,7 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Non-success status code 404 for asset:' +
+                expect(error).to.include('non-success status code 404 for asset:' +
                     ' app/template.mobileapp.js');
                 done();
             }, false);
@@ -496,7 +496,7 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Hash mismatch for asset: ' +
+                expect(error).to.include('hash mismatch for asset: ' +
                     'app/template.mobileapp.js');
                 done();
             }, false);
@@ -528,7 +528,7 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Version mismatch for index page, expected: version2,' +
+                expect(error).to.include('version mismatch for index page, expected: version2,' +
                     ' actual: version3');
                 done();
             }, false);
@@ -560,7 +560,7 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Could not find ROOT_URL in downloaded asset bundle');
+                expect(error).to.include('could not find ROOT_URL in downloaded asset bundle');
                 done();
             }, false);
             autoupdate.checkForUpdates();
@@ -618,7 +618,7 @@ describe('autoupdate', () => {
         it('should invoke the onError callback with an error', async(done) => {
             const autoupdate = await setUpAutoupdate(showLogs, () => {
             }, 'version1', (error) => {
-                expect(error).to.include('Could not find appId in downloaded asset bundle');
+                expect(error).to.include('could not find appId in downloaded asset bundle');
                 done();
             }, false);
             autoupdate.checkForUpdates();

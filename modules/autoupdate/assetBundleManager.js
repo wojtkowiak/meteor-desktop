@@ -29,350 +29,345 @@
 
  */
 
+import path from 'path';
+import shell from 'shelljs';
+import fs from 'fs';
+import url from 'url';
+import request from 'request';
 
-var shell = require('shelljs');
-var path = require('path');
-var AssetBundle = require('./assetBundle');
-var AssetManifest = require('./assetManifest');
-var AssetBundleDownloader = require('./assetBundleDownloader');
-var fs = require('fs');
-var request = require('request');
-var url = require('url');
+import AssetBundle from './assetBundle';
+import AssetBundleDownloader from './assetBundleDownloader';
+import AssetManifest from './assetManifest';
 
-var shellJsConfig;
 require('shelljs/global');
-shellJsConfig = config;
+const shellJsConfig = config;
 
-/**
- *
- * @param {object}      l                  - Logger instance.
- * @param {object}      configuration      - Configuration object.
- * @param {AssetBundle} initialAssetBundle - Parent asset bundle.
- * @param {string}      versionsDirectory  - Path to versions dir.
- * @constructor
- */
-function AssetBundleManager(l, configuration, initialAssetBundle, versionsDirectory) {
-    this.log = l.getLoggerFor('AssetBundleManager');
-
-    this.configuration = configuration;
-    this._initialAssetBundle = initialAssetBundle;
-    this._callback = null;
-    this._versionsDirectory = versionsDirectory;
-
-    this._downloadDirectory = path.join(versionsDirectory, 'Downloading');
-    this._partialDownloadDirectory = path.join(versionsDirectory, 'PartialDownload');
-
-    this._downloadedAssetBundlesByVersion = {};
-    this._partiallyDownloadedAssetBundle = null;
-
-    this._assetBundleDownloader = null;
-
-    this.httpClient = request;
-
-    this._loadDownloadedAssetBundles();
+function exists(checkPath) {
+    try {
+        fs.accessSync(checkPath);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
+class AssetBundleManager {
 
-/**
- * Callback setter.
- *
- * @param {Object} callback
- */
-AssetBundleManager.prototype.setCallback = function setCallback(callback) {
-    this._callback = callback;
-};
+    /**
+     * @param {object}      log                - Winston reference.
+     * @param {object}      configuration      - Configuration object.
+     * @param {AssetBundle} initialAssetBundle - Parent asset bundle.
+     * @param {string}      versionsDirectory  - Path to versions dir.
+     * @constructor
+     */
+    constructor(log, configuration, initialAssetBundle, versionsDirectory) {
+        this.log = log.getLoggerFor('AssetBundleManager');
 
+        this.configuration = configuration;
+        this.initialAssetBundle = initialAssetBundle;
 
-AssetBundleManager.prototype.downloadedAssetBundleWithVersion =
-    function downloadedAssetBundleWithVersion(version) {
-        if (version in this._downloadedAssetBundlesByVersion) {
-            return this._downloadedAssetBundlesByVersion[version];
+        this.versionsDirectory = versionsDirectory;
+
+        this.downloadDirectory = path.join(versionsDirectory, 'Downloading');
+        this.partialDownloadDirectory = path.join(versionsDirectory, 'PartialDownload');
+
+        this.downloadedAssetBundlesByVersion = {};
+        this.partiallyDownloadedAssetBundle = null;
+
+        this.callback = null;
+        this.assetBundleDownloader = null;
+
+        this.httpClient = request;
+
+        this.loadDownloadedAssetBundles();
+    }
+
+    /**
+     * Callback setter.
+     *
+     * @param {Object} callback
+     */
+    setCallback(callback) {
+        this.callback = callback;
+    }
+
+    /**
+     * Returns a bundle searched by version.
+     * @param {string} version - Version to get.
+     * @returns {AssetBundle|null}
+     */
+    downloadedAssetBundleWithVersion(version) {
+        if (version in this.downloadedAssetBundlesByVersion) {
+            return this.downloadedAssetBundlesByVersion[version];
         }
         return null;
     }
 
-/**
- * Starts checking for available update.
- *
- * @param {string} baseUrl - Url of meteor server.
- */
-AssetBundleManager.prototype.checkForUpdates = function checkForUpdates(baseUrl) {
-    var self = this;
-    var manifest;
-    var version;
-    var assetBundle;
-    var downloadedAssetBundle;
-    var manifestUrl = url.resolve(baseUrl, 'manifest.json');
+    /**
+     * Starts checking for available update.
+     *
+     * @param {string} baseUrl - Url of meteor server.
+     */
+    checkForUpdates(baseUrl) {
+        let manifest;
+        const manifestUrl = url.resolve(baseUrl, 'manifest.json');
 
-    this.log.info('Trying to query ' + manifestUrl);
-    this.httpClient(manifestUrl, function onHttpResponse(error, response, body) {
-        if (!error) {
+        this.log.info(`trying to query ${manifestUrl}`);
+
+        this.httpClient(manifestUrl, (error, response, body) => {
+            if (error) {
+                this.didFail(`error downloading asset manifest: ${error}`);
+                return;
+            }
             if (response.statusCode !== 200) {
-                self._didFail(
-                    'Non-success status code ' + response.statusCode + ' for asset manifest'
+                this.didFail(
+                    `non-success status code ${response.statusCode} for asset manifest`
                 );
                 return;
             }
 
             try {
-                manifest = new AssetManifest(self.log, body);
+                manifest = new AssetManifest(this.log, body);
             } catch (e) {
-                self._didFail(e.message);
+                this.didFail(e.message);
                 return;
             }
 
-            version = manifest.version;
+            const version = manifest.version;
 
-            self.log.debug('Downloaded asset manifest for version: ' + version);
+            this.log.debug(`downloaded asset manifest for version: ${version}`);
 
             if (
-                self._assetBundleDownloader !== null &&
-                self._assetBundleDownloader.getAssetBundle().getVersion() === version
+                this.assetBundleDownloader !== null &&
+                this.assetBundleDownloader.getAssetBundle().getVersion() === version
             ) {
-                self.log.info('Already downloading asset bundle version: ' + version);
+                this.log.info(`already downloading asset bundle version: ${version}`);
                 return;
             }
 
             // Give the callback a chance to decide whether the version should be downloaded.
             if (
-                self._callback !== null && !self._callback.shouldDownloadBundleForManifest(manifest)
+                this.callback !== null && !this.callback.shouldDownloadBundleForManifest(manifest)
             ) {
                 return;
             }
 
             // Cancel download in progress if there is one.
-            if (self._assetBundleDownloader !== null) {
-                self._assetBundleDownloader.cancel();
+            if (this.assetBundleDownloader !== null) {
+                this.assetBundleDownloader.cancel();
             }
-            self._assetBundleDownloader = null;
+            this.assetBundleDownloader = null;
 
             // There is no need to redownload the initial version.
-            if (self._initialAssetBundle.getVersion() === version) {
-                self.log.debug('No redownload of initial version.');
-                self._didFinishDownloadingAssetBundle(self._initialAssetBundle);
+            if (this.initialAssetBundle.getVersion() === version) {
+                this.log.debug('No redownload of initial version.');
+                this.didFinishDownloadingAssetBundle(this.initialAssetBundle);
                 return;
             }
 
             // If there is a previously downloaded asset bundle with the requested
             // version, use that.
-            if (version in self._downloadedAssetBundlesByVersion) {
-                downloadedAssetBundle = self._downloadedAssetBundlesByVersion[version];
+            if (version in this.downloadedAssetBundlesByVersion) {
+                const downloadedAssetBundle = this.downloadedAssetBundlesByVersion[version];
                 if (downloadedAssetBundle !== null) {
-                    self._didFinishDownloadingAssetBundle(downloadedAssetBundle);
+                    this.didFinishDownloadingAssetBundle(downloadedAssetBundle);
                     return;
                 }
             }
 
             // Else, get ready to download the new asset bundle
 
-            self._moveExistingDownloadDirectoryIfNeeded();
+            this.moveExistingDownloadDirectoryIfNeeded();
 
             // Create download directory
-            if (!self._makeDownloadDirectory()) {
-                self._didFail('Could not create download directory');
+            if (!this.makeDownloadDirectory()) {
+                this.didFail('could not create download directory');
                 return;
             }
 
             // Copy downloaded asset manifest to file.
             try {
-                fs.writeFileSync(path.join(self._downloadDirectory, 'program.json'), body);
+                fs.writeFileSync(path.join(this.downloadDirectory, 'program.json'), body);
             } catch (e) {
-                self._didFail(e.message);
+                this.didFail(e.message);
                 return;
             }
-            self.log.debug('Manifest copied to new Download dir');
+            this.log.debug('manifest copied to new Download dir');
 
-
-            assetBundle = null;
+            let assetBundle = null;
             try {
                 assetBundle = new AssetBundle(
-                    self.log,
-                    self._downloadDirectory,
+                    this.log,
+                    this.downloadDirectory,
                     manifest,
-                    self._initialAssetBundle
+                    this.initialAssetBundle
                 );
             } catch (e) {
-                self._didFail(e.message);
+                this.didFail(e.message);
                 return;
             }
 
-            self._downloadAssetBundle(assetBundle, baseUrl);
-        } else {
-            self._didFail('Error downloading asset manifest: ' + error);
-        }
-    });
-};
+            this.downloadAssetBundle(assetBundle, baseUrl);
+        });
+    }
 
-/**
- * Removes unnecessary versions.
- *
- * @param {string} versionToKeep
- */
-AssetBundleManager.prototype.removeAllDownloadedAssetBundlesExceptForVersion =
-    function removeAllDownloadedAssetBundlesExceptForVersion(versionToKeep) {
-        var self = this;
-        Object.keys(this._downloadedAssetBundlesByVersion).forEach(
-            function eachVersion(assetVersion) {
-                var assetBundle = self._downloadedAssetBundlesByVersion[assetVersion];
-                var version = assetBundle.getVersion();
+    /**
+     * Removes unnecessary versions.
+     *
+     * @param {string} versionToKeep
+     */
+    removeAllDownloadedAssetBundlesExceptForVersion(versionToKeep) {
+        Object.keys(this.downloadedAssetBundlesByVersion).forEach(
+            assetVersion => {
+                const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];
+                const version = assetBundle.getVersion();
 
                 if (version !== versionToKeep) {
-                    shell.rm('-rf', path.join(self._versionsDirectory, version));
-                    delete self._downloadedAssetBundlesByVersion[version];
+                    shell.rm('-rf', path.join(this.versionsDirectory, version));
+                    delete this.downloadedAssetBundlesByVersion[version];
                 }
             });
-    };
+    }
 
-/**
- * Creates Download directory.
- *
- * @returns {boolean}
- * @private
- */
-AssetBundleManager.prototype._makeDownloadDirectory = function _makeDownloadDirectory() {
-    // Make shellJs throw on failure.
-    shellJsConfig.fatal = true;
-    try {
-        if (!fs.existsSync(this._downloadDirectory)) {
-            this.log.info('Created download dir.');
-            shell.mkdir(this._downloadDirectory);
+    /**
+     * Creates Download directory.
+     *
+     * @returns {boolean}
+     * @private
+     */
+    makeDownloadDirectory() {
+        // Make shellJs throw on failure.
+        shellJsConfig.fatal = true;
+        try {
+            if (!fs.existsSync(this.downloadDirectory)) {
+                this.log.info('created download dir.');
+                shell.mkdir(this.downloadDirectory);
+            }
+            shellJsConfig.fatal = false;
+            return true;
+        } catch (e) {
+            this.log.debug(`creating download dir failed: ${e.message}`);
         }
         shellJsConfig.fatal = false;
-        return true;
-    } catch (e) {
-        this.log.debug('Creating download dir failed: ' + e.message);
+        return false;
     }
-    shellJsConfig.fatal = false;
-    return false;
-};
 
-/**
- * Loads all downloaded asset bundles.
- *
- * @private
- */
-AssetBundleManager.prototype._loadDownloadedAssetBundles = function _loadDownloadedAssetBundles() {
-    var self = this;
-    var assetBundle;
-
-    shell.ls(this._versionsDirectory).forEach(function eachVersionDir(file) {
-        const directory = path.join(self._versionsDirectory, file);
-        if (self._downloadDirectory !== directory
-            && self._partialDownloadDirectory !== directory
-            && fs.lstatSync(directory).isDirectory()
-        ) {
-            assetBundle = new AssetBundle(
-                self.log,
-                directory,
-                undefined,
-                self._initialAssetBundle
-            );
-            self.log.info('Got version: ' + assetBundle.getVersion() + ' in ' + file);
-            self._downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
-        }
-    });
-
-};
-
-/**
- * Failure handler.
- *
- * @param {string} cause - Error message.
- * @private
- */
-AssetBundleManager.prototype._didFail = function _didFail(cause) {
-    this._assetBundleDownloader = null;
-    this.log.debug('Fail: ' + cause);
-
-    if (this._callback !== null) {
-        this._callback.onError(cause);
-    }
-};
-
-/**
- * Success handler.
- *
- * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
- * @private
- */
-AssetBundleManager.prototype._didFinishDownloadingAssetBundle =
-    function _didFinishDownloadingAssetBundle(assetBundle) {
-        this._assetBundleDownloader = null;
-
-        if (this._callback !== null) {
-            this._callback.onFinishedDownloadingAssetBundle(assetBundle);
-        }
-    };
-
-
-/**
- * Searches for a cached asset in all available bundles.
- *
- * @param {Asset} asset - Asset we are searching for.
- * @returns {Asset|null}
- * @private
- */
-AssetBundleManager.prototype._cachedAssetForAsset = function _cachedAssetForAsset(asset) {
-    var self = this;
-    var assetBundleKey;
-    var assetBundle;
-
-    var bundles = Object.keys(this._downloadedAssetBundlesByVersion).reduce(
-        function reduceBundles(arr, key) {
-            arr.push(self._downloadedAssetBundlesByVersion[key]);
-            return arr;
-        },
-        []
-    );
-
-    var cachedAsset;
-    for (assetBundleKey in bundles) {
-        if (bundles.hasOwnProperty(assetBundleKey)) {
-            assetBundle = bundles[assetBundleKey];
-            cachedAsset = assetBundle.cachedAssetForUrlPath(asset.urlPath, asset.hash);
-            if (cachedAsset !== null) {
-                return cachedAsset;
+    /**
+     * Loads all downloaded asset bundles.
+     *
+     * @private
+     */
+    loadDownloadedAssetBundles() {
+        shell.ls(this.versionsDirectory).forEach(file => {
+            const directory = path.join(this.versionsDirectory, file);
+            if (this.downloadDirectory !== directory
+                && this.partialDownloadDirectory !== directory
+                && fs.lstatSync(directory).isDirectory()
+            ) {
+                const assetBundle = new AssetBundle(
+                    this.log,
+                    directory,
+                    undefined,
+                    this.initialAssetBundle
+                );
+                this.log.info(`got version: ${assetBundle.getVersion()} in ${file}`);
+                this.downloadedAssetBundlesByVersion[assetBundle.getVersion()] = assetBundle;
             }
+        });
+    }
+
+    /**
+     * Failure handler.
+     *
+     * @param {string} cause - Error message.
+     * @private
+     */
+    didFail(cause) {
+        this.assetBundleDownloader = null;
+        this.log.debug(`fail: ${cause}`);
+
+        if (this.callback !== null) {
+            this.callback.onError(cause);
         }
     }
 
-    if (this._partiallyDownloadedAssetBundle !== null) {
-        cachedAsset =
-            this._partiallyDownloadedAssetBundle.cachedAssetForUrlPath(asset.urlPath, asset.hash);
+    /**
+     * Success handler.
+     *
+     * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
+     * @private
+     */
+    didFinishDownloadingAssetBundle(assetBundle) {
+        this.assetBundleDownloader = null;
 
-        // Make sure the asset has been downloaded.
-        if (cachedAsset !== null && fs.existsSync(cachedAsset.getFile())) {
+        if (this.callback !== null) {
+            this.callback.onFinishedDownloadingAssetBundle(assetBundle);
+        }
+    }
+
+    /**
+     * Searches for a cached asset in all available bundles.
+     *
+     * @param {Asset} asset - Asset we are searching for.
+     * @returns {Asset|null}
+     * @private
+     */
+    cachedAssetForAsset(asset) {
+        const bundles = Object.keys(this.downloadedAssetBundlesByVersion).reduce(
+            (arr, key) => {
+                arr.push(this.downloadedAssetBundlesByVersion[key]);
+                return arr;
+            },
+            []
+        );
+
+        let cachedAsset;
+        const assetFound = bundles.some(assetBundle => {
+            cachedAsset = assetBundle.cachedAssetForUrlPath(asset.urlPath, asset.hash);
+            return cachedAsset;
+        });
+        if (assetFound) {
             return cachedAsset;
         }
+
+        if (this.partiallyDownloadedAssetBundle !== null) {
+            cachedAsset =
+                this.partiallyDownloadedAssetBundle
+                    .cachedAssetForUrlPath(asset.urlPath, asset.hash);
+
+            // Make sure the asset has been downloaded.
+            try {
+                if (cachedAsset !== null && fs.accessSync(cachedAsset.getFile())) {
+                    return cachedAsset;
+                }
+            } catch (e) {
+                return null;
+            }
+        }
+        return null;
     }
 
-    return null;
-};
+    /**
+     * Prepares asset bundle downloader.
+     *
+     * @param {AssetBundle} assetBundle - Asset bundle to download.
+     * @param {string}      baseUrl     - Url to meteor server.
+     * @private
+     */
+    downloadAssetBundle(assetBundle, baseUrl) {
+        const missingAssets = [];
 
-/**
- * Prepareas asset bundle downloader.
- *
- * @param {AssetBundle} assetBundle - Asset bundle to download.
- * @param {string}      baseUrl     - Url to meteor server.
- * @private
- */
-AssetBundleManager.prototype._downloadAssetBundle =
-    function _downloadAssetBundle(assetBundle, baseUrl) {
-        var self = this;
-        var cachedAsset;
-        var assetBundleDownloader;
-        var missingAssets = [];
-
-        assetBundle.getOwnAssets().forEach(function ownAsset(asset) {
+        assetBundle.getOwnAssets().forEach(asset => {
             // Create containing directories for the asset if necessary
+            const containingDirectory = path.dirname(asset.getFile());
 
-            var containingDirectory = path.dirname(asset.getFile());
-
-            if (!fs.existsSync(containingDirectory)) {
+            try {
+                fs.lstatSync(containingDirectory);
+            } catch (e) {
                 shellJsConfig.fatal = true;
                 try {
                     shell.mkdir('-p', containingDirectory);
-                } catch (e) {
-                    self._didFail('Could not create containing directory: ' + containingDirectory);
+                } catch (shellError) {
+                    this.didFail(`could not create containing directory: ${containingDirectory}`);
                     shellJsConfig.fatal = false;
                     return;
                 }
@@ -380,14 +375,14 @@ AssetBundleManager.prototype._downloadAssetBundle =
             }
 
             // If we find a cached asset, we copy it.
-            cachedAsset = self._cachedAssetForAsset(asset);
+            const cachedAsset = this.cachedAssetForAsset(asset);
 
             if (cachedAsset !== null) {
                 shellJsConfig.fatal = true;
                 try {
                     shell.cp(cachedAsset.getFile(), asset.getFile());
                 } catch (e) {
-                    self._didFail(e.message);
+                    this.didFail(e.message);
                     shellJsConfig.fatal = false;
                     return;
                 }
@@ -397,13 +392,13 @@ AssetBundleManager.prototype._downloadAssetBundle =
             }
         });
 
-        // If all assets were cached, there is no need to start a download
+        // If all assets were cached, there is no need to start a download.
         if (missingAssets.length === 0) {
-            this._didFinishDownloadingAssetBundle(assetBundle);
+            this.didFinishDownloadingAssetBundle(assetBundle);
             return;
         }
 
-        assetBundleDownloader = new AssetBundleDownloader(
+        let assetBundleDownloader = new AssetBundleDownloader(
             this.log,
             this.configuration,
             assetBundle,
@@ -411,77 +406,75 @@ AssetBundleManager.prototype._downloadAssetBundle =
             missingAssets
         );
 
-        assetBundleDownloader.setCallback(
-            function onFinished() {
+        assetBundleDownloader.setCallbacks(
+            () => {
                 assetBundleDownloader = null;
-                self._moveDownloadedAssetBundleIntoPlace(assetBundle);
-                self._didFinishDownloadingAssetBundle(assetBundle);
+                this.moveDownloadedAssetBundleIntoPlace(assetBundle);
+                this.didFinishDownloadingAssetBundle(assetBundle);
             },
-            function onFailure(cause) {
-                self._didFail(cause);
+            cause => {
+                this.didFail(cause);
             }
         );
         assetBundleDownloader.resume();
-    };
+    }
 
-/**
- * Move the downloaded asset bundle to a new directory named after the version.
- *
- * @param {AssetBundle} assetBundle - Asset bundle to move.
- * @private
- */
-AssetBundleManager.prototype._moveDownloadedAssetBundleIntoPlace =
-    function _moveDownloadedAssetBundleIntoPlace(assetBundle) {
-        var version = assetBundle.getVersion();
-        var versionDirectory = path.join(this._versionsDirectory, version);
-        shell.mv(this._downloadDirectory, versionDirectory);
+    /**
+     * Move the downloaded asset bundle to a new directory named after the version.
+     *
+     * @param {AssetBundle} assetBundle - Asset bundle to move.
+     * @private
+     */
+    moveDownloadedAssetBundleIntoPlace(assetBundle) {
+        const version = assetBundle.getVersion();
+        const versionDirectory = path.join(this.versionsDirectory, version);
+        shell.mv(this.downloadDirectory, versionDirectory);
         assetBundle.didMoveToDirectoryAtUri(versionDirectory);
-        this._downloadedAssetBundlesByVersion[version] = assetBundle;
-    };
+        this.downloadedAssetBundlesByVersion[version] = assetBundle;
+    }
 
-/**
- * If there is an existing Downloading directory, move it
- * to PartialDownload and load the partiallyDownloadedAssetBundle so we
- * don't unnecessarily redownload assets.
- *
- * @private
- */
-AssetBundleManager.prototype._moveExistingDownloadDirectoryIfNeeded =
-    function _moveExistingDownloadDirectoryIfNeeded() {
+    /**
+     * If there is an existing Downloading directory, move it
+     * to PartialDownload and load the partiallyDownloadedAssetBundle so we
+     * won't unnecessarily redownload assets.
+     *
+     * @private
+     */
+    moveExistingDownloadDirectoryIfNeeded() {
         shellJsConfig.fatal = true;
 
-        if (fs.existsSync(this._downloadDirectory)) {
-            if (fs.existsSync(this._partialDownloadDirectory)) {
+        if (exists(this.downloadDirectory)) {
+            if (exists(this.partialDownloadDirectory)) {
                 try {
-                    shell.rm('-Rf', this._partialDownloadDirectory);
+                    shell.rm('-Rf', this.partialDownloadDirectory);
                 } catch (e) {
-                    this.log.error('Could not delete partial download directory.');
+                    this.log.error('could not delete partial download directory.');
                 }
             }
 
-            this._partiallyDownloadedAssetBundle = null;
+            this.partiallyDownloadedAssetBundle = null;
 
             try {
-                shell.mv(this._downloadDirectory, this._partialDownloadDirectory);
+                shell.mv(this.downloadDirectory, this.partialDownloadDirectory);
             } catch (e) {
-                this.log.error('Could not rename existing download directory');
+                this.log.error('could not rename existing download directory');
                 shellJsConfig.fatal = false;
                 return;
             }
 
             try {
-                this._partiallyDownloadedAssetBundle =
+                this.partiallyDownloadedAssetBundle =
                     new AssetBundle(
                         this.log,
-                        this._partialDownloadDirectory,
+                        this.partialDownloadDirectory,
                         undefined,
-                        this._initialAssetBundle
+                        this.initialAssetBundle
                     );
             } catch (e) {
-                this.log.warn('Could not load partially downloaded asset bundle.');
+                this.log.warn('could not load partially downloaded asset bundle.');
             }
         }
         shellJsConfig.fatal = false;
-    };
-
+    }
+}
 module.exports = AssetBundleManager;

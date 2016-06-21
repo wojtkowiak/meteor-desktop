@@ -134,7 +134,7 @@ HCPClient.prototype._init = function _init() {
 
     lastDownloadedVersion = this.config.lastDownloadedVersion;
     if (lastDownloadedVersion) {
-        this.currentAssetBundle = this.assetBundleManager._downloadedAssetBundlesByVersion[lastDownloadedVersion];
+        this.currentAssetBundle = this.assetBundleManager.downloadedAssetBundlesByVersion[lastDownloadedVersion];
 
         if (this.currentAssetBundle === null) {
             this.currentAssetBundle = initialAssetBundle;

@@ -280,11 +280,11 @@ class HCPClient {
                 this.log.info(`reverting to last known good version: ${assetBundle.getVersion()}`);
                 this.pendingAssetBundle = assetBundle;
             }
-        } else if (this.currentAssetBundle !== this.assetBundleManager._initialAssetBundle) {
+        } else if (this.currentAssetBundle !== this.assetBundleManager.initialAssetBundle) {
             // Else, revert to the initial asset bundle, unless that is what we are currently
             // serving.
             this.log.info('reverting to initial bundle');
-            this.pendingAssetBundle = this.assetBundleManager._initialAssetBundle;
+            this.pendingAssetBundle = this.assetBundleManager.initialAssetBundle;
         }
 
         // Only reload if we have a pending asset bundle to reload.
