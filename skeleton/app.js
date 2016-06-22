@@ -262,7 +262,8 @@ class App {
         // Now go through each directory. If there is a index.js then it should be a module.
         shell.ls('-d', join(__dirname, 'modules', '*')).forEach(dir => {
             try {
-                if (fs.lstatSync(dir).isDirectory() && fs.accessSync(path.join(dir, 'index.js'), fs.R_OK)) {
+                if (fs.lstatSync(dir).isDirectory()) {
+                    fs.accessSync(path.join(dir, 'index.js'), fs.R_OK);
                     moduleName = path.parse(dir).name;
                     this.l.debug(`loading module: ${dir} => ${moduleName}`);
                     let settings = {};
