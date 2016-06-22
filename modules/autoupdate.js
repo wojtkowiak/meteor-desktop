@@ -74,7 +74,11 @@ class HCPClient {
         this.systemEvents.on('beforeDesktopLoaded', this.init.bind(this));
 
         // We will need a reference to the BrowserWindow object once it will be available.
-        this.systemEvents.on('windowOpened', window => (this.window = window));
+        this.systemEvents.on('windowOpened', window => {
+            this.window = window;
+            // Start the startup timer.
+            this.startStartupTimer();
+        });
 
         // Lets register for some ICP events. You can treat this as public API.
         this.module.on('checkForUpdates', this.checkForUpdates.bind(this));

@@ -369,6 +369,9 @@ class App {
                 this.systemEvents.emit('beforeLoadingFinished');
                 this.window.show();
                 this.window.focus();
+                if (this.settings.devtron) {
+                    this.webContents.executeJavaScript('Desktop.devtron.install()');
+                }
             }
             this.systemEvents.emit('loadingFinished');
         });

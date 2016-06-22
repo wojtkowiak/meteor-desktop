@@ -2,6 +2,7 @@
     "name": "My Meteor App",
     "projectName": "MyMeteorApp",
     "devTools": true,
+    "devtron": true,
     "webAppStartupTimeout": 20000,
     "window": {
         "fullscreen": false,

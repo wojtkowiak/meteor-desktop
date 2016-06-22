@@ -36,6 +36,14 @@
 var _ = require('lodash');
 var ipc = require('electron').ipcRenderer;
 
+let devtron = null;
+try {
+    devtron = require('devtron');
+    window.__devtron = {require: require, process: process};
+} catch (e) {
+
+}
+
 /**
  * Callback passed to ipc on/once methods.
  *
@@ -46,7 +54,7 @@ var ipc = require('electron').ipcRenderer;
 
 
 var Desktop = {
-
+    devtron,
     onceEventListeners: {},
     eventListeners: {},
     registeredInIpc: {},

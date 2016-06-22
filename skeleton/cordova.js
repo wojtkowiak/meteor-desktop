@@ -10,6 +10,7 @@ WebAppLocalServer = {
     _onVersionsCleanedUp: null,
     startupDidComplete(callback) {
         this._onVersionsCleanedUp = callback;
+        console.log('startup did complete');
         Desktop.send('autoupdate', 'startupDidComplete');
     },
 
