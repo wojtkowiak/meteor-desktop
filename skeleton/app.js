@@ -16,7 +16,7 @@ import winston from 'winston';
 import electronDebug from 'electron-debug';
 
 import Module from './modules/module.js';
-import desktop from './desktop.js';
+import desktop from './desktop.asar/desktop.js';
 
 /**
  * This is the main app which is a skeleton for the whole integration.
@@ -98,7 +98,7 @@ class App {
      */
     loadSettings() {
         try {
-            this.settings = JSON.parse(fs.readFileSync(join(__dirname, 'settings.json'), 'UTF-8'));
+            this.settings = JSON.parse(fs.readFileSync('./desktop.asar/settings.json'), 'UTF-8');
         } catch (e) {
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
                 ' this application.');
@@ -144,7 +144,7 @@ class App {
         this.mergeOsSpecificWindowSettings();
 
         if ('icon' in this.settings.window) {
-            this.settings.window.icon = join(__dirname, 'assets', this.settings.window.icon);
+            this.settings.window.icon = join(__dirname, 'desktop.asar', 'assets', this.settings.window.icon);
         }
     }
 
@@ -241,7 +241,7 @@ class App {
                 if (moduleName === 'autoupdate') {
                     settings.dataPath = this.userDataDir;
                     settings.bundleStorePath = this.userDataDir;
-                    settings.initialBundlePath = path.join(__dirname, 'meteor');
+                    settings.initialBundlePath = path.join(__dirname, 'meteor.asar');
                     settings.webAppStartupTimeout =
                         this.settings.webAppStartupTimeout ?
                             this.settings.webAppStartupTimeout : 20000;
@@ -260,18 +260,18 @@ class App {
         });
 
         // Now go through each directory. If there is a index.js then it should be a module.
-        shell.ls('-d', join(__dirname, 'modules', '*')).forEach(dir => {
+        fs.readdirSync(join(__dirname, 'desktop.asar', 'modules')).forEach(dir => {
             try {
-                if (fs.lstatSync(dir).isDirectory()) {
-                    fs.accessSync(path.join(dir, 'index.js'), fs.R_OK);
-                    moduleName = path.parse(dir).name;
+                const modulePath = join(__dirname, 'desktop.asar', 'modules', dir);
+                if (fs.lstatSync(modulePath).isDirectory()) {
+                    moduleName = path.parse(modulePath).name;
                     this.l.debug(`loading module: ${dir} => ${moduleName}`);
                     let settings = {};
                     // module.json is mandatory, but we can live without it.
                     try {
                         let moduleJson = {};
                         moduleJson = JSON.parse(
-                            fs.readFileSync(path.join(dir, 'module.json'), 'UTF-8')
+                            fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
                         );
                         if ('settings' in moduleJson) {
                             settings = moduleJson.settings;
@@ -280,9 +280,9 @@ class App {
                             moduleName = moduleJson.name;
                         }
                     } catch (e) {
-                        this.l.warn(`could not load ${path.join(dir, 'module.json')}`);
+                        this.l.warn(`could not load ${path.join(modulePath, 'module.json')}`);
                     }
-                    this.modules[moduleName] = require(path.join(dir, 'index.js'));
+                    this.modules[moduleName] = require(path.join(modulePath, 'index.js'));
                     const AppModule = this.modules[moduleName];
                     this.configureLogger(moduleName);
                     this.modules[moduleName] = new AppModule(
@@ -296,7 +296,7 @@ class App {
                     );
                 }
             } catch (e) {
-                this.l.warn(`no index.js found in ${dir}`);
+                this.l.warn(e);
             }
         });
     }
