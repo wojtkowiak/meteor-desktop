@@ -1,3 +1,4 @@
+// fix timout
 - inject isDesktop on hcp
 - asar?
 
@@ -8,7 +9,7 @@
 - make @ transleate to relative path
 - how to read local files in browser
 - use NODE_ENV?
-
+- ... while building
 
 - generate installer
 - test installers, test new initialbundlever

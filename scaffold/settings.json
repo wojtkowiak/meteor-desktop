@@ -3,7 +3,7 @@
     "projectName": "MyMeteorApp",
     "devTools": true,
     "devtron": true,
-    "webAppStartupTimeout": 20000,
+    "webAppStartupTimeout": 60000,
     "window": {
         "fullscreen": false,
         "kiosk": false,
