@@ -46,7 +46,7 @@ describe('desktop', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
             const deps = MeteorDesktop.desktop.getDependencies();
             expect(deps).to.have.a.deep.property('fromSettings.some-package', '1.2.3');
-            expect(deps).to.have.a.deep.property('plugins.meteor-desktop-splash-screen', '0.0.2');
+            expect(deps).to.have.a.deep.property('plugins.meteor-desktop-splash-screen', '0.0.14');
             expect(deps).to.have.a.deep.property('modules.someModule.dependency', '1.0.1');
             expect(deps).to.have.a.deep.property('modules.someModule2.dependency2', '0.0.5');
         });
@@ -76,7 +76,7 @@ describe('desktop', () => {
             const deps = MeteorDesktop.desktop.getDependencies();
             expect(deps).to.deep.equal({
                 fromSettings: { 'some-package': '1.2.3' },
-                plugins: { 'meteor-desktop-splash-screen': '0.0.2' },
+                plugins: { 'meteor-desktop-splash-screen': '0.0.14' },
                 modules: {
                     someModule: { dependency: '1.0.1' },
                     someModule2: { dependency2: '0.0.5' }

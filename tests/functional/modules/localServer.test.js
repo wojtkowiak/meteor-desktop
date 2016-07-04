@@ -14,7 +14,7 @@ chai.use(dirty);
 const { describe, it } = global;
 const { expect } = chai;
 import paths from '../../helpers/paths';
-import LocalServer from '../../../modules/localServer';
+import LocalServer from '../../../skeleton/modules/localServer';
 import fetch from 'node-fetch';
 
 let localPort;

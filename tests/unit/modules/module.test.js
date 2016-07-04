@@ -20,7 +20,7 @@ mockery.enable({
 });
 
 const rewire = require('rewire');
-const Module = rewire('../../../modules/module.js');
+const Module = rewire('../../../skeleton/modules/module.js');
 
 describe('Module', () => {
     describe('#sendInternal', () => {

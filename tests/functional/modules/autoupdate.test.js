@@ -5,7 +5,7 @@
 /**
  * Here we will test both localServer and autoupdate.
  *
- * !!!You need to have a free port 3000!!!
+ * !!!You need to have a free port 3788!!!
  *
  * In Cordova integration the local server is embedded in the autoupdate module. In this
  * Electron integration the localServer and autoupdate are decoupled. Of course it is crucial
@@ -41,14 +41,14 @@ import {
     shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed,
     expectAssetServedToContain
 } from '../../helpers/autoupdate/localServer';
-import HCPClient from '../../../modules/autoupdate.js';
+import HCPClient from '../../../skeleton/modules/autoupdate.js';
 import path from 'path';
 import shell from 'shelljs';
 
 import fs from 'fs';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
 
-const showLogs = true;
+const showLogs = false;
 const showErrors = true;
 
 let meteorServer;

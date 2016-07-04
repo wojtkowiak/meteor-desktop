@@ -22,7 +22,7 @@ function exists(checkPath) {
 
 /**
  * Copy of localServer.js slightly adapted to mimic real meteor server.
- * It has a hardcoded port set to 3000.
+ * It has a hardcoded port set to 3788.
  *
  * @param {Object} log - Logger instance.
  * @param app
@@ -142,8 +142,8 @@ export default class MeteorServer {
 
         this.server = server;
 
-        // The port is hardcoded to 3000.
-        this.port = 3000;
+        // The port is hardcoded to 3788.
+        this.port = 3788;
 
         this.startHttpServer(restart);
     }

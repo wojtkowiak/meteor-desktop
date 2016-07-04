@@ -1,4 +1,4 @@
-import LocalServer from '../../../modules/localServer';
+import LocalServer from '../../../skeleton/modules/localServer';
 import fetch from 'node-fetch';
 import chai from 'chai';
 import dirty from 'dirty-chai';

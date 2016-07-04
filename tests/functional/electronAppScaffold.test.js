@@ -14,20 +14,22 @@ describe('electronAppScaffold', () => {
     });
 
     describe('#make', () => {
-        it('should create .meteor-desktop scaffold', () => {
+        it('should create .meteor-desktop scaffold', (done) => {
             const logStub = stubLog(MeteorDesktop.electronApp.scaffold, 'info');
-            MeteorDesktop.electronApp.scaffold.make();
+            MeteorDesktop.electronApp.scaffold.make().then(() => {
 
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.root)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.cordova)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.index)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.app)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.preload)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.modules)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.packageJson)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.gitIgnore)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.root)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.cordova)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.index)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.app)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.preload)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.modules)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.packageJson)).to.be.true();
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.gitIgnore)).to.be.true();
 
-            logStub.restore();
+                logStub.restore();
+                done();
+            }).catch((e) => { done(e); logStub.restore(); });
         });
     });
 });

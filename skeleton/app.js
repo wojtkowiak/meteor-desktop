@@ -15,8 +15,11 @@ import assignIn from 'lodash/assignIn';
 import winston from 'winston';
 import electronDebug from 'electron-debug';
 
+
+process.env.NODE_PATH = join(__dirname, 'node_modules');
+require('module').Module._initPaths();
+
 import Module from './modules/module.js';
-import desktop from './desktop.asar/desktop.js';
 
 /**
  * This is the main app which is a skeleton for the whole integration.
@@ -98,10 +101,12 @@ class App {
      */
     loadSettings() {
         try {
-            this.settings = JSON.parse(fs.readFileSync('./desktop.asar/settings.json'), 'UTF-8');
+            this.settings = JSON.parse(fs.readFileSync(join(__dirname, '..', 'desktop.asar', 'settings.json')), 'UTF-8');
         } catch (e) {
+            this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
                 ' this application.');
+
             if (this.app && this.app.quit) {
                 this.app.quit();
             }
@@ -144,7 +149,7 @@ class App {
         this.mergeOsSpecificWindowSettings();
 
         if ('icon' in this.settings.window) {
-            this.settings.window.icon = join(__dirname, 'desktop.asar', 'assets', this.settings.window.icon);
+            this.settings.window.icon = join(__dirname, '..', 'desktop.asar', 'assets', this.settings.window.icon);
         }
     }
 
@@ -165,6 +170,8 @@ class App {
         this.systemEvents.emit('beforeDesktopLoaded');
 
         try {
+            // This is `reify` so we can have nested imports.
+            import desktop from '../desktop.asar/desktop.js';
             this.desktop = desktop(
                 winston,
                 this.app,
@@ -241,7 +248,7 @@ class App {
                 if (moduleName === 'autoupdate') {
                     settings.dataPath = this.userDataDir;
                     settings.bundleStorePath = this.userDataDir;
-                    settings.initialBundlePath = path.join(__dirname, 'meteor.asar');
+                    settings.initialBundlePath = path.join(__dirname, '..', 'meteor.asar');
                     settings.webAppStartupTimeout =
                         this.settings.webAppStartupTimeout ?
                             this.settings.webAppStartupTimeout : 20000;
@@ -260,9 +267,9 @@ class App {
         });
 
         // Now go through each directory. If there is a index.js then it should be a module.
-        fs.readdirSync(join(__dirname, 'desktop.asar', 'modules')).forEach(dir => {
+        fs.readdirSync(join(__dirname, '..', 'desktop.asar', 'modules')).forEach(dir => {
             try {
-                const modulePath = join(__dirname, 'desktop.asar', 'modules', dir);
+                const modulePath = join(__dirname, '..', 'desktop.asar', 'modules', dir);
                 if (fs.lstatSync(modulePath).isDirectory()) {
                     moduleName = path.parse(modulePath).name;
                     this.l.debug(`loading module: ${dir} => ${moduleName}`);

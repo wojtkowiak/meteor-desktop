@@ -10,7 +10,7 @@ import { createTestInstance, stubLog, getModuleJson, saveModuleJson } from '../h
 import fs from 'fs';
 import shell from 'shelljs';
 import paths from '../helpers/paths';
-import path from 'path';
+import asar from 'asar';
 
 describe('electronApp', () => {
     let MeteorDesktop;
@@ -19,22 +19,25 @@ describe('electronApp', () => {
         MeteorDesktop = createTestInstance();
     });
 
-    describe('#copyFilesFromDesktop', () => {
-        it('should copy certain files from .desktop', () => {
+    describe('#packDesktopToAsar', () => {
+        it('should make desktop.asar from .desktop', (done) => {
             shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-            shell.cp('-rf', paths.fixtures.electronApp, paths.fixtures.testProjectInstall);
+            shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
             const logStub = stubLog(MeteorDesktop.electronApp, 'info');
-            MeteorDesktop.electronApp.copyFilesFromDesktop();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.index)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.assets)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.settings)).to.be.true();
-            logStub.restore();
+            MeteorDesktop.electronApp.packDesktopToAsar().then(() => {
+                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.desktopAsar)).to.be.true();
+                const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
+                expect(files).to.include.members(
+                    ['\\desktop.js', '\\settings.json', '\\modules', '\\assets']);
+                logStub.restore();
+                done();
+            }).catch((e) => { done(e); logStub.restore(); });
         });
     });
     describe('#updatePackageJsonFields', () => {
         it('should update fields according to settings.packageJsonFields', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-            shell.cp('-rf', paths.fixtures.electronApp, paths.fixtures.testProjectInstall);
+            shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
             const logStub = stubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.updatePackageJsonFields();
             const packageJson = JSON.parse(
@@ -48,7 +51,7 @@ describe('electronApp', () => {
     describe('#updateDependencies', () => {
         it('should update dependencies list', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
-            shell.cp('-rf', paths.fixtures.electronApp, paths.fixtures.testProjectInstall);
+            shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
             const logStub = stubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.packageJson = {};
             MeteorDesktop.electronApp.updateDependencies();
@@ -56,7 +59,8 @@ describe('electronApp', () => {
                 fs.readFileSync(MeteorDesktop.env.paths.electronApp.packageJson, 'UTF-8')
             );
             expect(packageJson.dependencies).to.have.a.property('some-package', '1.2.3');
-            expect(packageJson.dependencies).to.have.a.property('meteor-desktop-splash-screen', '0.0.2');
+            expect(packageJson.dependencies).to.have.a.property(
+                'meteor-desktop-splash-screen', '0.0.14');
             expect(packageJson.dependencies).to.have.a.property('dependency', '1.0.1');
             expect(packageJson.dependencies).to.have.a.property('dependency2', '0.0.5');
             logStub.restore();
@@ -90,7 +94,5 @@ describe('electronApp', () => {
                 'someModule', 'shelljs', '0.2.0', /found to be conflicting/
             );
         });
-
-
     });
 });

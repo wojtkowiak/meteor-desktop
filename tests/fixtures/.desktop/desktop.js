@@ -1,6 +1,3 @@
-const Module = require('./modules/module.js');
-const desktop = new Module('desktop');
-
 /**
  * Represents the native desktop side.
  *
@@ -10,10 +7,13 @@ const desktop = new Module('desktop');
  * @param {Object} systemEvents - Event emitter for listening or emitting events on the desktop
  *                                side.
  * @param {Object} modules      - Reference to all loaded modules.
+ * @param {Object} Module       - Reference to Module.
  * @constructor
  */
 class Desktop {
-    constructor(log, app, appSettings, systemEvents, modules) {
+    constructor(log, app, appSettings, systemEvents, modules, Module) {
+        const desktop = new Module('desktop');
+        // From Meteor use this by invoking Electron.send('desktop', 'closeApp');
         desktop.on('closeApp', () => app.quit());
     }
 }

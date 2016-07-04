@@ -41,7 +41,7 @@ export function createTestInstance() {
     return meteorDesktop(
         paths.fixtures.testProjectInstall,
         paths.fixtures.testProjectInstall,
-        { ddpUrl: 'http://127.0.0.1:3000' },
+        { ddpUrl: 'http://127.0.0.1:3788' },
         {
             log: class {
                 constructor() {

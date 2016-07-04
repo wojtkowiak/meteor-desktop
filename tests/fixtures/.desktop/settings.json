@@ -2,18 +2,30 @@
     "name": "My Meteor App",
     "projectName": "MyMeteorApp",
     "devTools": true,
+    "devtron": true,
+    "webAppStartupTimeout": 60000,
     "window": {
         "fullscreen": false,
         "kiosk": false,
-        "alwaysOnTop": false
+        "alwaysOnTop": false,
+        "icon": "meteor.png",
+        "_windows": {
+            "icon": "meteor.ico"
+        }
     },
     "packageJsonFields": {
         "description": "My Meteor App",
         "private": true
     },
+    "packagerOptions": {
+        "icon": "meteor.ico",
+        "_osx": {
+            "icon": "meteor.icns"
+        }
+    },
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.0.2"
+            "version": "0.0.14"
         }
     },
     "version": "0.0.1",
@@ -21,3 +33,4 @@
         "some-package": "1.2.3"
     }
 }
+
