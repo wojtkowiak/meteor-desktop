@@ -88,19 +88,18 @@ export default class LocalServer {
         // Answer 3: We will still serve files that have been deleted in the new version - hard
         // to say if that is a real problem.
 
-        // TODO: is there any case not supported here?
         /**
          * Everything that is:
          * - not starting with `app` or `packages`
          * - not a merged-stylesheets.css
-         * - not with `meteor_js_resource` in the name
+         * - not with `meteor_[js/css]_resource` in the name
          * - not a cordova.js file
          * should be taken from /app/ path.
          */
         server.use(modRewrite([
             '^/favicon.ico [R=404,L,NS]',
-            '^/(?!($|app|packages|merged-stylesheets.css|.*meteor_js_resource|cordova.js))(.*) ' +
-            '/app/$2'
+            '^/(?!($|app|packages|merged-stylesheets.css|.*meteor_(js|css)_resource|cordova.js))' +
+            '(.*) /app/$2'
         ]));
 
         function setSourceMapHeader(req, res, next) {

@@ -1,6 +1,8 @@
 // fix timout
 - inject isDesktop on hcp
+- add self to .gitignore
 - asar?
+-- production
 
 - https://github.com/jamielob/reloader/
 - startup timer and fallback strategy (startup timer should run on any run)

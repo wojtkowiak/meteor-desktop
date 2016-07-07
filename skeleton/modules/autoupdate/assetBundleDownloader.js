@@ -34,6 +34,7 @@ import url from 'url';
 // TODO: maybe use node-fetch?
 import request from 'request';
 import queue from 'queue';
+import IsDesktopInjector from './isDesktopInjector';
 
 export default class AssetBundleDownloader {
     /**
@@ -53,7 +54,7 @@ export default class AssetBundleDownloader {
         this.configuration = configuration;
         this.assetBundle = assetBundle;
         this.baseUrl = baseUrl;
-
+        this.injector = new IsDesktopInjector();
         this.httpClient = request;
 
         this.eTagWithSha1HashPattern = new RegExp('"([0-9a-f]{40})"');
@@ -110,20 +111,33 @@ export default class AssetBundleDownloader {
         /**
          * @param {Asset} asset - Asset that was downloaded.
          * @param {Object} response - Response object from `request`.
-         * @param {string} body - Body of downloaded the file.
+         * @param {Buffer} body - Body of downloaded the file.
          */
         function onResponse(asset, response, body) {
+            let fileContents = body;
             self.assetsDownloading.splice(self.assetsDownloading.indexOf(asset), 1);
 
             try {
-                self.verifyResponse(response, asset, body);
+                self.verifyResponse(response, asset, fileContents);
             } catch (e) {
                 self.didFail(e.message);
                 return;
             }
 
             try {
-                fs.writeFileSync(asset.getFile(), body);
+                // Unfortunately on every hot code push we need to ensure that we will not loose
+                // `Meteor.isDesktop`. Here we will inject it into the code that arrived from HCP.
+                if (asset.fileType === 'js') {
+                    const fileContentsString = fileContents.toString('UTF-8');
+                    const result = self.injector.processFileContents(fileContentsString);
+                    if (result.injected || result.injectedStartupDidComplete) {
+                        fs.writeFileSync(asset.getFile(), result.fileContents, 'UTF-8');
+                    } else {
+                        fs.writeFileSync(asset.getFile(), fileContents);
+                    }
+                } else {
+                    fs.writeFileSync(asset.getFile(), fileContents);
+                }
             } catch (e) {
                 self.didFail(e.message);
                 return;
