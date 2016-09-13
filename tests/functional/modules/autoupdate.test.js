@@ -94,8 +94,8 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             }
         }, {},
         {
-            dataPath: paths.fixtures.autoUpdateVersionsInstall,
-            bundleStorePath: paths.fixtures.autoUpdateVersionsInstall,
+            dataPath: paths.autoUpdateVersionsPath,
+            bundleStorePath: paths.autoUpdateVersionsPath,
             initialBundlePath: paths.fixtures.bundledWww,
             test: testMode,
             webAppStartupTimeout: 200
@@ -173,8 +173,8 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
  * Cleans up the temporary version directory.
  */
 function cleanup() {
-    const autoupdateJson = path.join(paths.fixtures.autoUpdateVersionsInstall, 'autoupdate.json');
-    const versions = path.join(paths.fixtures.autoUpdateVersionsInstall, 'versions');
+    const autoupdateJson = path.join(paths.autoUpdateVersionsPath, 'autoupdate.json');
+    const versions = path.join(paths.autoUpdateVersionsPath, 'versions');
     if (exists(autoupdateJson)) {
         shell.rm(autoupdateJson);
     }
@@ -240,8 +240,8 @@ function wait(delay) {
 
 describe('autoupdate', () => {
     before(() => {
-        shell.rm('-rf', paths.fixtures.autoUpdateVersionsInstall);
-        shell.mkdir('-p', paths.fixtures.autoUpdateVersionsInstall);
+        shell.rm('-rf', paths.autoUpdateVersionsPath);
+        shell.mkdir('-p', paths.autoUpdateVersionsPath);
     });
 
     describe('when updating from the bundled app version to a downloaded version', () => {
@@ -737,7 +737,7 @@ describe('autoupdate', () => {
         beforeEach(async(done) => {
             cleanup();
             const downloadingPath = path.join(
-                paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
+                paths.autoUpdateVersionsPath, 'Downloading');
             if (exists(downloadingPath)) {
                 shell.rm('-rf', downloadingPath);
             }
@@ -796,7 +796,7 @@ describe('autoupdate', () => {
         beforeEach(async(done) => {
             cleanup();
             const downloadingPath = path.join(
-                paths.fixtures.autoUpdateVersionsInstall, 'Downloading');
+                paths.autoUpdateVersionsPath, 'Downloading');
             if (exists(downloadingPath)) {
                 shell.rm('-rf', downloadingPath);
             }

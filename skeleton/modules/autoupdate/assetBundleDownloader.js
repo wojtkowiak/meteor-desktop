@@ -30,7 +30,9 @@
  */
 
 import fs from 'fs';
+import originalFs from 'original-fs';
 import url from 'url';
+import path from 'path';
 // TODO: maybe use node-fetch?
 import request from 'request';
 import queue from 'queue';
@@ -114,13 +116,13 @@ export default class AssetBundleDownloader {
          * @param {Buffer} body - Body of downloaded the file.
          */
         function onResponse(asset, response, body) {
-            let fileContents = body;
+            const fileContents = body;
             self.assetsDownloading.splice(self.assetsDownloading.indexOf(asset), 1);
 
             try {
                 self.verifyResponse(response, asset, fileContents);
             } catch (e) {
-                self.didFail(e.message);
+                self.didFail(`failed at verifyResponse: ${e.message}`);
                 return;
             }
 
@@ -136,10 +138,10 @@ export default class AssetBundleDownloader {
                         fs.writeFileSync(asset.getFile(), fileContents);
                     }
                 } else {
-                    fs.writeFileSync(asset.getFile(), fileContents);
+                    originalFs.writeFileSync(asset.getFile(), fileContents);
                 }
             } catch (e) {
-                self.didFail(e.message);
+                self.didFail(`failed at injecting isDesktop and writing to disk: ${e.message}`);
                 return;
             }
 
@@ -152,7 +154,7 @@ export default class AssetBundleDownloader {
                     try {
                         self.verifyRuntimeConfig(runtimeConfig);
                     } catch (e) {
-                        self.didFail(e);
+                        self.didFail(`fail at verifyRuntimeConfig: ${e}`);
                         return;
                     }
                 }

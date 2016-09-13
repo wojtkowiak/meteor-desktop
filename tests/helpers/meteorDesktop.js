@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import path from 'path';
 import fs from 'fs';
 
-export function stubLog(object, methods, stubProcessExit) {
+export function StubLog(object, methods, stubProcessExit) {
     const stubs = {};
 
     const methodsArray = Array.isArray(methods) ? methods : [methods];
@@ -35,12 +35,12 @@ export function createTestInstance() {
 
     // Copy test meteor app.
     shell.mkdir('-p', paths.testsTmpPath);
-    shell.mkdir(paths.fixtures.testProjectInstall);
+    shell.mkdir(paths.testProjectInstallPath);
     shell.cp('-r', paths.fixtures.testProject, paths.testsTmpPath);
 
     return meteorDesktop(
-        paths.fixtures.testProjectInstall,
-        paths.fixtures.testProjectInstall,
+        paths.testProjectInstallPath,
+        paths.testProjectInstallPath,
         { ddpUrl: 'http://127.0.0.1:3788' },
         {
             log: class {
@@ -102,14 +102,14 @@ export function getFakeLogger(show, showErrors) {
 
 export function getModuleJson(module) {
     const moduleJsonPath = path.join(
-        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
+        paths.testProjectInstallPath, '.desktop', 'modules', module, 'module.json'
     );
     return JSON.parse(fs.readFileSync(moduleJsonPath, 'UTF-8'));
 }
 
 export function saveModuleJson(module, moduleJson) {
     const moduleJsonPath = path.join(
-        paths.fixtures.testProjectInstall, '.desktop', 'modules', module, 'module.json'
+        paths.testProjectInstallPath, '.desktop', 'modules', module, 'module.json'
     );
     fs.writeFileSync(
         moduleJsonPath, JSON.stringify(moduleJson, null, 2)

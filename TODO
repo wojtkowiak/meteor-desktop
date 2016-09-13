@@ -1,16 +1,18 @@
-// fix timout
-- inject isDesktop on hcp
+- uglify
+-- ipc async answer
+- use NODE_ENV?
 - add self to .gitignore
-- asar?
 -- production
+- start
 
 - https://github.com/jamielob/reloader/
 - startup timer and fallback strategy (startup timer should run on any run)
 
+- do not hide window in standard, hide it thorugh splashcreen plugin
+
 - desktop compatibility version (win/lin/osx)
 - make @ transleate to relative path
 - how to read local files in browser
-- use NODE_ENV?
 - ... while building
 
 - generate installer
@@ -21,6 +23,7 @@
 - tests for app
 
 - write about events
+- write about extract
 - write that projectName is the name in package.json and the name of the dir
 - write how to modify main window
 - write about settings in moduleJson

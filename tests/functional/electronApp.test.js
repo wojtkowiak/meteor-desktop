@@ -6,7 +6,7 @@ chai.use(dirty);
 import sinon from 'sinon';
 const { describe, it } = global;
 const { expect } = chai;
-import { createTestInstance, stubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
+import { createTestInstance, StubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
 import fs from 'fs';
 import shell from 'shelljs';
 import paths from '../helpers/paths';
@@ -21,9 +21,9 @@ describe('electronApp', () => {
 
     describe('#packDesktopToAsar', () => {
         it('should make desktop.asar from .desktop', (done) => {
-            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
             shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
-            const logStub = stubLog(MeteorDesktop.electronApp, 'info');
+            const logStub = new StubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.packDesktopToAsar().then(() => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.desktopAsar)).to.be.true();
                 const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
@@ -36,9 +36,9 @@ describe('electronApp', () => {
     });
     describe('#updatePackageJsonFields', () => {
         it('should update fields according to settings.packageJsonFields', () => {
-            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
             shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
-            const logStub = stubLog(MeteorDesktop.electronApp, 'info');
+            const logStub = new StubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.updatePackageJsonFields();
             const packageJson = JSON.parse(
                 fs.readFileSync(MeteorDesktop.env.paths.electronApp.packageJson, 'UTF-8')
@@ -50,9 +50,9 @@ describe('electronApp', () => {
     });
     describe('#updateDependencies', () => {
         it('should update dependencies list', () => {
-            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
             shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
-            const logStub = stubLog(MeteorDesktop.electronApp, 'info');
+            const logStub = new StubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.packageJson = {};
             MeteorDesktop.electronApp.updateDependencies();
             const packageJson = JSON.parse(
@@ -68,11 +68,11 @@ describe('electronApp', () => {
 
 
         function testUpdateDependenciesError(module, dependency, version, match) {
-            shell.cp('-rf', paths.fixtures.desktop, paths.fixtures.testProjectInstall);
+            shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
             const moduleJson = getModuleJson(module);
             moduleJson.dependencies[dependency] = version;
             saveModuleJson(module, moduleJson);
-            const logStub = stubLog(MeteorDesktop.electronApp, ['error', 'info'], true);
+            const logStub = new StubLog(MeteorDesktop.electronApp, ['error', 'info'], true);
             MeteorDesktop.electronApp.packageJson = {};
             MeteorDesktop.electronApp.updateDependencies();
             expect(logStub.stubs.error).to.have.been.calledWithMatch(

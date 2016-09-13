@@ -64,6 +64,7 @@ class HCPClient {
         this.module = new Module('autoupdate');
 
         this.settings = settings;
+        this.appSettings = appSettings;
 
         this.startupTimer = null;
         this.window = null;
@@ -71,7 +72,7 @@ class HCPClient {
         this.systemEvents = systemEvents;
 
         // We want this to be initialized before loading the desktop part.
-        this.systemEvents.on('beforeDesktopLoaded', this.init.bind(this));
+        this.systemEvents.on('beforeDesktopLoad', this.init.bind(this));
 
         // We will need a reference to the BrowserWindow object once it will be available.
         this.systemEvents.on('windowOpened', window => {
@@ -171,7 +172,8 @@ class HCPClient {
             this.log,
             this.config,
             initialAssetBundle,
-            this.versionsDir
+            this.versionsDir,
+            this.appSettings
         );
 
         this.assetBundleManager.setCallback(this);
@@ -437,9 +439,10 @@ class HCPClient {
      * Method that decides whether we are interested in the new bundle that we were notified about.
      * Called by assetBundleManager.
      * @param {AssetManifest} manifest - Manifest of the new bundle.
+     * @param {null|Object} desktopVersion - Version information about the desktop part.
      * @returns {boolean}
      */
-    shouldDownloadBundleForManifest(manifest) {
+    shouldDownloadBundleForManifest(manifest, desktopVersion) {
         const version = manifest.version;
 
         // No need to redownload the current version.
@@ -472,7 +475,28 @@ class HCPClient {
             return false;
         }
         */
-        // TODO: place for checking electron compatibility version
+
+        if (desktopVersion) {
+            this.log.debug(`got desktop version information: ${desktopVersion.version} ` +
+                `(compatibility: ${desktopVersion.compatibilityVersion})`);
+
+            let blockAppUpdateOnDesktopIncompatibility = true;
+            if ('desktopHCPSettings' in this.appSettings &&
+                'blockAppUpdateOnDesktopIncompatibility' in this.appSettings.desktopHCPSettings) {
+                blockAppUpdateOnDesktopIncompatibility =
+                    this.appSettings.desktopHCPSettings.blockAppUpdateOnDesktopIncompatibility;
+            }
+
+            if (this.appSettings.compatibilityVersion !== desktopVersion.compatibilityVersion &&
+                blockAppUpdateOnDesktopIncompatibility) {
+                this.log.warn('Skipping downloading new version because the .desktop ' +
+                    'compatibility version have changed and is potentially incompatible.');
+                this.notifyError('Skipping downloading new version because the .desktop ' +
+                    'compatibility version have changed and is potentially incompatible ' +
+                    `(${version})`);
+                return false;
+            }
+        }
 
         return true;
     }

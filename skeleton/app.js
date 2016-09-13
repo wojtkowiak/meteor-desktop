@@ -2,24 +2,19 @@
 /* eslint-disable global-require */
 
 import electron from 'electron';
-const { app, BrowserWindow, dialog } = electron;
-
 import { EventEmitter as Events } from 'events';
-
 import path from 'path';
-const { join } = path;
 import fs from 'fs';
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
-
 import winston from 'winston';
-import electronDebug from 'electron-debug';
+import Module from './modules/module.js';
 
+const { app, BrowserWindow, dialog } = electron;
+const { join } = path;
 
 process.env.NODE_PATH = join(__dirname, 'node_modules');
 require('module').Module._initPaths();
-
-import Module from './modules/module.js';
 
 /**
  * This is the main app which is a skeleton for the whole integration.
@@ -32,6 +27,7 @@ class App {
 
         this.initLogger();
         this.configureLogger();
+
         this.l = winston.loggers.get('main');
         this.l.info('app data dir is:', this.userDataDir);
 
@@ -55,10 +51,16 @@ class App {
 
         this.loadSettings();
 
-        electronDebug({
-            showDevTools: true,
-            enabled: (this.settings.devTools !== undefined) ? this.settings.devTools : true
-        });
+        if (this.isProduction()) {
+            // In case anything depends on this...
+            process.env.NODE_ENV = 'production';
+        } else {
+            import electronDebug from 'electron-debug';
+            electronDebug({
+                showDevTools: true,
+                enabled: (this.settings.devTools !== undefined) ? this.settings.devTools : true
+            });
+        }
 
         this.prepareWindowSettings();
 
@@ -67,6 +69,14 @@ class App {
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
+    }
+
+    /**
+     * Checks whether this is a production build.
+     * @returns {boolean}
+     */
+    isProduction() {
+        return ('env' in this.settings && this.settings.env === 'prod');
     }
 
     /**
@@ -164,10 +174,20 @@ class App {
         this.l.info('ready fired');
 
         this.loadPlugins();
-        this.systemEvents.emit('beforeModulesLoad');
+        try {
+            this.systemEvents.emit('beforeModulesLoad');
+        } catch (e) {
+            this.l.error(`error while handling 'beforeModulesLoad' event: ${e}`);
+        }
+
         this.loadModules();
 
-        this.systemEvents.emit('beforeDesktopLoaded');
+        try {
+            this.systemEvents.emit('beforeDesktopLoad');
+        } catch (e) {
+            this.l.error(`error while handling 'beforeDesktopLoad' event: ${e}`);
+        }
+
 
         try {
             // This is `reify` so we can have nested imports.
@@ -214,19 +234,26 @@ class App {
     loadPlugins() {
         if ('plugins' in this.settings) {
             Object.keys(this.settings.plugins).forEach(plugin => {
-                this.l.debug(`loading plugin: ${plugin}`);
-                this.modules[plugin] = require(plugin);
-                const Plugin = this.modules[plugin];
-                this.configureLogger(plugin);
-                this.modules[plugin] = new Plugin(
-                    winston,
-                    this.app,
-                    this.settings,
-                    this.systemEvents,
-                    this.modules,
-                    this.settings.plugins[plugin],
-                    Module
-                );
+
+                try {
+                    this.l.debug(`loading plugin: ${plugin}`);
+                    this.modules[plugin] = require(plugin);
+                    const Plugin = this.modules[plugin];
+                    this.configureLogger(plugin);
+                    this.modules[plugin] = new Plugin(
+                        winston,
+                        this.app,
+                        this.settings,
+                        this.systemEvents,
+                        this.modules,
+                        this.settings.plugins[plugin],
+                        Module
+                    );
+                } catch (e) {
+                    // TODO: its probably safer not to exit here, but a strategy for handling this would be better.
+                    this.l.error(`error while loading plugin: ${e}`);
+                }
+
             });
         }
     }
@@ -285,6 +312,10 @@ class App {
                         }
                         if ('name' in moduleJson) {
                             moduleName = moduleJson.name;
+                        }
+                        if ('extract' in moduleJson) {
+                            settings['extractedFilesPath'] =
+                                join(__dirname, '..', 'extracted', moduleName);
                         }
                     } catch (e) {
                         this.l.warn(`could not load ${path.join(modulePath, 'module.json')}`);
@@ -376,10 +407,11 @@ class App {
                 this.systemEvents.emit('beforeLoadingFinished');
                 this.window.show();
                 this.window.focus();
-                if (this.settings.devtron) {
+                if (this.settings.devtron && !this.isProduction()) {
                     this.webContents.executeJavaScript('Desktop.devtron.install()');
                 }
             }
+            console.log('loadingFinished');
             this.systemEvents.emit('loadingFinished');
         });
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
@@ -423,7 +455,12 @@ class App {
 
         const logger = winston.loggers.get(entityName);
         if (entityName !== 'main') {
-            logger.add(winston.transports.File, { name: entityName, filename: join(this.userDataDir, `${entityName}.log`) });
+            logger.add(winston.transports.File, {
+                level: 'debug',
+                name: entityName,
+                handleExceptions: false,
+                filename: join(this.userDataDir, `${entityName}.log`)
+            });
         }
 
         logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
@@ -434,9 +471,9 @@ class App {
                 winston.loggers.add(`${logger._name}__${subEntityName}`, {});
                 const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
                 /*newLogger.add(winston.transports.File, {
-                    name: `${logger._name}__${subEntityName}`,
-                    filename: join(this.userDataDir, `${entityName}.log`)
-                });*/
+                 name: `${logger._name}__${subEntityName}`,
+                 filename: join(this.userDataDir, `${entityName}.log`)
+                 });*/
 
                 newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
                 newLogger.getLoggerFor = logger.getLoggerFor;

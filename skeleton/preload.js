@@ -2,6 +2,7 @@
 
 // This is a modified version of
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
+
 /**
  The MIT License (MIT)
 

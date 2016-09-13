@@ -12,7 +12,7 @@
 
 ## What is this?
 
-This is a complete implementation of integration between `Meteor` and `Electron`. To make it clear from the start, this is a **desktop client** - it is just like your mobile clients - but for desktops. It also features a full hot code push implementation - which means you 
+This is a complete implementation of integration between `Meteor` and `Electron`. To make it clear from the start, this is a **desktop client** - it is just like your mobile clients - but for desktops. It also features a full hot code push implementation - which means you can release updates the same way you are used to.
 
 ## Prerequisites
 

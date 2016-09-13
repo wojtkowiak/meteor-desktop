@@ -11,6 +11,7 @@
         "Meteor": true,
         "WebAppLocalServer": true,
         "Desktop": true,
+        "Profile": true
     },
     "parser": "babel-eslint",
     "rules": {
