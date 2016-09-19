@@ -30,13 +30,12 @@ const currentVersion = hash.sync({
     files: [`${desktopPath}${path.sep}**`]
 });
 
-
 if (currentVersion !== version) {
+    // TODO: something meteor'ish to print to stdout?
     console.info('[meteor-desktop] Initial .desktop version inconsistency found. Files have ' +
         'changed during the build, triggering desktop rebuild.');
     saveNewVersion(currentVersion);
 } else {
-
     const watcher = chokidar.watch(desktopPath, {
         persistent: true,
         ignoreInitial: true

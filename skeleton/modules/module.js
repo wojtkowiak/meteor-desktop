@@ -105,7 +105,10 @@ export default class Module {
      */
     sendInternal(event, ...data) {
         if (!renderer) throw new Error('No reference to renderer process (meteor) yet.');
-        renderer.send(event, ...data);
+        // During the HCP update the window might already be destroyed.
+        if (!renderer.isDestroyed()) {
+            renderer.send(event, ...data);
+        }
     }
 }
 

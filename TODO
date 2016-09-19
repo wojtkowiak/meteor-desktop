@@ -1,3 +1,7 @@
+- fix copy cached asset
+- scenario, clean project and meteor project change
+- scenario, clean project, desktop change then meteor project change
+
 - uglify
 -- ipc async answer
 - use NODE_ENV?
@@ -30,6 +34,7 @@
 - write about icon in window
 - write about passing diferrent things for platforms
 - write about devtron ipc
+- write about hcp when errors prevented startup no watch is presetnt
 
 // Optional
 - create toaster plugin

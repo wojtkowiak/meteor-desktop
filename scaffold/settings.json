@@ -20,6 +20,7 @@
     },
     "packageJsonFields": {
         "description": "My Meteor App",
+        "author": "Me, Myself And I",
         "private": true
     },
     "packagerOptions": {

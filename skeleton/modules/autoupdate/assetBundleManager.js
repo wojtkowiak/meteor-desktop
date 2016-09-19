@@ -32,6 +32,7 @@
 import path from 'path';
 import shell from 'shelljs';
 import fs from 'fs';
+import rimraf from 'rimraf';
 import originalFs from 'original-fs';
 import url from 'url';
 import request from 'request';
@@ -146,7 +147,7 @@ class AssetBundleManager {
     checkForUpdates(baseUrl) {
         let manifest;
         const manifestUrl = url.resolve(baseUrl, 'manifest.json');
-        const desktopVersionUrl = url.resolve(baseUrl, 'version.desktop');
+        const desktopVersionUrl = url.resolve(baseUrl, 'version.desktop.json');
 
         this.log.info(`trying to query ${manifestUrl}`);
 
@@ -185,8 +186,7 @@ class AssetBundleManager {
             this.getDesktopVersion(desktopVersionUrl, desktopVersion => {
                 // Give the callback a chance to decide whether the version should be downloaded.
                 if (
-                    this.callback !== null &&
-                    !this.callback.shouldDownloadBundleForManifest(manifest, desktopVersion)
+                    this.callback !== null && !this.callback.shouldDownloadBundleForManifest(manifest, desktopVersion)
                 ) {
                     return;
                 }
@@ -208,6 +208,7 @@ class AssetBundleManager {
                 // version, use that.
                 if (version in this.downloadedAssetBundlesByVersion) {
                     const downloadedAssetBundle = this.downloadedAssetBundlesByVersion[version];
+                    downloadedAssetBundle.desktopVersion = desktopVersion;
                     if (downloadedAssetBundle !== null) {
                         this.didFinishDownloadingAssetBundle(downloadedAssetBundle);
                         return;
@@ -215,7 +216,6 @@ class AssetBundleManager {
                 }
 
                 // Else, get ready to download the new asset bundle
-
                 this.moveExistingDownloadDirectoryIfNeeded();
 
                 // Create download directory
@@ -239,7 +239,8 @@ class AssetBundleManager {
                         this.log,
                         this.downloadDirectory,
                         manifest,
-                        this.initialAssetBundle
+                        this.initialAssetBundle,
+                        desktopVersion
                     );
                 } catch (e) {
                     this.didFail(e.message);
@@ -254,20 +255,30 @@ class AssetBundleManager {
     /**
      * Removes unnecessary versions.
      *
-     * @param {string} versionToKeep
+     * @param {AssetBundle} assetBundleToKeep
      */
-    removeAllDownloadedAssetBundlesExceptForVersion(versionToKeep) {
+    removeAllDownloadedAssetBundlesExceptForVersion(assetBundleToKeep) {
+        const desktopVersionToKeep = assetBundleToKeep.desktopVersion;
+        console.log('version to keep', desktopVersionToKeep);
         Object.keys(this.downloadedAssetBundlesByVersion).forEach(
             assetVersion => {
                 const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];
                 const version = assetBundle.getVersion();
-
-                if (version !== versionToKeep) {
-                    // Because there may be a desktop.asar file we will turn off asar handling.
-                    process.noAsar = true;
-                    shell.rm('-rf', path.join(this.versionsDirectory, version));
-                    process.noAsar = false;
+                if (version !== assetBundleToKeep.getVersion()) {
+                    const desktopVersion = assetBundle.desktopVersion;
+                    console.log('version desktop to delete', desktopVersion);
+                    if (desktopVersion.version && desktopVersionToKeep.version &&
+                        desktopVersion.version !== desktopVersionToKeep.version) {
+                        this.log.info(`pruned old ${desktopVersion.version}_desktop.asar`);
+                        originalFs.unlinkSync(path.join(this.versionsDirectory, `${desktopVersion.version}_desktop.asar`));
+                    }
+                    // Using rimraf specifically instead of shelljs.rm because despite using
+                    // process.noAsar shelljs tried to remove files inside asar instead of just
+                    // deleting the archive. `del` also could not delete asar archive. Rimraf is ok
+                    // because it accepts custom fs object.
+                    rimraf.sync(path.join(this.versionsDirectory, version), originalFs);
                     delete this.downloadedAssetBundlesByVersion[version];
+                    this.log.info(`pruned old version dir ${version}`);
                 }
             });
     }
@@ -305,7 +316,7 @@ class AssetBundleManager {
             const directory = path.join(this.versionsDirectory, file);
             if (this.downloadDirectory !== directory
                 && this.partialDownloadDirectory !== directory
-                && fs.lstatSync(directory).isDirectory()
+                && originalFs.lstatSync(directory).isDirectory()
             ) {
                 try {
                     const assetBundle = new AssetBundle(
@@ -346,9 +357,39 @@ class AssetBundleManager {
      */
     didFinishDownloadingAssetBundle(assetBundle) {
         this.assetBundleDownloader = null;
-
+        this.handleDesktopBundle(assetBundle);
         if (this.callback !== null) {
             this.callback.onFinishedDownloadingAssetBundle(assetBundle);
+        }
+    }
+
+
+    /**
+     * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
+     */
+    handleDesktopBundle(assetBundle) {
+        if (assetBundle.desktopVersion.version) {
+            assetBundle.writeDesktopVersion();
+            // If there is a new version of desktop.asar copy it with a name changed so it
+            // will contain the version.
+            const desktopPath = path.join(
+                this.versionsDirectory,
+                `${assetBundle.desktopVersion.version}_desktop.asar`
+            );
+
+            if (assetBundle.desktopVersion.version !== this.appSettings.desktopVersion &&
+                !exists(desktopPath)
+            ) {
+                assetBundle.getOwnAssets().some(asset => {
+                    if (~asset.filePath.indexOf('desktop.asar')) {
+                        // TODO: need more efficient way of copying asar archive
+                        originalFs.writeFileSync(
+                            desktopPath, originalFs.readFileSync(asset.getFile()));
+                        return true;
+                    }
+                    return false;
+                });
+            }
         }
     }
 
@@ -427,14 +468,18 @@ class AssetBundleManager {
 
             if (cachedAsset !== null) {
                 shellJsConfig.fatal = true;
+                shellJsConfig.fatal = false;
                 try {
-                    shell.cp(cachedAsset.getFile(), asset.getFile());
+                    if (~cachedAsset.getFile().indexOf('desktop.asar')) {
+                        originalFs.createReadStream(cachedAsset.getFile()).pipe(originalFs.createWriteStream(asset.getFile()));
+                    } else {
+                        shell.cp(cachedAsset.getFile(), asset.getFile());
+                    }
                 } catch (e) {
                     this.didFail(e.message);
                     shellJsConfig.fatal = false;
                     return;
                 }
-                shellJsConfig.fatal = false;
             } else {
                 missingAssets.push(asset);
             }
@@ -459,10 +504,10 @@ class AssetBundleManager {
                 assetBundleDownloader = null;
                 try {
                     this.moveDownloadedAssetBundleIntoPlace(assetBundle);
+                    this.didFinishDownloadingAssetBundle(assetBundle);
                 } catch (e) {
                     this.didFail(e);
                 }
-                this.didFinishDownloadingAssetBundle(assetBundle);
             },
             cause => {
                 this.didFail(cause);
@@ -498,7 +543,7 @@ class AssetBundleManager {
         if (exists(this.downloadDirectory)) {
             if (exists(this.partialDownloadDirectory)) {
                 try {
-                    shell.rm('-Rf', this.partialDownloadDirectory);
+                    rimraf.sync(this.partialDownloadDirectory, originalFs);
                 } catch (e) {
                     this.log.error('could not delete partial download directory.');
                 }
@@ -507,7 +552,7 @@ class AssetBundleManager {
             this.partiallyDownloadedAssetBundle = null;
 
             try {
-                shell.mv(this.downloadDirectory, this.partialDownloadDirectory);
+                originalFs.renameSync(this.downloadDirectory, this.partialDownloadDirectory);
             } catch (e) {
                 this.log.error('could not rename existing download directory');
                 shellJsConfig.fatal = false;

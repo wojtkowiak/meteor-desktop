@@ -32,6 +32,8 @@
 import path from 'path';
 import shell from 'shelljs';
 import fs from 'fs';
+import originalFs from 'original-fs';
+import rimraf from 'rimraf';
 import url from 'url';
 
 const { join } = path;
@@ -92,7 +94,7 @@ class HCPClient {
     }
 
     /**
-     * Resets or sets and empty config object.
+     * Resets or sets an empty config object.
      *
      * @private
      */
@@ -150,7 +152,11 @@ class HCPClient {
             this.log.info(
                 'detected new bundled version, removing versions directory if it exists');
             if (exists(this.versionsDir)) {
-                shell.rm('-rf', this.versionsDir);
+                // Using rimraf specifically instead of shelljs.rm because despite using
+                // process.noAsar shelljs tried to remove files inside asar instead of just
+                // deleting the archive. `del` also could not delete asar archive. Rimraf is ok
+                // because it accepts custom fs object.
+                rimraf.sync(this.versionsDir, originalFs);
                 if (exists(this.versionsDir)) {
                     this.log.warn('could not remove versions directory');
                 }
@@ -182,15 +188,25 @@ class HCPClient {
 
         const lastDownloadedVersion = this.config.lastDownloadedVersion;
         if (lastDownloadedVersion) {
-            this.currentAssetBundle = this.assetBundleManager
-                .downloadedAssetBundleWithVersion(lastDownloadedVersion);
-            this.log.verbose(
-                `using last downloaded version (${lastDownloadedVersion})`);
+            if (~this.config.blacklistedVersions.indexOf(lastDownloadedVersion)) {
+                this.useLastKnownGoodVersion();
+            } else {
+                if (lastDownloadedVersion !== initialAssetBundle.getVersion()) {
 
-            if (!this.currentAssetBundle) {
-                this.log.warn('seems that last downloaded version does not exists... ' +
-                    'using initial asset bundle');
-                this.currentAssetBundle = initialAssetBundle;
+                    this.currentAssetBundle = this.assetBundleManager
+                        .downloadedAssetBundleWithVersion(lastDownloadedVersion);
+                    this.log.verbose(
+                        `will use last downloaded version (${lastDownloadedVersion})`);
+
+                    if (!this.currentAssetBundle) {
+                        this.log.warn('seems that last downloaded version does not exists... ');
+                        this.useLastKnownGoodVersion();
+                    }
+                } else {
+                    this.currentAssetBundle = initialAssetBundle;
+                    this.log.verbose(
+                        `will use last downloaded version which is apparently also the initial asset bundle (${lastDownloadedVersion})`);
+                }
             }
         } else {
             this.log.verbose('using initial asset bundle');
@@ -198,6 +214,21 @@ class HCPClient {
         }
 
         this.pendingAssetBundle = null;
+    }
+
+    useLastKnownGoodVersion() {
+        const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
+        this.log.debug(`last known good version is ${this.config.lastKnownGoodVersion}`);
+        if (lastKnownGoodVersion
+            && lastKnownGoodVersion !== this.assetBundleManager.initialAssetBundle.getVersion()) {
+            const assetBundle = this.assetBundleManager
+                .downloadedAssetBundleWithVersion(lastKnownGoodVersion);
+            this.log.info(`will use last known good version: ${assetBundle.getVersion()}`);
+            this.currentAssetBundle = assetBundle;
+        } else {
+            this.log.verbose('using initial asset bundle');
+            this.currentAssetBundle = this.assetBundleManager.initialAssetBundle;
+        }
     }
 
     /**
@@ -255,6 +286,7 @@ class HCPClient {
 
         this.startupTimerStartTimestamp = Date.now();
         this.startupTimer = setTimeout(() => {
+            this.removeStartupTimer();
             this.revertToLastKnownGoodVersion();
         }, this.settings.webAppStartupTimeout);
 
@@ -271,7 +303,10 @@ class HCPClient {
         // Blacklist the current version, so we don't update to it again right away.
         this.log.warn('startup timer expired, reverting to another version');
 
-        if (!~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
+        // If this is the initial version, we will not get anything from blacklisting it.
+        if (this.currentAssetBundle.getVersion() !==
+            this.assetBundleManager.initialAssetBundle.getVersion() &&
+            !~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
             this.log.debug(`blacklisted version ${this.currentAssetBundle.getVersion()}`);
             this.config.blacklistedVersions.push(this.currentAssetBundle.getVersion());
             this.saveConfig();
@@ -279,14 +314,17 @@ class HCPClient {
 
         // If there is a last known good version and we can load the bundle, revert to it.
         const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
-        if (lastKnownGoodVersion) {
+        this.log.debug(`last known good version is ${this.config.lastKnownGoodVersion}`);
+        if (lastKnownGoodVersion
+            && lastKnownGoodVersion !== this.assetBundleManager.initialAssetBundle.getVersion()) {
             const assetBundle = this.assetBundleManager
                 .downloadedAssetBundleWithVersion(lastKnownGoodVersion);
-            if (assetBundle) {
+            if (assetBundle && assetBundle.getVersion() !== this.currentAssetBundle.getVersion()) {
                 this.log.info(`reverting to last known good version: ${assetBundle.getVersion()}`);
                 this.pendingAssetBundle = assetBundle;
             }
-        } else if (this.currentAssetBundle !== this.assetBundleManager.initialAssetBundle) {
+        } else if (this.currentAssetBundle.getVersion() !==
+            this.assetBundleManager.initialAssetBundle.getVersion()) {
             // Else, revert to the initial asset bundle, unless that is what we are currently
             // serving.
             this.log.info('reverting to initial bundle');
@@ -295,6 +333,7 @@ class HCPClient {
 
         // Only reload if we have a pending asset bundle to reload.
         if (this.pendingAssetBundle) {
+            this.systemEvents.emit('revertVersionReady');
             this.log.warn(`will try to revert to ${this.pendingAssetBundle.getVersion()}`);
             this.window.reload();
         }
@@ -321,16 +360,23 @@ class HCPClient {
     startupDidComplete(onVersionsCleanedUp = Function.prototype) {
         this.log.verbose('startup did complete, stopping startup timer (startup took ' +
             `${Date.now() - this.startupTimerStartTimestamp}ms)`);
+
+        // Remove this version from blacklisted.
+        if (~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
+            this.config.blacklistedVersions.splice(this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion()), 1);
+            this.saveConfig();
+        }
+
         this.removeStartupTimer();
 
-        // If startup completed successfully, we consider a version good.
+        // If startup completed successfully, we consider a good version.
         this.config.lastKnownGoodVersion = this.currentAssetBundle.getVersion();
         this.saveConfig();
 
         setImmediate(() => {
             this.assetBundleManager
                 .removeAllDownloadedAssetBundlesExceptForVersion(
-                    this.currentAssetBundle.getVersion()
+                    this.currentAssetBundle
                 );
 
             if (typeof onVersionsCleanedUp === 'function') {
@@ -383,6 +429,7 @@ class HCPClient {
         } catch (e) {
             this.log.error('could not read the config.json');
             this.resetConfig();
+            this.resetConfig();
             this.saveConfig();
         }
     }
@@ -410,6 +457,19 @@ class HCPClient {
     }
 
     /**
+     * Fires console.warn on the Meteor app side.
+     *
+     * @param {string} cause - Warn message.
+     * @private
+     */
+    notifyWarning(cause) {
+        this.module.send(
+            'warn',
+            `[autoupdate] Warning: ${cause}`
+        );
+    }
+
+    /**
      * Makes downloaded asset pending. Fired by assetBundleManager.
      * @param assetBundle
      */
@@ -419,16 +479,18 @@ class HCPClient {
         this.config.lastDownloadedVersion = assetBundle.getVersion();
         this.saveConfig();
         this.pendingAssetBundle = assetBundle;
-        this.notifyNewVersionReady(assetBundle.getVersion());
+        this.notifyNewVersionReady(assetBundle.getVersion(), assetBundle.desktopVersion);
     }
 
     /**
      * Notify meteor that a new version is ready.
-     * @param {string} version - Version string.
+     * @param {string} version        - Version string.
+     * @param {Object} desktopVersion - Object with desktop version and compatibility
+     *                                  version.
      * @private
      */
-    notifyNewVersionReady(version) {
-        this.systemEvents.emit('newVersionReady');
+    notifyNewVersionReady(version, desktopVersion) {
+        this.systemEvents.emit('newVersionReady', desktopVersion.version);
         this.module.send(
             'onNewVersionReady',
             version
@@ -442,7 +504,7 @@ class HCPClient {
      * @param {null|Object} desktopVersion - Version information about the desktop part.
      * @returns {boolean}
      */
-    shouldDownloadBundleForManifest(manifest, desktopVersion) {
+    shouldDownloadBundleForManifest(manifest, desktopVersion = null) {
         const version = manifest.version;
 
         // No need to redownload the current version.
@@ -469,35 +531,59 @@ class HCPClient {
         // This is commented out intentionally as we do not care about cordova compatibility version
         // this should not affect us.
         /*
-        if (this.config.cordovaCompatibilityVersion !== manifest.cordovaCompatibilityVersion) {
-            this.notifyError("Skipping downloading new version because the Cordova platform version
-             or plugin versions have changed and are potentially incompatible");
-            return false;
-        }
-        */
+         if (this.config.cordovaCompatibilityVersion !== manifest.cordovaCompatibilityVersion) {
+         this.notifyError("Skipping downloading new version because the Cordova platform version
+         or plugin versions have changed and are potentially incompatible");
+         return false;
+         }
+         */
 
         if (desktopVersion) {
             this.log.debug(`got desktop version information: ${desktopVersion.version} ` +
                 `(compatibility: ${desktopVersion.compatibilityVersion})`);
 
             let blockAppUpdateOnDesktopIncompatibility = true;
+            let ignoreCompatibilityVersion = false;
+
             if ('desktopHCPSettings' in this.appSettings &&
                 'blockAppUpdateOnDesktopIncompatibility' in this.appSettings.desktopHCPSettings) {
                 blockAppUpdateOnDesktopIncompatibility =
                     this.appSettings.desktopHCPSettings.blockAppUpdateOnDesktopIncompatibility;
             }
 
-            if (this.appSettings.compatibilityVersion !== desktopVersion.compatibilityVersion &&
-                blockAppUpdateOnDesktopIncompatibility) {
-                this.log.warn('Skipping downloading new version because the .desktop ' +
-                    'compatibility version have changed and is potentially incompatible.');
-                this.notifyError('Skipping downloading new version because the .desktop ' +
-                    'compatibility version have changed and is potentially incompatible ' +
-                    `(${version})`);
-                return false;
+            if ('desktopHCPSettings' in this.appSettings &&
+                'ignoreCompatibilityVersion' in this.appSettings.desktopHCPSettings) {
+                ignoreCompatibilityVersion =
+                    this.appSettings.desktopHCPSettings.ignoreCompatibilityVersion;
+            }
+
+            if (this.appSettings.compatibilityVersion !== desktopVersion.compatibilityVersion) {
+                if (!ignoreCompatibilityVersion) {
+                    if (blockAppUpdateOnDesktopIncompatibility) {
+                        this.log.warn('Skipping downloading new version because the .desktop ' +
+                            'compatibility version have changed and is potentially incompatible.');
+                        this.notifyError('Skipping downloading new version because the .desktop ' +
+                            'compatibility version have changed and is potentially incompatible ' +
+                            `(${this.appSettings.compatibilityVersion} != ` +
+                            `${desktopVersion.compatibilityVersion})`);
+                        return false;
+                    }
+                    this.log.warn('Allowing download of new meteor app version despite ' +
+                        'incompatible .desktop. (blockAppUpdateOnDesktopIncompatibility)');
+                    this.notifyWarning('Allowing download of new meteor app version despite ' +
+                        'incompatible .desktop. (blockAppUpdateOnDesktopIncompatibility)' +
+                        `(${this.appSettings.compatibilityVersion} != ` +
+                        `${desktopVersion.compatibilityVersion})`);
+                } else {
+                    this.log.warn('Allowing download of new meteor app version with ' +
+                        'potentially incompatible .desktop. (ignoreCompatibilityVersion)');
+                    this.notifyWarning('Allowing download of new meteor app version with ' +
+                        'potentially incompatible .desktop. (ignoreCompatibilityVersion)' +
+                        `(${this.appSettings.compatibilityVersion} != ` +
+                        `${desktopVersion.compatibilityVersion})`);
+                }
             }
         }
-
         return true;
     }
 }

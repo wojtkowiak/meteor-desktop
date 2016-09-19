@@ -32,6 +32,19 @@ class App {
         this.l.info('app data dir is:', this.userDataDir);
 
         this.l.info('starting app');
+
+        this.settings = {
+            devTools: false
+        };
+        this.desktopPath = path.resolve(join(__dirname, '..', 'desktop.asar'));
+        this.loadSettings();
+        this.l.debug(`initial desktop version is ${this.settings.desktopVersion}`);
+
+        if (this.resolveDesktopPath()) {
+            // Refresh setting because we will use different desktop.asar version.
+            this.loadSettings();
+        }
+
         // System events emitter.
         this.systemEvents = new Events();
 
@@ -43,13 +56,8 @@ class App {
         this.modules = {};
         this.localServer = null;
 
-        this.settings = {
-            devTools: false
-        };
 
         this.catchUncaughtExceptions();
-
-        this.loadSettings();
 
         if (this.isProduction()) {
             // In case anything depends on this...
@@ -64,11 +72,115 @@ class App {
 
         this.prepareWindowSettings();
 
-        this.newVersionReady = false;
-        this.systemEvents.on('newVersionReady', () => (this.newVersionReady = true));
+        this.meteorAppVersionChange = false;
+        this.desktopVersionChange = null;
+        this.systemEvents.on('newVersionReady', (desktopVersion) => {
+            this.meteorAppVersionChange = true;
+            this.desktopVersionChange = desktopVersion;
+        });
+        this.systemEvents.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
+    }
+
+    /**
+     * Decides where the current desktop.asar lies. Takes into account desktopHCP.
+     * Also supports falling back to last known good version Meteor mechanism.
+     */
+    resolveDesktopPath() {
+        let changed = false;
+        // Read meteor's initial asset bundle version.
+        const initialVersion = this.readInitialAssetBundleVersion();
+
+        this.autoupdate = null;
+        this.autoupdateConfig = join(this.userDataDir, 'autoupdate.json');
+        this.readConfig();
+
+        if (this.autoupdate.lastSeenInitialVersion !== initialVersion) {
+            this.l.warn(`will use desktop.asar from initial version beacuse the initial version of meteor app has changed: ${this.desktopPath}`);
+            return;
+        }
+
+        // We have a last downloaded version.
+        if (this.autoupdate.lastDownloadedVersion) {
+            // But it might be blacklisted.
+            if (~this.autoupdate.blacklistedVersions.indexOf(this.autoupdate.lastDownloadedVersion)) {
+                // Lets check if we have last known good version.
+                if (this.autoupdate.lastKnownGoodVersion) {
+                    // If this is different from the initial version.
+                    if (this.autoupdate.lastKnownGoodVersion !== this.autoupdate.lastSeenInitialVersion) {
+
+                        const desktopVersion = this.readDesktopVersionFromBundle(this.autoupdate.lastKnownGoodVersion);
+                        if (desktopVersion.version) {
+                            if (desktopVersion.version !== this.settings.desktopVersion) {
+                                this.desktopPath = join(this.userDataDir, 'versions', `${desktopVersion.version}_desktop.asar`);
+                                changed = true;
+                                this.l.warn(`will use desktop.asar from last known good version at: ${this.desktopPath}`);
+                            } else {
+                                this.l.warn(`will use desktop.asar from initial version because last known good version of meteor app is using it: ${this.desktopPath}`);
+                            }
+                        } else {
+                            this.l.warn(`will use desktop.asar from inital version because last known good version of meteor app does not contain new desktop version: ${this.desktopPath}`);
+                        }
+                    } else {
+                        this.l.info(`will use desktop.asar from last known good version which is apparently the initial bundle: ${this.desktopPath}`);
+                    }
+                } else {
+                    this.l.warn(`will use desktop.asar from initial version as a fallback: ${this.desktopPath}`);
+                }
+            } else {
+                if (this.autoupdate.lastDownloadedVersion !== this.autoupdate.lastSeenInitialVersion) {
+                    const desktopVersion = this.readDesktopVersionFromBundle(this.autoupdate.lastDownloadedVersion);
+                    if (desktopVersion.version) {
+                        if (desktopVersion.version !== this.settings.desktopVersion) {
+                            this.desktopPath = join(this.userDataDir, 'versions', `${desktopVersion.version}_desktop.asar`);
+                            changed = true;
+                            this.l.warn(`will use desktop.asar from last downloaded version at: ${this.desktopPath}`);
+                        } else {
+                            this.l.warn(`will use desktop.asar from initial version because last downloaded version is using it: ${this.desktopPath}`);
+                        }
+                    } else {
+                        this.l.warn(`will use desktop.asar from inital version from last downloaded version does not contain new desktop version: ${this.desktopPath}`);
+                    }
+                } else {
+                    this.l.info(`will use desktop.asar from last downloaded version which is apparently the initial bundle: ${this.desktopPath}`);
+                }
+            }
+        } else {
+            this.l.info(`using desktop.asar from initial bundle: ${this.desktopPath}`);
+        }
+        return changed;
+    }
+
+    readDesktopVersionFromBundle(version) {
+        let desktopVersion;
+        try {
+            return JSON.parse(fs.readFileSync(join(this.userDataDir, 'versions', version, '_desktop.json'), 'UTF-8'));
+        } catch (e) {
+            return {};
+        }
+    }
+
+    readInitialAssetBundleVersion() {
+        let desktopVersion;
+        try {
+            return JSON.parse(fs.readFileSync(path.resolve(join(__dirname, '..', 'meteor.asar', 'program.json')), 'UTF-8')).version;
+        } catch (e) {
+            return {};
+        }
+    }
+
+    /**
+     * Reads config json file.
+     * @private
+     */
+    readConfig() {
+        try {
+            this.autoupdate = JSON.parse(fs.readFileSync(this.autoupdateConfig, 'UTF-8'));
+        } catch (e) {
+            this.autoupdate = {};
+        }
     }
 
     /**
@@ -111,7 +223,8 @@ class App {
      */
     loadSettings() {
         try {
-            this.settings = JSON.parse(fs.readFileSync(join(__dirname, '..', 'desktop.asar', 'settings.json')), 'UTF-8');
+            this.settings = JSON.parse(
+                fs.readFileSync(join(this.desktopPath, 'settings.json')), 'UTF-8');
         } catch (e) {
             this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
@@ -159,7 +272,7 @@ class App {
         this.mergeOsSpecificWindowSettings();
 
         if ('icon' in this.settings.window) {
-            this.settings.window.icon = join(__dirname, '..', 'desktop.asar', 'assets', this.settings.window.icon);
+            this.settings.window.icon = join(this.desktopPath, 'assets', this.settings.window.icon);
         }
     }
 
@@ -190,8 +303,8 @@ class App {
 
 
         try {
-            // This is `reify` so we can have nested imports.
-            import desktop from '../desktop.asar/desktop.js';
+            const desktopJsPath = join(this.desktopPath, 'desktop.js');
+            const desktop = require(desktopJsPath);
             this.desktop = desktop(
                 winston,
                 this.app,
@@ -294,9 +407,9 @@ class App {
         });
 
         // Now go through each directory. If there is a index.js then it should be a module.
-        fs.readdirSync(join(__dirname, '..', 'desktop.asar', 'modules')).forEach(dir => {
+        fs.readdirSync(join(this.desktopPath, 'modules')).forEach(dir => {
             try {
-                const modulePath = join(__dirname, '..', 'desktop.asar', 'modules', dir);
+                const modulePath = join(this.desktopPath, 'modules', dir);
                 if (fs.lstatSync(modulePath).isDirectory()) {
                     moduleName = path.parse(modulePath).name;
                     this.l.debug(`loading module: ${dir} => ${moduleName}`);
@@ -383,32 +496,26 @@ class App {
             // We need to block it.
             event.preventDefault();
 
-            if (this.newVersionReady) {
-                this.systemEvents.emit(
-                    'beforeReload', this.modules.autoupdate.getPendingVersion());
-
-                // Firing reset routine.
-                this.modules.autoupdate.onReset();
-
-                // Reinitialize the local server.
-                this.localServer.init(
-                    this.modules.autoupdate.getDirectory(),
-                    this.modules.autoupdate.getParentDirectory(),
-                    true
-                );
+            console.log('refresh', this.meteorAppVersionChange);
+            if (this.meteorAppVersionChange) {
+                this.updateToNewVersion();
             }
-            this.newVersionReady = false;
+            this.meteorAppVersionChange = false;
         });
 
         // The app was loaded.
         this.webContents.on('did-stop-loading', () => {
             if (!this.windowAlreadyLoaded) {
-                this.windowAlreadyLoaded = true;
-                this.systemEvents.emit('beforeLoadingFinished');
-                this.window.show();
-                this.window.focus();
-                if (this.settings.devtron && !this.isProduction()) {
-                    this.webContents.executeJavaScript('Desktop.devtron.install()');
+                if (this.meteorAppVersionChange) {
+                    this.updateToNewVersion();
+                } else {
+                    this.windowAlreadyLoaded = true;
+                    this.systemEvents.emit('beforeLoadingFinished');
+                    this.window.show();
+                    this.window.focus();
+                    if (this.settings.devtron && !this.isProduction()) {
+                        this.webContents.executeJavaScript('Desktop.devtron.install()');
+                    }
                 }
             }
             console.log('loadingFinished');
@@ -417,6 +524,26 @@ class App {
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
 
+    updateToNewVersion() {
+        this.systemEvents.emit(
+            'beforeReload', this.modules.autoupdate.getPendingVersion());
+
+        if (this.settings.desktopHCP && this.settings.desktopVersion !== this.desktopVersionChange) {
+            this.l.info('relaunching to use different version of desktop.asar');
+            app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+            app.exit(0)
+        } else {
+            // Firing reset routine.
+            this.modules.autoupdate.onReset();
+
+            // Reinitialize the local server.
+            this.localServer.init(
+                this.modules.autoupdate.getDirectory(),
+                this.modules.autoupdate.getParentDirectory(),
+                true
+            );
+        }
+    }
 
     initLogger() {
         const fileLogConfiguration = {
@@ -440,6 +567,7 @@ class App {
             new (winston.transports.File)(fileLogConfiguration)
         ];
 
+        // TODO: seems that every logger that shares this default transports also registers for exceptions because handleExceptions is true - is this winston bug?
         winston.loggers.options.transports = this.loggerTransports;
     }
 
@@ -470,11 +598,6 @@ class App {
             if (!winston.loggers.loggers[`${logger._name}__${subEntityName}`]) {
                 winston.loggers.add(`${logger._name}__${subEntityName}`, {});
                 const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
-                /*newLogger.add(winston.transports.File, {
-                 name: `${logger._name}__${subEntityName}`,
-                 filename: join(this.userDataDir, `${entityName}.log`)
-                 });*/
-
                 newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
                 newLogger.getLoggerFor = logger.getLoggerFor;
                 return newLogger;

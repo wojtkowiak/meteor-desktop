@@ -32,6 +32,11 @@ Desktop.on('autoupdate', 'error', (event, args) => {
     WebAppLocalServer.onErrorCallback();
 });
 
+Desktop.on('autoupdate', 'warn', (event, args) => {
+    console.warn(args);
+});
+
+
 Desktop.on('autoupdate', 'onVersionsCleanedUp', () => {
     if (WebAppLocalServer.onVersionsCleanedUpCallback) {
         WebAppLocalServer.onVersionsCleanedUpCallback();

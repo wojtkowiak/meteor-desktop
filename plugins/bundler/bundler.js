@@ -172,7 +172,7 @@ class MeteorDesktopBundler {
     /**
      * Calculates a md5 from all dependencies.
      */
-    calculateCompatibilityVersion(dependencies, file) {
+    calculateCompatibilityVersion(dependencies, desktopPath, file) {
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
             `${dependency}:${dependencies[dependency]}`
@@ -180,7 +180,13 @@ class MeteorDesktopBundler {
         const mainCompatibilityVersion = file.require('meteor-desktop/package.json')
             .version
             .split('.')[0];
+        const desktopCompatibilityVersion = this.getSettings(desktopPath, file)
+            .version
+            .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion}`);
+        deps.push(`desktop-app:${desktopCompatibilityVersion}`);
+        console.log(`desktop-app:${desktopCompatibilityVersion}`);
+        console.log('deps', deps);
         return md5(JSON.stringify(deps));
     }
 
@@ -195,6 +201,7 @@ class MeteorDesktopBundler {
         }
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
+            console.log('bundling desktop');
             console.time('[meteor-desktop]: Preparing desktop.asar took');
 
             const requireLocal = files[0].require.bind(files[0]);
@@ -247,7 +254,7 @@ class MeteorDesktopBundler {
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
             settings.desktopVersion = version;
             settings.compatibilityVersion =
-                this.calculateCompatibilityVersion(dependencies, files[0]);
+                this.calculateCompatibilityVersion(dependencies, desktopPath, files[0]);
             fs.writeFileSync(
                 path.join(desktopTmpPath, 'settings.json'), JSON.stringify(settings, null, 4)
             );
@@ -309,7 +316,7 @@ class MeteorDesktopBundler {
             }, null, 2);
 
             inputFile.addAsset({
-                path: inputFile.getPathInPackage() + '.json',
+                path: `${inputFile.getPathInPackage()}.json`,
                 data: versionFileJSON
             });
 
