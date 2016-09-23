@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const chokidar = Npm.require('chokidar');
 const hash = Npm.require('hash-files');
 const path = Npm.require('path');
@@ -7,7 +9,7 @@ const fs = Npm.require('fs');
 const rootPath = path.resolve(path.join(process.cwd(), '..', '..', '..', '..', '..'));
 
 const desktopPath = path.resolve(path.join(rootPath, '.desktop'));
-const versionFile = path.join(rootPath, 'version.desktop');
+const versionFile = path.join(rootPath, 'version.desktop.json');
 
 function saveNewVersion(version) {
     fs.writeFileSync(versionFile, JSON.stringify({

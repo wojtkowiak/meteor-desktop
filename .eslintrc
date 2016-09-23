@@ -24,6 +24,12 @@
         ],
         "comma-dangle": [
             0
+        ],
+        "no-bitwise": [
+            "error",
+            {
+                "allow": ["~"]
+            }
         ]
     }
 }

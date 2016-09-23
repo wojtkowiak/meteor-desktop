@@ -45,7 +45,7 @@ class MeteorDesktopBundler {
         let settings = {};
         try {
             settings = JSON.parse(
-                fs.readFileSync(path.join(desktopPath, 'settings.json'), 'UTF-8')
+                this.fs.readFileSync(path.join(desktopPath, 'settings.json'), 'UTF-8')
             );
         } catch (e) {
             file.error({
@@ -66,7 +66,7 @@ class MeteorDesktopBundler {
         let moduleConfig = {};
         try {
             moduleConfig = JSON.parse(
-                fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
+                this.fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
             );
         } catch (e) {
             file.error({
@@ -86,8 +86,8 @@ class MeteorDesktopBundler {
 
         if (!extfs.isEmptySync(modulesPath)) {
             shell.ls('-d', path.join(modulesPath, '*')).forEach(
-                module => {
-                    if (fs.lstatSync(module).isDirectory()) {
+                (module) => {
+                    if (this.fs.lstatSync(module).isDirectory()) {
                         const moduleConfig = this.getModuleConfig(module, file);
                         if (path.parse) {
                             moduleConfig.dirName = path.parse(module).name;
@@ -129,7 +129,7 @@ class MeteorDesktopBundler {
         const moduleDependencies = {};
 
         configs.forEach(
-            moduleConfig => {
+            (moduleConfig) => {
                 if (!('dependencies' in moduleConfig)) {
                     moduleConfig.dependencies = {};
                 }
@@ -155,12 +155,12 @@ class MeteorDesktopBundler {
                 dependencies.plugins
             );
 
-            Object.keys(dependencies.modules).forEach(module => {
+            Object.keys(dependencies.modules).forEach(module =>
                 depsManager.mergeDependencies(
                     `module[${module}]`,
                     dependencies.modules[module]
-                );
-            });
+                )
+            );
 
             return depsManager.getDependencies();
         } catch (e) {
@@ -185,8 +185,6 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
-        console.log(`desktop-app:${desktopCompatibilityVersion}`);
-        console.log('deps', deps);
         return md5(JSON.stringify(deps));
     }
 
@@ -260,13 +258,13 @@ class MeteorDesktopBundler {
             );
 
             // Move files that should not be asar'ed.
-            configs.forEach(config => {
+            configs.forEach((config) => {
                 const moduleConfig = config;
                 if ('extract' in moduleConfig) {
                     if (!Array.isArray(moduleConfig.extract)) {
                         moduleConfig.extract = [moduleConfig.extract];
                     }
-                    moduleConfig.extract.forEach(file => {
+                    moduleConfig.extract.forEach((file) => {
                         const filePath = path.join(
                             modulesPath, moduleConfig.dirName, file);
 
@@ -286,7 +284,7 @@ class MeteorDesktopBundler {
             const preset = (uglifyingEnabled && settings.env === 'prod') ?
                 es2015Preset : node6Preset;
 
-            glob.sync(`${desktopTmpPath}/**/*.js`).forEach(file => {
+            glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
                 let { code } = babel.transformFileSync(file, {
                     presets: [preset]
                 });

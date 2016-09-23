@@ -23,6 +23,23 @@
         "author": "Me, Myself And I",
         "private": true
     },
+    "builderOptions": {
+        "win": {
+            "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
+            "title": "My Meteor App",
+            "authors": "Me, Myself And I"
+        },
+        "icon": "../.desktop/assets/meteor.ico",
+        "appId": "meteor.app",
+        "category": "meteor.apps",
+        "mac": {
+            "icon": ".desktop/assets/meteor.icns"
+        },
+        "dmg": {
+            "icon": ".desktop/assets/meteor.icns",
+            "background": ".desktop/assets/splashScreen.png"
+        }
+    },
     "packagerOptions": {
         "icon": "meteor.ico",
         "_osx": {
