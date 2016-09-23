@@ -22,7 +22,7 @@
  *      local server - this is the local server which is serving the app to the builtin Chrome in
  *      Electron
  *
- * Since we have a lot of `async` here it is crucial to cover the siginificant ones with try/catch.
+ * Since we have a lot of `async` here it is crucial to cover the significant ones with try/catch.
  *
  * If you need some more debug telling you why a test failed change the 'showLogs` var below the
  * imports section.
