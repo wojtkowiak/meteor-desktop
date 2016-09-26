@@ -24,7 +24,6 @@ describe('electronAppScaffold', () => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.preload)).to.be.true();
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.modules)).to.be.true();
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.packageJson)).to.be.true();
-                expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.gitIgnore)).to.be.true();
 
                 logStub.restore();
                 done();
