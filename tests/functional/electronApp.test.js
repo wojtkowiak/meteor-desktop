@@ -54,7 +54,7 @@ describe('electronApp', () => {
             shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
             const logStub = new StubLog(MeteorDesktop.electronApp, 'info');
             MeteorDesktop.electronApp.packageJson = {};
-            MeteorDesktop.electronApp.updateDependencies();
+            MeteorDesktop.electronApp.updateDependenciesList();
             const packageJson = JSON.parse(
                 fs.readFileSync(MeteorDesktop.env.paths.electronApp.packageJson, 'UTF-8')
             );
@@ -74,7 +74,7 @@ describe('electronApp', () => {
             saveModuleJson(module, moduleJson);
             const logStub = new StubLog(MeteorDesktop.electronApp, ['error', 'info'], true);
             MeteorDesktop.electronApp.packageJson = {};
-            MeteorDesktop.electronApp.updateDependencies();
+            MeteorDesktop.electronApp.updateDependenciesList();
             expect(logStub.stubs.error).to.have.been.calledWithMatch(
                 sinon.match(match)
             );

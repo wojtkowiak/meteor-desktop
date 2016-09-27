@@ -575,7 +575,7 @@ class App {
     /**
      * Returns a new logger instance.
      * @param {string} entityName
-     * @returns {Logger}
+     * @returns {Log}
      */
     configureLogger(entityName = 'main') {
         const transports = [];

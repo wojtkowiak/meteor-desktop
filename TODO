@@ -27,7 +27,7 @@
 - tests for app
 
 - write about events
-- write about extract
+- write about extract, extractedFilePath
 - write that projectName is the name in package.json and the name of the dir
 - write how to modify main window
 - write about settings in moduleJson

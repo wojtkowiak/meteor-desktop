@@ -12,6 +12,7 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
     "test-watch": "watch \"npm run test\" --wait 10 dist tests/functional tests/unit scaffold skeleton",
+    "lint": "eslint -c .eslintrc **/*.js",
     "prepublish": "npm run build",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
@@ -27,7 +28,7 @@
     "connect-modrewrite": "0.9.0",
     "del": "^2.2.2",
     "dirty-chai": "^1.2.2",
-    "eslint": "^3.5.0",
+    "eslint": "^3.6.0",
     "eslint-config-airbnb-base": "^7.1.0",
     "eslint-plugin-import": "^1.15.0",
     "find-port": "2.0.1",
