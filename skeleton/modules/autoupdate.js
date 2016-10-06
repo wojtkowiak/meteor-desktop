@@ -341,7 +341,7 @@ class HCPClient {
     /**
      * Fired from the Meteor app. Tells us that this version seems to be fine.
      *
-     * @param {function} onVersionsCleanedUp - Callback to be called after versions dir cleanup.
+     * @param {function} onVersionsCleanedUp - callback to be called after versions dir cleanup
      *
      * @private
      */
@@ -436,7 +436,7 @@ class HCPClient {
     /**
      * Fires error callback from the Meteor app side.
      *
-     * @param {string} cause - Error message.
+     * @param {string} cause - error message
      * @private
      */
     notifyError(cause) {
@@ -450,7 +450,7 @@ class HCPClient {
     /**
      * Fires console.warn on the Meteor app side.
      *
-     * @param {string} cause - Warn message.
+     * @param {string} cause - warn message
      * @private
      */
     notifyWarning(cause) {
@@ -475,9 +475,9 @@ class HCPClient {
 
     /**
      * Notify meteor that a new version is ready.
-     * @param {string} version        - Version string.
-     * @param {Object} desktopVersion - Object with desktop version and compatibility
-     *                                  version.
+     * @param {string} version        - version string
+     * @param {Object} desktopVersion - object with desktop version and compatibility
+     *                                  version
      * @private
      */
     notifyNewVersionReady(version, desktopVersion) {
@@ -491,8 +491,8 @@ class HCPClient {
     /**
      * Method that decides whether we are interested in the new bundle that we were notified about.
      * Called by assetBundleManager.
-     * @param {AssetManifest} manifest - Manifest of the new bundle.
-     * @param {null|Object} desktopVersion - Version information about the desktop part.
+     * @param {AssetManifest} manifest     - manifest of the new bundle
+     * @param {null|Object} desktopVersion - version information about the desktop part
      * @returns {boolean}
      */
     shouldDownloadBundleForManifest(manifest, desktopVersion = {}) {

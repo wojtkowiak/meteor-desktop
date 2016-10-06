@@ -2,12 +2,13 @@ import http from 'http';
 import connect from 'connect';
 import serveStatic from 'serve-static';
 import modRewrite from 'connect-modrewrite';
-import paths from '../paths';
-import enableDestroy from 'server-destroy';
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
 import sha1File from 'sha1-file';
+import enableDestroy from 'server-destroy';
+
+import paths from '../paths';
 
 let meteorServer;
 
@@ -156,7 +157,7 @@ export default class MeteorServer {
         try {
             this.httpServerInstance = http.createServer(this.server);
             this.httpServerInstance.on('error', (e) => {
-                this.onStartupFailed(1);
+                this.onStartupFailed(e);
             });
             this.httpServerInstance.on('listening', () => {
                 if (restart) {
@@ -168,7 +169,7 @@ export default class MeteorServer {
             this.httpServerInstance.listen(this.port);
             enableDestroy(this.httpServerInstance);
         } catch (e) {
-            this.onStartupFailed(1);
+            this.onStartupFailed(e);
         }
     }
 }
@@ -187,8 +188,8 @@ export function serveVersion(version) {
                 error() {
                 }
             });
-            function onStartupFailed() {
-                reject();
+            function onStartupFailed(e) {
+                reject(e);
             }
 
             function onServerReady() {

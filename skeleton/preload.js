@@ -49,8 +49,8 @@ try {
  * Callback passed to ipc on/once methods.
  *
  * @callback ipcListener
- * @param {string} event - Event name.
- * @param {...*=}  args  - Event's arguments.
+ * @param {string} event - event name
+ * @param {...*=}  args  - event's arguments
  */
 
 
@@ -63,10 +63,10 @@ var Desktop = {
     /**
      * Adds a callback to internal listeners placeholders and registers real ipc hooks.
      *
-     * @param {string}      module   - Module name.
-     * @param {string}      event    - The name of an event.
-     * @param {ipcListener} callback - Callback to fire when event arrives.
-     * @param {boolean}     once     - Whether this should be fired only once.
+     * @param {string}      module   - module name
+     * @param {string}      event    - the name of an event
+     * @param {ipcListener} callback - callback to fire when event arrives
+     * @param {boolean}     once     - whether this should be fired only once
      */
     addToListeners: function addToListeners(module, event, callback, once) {
         var self = this;
@@ -97,9 +97,9 @@ var Desktop = {
     /**
      * Invokes callback when the specified IPC event is fired.
      *
-     * @param {string} module        - Module name.
-     * @param {string} event         - The name of an event.
-     * @param {ipcListener} callback - A function to invoke when `event` is triggered.
+     * @param {string} module        - module name
+     * @param {string} event         - the name of an event
+     * @param {ipcListener} callback - function to invoke when `event` is triggered
      */
     on: function on(module, event, callback) {
         this.addToListeners(module, event, callback);
@@ -108,9 +108,9 @@ var Desktop = {
     /**
      * Invokes a callback once when the specified IPC event is fired.
      *
-     * @param {string} module        - Module name.
-     * @param {string} event         - The name of an event.
-     * @param {ipcListener} callback - A function to invoke when `event` is triggered.
+     * @param {string} module        - module name
+     * @param {string} event         - the name of an event
+     * @param {ipcListener} callback - function to invoke when `event` is triggered
      */
     once: function once(module, event, callback) {
         this.addToListeners(module, event, callback, true);
@@ -119,9 +119,9 @@ var Desktop = {
     /**
      * Unregisters a callback.
      *
-     * @param {string} module     - Module name.
-     * @param {string} event      - The name of an event.
-     * @param {function} callback - Listener to unregister.
+     * @param {string} module     - module name
+     * @param {string} event      - the name of an event
+     * @param {function} callback - listener to unregister
      */
     removeListener: function removeListener(module, event, callback) {
         var i;
@@ -141,8 +141,8 @@ var Desktop = {
     /**
      * Unregisters all callbacks.
      *
-     * @param {string} module     - Module name.
-     * @param {string} event      - The name of an event.
+     * @param {string} module     - module name
+     * @param {string} event      - the name of an event
      */
     removeAllListeners: function removeAllListeners(module, event) {
         var eventName = this.getEventName(module, event);
@@ -153,9 +153,9 @@ var Desktop = {
     /**
      * Send an event to the main Electron process.
      *
-     * @param {String} module - Module name.
-     * @param {String} event - The name of an event.
-     * @param {...*} arg - additional arguments to pass to event handler.
+     * @param {String} module - module name
+     * @param {String} event  - the name of an event
+     * @param {...*} arg      - additional arguments to pass to event handler
      */
     send: function send(/* module, event , ...args */) {
         var args = Array.prototype.slice.call(arguments);
@@ -167,8 +167,8 @@ var Desktop = {
     /**
      * Send an global event to the main Electron process.
      *
-     * @param {String} event - The name of an event.
-     * @param {...*} arg - additional arguments to pass to event handler.
+     * @param {String} event - the name of an event
+     * @param {...*} arg     - additional arguments to pass to event handler
      */
     sendGlobal: function send(/* event , ...args */) {
         var args = Array.prototype.slice.call(arguments);

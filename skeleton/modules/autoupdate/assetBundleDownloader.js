@@ -181,7 +181,6 @@ export default class AssetBundleDownloader {
                 self.assetsDownloading.push(asset);
                 const downloadUrl = self.downloadUrlForAsset(asset);
                 self.queue.push(callback => {
-                    console.log('will download', downloadUrl);
                     self.httpClient(
                         { uri: downloadUrl, encoding: null },
                         (error, response, body) => {

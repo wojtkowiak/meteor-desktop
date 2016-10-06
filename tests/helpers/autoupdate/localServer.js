@@ -1,7 +1,9 @@
-import LocalServer from '../../../skeleton/modules/localServer';
 import fetch from 'node-fetch';
 import chai from 'chai';
 import dirty from 'dirty-chai';
+
+import LocalServer from '../../../skeleton/modules/localServer';
+
 chai.use(dirty);
 const { expect } = chai;
 
@@ -127,6 +129,12 @@ export async function expectAssetServedToContain(path, expectedContents) {
 }
 
 
-module.exports = { setUpLocalServer, fetchFromLocalServer, expectVersionServedToEqual,
-    shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed,
-    expectAssetServedToContain };
+module.exports = {
+    setUpLocalServer,
+    fetchFromLocalServer,
+    expectVersionServedToEqual,
+    shutdownLocalServer,
+    restartLocalServerAndExpectVersion,
+    expectAssetToBeServed,
+    expectAssetServedToContain
+};

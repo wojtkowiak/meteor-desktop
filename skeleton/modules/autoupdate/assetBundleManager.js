@@ -259,7 +259,6 @@ class AssetBundleManager {
      */
     removeAllDownloadedAssetBundlesExceptForVersion(assetBundleToKeep) {
         const desktopVersionToKeep = assetBundleToKeep.desktopVersion;
-        console.log('version to keep', desktopVersionToKeep);
         Object.keys(this.downloadedAssetBundlesByVersion).forEach(
             assetVersion => {
                 const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];

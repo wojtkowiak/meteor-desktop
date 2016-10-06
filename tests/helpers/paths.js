@@ -1,4 +1,5 @@
 import path from 'path';
+
 const { join, resolve } = path;
 
 const testsPath = resolve('tests');
@@ -22,5 +23,12 @@ const fixtures = {
 };
 
 const cli = resolve(join(__dirname, '..', 'bin', 'cli.js'));
-export default { testsPath, testsTmpPath, testProjectInstallPath, autoUpdateVersionsPath, fixtures,
-    fixturesPath, cli };
+export default {
+    testsPath,
+    testsTmpPath,
+    testProjectInstallPath,
+    autoUpdateVersionsPath,
+    fixtures,
+    fixturesPath,
+    cli
+};

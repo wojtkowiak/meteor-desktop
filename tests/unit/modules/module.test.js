@@ -1,15 +1,15 @@
 /* eslint-disable no-underscore-dangle */
-
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
+import sinon from 'sinon';
+import mockery from 'mockery';
+import rewire from 'rewire';
+
 chai.use(sinonChai);
 chai.use(dirty);
-import sinon from 'sinon';
 const { describe, it } = global;
 const { expect } = chai;
-
-import mockery from 'mockery';
 
 const Electron = {
 };
@@ -19,25 +19,29 @@ mockery.enable({
     warnOnUnregistered: false
 });
 
-const rewire = require('rewire');
 const Module = rewire('../../../skeleton/modules/module.js');
 
 describe('Module', () => {
     describe('#sendInternal', () => {
         it('should throw when no reference to renderer set yet', () => {
-            const module = new Module('test');
-            expect(module.sendInternal.bind(module, 'test')).to.throw(
+            expect(Module.sendInternal.bind(module, 'test')).to.throw(
                 /No reference to renderer process/
             );
         });
         it('should send ipc when renderer is set', () => {
-            const module = new Module('test');
-            const rendererMock = { send: sinon.stub() };
+            const rendererMock = { send: sinon.stub(), isDestroyed: () => false };
             const revert = Module.__set__('renderer', rendererMock);
             const arg1 = { some: 'data' };
             const arg2 = 'test';
-            module.sendInternal('event', arg1, arg2);
+            Module.sendInternal('event', arg1, arg2);
             expect(rendererMock.send).to.be.calledWith('event', arg1, arg2);
+            revert();
+        });
+        it('should not send ipc when renderer is destroyed', () => {
+            const rendererMock = { send: sinon.stub(), isDestroyed: () => true };
+            const revert = Module.__set__('renderer', rendererMock);
+            Module.sendInternal('event');
+            expect(rendererMock.send).to.have.callCount(0);
             revert();
         });
     });

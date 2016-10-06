@@ -2,12 +2,12 @@
  * Represents the native desktop side.
  *
  * @param {Object} log          - Winston logger instance
- * @param {Object} app          - Reference to the Electron app
+ * @param {Object} app          - reference to the Electron app
  * @param {Object} appSettings  - settings.json object
- * @param {Object} systemEvents - Event emitter for listening or emitting events on the desktop
+ * @param {Object} systemEvents - event emitter for listening or emitting events on the desktop
  *                                side
- * @param {Object} modules      - Reference to all loaded modules
- * @param {Object} Module       - Reference to Module
+ * @param {Object} modules      - reference to all loaded modules
+ * @param {Object} Module       - reference to Module
  * @constructor
  */
 class Desktop {

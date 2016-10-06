@@ -3,19 +3,21 @@
 
 /**
  * Here we are only testing if the localServer is able to serve the meteor app from one path
- * correctly (the situation after app install where we have a bundled meteor app version).
+ * correctly (the situation after normal app install where we have a bundled meteor app version).
  */
 
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
+import fetch from 'node-fetch';
+
+import paths from '../../helpers/paths';
+import LocalServer from '../../../skeleton/modules/localServer';
+
 chai.use(sinonChai);
 chai.use(dirty);
 const { describe, it } = global;
 const { expect } = chai;
-import paths from '../../helpers/paths';
-import LocalServer from '../../../skeleton/modules/localServer';
-import fetch from 'node-fetch';
 
 let localPort;
 // const oneYearInSeconds = 60 * 60 * 24 * 365;
@@ -182,9 +184,9 @@ describe('localServer', () => {
     });
 });
 
-/*
 
-TODO: When we will switch to reading manifest in localServer, comply also to these:
+// TODO: When we will switch to reading manifest in localServer, comply also to these:
+/*
 
 it("should set the ETag header based on the asset hash", function(done) {
     pendingOnAndroid();
@@ -195,16 +197,19 @@ it("should set the ETag header based on the asset hash", function(done) {
     });
 });
 
-it("should set the Cache-Control header with a max-age of one year for a request with a cache buster", function(done) {
+it("should set the Cache-Control header with a max-age of one year for a request with a
+    cache buster", function(done) {
     pendingOnAndroid();
 
-    fetchFromLocalServer("/packages/meteor.js?9418708e9519b747d9d631d85ea85b90c0b5c70c").then(function(response) {
+    fetchFromLocalServer("/packages/meteor.js?9418708e9519b747d9d631d85ea85b90c0b5c70c")
+    .then(function(response) {
         expect(response.headers.get("Cache-Control")).toContain("max-age=" + oneYearInSeconds);
         done();
     });
 });
 
-it("should set the Cache-Control: no-cache header for a request without a cache buster", function(done) {
+it("should set the Cache-Control: no-cache header for a request without a cache buster",
+ function(done) {
     pendingOnAndroid();
 
     fetchFromLocalServer("/packages/meteor.js").then(function(response) {
@@ -214,3 +219,4 @@ it("should set the Cache-Control: no-cache header for a request without a cache 
 });
 
 */
+

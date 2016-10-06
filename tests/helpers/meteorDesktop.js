@@ -1,9 +1,10 @@
-import meteorDesktop from '../../dist/index';
-import shell from 'shelljs';
-import paths from './paths';
 import sinon from 'sinon';
 import path from 'path';
 import fs from 'fs';
+import shell from 'shelljs';
+
+import meteorDesktop from '../../dist/index';
+import paths from './paths';
 
 export function StubLog(object, methods, stubProcessExit) {
     const stubs = {};
@@ -14,7 +15,7 @@ export function StubLog(object, methods, stubProcessExit) {
         sinon.stub(process, 'exit');
     }
 
-    methodsArray.forEach(method => {
+    methodsArray.forEach((method) => {
         stubs[method] = sinon.stub(object.log, method);
     });
 

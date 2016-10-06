@@ -471,7 +471,7 @@ class App {
 
     /**
      * On server restart point chrome to the new port.
-     * @param {integer} port - Port on which the app is served.
+     * @param {number} port - port on which the app is served
      */
     onServerRestarted(port) {
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
@@ -590,7 +590,7 @@ class App {
 
     /**
      * Handle startup failure.
-     * @param {integer} code - Error code from local server.
+     * @param {number} code - error code from local server
      */
     onStartupFailed(code) {
         this.systemEvents.emit('startupFailed');
@@ -601,7 +601,7 @@ class App {
 
     /**
      * Starts the app loading in the browser.
-     * @param {integer} port - Port on which our local server is listening.
+     * @param {number} port - port on which our local server is listening
      */
     onServerReady(port) {
         const windowSettings = {

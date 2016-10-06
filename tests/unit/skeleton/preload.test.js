@@ -1,15 +1,16 @@
 /* eslint-disable no-underscore-dangle */
-
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
+import sinon from 'sinon';
+import mockery from 'mockery';
+import rewire from 'rewire';
+
 chai.use(sinonChai);
 chai.use(dirty);
-import sinon from 'sinon';
+
 const { describe, it } = global;
 const { expect } = chai;
-
-import mockery from 'mockery';
 
 const Electron = {};
 mockery.registerMock('electron', Electron);
@@ -18,7 +19,6 @@ mockery.enable({
     warnOnUnregistered: false
 });
 
-const rewire = require('rewire');
 const Desktop = rewire('../../../skeleton/preload.js');
 
 describe('Desktop', () => {
@@ -53,7 +53,7 @@ describe('Desktop', () => {
         const revertIpc = Desktop.__set__('ipc', ipcMock);
         const desktop = Desktop.__get__('Desktop');
 
-        callbacks.forEach(callback => {
+        callbacks.forEach((callback) => {
             if (once) {
                 desktop.once(module, event, callback);
             } else {
@@ -67,7 +67,7 @@ describe('Desktop', () => {
         }
 
         expect(desktop[listeners]).to.have.a.property(`${module}__${event}`);
-        callbacks.forEach(callback => {
+        callbacks.forEach((callback) => {
             expect(desktop[listeners][`${module}__${event}`]).to.include(callback);
         });
 

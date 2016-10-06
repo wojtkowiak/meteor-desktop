@@ -13,7 +13,7 @@
  * app correctly from two paths:
  *      main path - where the currently downloaded version is
  *      parent path - where the last bundled version is
- * The downloaded version always contains only files that have been changed so the app should
+ * The downloaded version always only contains files that have been changed so the app should
  * be served from both paths at the same time.
  *
  * Two similar terms are used below:
@@ -30,10 +30,11 @@
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
-chai.use(sinonChai);
-chai.use(dirty);
-const { describe, it } = global;
-const { expect } = chai;
+import path from 'path';
+import shell from 'shelljs';
+import fs from 'fs';
+import mockery from 'mockery';
+
 import paths from '../../helpers/paths';
 import { serveVersion } from '../../helpers/autoupdate/meteorServer';
 import {
@@ -41,12 +42,20 @@ import {
     shutdownLocalServer, restartLocalServerAndExpectVersion, expectAssetToBeServed,
     expectAssetServedToContain
 } from '../../helpers/autoupdate/localServer';
-import HCPClient from '../../../skeleton/modules/autoupdate.js';
-import path from 'path';
-import shell from 'shelljs';
-
-import fs from 'fs';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
+
+mockery.registerMock('original-fs', fs);
+mockery.enable({
+    warnOnReplace: false,
+    warnOnUnregistered: false
+});
+
+const HCPClient = require('../../../skeleton/modules/autoupdate.js');
+
+chai.use(sinonChai);
+chai.use(dirty);
+const { describe, it } = global;
+const { expect } = chai;
 
 const showLogs = false;
 const showErrors = true;
@@ -67,13 +76,13 @@ function exists(checkPath) {
  * It also checks if the version served from the local server from the start is the version we
  * are expecting to be served.
  *
- * @param {boolean} printLogs - Whether to print out the logs from autoupdate.
- * @param {Function} onNewVersionReady - Function to run on the `onNewVersionReady` system event.
- * @param {string} expectedVersion - The version we are expecting to serve from the start.
- * @param {Function} errorCallback - The callback which will be fired with autoupdate errors.
- * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
+ * @param {boolean} printLogs       - whether to print out the logs from autoupdate
+ * @param {Function} onNewVersionReady - Function to run on the `onNewVersionReady` system event
+ * @param {string} expectedVersion - The version we are expecting to serve from the start
+ * @param {Function} errorCallback - The callback which will be fired with autoupdate errors
+ * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false
  * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
- *                                   when true, autoupdate does not fire the startup timer.
+ *                                   when true, autoupdate does not fire the startup timer
  * @returns {HCPClient}
  */
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
@@ -101,9 +110,9 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             webAppStartupTimeout: 200
         },
         class Module {
-            on() {
+            constructor() {
+                this.on = () => {};
             }
-
             send(event, message) {
                 if (printLogs) {
                     console.log('module event sent from hcp:', event, message);

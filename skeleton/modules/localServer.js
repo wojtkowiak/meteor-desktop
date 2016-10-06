@@ -11,7 +11,7 @@ import fs from 'fs-plus';
 /**
  * Simple local HTTP server tailored for meteor app bundle.
  *
- * @param {Object} log - Logger instance.
+ * @param {Object} log - Logger instance
  * @param app
  *
  * @property {Array} errors
@@ -49,11 +49,11 @@ export default class LocalServer {
     /**
      * Initializes the module. Configures `connect` and searches for free port.
      *
-     * @param {string} serverPath       - Path for the resources to serve.
-     * @param {string} parentServerPath - Path for the parent resources.
-     * @param {boolean} restart         - Are we restarting the server?
-     * @param {boolean} randomPort      - Whether to choose a random port from those found
-     *                                    to be free.
+     * @param {string} serverPath       - path for the resources to serve
+     * @param {string} parentServerPath - path for the parent resources
+     * @param {boolean} restart         - are we restarting the server?
+     * @param {boolean} randomPort      - whether to choose a random port from those found
+     *                                    to be free
      */
     init(serverPath, parentServerPath, restart, randomPort = true) {
         // `connect` will do the job!
@@ -170,7 +170,7 @@ export default class LocalServer {
 
     /**
      * Tries to start the http server.
-     * @param {bool} restart - Is this restart.
+     * @param {bool} restart - is this restart
      */
     startHttpServer(restart) {
         try {

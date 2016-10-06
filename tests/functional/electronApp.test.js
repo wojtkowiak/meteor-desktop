@@ -1,16 +1,18 @@
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
-chai.use(sinonChai);
-chai.use(dirty);
 import sinon from 'sinon';
-const { describe, it } = global;
-const { expect } = chai;
-import { createTestInstance, StubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
 import fs from 'fs';
 import shell from 'shelljs';
-import paths from '../helpers/paths';
 import asar from 'asar';
+
+import { createTestInstance, StubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
+import paths from '../helpers/paths';
+
+chai.use(sinonChai);
+chai.use(dirty);
+const { describe, it } = global;
+const { expect } = chai;
 
 describe('electronApp', () => {
     let MeteorDesktop;
@@ -24,6 +26,7 @@ describe('electronApp', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
             shell.mkdir(MeteorDesktop.env.paths.electronApp.root);
             const logStub = new StubLog(MeteorDesktop.electronApp, 'info');
+            MeteorDesktop.electronApp.copyDesktopToDesktopTemp();
             MeteorDesktop.electronApp.packDesktopToAsar().then(() => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.desktopAsar)).to.be.true();
                 const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
@@ -45,9 +48,12 @@ describe('electronApp', () => {
             );
             expect(packageJson.description).to.be.equal('My Meteor App');
             expect(packageJson.private).to.be.true();
+            expect(packageJson.author).to.be.equal('Me, Myself And I');
+            expect(packageJson.name).to.be.equal('MyMeteorApp');
             logStub.restore();
         });
     });
+
     describe('#updateDependencies', () => {
         it('should update dependencies list', () => {
             shell.cp('-rf', paths.fixtures.desktop, paths.testProjectInstallPath);
@@ -60,7 +66,7 @@ describe('electronApp', () => {
             );
             expect(packageJson.dependencies).to.have.a.property('some-package', '1.2.3');
             expect(packageJson.dependencies).to.have.a.property(
-                'meteor-desktop-splash-screen', '0.0.14');
+                'meteor-desktop-splash-screen', '0.0.22');
             expect(packageJson.dependencies).to.have.a.property('dependency', '1.0.1');
             expect(packageJson.dependencies).to.have.a.property('dependency2', '0.0.5');
             logStub.restore();

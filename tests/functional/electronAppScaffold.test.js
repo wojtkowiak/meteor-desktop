@@ -1,10 +1,12 @@
 import chai from 'chai';
 import dirty from 'dirty-chai';
+import fs from 'fs';
+
+import { createTestInstance, StubLog } from '../helpers/meteorDesktop';
+
 chai.use(dirty);
 const { describe, it } = global;
 const { expect } = chai;
-import { createTestInstance, StubLog } from '../helpers/meteorDesktop';
-import fs from 'fs';
 
 describe('electronAppScaffold', () => {
     let MeteorDesktop;

@@ -10,7 +10,7 @@ let renderer = null;
  * providing events namespace. It is also a security layer as it is the only communication channel
  * between your app and node environment.
  *
- * @param {string} name - Name of the module.
+ * @param {string} name - name of the module
  * @class
  */
 export default class Module {
@@ -22,8 +22,8 @@ export default class Module {
     /**
      * Sends an general IPC event with data.
      *
-     * @param {string} event - Event name.
-     * @param {...*=}  data  - Data to send.
+     * @param {string} event - event name
+     * @param {...*=}  data  - data to send
      */
     static sendGlobalEvent(event, ...data) {
         Module.sendInternal(event, ...data);
@@ -32,8 +32,8 @@ export default class Module {
     /**
      * Sends and IPC event with data.
      *
-     * @param {string} event - Event name.
-     * @param {...*=}  data  - Data to send.
+     * @param {string} event - event name
+     * @param {...*=}  data  - data to send
      */
     send(event, ...data) {
         Module.sendInternal(this.getEventName(event), ...data);
@@ -42,8 +42,8 @@ export default class Module {
     /**
      * Registers a callback to a IPC event.
      *
-     * @param {string}   event    - Event name.
-     * @param {function} callback - Callback to fire.
+     * @param {string}   event    - event name
+     * @param {function} callback - callback to fire
      */
     on(event, callback) {
         ipcMain.on(this.getEventName(event), (receivedEvent, ...args) => {
@@ -55,9 +55,9 @@ export default class Module {
     /**
      * Unregisters a callback.
      *
-     * @param {string} module     - Module name.
-     * @param {string} event      - The name of an event.
-     * @param {function} callback - Listener to unregister.
+     * @param {string} module     - module name
+     * @param {string} event      - the name of an event
+     * @param {function} callback - listener to unregister
      */
     removeListener(module, event, callback) {
         ipcMain.removeListener(this.getEventName(event), callback);
@@ -66,8 +66,8 @@ export default class Module {
     /**
      * Unregisters all callbacks.
      *
-     * @param {string} module - Module name.
-     * @param {string} event  - The name of an event.
+     * @param {string} module - module name
+     * @param {string} event  - the name of an event
      */
     removeAllListeners(module, event) {
         ipcMain.removeAllListeners(this.getEventName(event));
@@ -76,8 +76,8 @@ export default class Module {
     /**
      * Registers a once fired callback to a IPC event.
      *
-     * @param {string}   event    - Event name.
-     * @param {function} callback - Callback to fire.
+     * @param {string}   event    - event name
+     * @param {function} callback - callback to fire
      */
     once(event, callback) {
         ipcMain.once(this.getEventName(event), (receivedEvent, args) => {
@@ -89,7 +89,7 @@ export default class Module {
     /**
      * Concatenates module name with event name.
      *
-     * @param {string} event - Event name.
+     * @param {string} event - event name
      * @returns {string}
      * @private
      */
@@ -100,8 +100,8 @@ export default class Module {
     /**
      * Sends an IPC event.
      *
-     * @param {string} event - Event name.
-     * @param {*=}     data  - Data to send.
+     * @param {string} event - event name
+     * @param {*=}     data  - data to send
      * @private
      */
     static sendInternal(event, ...data) {

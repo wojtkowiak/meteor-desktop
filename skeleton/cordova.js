@@ -1,16 +1,16 @@
+/* eslint-disable no-console */
 /**
  * This is based on:
  * https://github.com/meteor/cordova-plugin-meteor-webapp/blob/master/www/webapp_local_server.js
  */
 
-
 WebAppLocalServer = {
     onNewVersionReadyCallback: null,
     onErrorCallback: null,
     onVersionsCleanedUpCallback: null,
+
     startupDidComplete(callback) {
         this.onVersionsCleanedUpCallback = callback;
-        console.log('startup did complete');
         Desktop.send('autoupdate', 'startupDidComplete');
     },
 
@@ -29,13 +29,12 @@ WebAppLocalServer = {
 
 Desktop.on('autoupdate', 'error', (event, args) => {
     console.error(args);
-    WebAppLocalServer.onErrorCallback();
+    WebAppLocalServer.onErrorCallback(args);
 });
 
 Desktop.on('autoupdate', 'warn', (event, args) => {
     console.warn(args);
 });
-
 
 Desktop.on('autoupdate', 'onVersionsCleanedUp', () => {
     if (WebAppLocalServer.onVersionsCleanedUpCallback) {

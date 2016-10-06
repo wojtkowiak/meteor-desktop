@@ -34,3 +34,7 @@
 - non transpiled dir
 - path to assets that could be downloaded from meteor app
 
+
+
+Test:
+- dependencies manager
