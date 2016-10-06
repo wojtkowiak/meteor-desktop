@@ -5,13 +5,14 @@ import electron from 'electron';
 import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
+import os from 'os';
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
 import { spawnSync } from 'child_process';
 import winston from 'winston';
 import Module from './modules/module.js';
 
-const { app, BrowserWindow, dialog } = electron;
+const { app, BrowserWindow, dialog, autoUpdater } = electron;
 const { join } = path;
 
 process.env.NODE_PATH = join(__dirname, 'node_modules');
@@ -62,6 +63,7 @@ class App {
         this.app = app;
         this.window = null;
         this.windowAlreadyLoaded = false;
+        this.autoUpdater = null;
         this.webContents = null;
         this.modules = {};
         this.localServer = null;
@@ -378,6 +380,8 @@ class App {
     onReady() {
         this.l.info('ready fired');
 
+        this.setUpAutoUpdater();
+
         this.loadPlugins();
         try {
             this.systemEvents.emit('beforeModulesLoad');
@@ -423,6 +427,46 @@ class App {
             this.modules.autoupdate.getDirectory(),
             this.modules.autoupdate.getParentDirectory()
         );
+    }
+
+    setUpAutoUpdater() {
+        if (this.settings.autoUpdateFeedUrl && this.settings.autoUpdateFeedUrl.trim() !== '') {
+            const version = app.getVersion();
+            let platform = '';
+            if (this.os.isWindows) {
+                platform = os.arch() === 'ia32' ? 'win32' : 'win64';
+            }
+            if (this.os.isOsx) {
+                platform = os.platform() + '_' + os.arch();
+            }
+            let feed = this.settings.autoUpdateFeedUrl;
+            feed = feed.replace(':version', version);
+            feed = feed.replace(':platform', platform);
+            this.l.info(feed);
+
+            autoUpdater.on('error', (err) => {
+                this.l.error('autoUpdater reported an error:', err);
+            });
+            autoUpdater.on('checking-for-update', () => {
+                this.l.info('autoUpdater is checking for updates');
+            });
+
+            autoUpdater.on('update-available', () => {
+                this.l.info('autoUpdater reported an update is available');
+            });
+
+            autoUpdater.on('update-not-available', () => {
+                this.l.info('autoUpdater reported an update is not available');
+            });
+
+            autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                this.l.info('autoUpdater reported an update was downloaded with version:', releaseName);
+                this.systemEvents.emit('autoUpdaterUpdateDownloaded', releaseNotes, releaseName, releaseDate, updateURL);
+            });
+            autoUpdater.setFeedURL(feed, this.settings.autoUpdateFeedHeaders ? autoUpdateFeedHeaders : undefined);
+            autoUpdater.checkForUpdates();
+            this.autoUpdater = autoUpdater;
+        }
     }
 
     /**
