@@ -1,5 +1,7 @@
 ![Logo](meteor-desktop.png)
 
+# WORK IN PROGRESS
+
 # Meteor Desktop
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.

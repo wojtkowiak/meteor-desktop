@@ -1,5 +1,3 @@
-- support update server
-- run tests
 - logs in a devtool extension
 
 - scenario, clean project and meteor project change
@@ -12,7 +10,6 @@
 
 - do not hide window in standard, hide it thorugh splashcreen plugin
 
-- make @ transleate to relative path
 - how to read local files in browser
 
 - tests
@@ -37,4 +34,6 @@
 
 
 Test:
+- coverage
 - dependencies manager
+

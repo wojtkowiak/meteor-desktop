@@ -11,6 +11,7 @@ import assignIn from 'lodash/assignIn';
 import { spawnSync } from 'child_process';
 import winston from 'winston';
 import Module from './modules/module.js';
+import LoggerManager from './loggerManager';
 
 const { app, BrowserWindow, dialog, autoUpdater } = electron;
 const { join } = path;
@@ -26,11 +27,9 @@ class App {
 
     constructor() {
         this.getOsSpecificValues();
+        this.loggerManager = new LoggerManager(this);
+        this.l = LoggerManager.getMainLogger();
 
-        this.initLogger();
-        this.configureLogger();
-
-        this.l = winston.loggers.get('main');
         this.l.info('app data dir is:', this.userDataDir);
 
         this.l.info('starting app');
@@ -94,6 +93,19 @@ class App {
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
+    }
+
+    /**
+     * Prepares all the values that are dependant on os.
+     */
+    getOsSpecificValues() {
+        this.os = {
+            isWindows: (process.platform === 'win32'),
+            isLinux: (process.platform === 'linux'),
+            isOsx: (process.platform === 'darwin')
+        };
+
+        this.userDataDir = app.getPath('userData');
     }
 
     handleSquirrelEvents() {
@@ -263,18 +275,7 @@ class App {
         return ('env' in this.settings && this.settings.env === 'prod');
     }
 
-    /**
-     * Prepares all the values that are dependant on os.
-     */
-    getOsSpecificValues() {
-        this.os = {
-            isWindows: (process.platform === 'win32'),
-            isLinux: (process.platform === 'linux'),
-            isOsx: (process.platform === 'darwin')
-        };
 
-        this.userDataDir = app.getPath('userData');
-    }
 
     /**
      * Merges window settings specific to current os.
@@ -488,7 +489,7 @@ class App {
                     this.l.debug(`loading plugin: ${plugin}`);
                     this.modules[plugin] = require(plugin);
                     const Plugin = this.modules[plugin];
-                    this.configureLogger(plugin);
+                    this.loggerManager.configureLogger(plugin);
                     this.modules[plugin] = new Plugin(
                         winston,
                         this.app,
@@ -529,7 +530,7 @@ class App {
                         this.settings.webAppStartupTimeout ?
                             this.settings.webAppStartupTimeout : 20000;
                 }
-                this.configureLogger(moduleName);
+                this.loggerManager.configureLogger(moduleName);
                 this.modules[moduleName] = new InternalModule(
                     winston,
                     this.app,
@@ -571,7 +572,7 @@ class App {
                     }
                     this.modules[moduleName] = require(path.join(modulePath, 'index.js'));
                     const AppModule = this.modules[moduleName];
-                    this.configureLogger(moduleName);
+                    this.loggerManager.configureLogger(moduleName);
                     this.modules[moduleName] = new AppModule(
                         winston,
                         this.app,
@@ -678,67 +679,6 @@ class App {
                 this.modules.autoupdate.getParentDirectory(),
                 true
             );
-        }
-    }
-
-    initLogger() {
-        const fileLogConfiguration = {
-            level: 'debug',
-            filename: join(this.userDataDir, 'run.log'),
-            handleExceptions: true,
-            json: false,
-            maxsize: 5242880, //5MB
-            maxFiles: 5,
-            colorize: false
-        };
-        const consoleLogConfiguration = {
-            level: 'debug',
-            handleExceptions: true,
-            json: false,
-            colorize: true
-        };
-
-        this.loggerTransports = [
-            new (winston.transports.Console)(consoleLogConfiguration),
-            new (winston.transports.File)(fileLogConfiguration)
-        ];
-
-        // TODO: seems that every logger that shares this default transports also registers for exceptions because handleExceptions is true - is this winston bug?
-        winston.loggers.options.transports = this.loggerTransports;
-    }
-
-
-    /**
-     * Returns a new logger instance.
-     * @param {string} entityName
-     * @returns {Log}
-     */
-    configureLogger(entityName = 'main') {
-        const transports = [];
-        winston.loggers.add(entityName, {});
-
-        const logger = winston.loggers.get(entityName);
-        if (entityName !== 'main') {
-            logger.add(winston.transports.File, {
-                level: 'debug',
-                name: entityName,
-                handleExceptions: false,
-                filename: join(this.userDataDir, `${entityName}.log`)
-            });
-        }
-
-        logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
-        logger._name = entityName;
-
-        logger.getLoggerFor = (subEntityName) => {
-            if (!winston.loggers.loggers[`${logger._name}__${subEntityName}`]) {
-                winston.loggers.add(`${logger._name}__${subEntityName}`, {});
-                const newLogger = winston.loggers.get(`${logger._name}__${subEntityName}`);
-                newLogger.filters.push((level, msg) => `[${logger._name}] [${subEntityName}] ${msg}`);
-                newLogger.getLoggerFor = logger.getLoggerFor;
-                return newLogger;
-            }
-            return winston.loggers.get(`${logger._name}__${subEntityName}`);
         }
     }
 }
