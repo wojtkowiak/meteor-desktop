@@ -13,10 +13,12 @@
         "fullscreen": false,
         "kiosk": false,
         "alwaysOnTop": false,
-        "icon": "meteor.png",
+        "icon": "@assets/meteor.png",
         "_windows": {
-            "icon": "meteor.ico"
+            "icon": "@assets/meteor.ico"
         }
+    },
+    "windowDev": {
     },
     "packageJsonFields": {
         "description": "My Meteor App",
@@ -25,13 +27,18 @@
     },
     "builderOptions": {
         "win": {
-            "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
             "title": "My Meteor App",
-            "authors": "Me, Myself And I"
+            "authors": "Me, Myself And I",
+            "target": "squirrel"
         },
-        "icon": "../.desktop/assets/meteor.ico",
+        "squirrelWindows": {
+            "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
+            "loadingGif": ".desktop/assets/install.gif"
+        },
+        "icon": ".desktop/assets/meteor.ico",
         "appId": "meteor.app",
-        "category": "meteor.apps",
+        "productName": "My Meteor App",
+        "compression": "maximum",
         "mac": {
             "icon": ".desktop/assets/meteor.icns"
         },
@@ -58,7 +65,7 @@
     },
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.0.20"
+            "version": "0.0.22"
         }
     },
     "uglify": true,

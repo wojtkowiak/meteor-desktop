@@ -6,16 +6,7 @@ import findPort from 'find-port';
 import enableDestroy from 'server-destroy';
 import url from 'url';
 import path from 'path';
-import fs from 'fs';
-
-function exists(path) {
-    try {
-        fs.accessSync(path);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+import fs from 'fs-plus';
 
 /**
  * Simple local HTTP server tailored for meteor app bundle.
@@ -108,9 +99,9 @@ export default class LocalServer {
             // Now here it would be very useful to actually read the manifest and server sourcemaps
             // according to it. For now just checking if a sourcemap for a file exits.
             if ((ext === '.js' || ext === '.css') && (
-                    exists(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
+                    fs.existsSync(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
                     (parentServerPath &&
-                    exists(path.join(parentServerPath, `${parsedUrl.pathname}.map`)))
+                    fs.existsSync(path.join(parentServerPath, `${parsedUrl.pathname}.map`)))
                 )
             ) {
                 res.setHeader('X-SourceMap', `${parsedUrl.pathname}.map?${parsedUrl.query}`);
@@ -159,7 +150,7 @@ export default class LocalServer {
                 '127.0.0.1',
                 8034,
                 8063,
-                ports => {
+                (ports) => {
                     if (ports.length === 0) {
                         reject();
                     }
@@ -186,7 +177,7 @@ export default class LocalServer {
             this.httpServerInstance = http.createServer(this.server);
             this.httpServerInstance.on('error', (e) => {
                 this.log.error(e);
-                this.retries++;
+                this.retries += 1;
                 if (this.retries < this.maxRetries) {
                     this.init(this.serverPath, this.parentServerPath, true);
                 } else {
@@ -201,7 +192,7 @@ export default class LocalServer {
                     this.onServerReady(this.port);
                 }
             });
-            this.httpServerInstance.listen(this.port);
+            this.httpServerInstance.listen(this.port, '127.0.0.1');
             enableDestroy(this.httpServerInstance);
         } catch (e) {
             this.log.error(e);

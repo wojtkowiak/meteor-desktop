@@ -1,29 +1,21 @@
-- fix copy cached asset
+- support update server
+- run tests
+- logs in a devtool extension
+
 - scenario, clean project and meteor project change
 - scenario, clean project, desktop change then meteor project change
-
-- uglify
+- licenses
 -- ipc async answer
 - use NODE_ENV?
-- add self to .gitignore
--- production
-- start
 
 - https://github.com/jamielob/reloader/
-- startup timer and fallback strategy (startup timer should run on any run)
 
 - do not hide window in standard, hide it thorugh splashcreen plugin
 
-- desktop compatibility version (win/lin/osx)
 - make @ transleate to relative path
 - how to read local files in browser
-- ... while building
 
-- generate installer
-- test installers, test new initialbundlever
 - tests
-- hcp for modules
-- handle medc version change and potential incompatibiliy in builds
 - tests for app
 
 - write about events
@@ -38,5 +30,7 @@
 
 // Optional
 - create toaster plugin
-- support input
 - move autoupdate to npm plugin
+- non transpiled dir
+- path to assets that could be downloaded from meteor app
+

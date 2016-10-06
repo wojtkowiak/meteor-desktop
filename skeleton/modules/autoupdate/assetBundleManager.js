@@ -240,7 +240,7 @@ class AssetBundleManager {
                         this.downloadDirectory,
                         manifest,
                         this.initialAssetBundle,
-                        desktopVersion
+                        desktopVersion === null ? undefined : desktopVersion
                     );
                 } catch (e) {
                     this.didFail(e.message);

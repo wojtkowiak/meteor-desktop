@@ -4,9 +4,10 @@
 import electron from 'electron';
 import { EventEmitter as Events } from 'events';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-plus';
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
+import { spawnSync } from 'child_process';
 import winston from 'winston';
 import Module from './modules/module.js';
 
@@ -38,7 +39,16 @@ class App {
         };
         this.desktopPath = path.resolve(join(__dirname, '..', 'desktop.asar'));
         this.loadSettings();
+
+        if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
+            app.setAppUserModelId(this.settings.builderOptions.appId);
+        }
         this.l.debug(`initial desktop version is ${this.settings.desktopVersion}`);
+
+        if (this.handleSquirrelEvents()) {
+            app.quit();
+            return;
+        }
 
         if (this.resolveDesktopPath()) {
             // Refresh setting because we will use different desktop.asar version.
@@ -82,6 +92,66 @@ class App {
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
+    }
+
+    handleSquirrelEvents() {
+        if (process.platform !== 'win32') {
+            return false;
+        }
+
+        const squirrelCommand = process.argv[1];
+        if (!squirrelCommand || squirrelCommand.substr(0, '--squirrel'.length) !== '--squirrel') {
+            return false;
+        }
+
+        switch (squirrelCommand) {
+            case '--squirrel-install':
+                this.createShortcuts();
+                break;
+            case '--squirrel-firstrun':
+                return false;
+                break;
+            case '--squirrel-updated':
+                this.updateShortcuts();
+                break;
+            case '--squirrel-uninstall':
+                this.removeShortcuts();
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    spawnUpdate(args) {
+        const updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
+        this.l.debug(`Spawning ${updateExe} with args ${args.join(',')}`);
+        spawnSync(updateExe, args);
+    }
+
+    removeShortcuts() {
+        const exeName = path.basename(process.execPath);
+        this.spawnUpdate(['--removeShortcut', exeName]);
+    }
+
+    createShortcuts() {
+        const exeName = path.basename(process.execPath);
+        this.spawnUpdate(['--createShortcut', exeName])
+    }
+
+    updateShortcuts() {
+        const homeDirectory = fs.getHomeDirectory();
+        if (homeDirectory) {
+            const exeName = path.basename(process.execPath, '.exe');
+            dialog.showErrorBox('Application', path.join(homeDirectory, 'Desktop', exeName + '.lnk'));
+            const desktopShortcutPath = path.join(homeDirectory, 'Desktop', exeName + '.lnk');
+            if (fs.existsSync(desktopShortcutPath)) {
+                this.createShortcuts();
+            }
+        } else {
+            this.createShortcuts();
+        }
     }
 
     /**
@@ -219,6 +289,16 @@ class App {
     }
 
     /**
+     * Merges window dev settings.
+     */
+    mergeWindowDevSettings() {
+        if (!this.isProduction() && 'windowDev' in this.settings) {
+            assignIn(this.settings.window, this.settings.windowDev);
+        }
+    }
+
+
+    /**
      * Tries to load the settings.json.
      */
     loadSettings() {
@@ -268,12 +348,24 @@ class App {
         if (!('window' in this.settings)) {
             this.settings.window = {};
         }
-
+        this.mergeWindowDevSettings();
         this.mergeOsSpecificWindowSettings();
+        this.applyVars(this.settings.window);
+        console.log(this.settings.window);
+    }
 
-        if ('icon' in this.settings.window) {
-            this.settings.window.icon = join(this.desktopPath, 'assets', this.settings.window.icon);
-        }
+    applyVars(object) {
+        Object.keys(object).forEach((key) => {
+           if (key[0] !== '_') {
+               if (typeof object[key] === 'object') {
+                   this.applyVars(object[key]);
+               } else if (typeof object[key] === 'string') {
+                   if (~object[key].indexOf('@assets')) {
+                       object[key] = path.join(this.desktopPath, 'assets', object[key].replace(/@assets\//gmi, ''));
+                   }
+               }
+           }
+        });
     }
 
     /**

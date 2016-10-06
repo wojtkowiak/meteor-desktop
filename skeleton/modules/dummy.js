@@ -6,6 +6,7 @@
  */
 
 import Module from './module.js';
+
 const dummy = new Module('dummyModule');
 
 // Nothing to do here since Module is already setting this reference for us.

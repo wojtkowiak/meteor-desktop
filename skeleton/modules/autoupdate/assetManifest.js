@@ -129,3 +129,9 @@ export default function AssetManifest(logger, manifestSource) {
 }
 
 module.exports = AssetManifest;
+
+/**
+ * @typedef {Object} AssetManifest
+ * @property {string} version
+ * @property {string} cordovaCompatibilityVersion
+ */

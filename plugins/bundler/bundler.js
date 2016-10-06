@@ -199,7 +199,6 @@ class MeteorDesktopBundler {
         }
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
-            console.log('bundling desktop');
             console.time('[meteor-desktop]: Preparing desktop.asar took');
 
             const requireLocal = files[0].require.bind(files[0]);
@@ -217,12 +216,13 @@ class MeteorDesktopBundler {
             const es2015Preset = requireLocal('babel-preset-es2015');
             const uglify = requireLocal('uglify-js');
 
-            const DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager');
+            const DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
             const ElectronAppScaffold =
                 requireLocal('meteor-desktop/dist/electronAppScaffold').default;
 
             const context = {
                 env: {
+                    isProductionBuild: () => process.env.NODE_ENV === 'production',
                     options: {
                         production: process.env.NODE_ENV === 'production'
                     }
@@ -326,7 +326,8 @@ class MeteorDesktopBundler {
             fs.writeFileSync(versionJsonFile, versionFileJSON, 'UTF-8');
 
             shell.rm('./desktop.asar');
-            console.time('[meteor-desktop]: Preparing desktop.asar took');
+            shell.rm('-rf', 'desktopTmpPath');
+            console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
         });
     }
 }

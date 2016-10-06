@@ -26,29 +26,19 @@
 
  This file is based on:
  /cordova-plugin-meteor-webapp/blob/master/src/android/WebAppLocalServer.java
-
  */
 
 import path from 'path';
 import shell from 'shelljs';
-import fs from 'fs';
+import fs from 'fs-plus';
 import originalFs from 'original-fs';
 import rimraf from 'rimraf';
 import url from 'url';
 
-const { join } = path;
-
 import AssetBundle from './autoupdate/assetBundle';
 import AssetBundleManager from './autoupdate/assetBundleManager';
 
-function exists(checkPath) {
-    try {
-        fs.accessSync(checkPath);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+const { join } = path;
 
 /**
  * Represents the hot code push client.
@@ -59,7 +49,7 @@ function exists(checkPath) {
 class HCPClient {
 
     constructor(log, app, appSettings, systemEvents, modules, settings, Module) {
-        // Get the automtically predefined logger instance.
+        // Get the automatically predefined logger instance.
         this.log = log.loggers.get('autoupdate');
 
         // Register this as a Meteor Desktop module.
@@ -77,7 +67,7 @@ class HCPClient {
         this.systemEvents.on('beforeDesktopLoad', this.init.bind(this));
 
         // We will need a reference to the BrowserWindow object once it will be available.
-        this.systemEvents.on('windowOpened', window => {
+        this.systemEvents.on('windowOpened', (window) => {
             this.window = window;
             // Start the startup timer.
             this.startStartupTimer();
@@ -151,13 +141,13 @@ class HCPClient {
         if (initialAssetBundle.getVersion() !== this.config.lastSeenInitialVersion) {
             this.log.info(
                 'detected new bundled version, removing versions directory if it exists');
-            if (exists(this.versionsDir)) {
+            if (fs.existsSync(this.versionsDir)) {
                 // Using rimraf specifically instead of shelljs.rm because despite using
                 // process.noAsar shelljs tried to remove files inside asar instead of just
                 // deleting the archive. `del` also could not delete asar archive. Rimraf is ok
                 // because it accepts custom fs object.
                 rimraf.sync(this.versionsDir, originalFs);
-                if (exists(this.versionsDir)) {
+                if (fs.existsSync(this.versionsDir)) {
                     this.log.warn('could not remove versions directory');
                 }
             }
@@ -168,7 +158,7 @@ class HCPClient {
         this.config.lastSeenInitialVersion = initialAssetBundle.getVersion();
 
         // If the versions directory does not exist, we create it.
-        if (!exists(this.versionsDir)) {
+        if (!fs.existsSync(this.versionsDir)) {
             this.log.info('created versions dir');
             // TODO: what if this fails? We need to report this to the main app.
             shell.mkdir(this.versionsDir);
@@ -190,23 +180,20 @@ class HCPClient {
         if (lastDownloadedVersion) {
             if (~this.config.blacklistedVersions.indexOf(lastDownloadedVersion)) {
                 this.useLastKnownGoodVersion();
-            } else {
-                if (lastDownloadedVersion !== initialAssetBundle.getVersion()) {
+            } else if (lastDownloadedVersion !== initialAssetBundle.getVersion()) {
+                this.currentAssetBundle = this.assetBundleManager
+                    .downloadedAssetBundleWithVersion(lastDownloadedVersion);
+                this.log.verbose(
+                    `will use last downloaded version (${lastDownloadedVersion})`);
 
-                    this.currentAssetBundle = this.assetBundleManager
-                        .downloadedAssetBundleWithVersion(lastDownloadedVersion);
-                    this.log.verbose(
-                        `will use last downloaded version (${lastDownloadedVersion})`);
-
-                    if (!this.currentAssetBundle) {
-                        this.log.warn('seems that last downloaded version does not exists... ');
-                        this.useLastKnownGoodVersion();
-                    }
-                } else {
-                    this.currentAssetBundle = initialAssetBundle;
-                    this.log.verbose(
-                        `will use last downloaded version which is apparently also the initial asset bundle (${lastDownloadedVersion})`);
+                if (!this.currentAssetBundle) {
+                    this.log.warn('seems that last downloaded version does not exists... ');
+                    this.useLastKnownGoodVersion();
                 }
+            } else {
+                this.currentAssetBundle = initialAssetBundle;
+                this.log.verbose(
+                    `will use last downloaded version which is apparently also the initial asset bundle (${lastDownloadedVersion})`);
             }
         } else {
             this.log.verbose('using initial asset bundle');
@@ -306,7 +293,8 @@ class HCPClient {
         // If this is the initial version, we will not get anything from blacklisting it.
         if (this.currentAssetBundle.getVersion() !==
             this.assetBundleManager.initialAssetBundle.getVersion() &&
-            !~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
+            !~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())
+        ) {
             this.log.debug(`blacklisted version ${this.currentAssetBundle.getVersion()}`);
             this.config.blacklistedVersions.push(this.currentAssetBundle.getVersion());
             this.saveConfig();
@@ -363,7 +351,10 @@ class HCPClient {
 
         // Remove this version from blacklisted.
         if (~this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion())) {
-            this.config.blacklistedVersions.splice(this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion()), 1);
+            this.config.blacklistedVersions.splice(
+                this.config.blacklistedVersions.indexOf(this.currentAssetBundle.getVersion()),
+                1
+            );
             this.saveConfig();
         }
 
@@ -504,7 +495,7 @@ class HCPClient {
      * @param {null|Object} desktopVersion - Version information about the desktop part.
      * @returns {boolean}
      */
-    shouldDownloadBundleForManifest(manifest, desktopVersion = null) {
+    shouldDownloadBundleForManifest(manifest, desktopVersion = {}) {
         const version = manifest.version;
 
         // No need to redownload the current version.

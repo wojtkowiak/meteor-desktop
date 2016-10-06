@@ -16,5 +16,5 @@ This is a complete implementation of integration between `Meteor` and `Electron`
 
 ## Prerequisites
 
- - Meteor >= `1.3.3` (works with >= `1.2` but without full build automation)
+ - Meteor >= `1.3.3`
  - 

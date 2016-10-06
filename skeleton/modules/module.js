@@ -1,4 +1,5 @@
 import electron from 'electron';
+
 const { ipcMain } = electron;
 
 // Place to store the reference to the renderer process.
@@ -10,7 +11,7 @@ let renderer = null;
  * between your app and node environment.
  *
  * @param {string} name - Name of the module.
- * @constructor
+ * @class
  */
 export default class Module {
 
@@ -22,20 +23,20 @@ export default class Module {
      * Sends an general IPC event with data.
      *
      * @param {string} event - Event name.
-     * @param {...*=}     data  - Data to send.
+     * @param {...*=}  data  - Data to send.
      */
-    sendGlobalEvent(event, ...data) {
-        this.sendInternal(event, ...data);
+    static sendGlobalEvent(event, ...data) {
+        Module.sendInternal(event, ...data);
     }
 
     /**
      * Sends and IPC event with data.
      *
      * @param {string} event - Event name.
-     * @param {...*=}     data  - Data to send.
+     * @param {...*=}  data  - Data to send.
      */
     send(event, ...data) {
-        this.sendInternal(this.getEventName(event), ...data);
+        Module.sendInternal(this.getEventName(event), ...data);
     }
 
     /**
@@ -65,8 +66,8 @@ export default class Module {
     /**
      * Unregisters all callbacks.
      *
-     * @param {string} module     - Module name.
-     * @param {string} event      - The name of an event.
+     * @param {string} module - Module name.
+     * @param {string} event  - The name of an event.
      */
     removeAllListeners(module, event) {
         ipcMain.removeAllListeners(this.getEventName(event));
@@ -103,9 +104,9 @@ export default class Module {
      * @param {*=}     data  - Data to send.
      * @private
      */
-    sendInternal(event, ...data) {
+    static sendInternal(event, ...data) {
         if (!renderer) throw new Error('No reference to renderer process (meteor) yet.');
-        // During the HCP update the window might already be destroyed.
+        // During the HCP update the window might have been already destroyed.
         if (!renderer.isDestroyed()) {
             renderer.send(event, ...data);
         }
