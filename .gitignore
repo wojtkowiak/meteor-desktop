@@ -2,4 +2,8 @@ node_modules
 .idea
 dist
 tests/_tmp_
+.npm
+.versions
+version.desktop
+npm-debug*
 
