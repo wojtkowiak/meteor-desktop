@@ -112,7 +112,7 @@ export default class DesktopPathResolver {
                     }
                 } else {
                     log.warn('will use desktop.asar from initial version as a fallback: ' +
-                        `${this.desktopPath}`);
+                        `${desktopPath}`);
                 }
             } else if (autoupdateConfig.lastDownloadedVersion !==
                     autoupdateConfig.lastSeenInitialVersion
@@ -129,7 +129,7 @@ export default class DesktopPathResolver {
                             'versions',
                             `${desktopVersion.version}_desktop.asar`);
                         log.warn('will use desktop.asar from last downloaded version ' +
-                            `at: ${this.desktopPath}`);
+                            `at: ${desktopPath}`);
                     } else {
                         log.warn('will use desktop.asar from initial version because last ' +
                             `downloaded version is using it: ${desktopPath}`);
