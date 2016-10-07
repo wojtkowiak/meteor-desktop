@@ -2,10 +2,9 @@ machine:
   node:
     version: 4.4.0
 
-post:
-    - npm install -g npm@3.x.x
-
 dependencies:
+  pre:
+    - npm install -g npm@3.x.x
   override:
     - npm install
 
