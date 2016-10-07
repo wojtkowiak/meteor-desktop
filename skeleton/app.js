@@ -12,6 +12,7 @@ import { spawnSync } from 'child_process';
 import winston from 'winston';
 import Module from './modules/module.js';
 import LoggerManager from './loggerManager';
+import DesktopPathResolver from './desktopPathResolver';
 
 const { app, BrowserWindow, dialog, autoUpdater } = electron;
 const { join } = path;
@@ -27,32 +28,26 @@ class App {
 
     constructor() {
         this.getOsSpecificValues();
+
         this.loggerManager = new LoggerManager(this);
-        this.l = LoggerManager.getMainLogger();
+        this.l = this.loggerManager.getMainLogger();
 
         this.l.info('app data dir is:', this.userDataDir);
-
-        this.l.info('starting app');
 
         this.settings = {
             devTools: false
         };
-        this.desktopPath = path.resolve(join(__dirname, '..', 'desktop.asar'));
-        this.loadSettings();
 
-        if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
-            app.setAppUserModelId(this.settings.builderOptions.appId);
-        }
-        this.l.debug(`initial desktop version is ${this.settings.desktopVersion}`);
+        this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
+        this.loadSettings();
 
         if (this.handleSquirrelEvents()) {
             app.quit();
             return;
         }
 
-        if (this.resolveDesktopPath()) {
-            // Refresh setting because we will use different desktop.asar version.
-            this.loadSettings();
+        if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
+            app.setAppUserModelId(this.settings.builderOptions.appId);
         }
 
         // System events emitter.
@@ -158,112 +153,12 @@ class App {
         const homeDirectory = fs.getHomeDirectory();
         if (homeDirectory) {
             const exeName = path.basename(process.execPath, '.exe');
-            dialog.showErrorBox('Application', path.join(homeDirectory, 'Desktop', exeName + '.lnk'));
             const desktopShortcutPath = path.join(homeDirectory, 'Desktop', exeName + '.lnk');
             if (fs.existsSync(desktopShortcutPath)) {
                 this.createShortcuts();
             }
         } else {
             this.createShortcuts();
-        }
-    }
-
-    /**
-     * Decides where the current desktop.asar lies. Takes into account desktopHCP.
-     * Also supports falling back to last known good version Meteor mechanism.
-     */
-    resolveDesktopPath() {
-        let changed = false;
-        // Read meteor's initial asset bundle version.
-        const initialVersion = this.readInitialAssetBundleVersion();
-
-        this.autoupdate = null;
-        this.autoupdateConfig = join(this.userDataDir, 'autoupdate.json');
-        this.readConfig();
-
-        if (this.autoupdate.lastSeenInitialVersion !== initialVersion) {
-            this.l.warn(`will use desktop.asar from initial version beacuse the initial version of meteor app has changed: ${this.desktopPath}`);
-            return;
-        }
-
-        // We have a last downloaded version.
-        if (this.autoupdate.lastDownloadedVersion) {
-            // But it might be blacklisted.
-            if (~this.autoupdate.blacklistedVersions.indexOf(this.autoupdate.lastDownloadedVersion)) {
-                // Lets check if we have last known good version.
-                if (this.autoupdate.lastKnownGoodVersion) {
-                    // If this is different from the initial version.
-                    if (this.autoupdate.lastKnownGoodVersion !== this.autoupdate.lastSeenInitialVersion) {
-
-                        const desktopVersion = this.readDesktopVersionFromBundle(this.autoupdate.lastKnownGoodVersion);
-                        if (desktopVersion.version) {
-                            if (desktopVersion.version !== this.settings.desktopVersion) {
-                                this.desktopPath = join(this.userDataDir, 'versions', `${desktopVersion.version}_desktop.asar`);
-                                changed = true;
-                                this.l.warn(`will use desktop.asar from last known good version at: ${this.desktopPath}`);
-                            } else {
-                                this.l.warn(`will use desktop.asar from initial version because last known good version of meteor app is using it: ${this.desktopPath}`);
-                            }
-                        } else {
-                            this.l.warn(`will use desktop.asar from inital version because last known good version of meteor app does not contain new desktop version: ${this.desktopPath}`);
-                        }
-                    } else {
-                        this.l.info(`will use desktop.asar from last known good version which is apparently the initial bundle: ${this.desktopPath}`);
-                    }
-                } else {
-                    this.l.warn(`will use desktop.asar from initial version as a fallback: ${this.desktopPath}`);
-                }
-            } else {
-                if (this.autoupdate.lastDownloadedVersion !== this.autoupdate.lastSeenInitialVersion) {
-                    const desktopVersion = this.readDesktopVersionFromBundle(this.autoupdate.lastDownloadedVersion);
-                    if (desktopVersion.version) {
-                        if (desktopVersion.version !== this.settings.desktopVersion) {
-                            this.desktopPath = join(this.userDataDir, 'versions', `${desktopVersion.version}_desktop.asar`);
-                            changed = true;
-                            this.l.warn(`will use desktop.asar from last downloaded version at: ${this.desktopPath}`);
-                        } else {
-                            this.l.warn(`will use desktop.asar from initial version because last downloaded version is using it: ${this.desktopPath}`);
-                        }
-                    } else {
-                        this.l.warn(`will use desktop.asar from inital version from last downloaded version does not contain new desktop version: ${this.desktopPath}`);
-                    }
-                } else {
-                    this.l.info(`will use desktop.asar from last downloaded version which is apparently the initial bundle: ${this.desktopPath}`);
-                }
-            }
-        } else {
-            this.l.info(`using desktop.asar from initial bundle: ${this.desktopPath}`);
-        }
-        return changed;
-    }
-
-    readDesktopVersionFromBundle(version) {
-        let desktopVersion;
-        try {
-            return JSON.parse(fs.readFileSync(join(this.userDataDir, 'versions', version, '_desktop.json'), 'UTF-8'));
-        } catch (e) {
-            return {};
-        }
-    }
-
-    readInitialAssetBundleVersion() {
-        let desktopVersion;
-        try {
-            return JSON.parse(fs.readFileSync(path.resolve(join(__dirname, '..', 'meteor.asar', 'program.json')), 'UTF-8')).version;
-        } catch (e) {
-            return {};
-        }
-    }
-
-    /**
-     * Reads config json file.
-     * @private
-     */
-    readConfig() {
-        try {
-            this.autoupdate = JSON.parse(fs.readFileSync(this.autoupdateConfig, 'UTF-8'));
-        } catch (e) {
-            this.autoupdate = {};
         }
     }
 
@@ -299,7 +194,6 @@ class App {
             assignIn(this.settings.window, this.settings.windowDev);
         }
     }
-
 
     /**
      * Tries to load the settings.json.

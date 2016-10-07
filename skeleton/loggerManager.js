@@ -1,16 +1,22 @@
-import winston from 'winston';
 import { join } from 'path';
+import winston from 'winston';
 
 export default class LoggerManager {
     /**
      * @param {App} $ - context.
      */
     constructor($) {
+        this.$ = $;
+
+        /* TODO: fix `Possible EventEmitter memory leak detected.` warning - will probably have to
+                 drop winston in favor of bunyan (winston does not seem to be actively supported)
+        */
+
         // Default Winston transports.
         this.fileLogConfiguration = {
             level: 'debug',
             filename: join($.userDataDir, 'run.log'),
-            handleExceptions: false,
+            handleExceptions: true,
             json: false,
             maxsize: 5242880, // 5MB
             maxFiles: 5,
@@ -18,7 +24,7 @@ export default class LoggerManager {
         };
         this.consoleLogConfiguration = {
             level: 'debug',
-            handleExceptions: false,
+            handleExceptions: true,
             json: false,
             colorize: true
         };
@@ -28,16 +34,15 @@ export default class LoggerManager {
             new (winston.transports.File)(this.fileLogConfiguration)
         ];
 
-        this.configureLogger();
-        this.setDefaultTransports();
-    }
-
-    static getMainLogger() {
-        return winston.loggers.get('main');
-    }
-
-    setDefaultTransports() {
         winston.loggers.options.transports = this.loggerTransports;
+        this.mainLogger = this.configureLogger();
+    }
+
+    /**
+     * @returns {Log}
+     */
+    getMainLogger() {
+        return this.mainLogger;
     }
 
     /**
@@ -54,23 +59,8 @@ export default class LoggerManager {
                 level: 'debug',
                 name: entityName,
                 handleExceptions: false,
-                filename: join(this.userDataDir, `${entityName}.log`)
+                filename: join(this.$.userDataDir, `${entityName}.log`)
             });
-        } else {
-            const fileLogConfiguration = {};
-            Object.assign(
-                fileLogConfiguration,
-                this.fileLogConfiguration,
-                { handleExceptions: true }
-            );
-            const consoleLogConfiguration = {};
-            Object.assign(
-                consoleLogConfiguration,
-                this.consoleLogConfiguration,
-                { handleExceptions: true }
-            );
-            logger.add(winston.transports.File, fileLogConfiguration);
-            logger.add(winston.transports.Console, consoleLogConfiguration);
         }
 
         logger.filters.push((level, msg) => `[${entityName}] ${msg}`);
@@ -85,6 +75,8 @@ export default class LoggerManager {
                 return newLogger;
             }
             return winston.loggers.get(`${logger.entityName}__${subEntityName}`);
-        }
+        };
+
+        return logger;
     }
 }

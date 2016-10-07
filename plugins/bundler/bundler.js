@@ -326,7 +326,7 @@ class MeteorDesktopBundler {
             fs.writeFileSync(versionJsonFile, versionFileJSON, 'UTF-8');
 
             shell.rm('./desktop.asar');
-            shell.rm('-rf', 'desktopTmpPath');
+            shell.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
         });
     }
