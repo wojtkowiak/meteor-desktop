@@ -1,7 +1,7 @@
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
-import sinon from 'sinon';
+import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
 import asar from 'asar';
@@ -30,9 +30,9 @@ describe('electronApp', () => {
             MeteorDesktop.electronApp.packDesktopToAsar().then(() => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.desktopAsar)).to.be.true();
                 const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
-                console.log(files);
+                const expected = ['desktop.js', 'settings.json', 'modules', 'assets'];
                 expect(files).to.include.members(
-                    ['\\desktop.js', '\\settings.json', '\\modules', '\\assets']);
+                    expected.map(expectedPath => path.sep + expectedPath));
                 logStub.restore();
                 done();
             }).catch((e) => { done(e); logStub.restore(); });

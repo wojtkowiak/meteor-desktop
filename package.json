@@ -32,7 +32,7 @@
     "dirty-chai": "^1.2.2",
     "eslint": "^3.6.0",
     "eslint-config-airbnb-base": "^8.0.0",
-    "eslint-plugin-import": "^2.0.0",
+    "eslint-plugin-import": "^1.16.0",
     "find-port": "2.0.1",
     "fs-plus": "^2.9.2",
     "mocha": "^2.5.3",
