@@ -30,6 +30,7 @@ describe('electronApp', () => {
             MeteorDesktop.electronApp.packDesktopToAsar().then(() => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.desktopAsar)).to.be.true();
                 const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
+                console.log(files);
                 expect(files).to.include.members(
                     ['\\desktop.js', '\\settings.json', '\\modules', '\\assets']);
                 logStub.restore();
