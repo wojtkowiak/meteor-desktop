@@ -78,12 +78,13 @@ describe('electronApp', () => {
             const moduleJson = getModuleJson(module);
             moduleJson.dependencies[dependency] = version;
             saveModuleJson(module, moduleJson);
-            const logStub = new StubLog(MeteorDesktop.electronApp, ['error', 'info'], true);
+            const logStub = new StubLog(MeteorDesktop.electronApp, ['info'], true);
             MeteorDesktop.electronApp.packageJson = {};
-            MeteorDesktop.electronApp.updateDependenciesList();
-            expect(logStub.stubs.error).to.have.been.calledWithMatch(
-                sinon.match(match)
-            );
+            try {
+                MeteorDesktop.electronApp.updateDependenciesList();
+            } catch (e) {
+                expect(e.message).to.match(match);
+            }
             logStub.restore();
         }
 
