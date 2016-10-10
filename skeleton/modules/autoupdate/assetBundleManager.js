@@ -30,19 +30,16 @@
  */
 
 import path from 'path';
-import shell from 'shelljs';
 import fs from 'fs-plus';
 import rimraf from 'rimraf';
 import originalFs from 'original-fs';
 import url from 'url';
 import request from 'request';
+import shell from 'shelljs';
 
 import AssetBundle from './assetBundle';
 import AssetBundleDownloader from './assetBundleDownloader';
 import AssetManifest from './assetManifest';
-
-require('shelljs/global');
-const shellJsConfig = config;
 
 function exists(checkPath) {
     try {
@@ -59,10 +56,12 @@ class AssetBundleManager {
      * @param {object}      configuration      - Configuration object.
      * @param {AssetBundle} initialAssetBundle - Parent asset bundle.
      * @param {string}      versionsDirectory  - Path to versions dir.
+     * @param {string}      desktopBundlePath  - Path to dir with desktop bundles.
      * @param {Object}      appSettings        - Settings from desktop.json.
      * @constructor
      */
-    constructor(log, configuration, initialAssetBundle, versionsDirectory, appSettings) {
+    constructor(
+        log, configuration, initialAssetBundle, versionsDirectory, desktopBundlePath, appSettings) {
         this.log = log.getLoggerFor('AssetBundleManager');
 
         this.appSettings = appSettings;
@@ -70,6 +69,7 @@ class AssetBundleManager {
         this.initialAssetBundle = initialAssetBundle;
 
         this.versionsDirectory = versionsDirectory;
+        this.desktopBundlePath = desktopBundlePath;
 
         this.downloadDirectory = path.join(versionsDirectory, 'Downloading');
         this.partialDownloadDirectory = path.join(versionsDirectory, 'PartialDownload');
@@ -121,7 +121,7 @@ class AssetBundleManager {
                 }
                 if (response.statusCode !== 200) {
                     this.didFail(
-                        `non-success status code ${response.statusCode} for asset manifest`
+                        `non-success status code ${response.statusCode} for version.desktop.json`
                     );
                     return;
                 }
@@ -129,7 +129,7 @@ class AssetBundleManager {
                 try {
                     desktopVersion = JSON.parse(body);
                 } catch (e) {
-                    this.didFail(e.message);
+                    this.didFail(`error parsing version.desktop.json: ${e.message}`);
                     return;
                 }
                 callback(desktopVersion);
@@ -147,7 +147,7 @@ class AssetBundleManager {
     checkForUpdates(baseUrl) {
         let manifest;
         const manifestUrl = url.resolve(baseUrl, 'manifest.json');
-        const desktopVersionUrl = url.resolve(baseUrl, 'version.desktop.json');
+        const desktopVersionUrl = url.resolve(baseUrl, 'version.desktop.json?meteor_dont_serve_index=true');
 
         this.log.info(`trying to query ${manifestUrl}`);
 
@@ -183,10 +183,11 @@ class AssetBundleManager {
             }
 
             // At this point we will check if we need to download the desktop version information.
-            this.getDesktopVersion(desktopVersionUrl, desktopVersion => {
+            this.getDesktopVersion(desktopVersionUrl, (desktopVersion) => {
                 // Give the callback a chance to decide whether the version should be downloaded.
                 if (
-                    this.callback !== null && !this.callback.shouldDownloadBundleForManifest(manifest, desktopVersion)
+                    this.callback !== null &&
+                    !this.callback.shouldDownloadBundleForManifest(manifest, desktopVersion)
                 ) {
                     return;
                 }
@@ -271,7 +272,7 @@ class AssetBundleManager {
                         this.log.info(`pruned old ${desktopVersion.version}_desktop.asar`);
 
                         try {
-                            originalFs.unlinkSync(path.join(this.versionsDirectory, `${desktopVersion.version}_desktop.asar`));
+                            originalFs.unlinkSync(path.join(this.desktopBundlePath, `${desktopVersion.version}_desktop.asar`));
                         } catch (e) {
                             // Theoretically no harm if we could not delete it...
                         }
@@ -295,18 +296,18 @@ class AssetBundleManager {
      */
     makeDownloadDirectory() {
         // Make shellJs throw on failure.
-        shellJsConfig.fatal = true;
+        shell.config.fatal = true;
         try {
             if (!fs.existsSync(this.downloadDirectory)) {
                 this.log.info('created download dir.');
                 shell.mkdir(this.downloadDirectory);
             }
-            shellJsConfig.fatal = false;
             return true;
         } catch (e) {
             this.log.debug(`creating download dir failed: ${e.message}`);
+        } finally {
+            shell.config.fatal = false;
         }
-        shellJsConfig.fatal = false;
         return false;
     }
 
@@ -316,7 +317,7 @@ class AssetBundleManager {
      * @private
      */
     loadDownloadedAssetBundles() {
-        shell.ls(this.versionsDirectory).forEach(file => {
+        shell.ls(this.versionsDirectory).forEach((file) => {
             const directory = path.join(this.versionsDirectory, file);
             if (this.downloadDirectory !== directory
                 && this.partialDownloadDirectory !== directory
@@ -377,14 +378,14 @@ class AssetBundleManager {
             // If there is a new version of desktop.asar copy it with a name changed so it
             // will contain the version.
             const desktopPath = path.join(
-                this.versionsDirectory,
+                this.desktopBundlePath,
                 `${assetBundle.desktopVersion.version}_desktop.asar`
             );
 
             if (assetBundle.desktopVersion.version !== this.appSettings.desktopVersion &&
                 !exists(desktopPath)
             ) {
-                assetBundle.getOwnAssets().some(asset => {
+                assetBundle.getOwnAssets().some((asset) => {
                     if (~asset.filePath.indexOf('desktop.asar')) {
                         // TODO: need more efficient way of copying asar archive
                         originalFs.writeFileSync(
@@ -414,7 +415,7 @@ class AssetBundleManager {
         );
 
         let cachedAsset;
-        const assetFound = bundles.some(assetBundle => {
+        const assetFound = bundles.some((assetBundle) => {
             cachedAsset = assetBundle.cachedAssetForUrlPath(asset.urlPath, asset.hash);
             return cachedAsset;
         });
@@ -449,40 +450,40 @@ class AssetBundleManager {
     downloadAssetBundle(assetBundle, baseUrl) {
         const missingAssets = [];
 
-        assetBundle.getOwnAssets().forEach(asset => {
+        assetBundle.getOwnAssets().forEach((asset) => {
             // Create containing directories for the asset if necessary
             const containingDirectory = path.dirname(asset.getFile());
 
             try {
                 fs.lstatSync(containingDirectory);
             } catch (e) {
-                shellJsConfig.fatal = true;
+                shell.config.fatal = true;
                 try {
                     shell.mkdir('-p', containingDirectory);
                 } catch (shellError) {
                     this.didFail(`could not create containing directory: ${containingDirectory}`);
-                    shellJsConfig.fatal = false;
                     return;
+                } finally {
+                    shell.config.fatal = false;
                 }
-                shellJsConfig.fatal = false;
             }
 
             // If we find a cached asset, we copy it.
             const cachedAsset = this.cachedAssetForAsset(asset);
 
             if (cachedAsset !== null) {
-                shellJsConfig.fatal = true;
-                shellJsConfig.fatal = false;
+                shell.config.fatal = true;
                 try {
                     if (~cachedAsset.getFile().indexOf('desktop.asar')) {
-                        originalFs.createReadStream(cachedAsset.getFile()).pipe(originalFs.createWriteStream(asset.getFile()));
+                        originalFs.createReadStream(cachedAsset.getFile())
+                            .pipe(originalFs.createWriteStream(asset.getFile()));
                     } else {
                         shell.cp(cachedAsset.getFile(), asset.getFile());
                     }
                 } catch (e) {
                     this.didFail(e.message);
-                    shellJsConfig.fatal = false;
-                    return;
+                } finally {
+                    shell.config.fatal = false;
                 }
             } else {
                 missingAssets.push(asset);
@@ -513,9 +514,7 @@ class AssetBundleManager {
                     this.didFail(e);
                 }
             },
-            cause => {
-                this.didFail(cause);
-            }
+            cause => this.didFail(cause)
         );
         assetBundleDownloader.resume();
     }
@@ -542,7 +541,7 @@ class AssetBundleManager {
      * @private
      */
     moveExistingDownloadDirectoryIfNeeded() {
-        shellJsConfig.fatal = true;
+        shell.config.fatal = true;
 
         if (exists(this.downloadDirectory)) {
             if (exists(this.partialDownloadDirectory)) {
@@ -559,7 +558,7 @@ class AssetBundleManager {
                 originalFs.renameSync(this.downloadDirectory, this.partialDownloadDirectory);
             } catch (e) {
                 this.log.error('could not rename existing download directory');
-                shellJsConfig.fatal = false;
+                shell.config.fatal = false;
                 return;
             }
 
@@ -575,7 +574,7 @@ class AssetBundleManager {
                 this.log.warn('could not load partially downloaded asset bundle.');
             }
         }
-        shellJsConfig.fatal = false;
+        shell.config.fatal = false;
     }
 }
 module.exports = AssetBundleManager;

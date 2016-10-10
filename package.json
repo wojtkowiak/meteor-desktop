@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -14,10 +14,11 @@
     "test-watch": "watch \"npm run test\" --wait 10 dist tests/unit tests/functional scaffold skeleton",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
-    "version-propagate": "node dist/scripts/propagateVersion.js",
+    "version": "node dist/scripts/propagateVersion.js",
+    "postversion": "npm run publish-all",
     "publish-plugins": "cd plugins/bundler && (meteor publish || echo) && cd ../watcher && (meteor publish || echo)",
     "prepublish": "npm run build",
-    "publish-all": "npm run version-propagate && npm run publish-plugins && npm publish",
+    "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
     "develop": "npm-run-all --parallel build-watch test-watch"
@@ -67,7 +68,6 @@
     "electron-builder": "7.11.2",
     "electron-packager": "8.1.0",
     "electron-rebuild": "1.2.0",
-    "extfs": "0.0.7",
     "glob": "7.1.0",
     "hash-files": "1.1.1",
     "lodash": "4.16.0",

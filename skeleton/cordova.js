@@ -28,7 +28,6 @@ WebAppLocalServer = {
 };
 
 Desktop.on('autoupdate', 'error', (event, args) => {
-    console.error(args);
     WebAppLocalServer.onErrorCallback(args);
 });
 

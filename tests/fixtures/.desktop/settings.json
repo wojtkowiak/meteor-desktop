@@ -9,7 +9,7 @@
         "blockAppUpdateOnDesktopIncompatibility": true
     },
     "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
-    "autoUpdateFeedHeaders": {},
+    "autoUpdateFeedHeaders": null,
     "webAppStartupTimeout": 60000,
     "window": {
         "fullscreen": false,

@@ -358,7 +358,7 @@ class App {
                 this.l.info('autoUpdater reported an update was downloaded with version:', releaseName);
                 this.systemEvents.emit('autoUpdaterUpdateDownloaded', releaseNotes, releaseName, releaseDate, updateURL);
             });
-            autoUpdater.setFeedURL(feed, this.settings.autoUpdateFeedHeaders ? autoUpdateFeedHeaders : undefined);
+            autoUpdater.setFeedURL(feed, this.settings.autoUpdateFeedHeaders ? this.settings.autoUpdateFeedHeaders : undefined);
             autoUpdater.checkForUpdates();
             this.autoUpdater = autoUpdater;
         }
@@ -418,6 +418,7 @@ class App {
                 const settings = {};
                 if (moduleName === 'autoupdate') {
                     settings.dataPath = this.userDataDir;
+                    settings.desktopBundlePath = __dirname;
                     settings.bundleStorePath = this.userDataDir;
                     settings.initialBundlePath = path.join(__dirname, '..', 'meteor.asar');
                     settings.webAppStartupTimeout =

@@ -64,7 +64,6 @@ function Asset(filePath, urlPath, fileType, cacheable, hash, sourceMapUrlPath, s
     };
 }
 
-
 export default class AssetBundle {
     /**
      * Represents assets bundle.
@@ -100,7 +99,6 @@ export default class AssetBundle {
             this.manifest = manifest;
         }
 
-
         this.version = this.manifest.version;
         this.cordovaCompatibilityVersion = this.manifest.cordovaCompatibilityVersion;
         if (!desktopVersion.version) {
@@ -112,7 +110,7 @@ export default class AssetBundle {
         this.ownAssetsByURLPath = {};
 
         // Filter assets that are only in this bundle. Rest can be taken from the parent.
-        this.manifest.entries.forEach(entry => {
+        this.manifest.entries.forEach((entry) => {
             const urlPath = url.parse(entry.urlPath).pathname;
 
             if (parentAssetBundle === undefined
@@ -310,10 +308,8 @@ export default class AssetBundle {
         let asset;
         if (urlPath in this.ownAssetsByURLPath) {
             asset = this.ownAssetsByURLPath[urlPath];
-        } else {
-            if (this.parentAssetBundle !== null) {
-                asset = this.parentAssetBundle.assetForUrlPath(urlPath);
-            }
+        } else if (this.parentAssetBundle !== null) {
+            asset = this.parentAssetBundle.assetForUrlPath(urlPath);
         }
         return asset;
     }

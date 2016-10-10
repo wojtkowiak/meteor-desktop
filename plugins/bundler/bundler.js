@@ -76,7 +76,11 @@ class MeteorDesktopBundler {
         return moduleConfig;
     }
 
-
+    /**
+     * Checks if the path is empty.
+     * @param {string} searchPath
+     * @returns {boolean}
+     */
     isEmpty(searchPath) {
         let stat;
         try {
@@ -102,10 +106,8 @@ class MeteorDesktopBundler {
         if (!this.isEmpty(modulesPath)) {
             shell.ls('-d', path.join(modulesPath, '*')).forEach(
                 (module) => {
-                    console.log('checking module');
                     if (this.fs.lstatSync(module).isDirectory()) {
                         const moduleConfig = this.getModuleConfig(module, file);
-                        console.log(moduleConfig);
                         if (path.parse) {
                             moduleConfig.dirName = path.parse(module).name;
                         } else {
@@ -115,8 +117,6 @@ class MeteorDesktopBundler {
                     }
                 }
             );
-        } else {
-            console.log('empty');
         }
         return configs;
     }
@@ -201,10 +201,9 @@ class MeteorDesktopBundler {
             .split('.')[0];
         const desktopCompatibilityVersion = this.getSettings(desktopPath, file)
             .version
-            .split('.')[0];
-        deps.push(`meteor-desktop:${mainCompatibilityVersion}`);
+            .split('.');
+        deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
-        console.log(deps);
         return md5(JSON.stringify(deps));
     }
 
@@ -257,7 +256,6 @@ class MeteorDesktopBundler {
 
 
             const configs = this.gatherModuleConfigs(shell, modulesPath, files[0]);
-            console.log(configs);
             const dependencies = this.getDependencies(desktopPath, files[0], configs, depsManager);
 
             const version = hash.sync({
@@ -334,7 +332,7 @@ class MeteorDesktopBundler {
             }, null, 2);
 
             inputFile.addAsset({
-                path: `${inputFile.getPathInPackage()}.json`,
+                path: 'version.desktop.json',
                 data: versionFileJSON
             });
 
@@ -346,7 +344,7 @@ class MeteorDesktopBundler {
             fs.writeFileSync(versionJsonFile, versionFileJSON, 'UTF-8');
 
             shell.rm('./desktop.asar');
-            //shell.rm('-rf', desktopTmpPath);
+            shell.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
         });
     }

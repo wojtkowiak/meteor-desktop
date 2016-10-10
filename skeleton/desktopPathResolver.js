@@ -48,6 +48,8 @@ export default class DesktopPathResolver {
      * @param {Log}    log         - App's logger instance
      */
     static resolveDesktopPath(userDataDir, log) {
+        // TODO: kinda the same logic is in the autoupdate module - extract it to common place.
+
         let desktopPath = path.resolve(join(__dirname, '..', 'desktop.asar'));
 
         const initialDesktopVersion =
@@ -90,8 +92,7 @@ export default class DesktopPathResolver {
                             if (desktopVersion.version !== initialDesktopVersion) {
                                 desktopPath =
                                     join(
-                                        userDataDir,
-                                        'versions',
+                                        __dirname,
                                         `${desktopVersion.version}_desktop.asar`
                                     );
                                 log.warn('will use desktop.asar from last known good version ' +
@@ -125,8 +126,7 @@ export default class DesktopPathResolver {
                 if (desktopVersion.version) {
                     if (desktopVersion.version !== initialDesktopVersion) {
                         desktopPath = join(
-                            userDataDir,
-                            'versions',
+                            __dirname,
                             `${desktopVersion.version}_desktop.asar`);
                         log.warn('will use desktop.asar from last downloaded version ' +
                             `at: ${desktopPath}`);

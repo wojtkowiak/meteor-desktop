@@ -81,6 +81,7 @@ class HCPClient {
 
         this.configFile = join(this.settings.dataPath, 'autoupdate.json');
         this.versionsDir = join(this.settings.bundleStorePath, 'versions');
+        this.desktopBundlePath = this.settings.desktopBundlePath;
     }
 
     /**
@@ -169,6 +170,7 @@ class HCPClient {
             this.config,
             initialAssetBundle,
             this.versionsDir,
+            this.desktopBundlePath,
             this.appSettings
         );
 

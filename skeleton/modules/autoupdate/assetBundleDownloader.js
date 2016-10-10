@@ -32,7 +32,6 @@
 import fs from 'fs';
 import originalFs from 'original-fs';
 import url from 'url';
-import path from 'path';
 // TODO: maybe use node-fetch?
 import request from 'request';
 import queue from 'queue';
@@ -176,11 +175,11 @@ export default class AssetBundleDownloader {
             }
         }
 
-        this.missingAssets.forEach(asset => {
+        this.missingAssets.forEach((asset) => {
             if (!~self.assetsDownloading.indexOf(asset)) {
                 self.assetsDownloading.push(asset);
                 const downloadUrl = self.downloadUrlForAsset(asset);
-                self.queue.push(callback => {
+                self.queue.push((callback) => {
                     self.httpClient(
                         { uri: downloadUrl, encoding: null },
                         (error, response, body) => {
@@ -266,14 +265,12 @@ export default class AssetBundleDownloader {
                             `hash mismatch for asset: ${asset.filePath} - expected hash:` +
                             `${expectedHash} != ${actualHash}`
                         );
-                    } else {
-                        if (asset.entrySize !== body.length) {
-                            // This check is specific to this integration. It is not present in
-                            // Cordova integration.
-                            // For now will not throw here as it is accepted on Cordova.
-                            this.log.debug(`wrong size for: ${asset.filePath} - expected: ` +
-                                `${asset.entrySize} != ${body.length}`);
-                        }
+                    } else if (asset.entrySize !== body.length) {
+                        // This check is specific to this integration. It is not present in
+                        // Cordova integration.
+                        // For now will not throw here as it is accepted on Cordova.
+                        this.log.debug(`wrong size for: ${asset.filePath} - expected: ` +
+                            `${asset.entrySize} != ${body.length}`);
                     }
                 } else {
                     this.log.warn(`invalid etag format for ${asset.urlPath}: ${eTag}`);
@@ -300,7 +297,6 @@ export default class AssetBundleDownloader {
             this.onFailure(cause);
         }
     }
-
 
     /**
      * Verifies runtime config.

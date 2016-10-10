@@ -19,4 +19,8 @@ Package.registerBuildPlugin({
 Package.onUse(function onUse(api) {
     api.versionsFrom('1.2.1');
     api.use('isobuild:compiler-plugin@1.0.0');
+    api.addFiles([
+        'dummy.js'
+    ], 'web.cordova');
+    api.export('__METEOR_DESKTOP_BUNDLER', 'server');
 });

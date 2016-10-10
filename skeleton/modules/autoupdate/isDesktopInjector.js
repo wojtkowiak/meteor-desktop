@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * Until we would have a `web.desktop` arch in Meteor we need to provide a way to distinguish
  * the desktop specific code. The easiest approach is to have a Meteor.isDesktop. Since we do not
@@ -37,8 +36,8 @@ class IsDesktopInjector {
 
 
         if (this.startupDidCompleteRegEx.test(fileContents) ||
-            this.startupDidCompleteProductionRegEx.test(fileContents)) {
-
+            this.startupDidCompleteProductionRegEx.test(fileContents)
+        ) {
             this.startupDidCompleteProductionRegEx.lastIndex = 0;
             this.startupDidCompleteRegEx.lastIndex = 0;
 

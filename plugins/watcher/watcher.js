@@ -6,7 +6,7 @@ function saveNewVersion(version, versionFile) {
         version
     }, null, 2), 'UTF-8');
 }
-if (!('omega:meteor-desktop-bundler' in Package)) {
+if (!('omega:meteor-desktop-bundler' in Package || !__METEOR_DESKTOP_BUNDLER)) {
     console.info('[meteor-desktop] .desktop HCP will not work because web.cordova architecture ' +
         'is missing. Run Meteor\'s mobile target or with --mobile-server.');
 } else {
@@ -43,16 +43,25 @@ if (!('omega:meteor-desktop-bundler' in Package)) {
     } else {
         const watcher = chokidar.watch(desktopPath, {
             persistent: true,
+            ignored: /tmp___/,
             ignoreInitial: true
         });
 
+        let timeout = null;
+
         watcher
             .on('all', (event, filePath) => {
-                console.log(`[meteor-desktop] ${filePath} have been changed, triggering desktop ` +
-                    'rebuild.');
-                saveNewVersion(hash.sync({
-                    files: [`${desktopPath}${path.sep}**`]
-                }), versionFile);
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                // Simple 2s debounce.
+                timeout = setTimeout(() => {
+                    console.log(`[meteor-desktop] ${filePath} have been changed, triggering desktop ` +
+                        'rebuild.');
+                    saveNewVersion(hash.sync({
+                        files: [`${desktopPath}${path.sep}**`]
+                    }), versionFile);
+                }, 2000);
             });
         console.log(`[meteor-desktop] Watching ${desktopPath} for changes.`);
     }
