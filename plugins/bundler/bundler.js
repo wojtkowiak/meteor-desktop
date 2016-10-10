@@ -76,19 +76,36 @@ class MeteorDesktopBundler {
         return moduleConfig;
     }
 
+
+    isEmpty(searchPath) {
+        let stat;
+        try {
+            stat = this.fs.statSync(searchPath);
+        } catch (e) {
+            return true;
+        }
+        if (stat.isDirectory()) {
+            const items = this.fs.readdirSync(searchPath);
+            return !items || !items.length;
+        }
+        return false;
+    }
+
     /**
      * Scans all modules for module.json and gathers this configuration altogether.
      *
      * @returns {[]}
      */
-    gatherModuleConfigs(extfs, shell, modulesPath, file) {
+    gatherModuleConfigs(shell, modulesPath, file) {
         const configs = [];
 
-        if (!extfs.isEmptySync(modulesPath)) {
+        if (!this.isEmpty(modulesPath)) {
             shell.ls('-d', path.join(modulesPath, '*')).forEach(
                 (module) => {
+                    console.log('checking module');
                     if (this.fs.lstatSync(module).isDirectory()) {
                         const moduleConfig = this.getModuleConfig(module, file);
+                        console.log(moduleConfig);
                         if (path.parse) {
                             moduleConfig.dirName = path.parse(module).name;
                         } else {
@@ -98,6 +115,8 @@ class MeteorDesktopBundler {
                     }
                 }
             );
+        } else {
+            console.log('empty');
         }
         return configs;
     }
@@ -185,6 +204,7 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
+        console.log(deps);
         return md5(JSON.stringify(deps));
     }
 
@@ -210,7 +230,6 @@ class MeteorDesktopBundler {
             const shell = requireLocal('shelljs');
             const glob = requireLocal('glob');
             const babel = requireLocal('babel-core');
-            const extfs = requireLocal('extfs');
             const hash = requireLocal('hash-files');
             const node6Preset = requireLocal('babel-preset-node6');
             const es2015Preset = requireLocal('babel-preset-es2015');
@@ -237,7 +256,8 @@ class MeteorDesktopBundler {
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
 
-            const configs = this.gatherModuleConfigs(extfs, shell, modulesPath, files[0]);
+            const configs = this.gatherModuleConfigs(shell, modulesPath, files[0]);
+            console.log(configs);
             const dependencies = this.getDependencies(desktopPath, files[0], configs, depsManager);
 
             const version = hash.sync({
@@ -326,7 +346,7 @@ class MeteorDesktopBundler {
             fs.writeFileSync(versionJsonFile, versionFileJSON, 'UTF-8');
 
             shell.rm('./desktop.asar');
-            shell.rm('-rf', desktopTmpPath);
+            //shell.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
         });
     }

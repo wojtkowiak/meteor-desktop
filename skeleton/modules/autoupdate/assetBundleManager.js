@@ -31,7 +31,7 @@
 
 import path from 'path';
 import shell from 'shelljs';
-import fs from 'fs';
+import fs from 'fs-plus';
 import rimraf from 'rimraf';
 import originalFs from 'original-fs';
 import url from 'url';
@@ -260,7 +260,7 @@ class AssetBundleManager {
     removeAllDownloadedAssetBundlesExceptForVersion(assetBundleToKeep) {
         const desktopVersionToKeep = assetBundleToKeep.desktopVersion;
         Object.keys(this.downloadedAssetBundlesByVersion).forEach(
-            assetVersion => {
+            (assetVersion) => {
                 const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];
                 const version = assetBundle.getVersion();
                 if (version !== assetBundleToKeep.getVersion()) {
@@ -269,7 +269,12 @@ class AssetBundleManager {
                     if (desktopVersion.version && desktopVersionToKeep.version &&
                         desktopVersion.version !== desktopVersionToKeep.version) {
                         this.log.info(`pruned old ${desktopVersion.version}_desktop.asar`);
-                        originalFs.unlinkSync(path.join(this.versionsDirectory, `${desktopVersion.version}_desktop.asar`));
+
+                        try {
+                            originalFs.unlinkSync(path.join(this.versionsDirectory, `${desktopVersion.version}_desktop.asar`));
+                        } catch (e) {
+                            // Theoretically no harm if we could not delete it...
+                        }
                     }
                     // Using rimraf specifically instead of shelljs.rm because despite using
                     // process.noAsar shelljs tried to remove files inside asar instead of just

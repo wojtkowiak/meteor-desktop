@@ -307,7 +307,7 @@ class App {
             this.systemEvents.emit('desktopLoaded', this.desktop);
             this.l.debug('desktop loaded');
         } catch (e) {
-            this.l.warn('could not load desktop.js');
+            this.l.warn('could not load desktop.js', e);
         }
 
         this.localServer = this.modules.localServer;
