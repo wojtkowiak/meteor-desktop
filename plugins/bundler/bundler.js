@@ -198,10 +198,10 @@ class MeteorDesktopBundler {
         );
         const mainCompatibilityVersion = file.require('meteor-desktop/package.json')
             .version
-            .split('.')[0];
+            .split('.');
         const desktopCompatibilityVersion = this.getSettings(desktopPath, file)
             .version
-            .split('.');
+            .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
         return md5(JSON.stringify(deps));

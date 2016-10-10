@@ -1,10 +1,8 @@
 - check plugin version from plugin
 - logs in a devtool extension
-
-- scenario, clean project and meteor project change
-- scenario, clean project, desktop change then meteor project change
+- forbid global install, npm list --depth 1 --global packagename > /dev/null 2>&1
 - licenses
--- ipc async answer
+- ipc async answer
 - use NODE_ENV?
 
 - https://github.com/jamielob/reloader/
