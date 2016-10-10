@@ -104,7 +104,7 @@ class MeteorDesktopBundler {
         const configs = [];
 
         if (!this.isEmpty(modulesPath)) {
-            shell.ls('-d', path.join(modulesPath, '*')).forEach(
+            this.fs.readdirSync(modulesPath).forEach(
                 (module) => {
                     if (this.fs.lstatSync(module).isDirectory()) {
                         const moduleConfig = this.getModuleConfig(module, file);
@@ -204,6 +204,7 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
+        console.log(deps);
         return md5(JSON.stringify(deps));
     }
 
