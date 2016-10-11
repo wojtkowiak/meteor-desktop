@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "0.0.59",
+  "version": "0.0.60",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -14,7 +14,7 @@
     "test-watch": "watch \"npm run test\" --wait 10 dist tests/unit tests/functional scaffold skeleton",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
-    "version": "node dist/scripts/propagateVersion.js",
+    "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
     "publish-plugins": "cd plugins/bundler && (meteor publish || echo) && cd ../watcher && (meteor publish || echo)",
     "prepublish": "npm run build",
