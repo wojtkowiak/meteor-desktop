@@ -255,6 +255,8 @@ class MeteorDesktopBundler {
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
+            shell.rm('-rf', desktopTmpPath);
+            shell.cp('-rf', desktopPath, desktopTmpPath);
 
             const configs = this.gatherModuleConfigs(shell, modulesPath, files[0]);
             const dependencies = this.getDependencies(desktopPath, files[0], configs, depsManager);
@@ -263,9 +265,6 @@ class MeteorDesktopBundler {
                 files: [`${desktopPath}${path.sep}**`]
             });
 
-            shell.rm('-rf', desktopTmpPath);
-
-            shell.cp('-rf', desktopPath, desktopTmpPath);
             // Pass information about build type to the settings.json.
             const settings = this.getSettings(desktopPath, files[0]);
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
