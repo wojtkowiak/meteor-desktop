@@ -107,7 +107,8 @@ class MeteorDesktopBundler {
             this.fs.readdirSync(modulesPath).forEach(
                 (module) => {
                     if (this.fs.lstatSync(path.join(modulesPath, module)).isDirectory()) {
-                        const moduleConfig = this.getModuleConfig(module, file);
+                        const moduleConfig =
+                            this.getModuleConfig(path.join(modulesPath, module), file);
                         if (path.parse) {
                             moduleConfig.dirName = path.parse(module).name;
                         } else {
