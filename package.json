@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "0.0.61",
+  "version": "0.0.65",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -16,6 +16,7 @@
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
+    "postinstall": "node dist/scripts/addToScripts",
     "publish-plugins": "cd plugins/bundler && (meteor publish || echo) && cd ../watcher && (meteor publish || echo)",
     "prepublish": "npm run build",
     "publish-all": "npm run publish-plugins && npm publish",

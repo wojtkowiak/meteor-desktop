@@ -1,3 +1,5 @@
+- autodetect port on which meteor is running
+- prepare dev env
 - check plugin version from plugin
 - logs in a devtool extension
 - forbid global install, npm list --depth 1 --global packagename > /dev/null 2>&1

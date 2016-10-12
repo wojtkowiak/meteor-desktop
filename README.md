@@ -9,7 +9,11 @@
 ```bash
  cd /your/meteor/app
  npm install --save-dev meteor-desktop
- meteor-desktop
+ meteor --mobile-server=127.0.0.1:3000
+ 
+ # open new terminal
+ npm run desktop -- init
+ npm run desktop
 ```
 
 ## What is this?
@@ -18,5 +22,7 @@ This is a complete implementation of integration between `Meteor` and `Electron`
 
 ## Prerequisites
 
- - Meteor >= `1.3.3`
- - 
+ - Meteor >= `1.3.3`<sup>*</sup>
+ - At least basic [Electron](http://electron.atom.io/) ecosystem knowledge  
+
+<sup>*</sup> `meteor-desktop` is not actively tested with older Meteor versions, however it should be compatible with >= `1.2` - check [Meteor pre 1.3.3 support](#pre)
