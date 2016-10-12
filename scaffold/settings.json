@@ -50,9 +50,9 @@
         }
     },
     "packagerOptions": {
-        "icon": "meteor.ico",
+        "icon": ".desktop/assets/meteor.ico",
         "_osx": {
-            "icon": "meteor.icns"
+            "icon": ".desktop/assets/meteor.icns"
         },
         "version-string": {
             "CompanyName": "My Company",
