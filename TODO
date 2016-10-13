@@ -1,3 +1,4 @@
+- uncaught exception custom handling
 - autodetect port on which meteor is running
 - prepare dev env
 - check plugin version from plugin
@@ -5,7 +6,6 @@
 - forbid global install, npm list --depth 1 --global packagename > /dev/null 2>&1
 - licenses
 - ipc async answer
-- use NODE_ENV?
 
 - https://github.com/jamielob/reloader/
 

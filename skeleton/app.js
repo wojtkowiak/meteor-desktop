@@ -8,17 +8,17 @@ import fs from 'fs-plus';
 import os from 'os';
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
-import { spawnSync } from 'child_process';
 import winston from 'winston';
-import Module from './modules/module.js';
+import Module from './modules/module';
 import LoggerManager from './loggerManager';
 import DesktopPathResolver from './desktopPathResolver';
+import Squirrel from './squirrel';
 
 const { app, BrowserWindow, dialog, autoUpdater } = electron;
 const { join } = path;
 
 process.env.NODE_PATH = join(__dirname, 'node_modules');
-require('module').Module._initPaths();
+require('module').Module._initPaths(); // eslint-disable-line
 
 /**
  * This is the main app which is a skeleton for the whole integration.
@@ -27,6 +27,8 @@ require('module').Module._initPaths();
 class App {
 
     constructor() {
+        this.catchUncaughtExceptions();
+
         this.getOsSpecificValues();
 
         this.loggerManager = new LoggerManager(this);
@@ -37,15 +39,17 @@ class App {
         this.settings = {
             devTools: false
         };
+        dialog.showErrorBox('Application', this.userDataDir);
 
         this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
         this.loadSettings();
 
-        if (this.handleSquirrelEvents()) {
+        if (Squirrel.handleSquirrelEvents(this.desktopPath)) {
             app.quit();
             return;
         }
 
+        // This is need for OSX - check Electron docs for more info.
         if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
             app.setAppUserModelId(this.settings.builderOptions.appId);
         }
@@ -62,15 +66,11 @@ class App {
         this.modules = {};
         this.localServer = null;
 
-
-        this.catchUncaughtExceptions();
-
         if (this.isProduction()) {
             // In case anything depends on this...
             process.env.NODE_ENV = 'production';
         } else {
-            import electronDebug from 'electron-debug';
-            electronDebug({
+            require('electron-debug')({
                 showDevTools: true,
                 enabled: (this.settings.devTools !== undefined) ? this.settings.devTools : true
             });
@@ -103,64 +103,6 @@ class App {
         this.userDataDir = app.getPath('userData');
     }
 
-    handleSquirrelEvents() {
-        if (process.platform !== 'win32') {
-            return false;
-        }
-
-        const squirrelCommand = process.argv[1];
-        if (!squirrelCommand || squirrelCommand.substr(0, '--squirrel'.length) !== '--squirrel') {
-            return false;
-        }
-
-        switch (squirrelCommand) {
-            case '--squirrel-install':
-                this.createShortcuts();
-                break;
-            case '--squirrel-firstrun':
-                return false;
-                break;
-            case '--squirrel-updated':
-                this.updateShortcuts();
-                break;
-            case '--squirrel-uninstall':
-                this.removeShortcuts();
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-    spawnUpdate(args) {
-        const updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
-        this.l.debug(`Spawning ${updateExe} with args ${args.join(',')}`);
-        spawnSync(updateExe, args);
-    }
-
-    removeShortcuts() {
-        const exeName = path.basename(process.execPath);
-        this.spawnUpdate(['--removeShortcut', exeName]);
-    }
-
-    createShortcuts() {
-        const exeName = path.basename(process.execPath);
-        this.spawnUpdate(['--createShortcut', exeName])
-    }
-
-    updateShortcuts() {
-        const homeDirectory = fs.getHomeDirectory();
-        if (homeDirectory) {
-            const exeName = path.basename(process.execPath, '.exe');
-            const desktopShortcutPath = path.join(homeDirectory, 'Desktop', exeName + '.lnk');
-            if (fs.existsSync(desktopShortcutPath)) {
-                this.createShortcuts();
-            }
-        } else {
-            this.createShortcuts();
-        }
-    }
 
     /**
      * Checks whether this is a production build.
@@ -218,10 +160,12 @@ class App {
      * Register on uncaughtExceptions so we can handle them.
      */
     catchUncaughtExceptions() {
-        process.on('uncaughtException', error => {
+        process.on('uncaughtException', (error) => {
             this.l.error(error);
             try {
-                this.systemEvents.emit('unhandledException');
+                if (this.systemEvents) {
+                    this.systemEvents.emit('unhandledException');
+                }
             } catch (e) {
                 this.l.warn('could not emit unhandledException');
             }
@@ -232,7 +176,7 @@ class App {
             }
             setTimeout(() => {
                 dialog.showErrorBox('Application', 'Internal error occurred. Restart this ' +
-                    'application. If the problem persist, contact support or try to reinstall.');
+                    'application. If the problem persists, contact support or try to reinstall.');
                 this.app.quit();
             }, 500);
         });

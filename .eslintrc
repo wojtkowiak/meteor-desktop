@@ -22,6 +22,7 @@
             "winston",
             "original-fs",
             "electron",
+            "electron-debug",
             "rimraf"
         ]
     },
