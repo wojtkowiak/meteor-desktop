@@ -46,9 +46,20 @@
         },
         "dmg": {
             "icon": ".desktop/assets/meteor.icns",
-            "background": ".desktop/assets/splashScreen.png"
-        }
-    },
+            "background": ".desktop/assets/dmgBackground.png",
+            "iconSize": 90,
+            "contents": [
+                { "x": 360, "y": 180, "type": "link", "path": "/Applications" },
+                { "x": 70, "y": 180, "type": "file" },
+                { "x": 500, "y": 500, "type": "position", "path": ".background" },
+                { "x": 500, "y": 500, "type": "position", "path": ".DS_Store" },
+                { "x": 500, "y": 500, "type": "position", "path": ".VolumeIcon.icns" }
+            ],
+            "window": {
+                "width": 480,
+                "height": 300
+            }
+        }    },
     "packagerOptions": {
         "icon": ".desktop/assets/meteor.ico",
         "_osx": {

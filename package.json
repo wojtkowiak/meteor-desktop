@@ -66,7 +66,7 @@
     "cross-spawn": "4.0.2",
     "del": "2.2.2",
     "electron": "1.4.3",
-    "electron-builder": "7.12.2",
+    "electron-builder": "7.13.0",
     "electron-packager": "8.1.0",
     "electron-rebuild": "1.2.0",
     "glob": "7.1.1",
