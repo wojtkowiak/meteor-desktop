@@ -65,7 +65,7 @@ export default class DesktopPathResolver {
             DesktopPathResolver.readJsonFile(join(userDataDir, 'autoupdate.json'));
 
         if (autoupdateConfig.lastSeenInitialVersion !== initialVersion) {
-            log.warn('will use desktop.asar from initial version because the initial version' +
+            log.warn('will use desktop.asar from initial version because the initial version ' +
             `of meteor app has changed: ${desktopPath}`);
             return desktopPath;
         }
@@ -128,7 +128,7 @@ export default class DesktopPathResolver {
                         desktopPath = join(
                             __dirname,
                             `${desktopVersion.version}_desktop.asar`);
-                        log.warn('will use desktop.asar from last downloaded version ' +
+                        log.info('will use desktop.asar from last downloaded version ' +
                             `at: ${desktopPath}`);
                     } else {
                         log.warn('will use desktop.asar from initial version because last ' +

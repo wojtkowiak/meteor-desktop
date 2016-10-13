@@ -10,7 +10,7 @@
   "description": "Build a Meteor's desktop client with hot code push.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
+    "test": "mocha --compilers js:babel-core/register \"tests/+(unit)/**/*.test.js\"",
     "test-watch": "watch \"npm run test\" --wait 10 dist tests/unit tests/functional scaffold skeleton",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register \"tests/+(functional|unit)/**/*.test.js\"",
