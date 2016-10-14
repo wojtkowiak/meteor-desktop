@@ -30,8 +30,8 @@ before_install:
         fi
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
   - npm run coverage
+  - npm run report-coverage
 
 cache:
   directories:
