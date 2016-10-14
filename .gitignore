@@ -6,4 +6,5 @@ tests/_tmp_
 .versions
 version.desktop
 npm-debug*
-
+coverage
+.nyc_output

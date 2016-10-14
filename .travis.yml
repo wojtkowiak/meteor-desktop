@@ -29,6 +29,10 @@ before_install:
             sleep 8;
         fi
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - npm run coverage
+
 cache:
   directories:
     - node_modules

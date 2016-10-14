@@ -10,7 +10,7 @@
   "description": "Build a Meteor's desktop client with hot code push.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "nyc mocha --compilers js:babel-core/register \"tests/+(unit)/**/*.test.js\"",
+    "test": "nyc mocha --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\"",
     "test-watch": "watch \"npm run test\" --wait 10 dist tests/unit tests/functional scaffold skeleton",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
@@ -28,6 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.14.0",
+    "babel-plugin-istanbul": "^2.0.1",
     "chai": "^3.5.0",
     "connect": "3.5.0",
     "connect-modrewrite": "0.9.0",
