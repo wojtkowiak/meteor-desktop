@@ -73,7 +73,7 @@ describe('DesktopPathResolver', () => {
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
 
-        it('should use last known good version (different than initial)', () => {
+        it('should use last known good version (if different than initial)', () => {
             prepareFsStubs(1, 1, {
                 lastSeenInitialVersion: 1,
                 lastDownloadedVersion: '546',
@@ -91,7 +91,7 @@ describe('DesktopPathResolver', () => {
             expect(infoStub.secondCall).to.be.calledWithMatch(sinon.match('will use desktop.asar' +
                 ' from last downloaded version at'));
 
-            expect(desktopPath.endsWith(`897_desktop.asar`)).to.be.true();
+            expect(desktopPath.endsWith('897_desktop.asar')).to.be.true();
 
         });
     });
