@@ -36,7 +36,7 @@
     "eslint-config-airbnb-base": "^8.0.0",
     "eslint-plugin-import": "^1.16.0",
     "find-port": "2.0.1",
-    "fs-plus": "^2.9.2",
+    "fs-plus": "^2.9.3",
     "mocha": "^2.5.3",
     "istanbul": "^0.4.5",
     "merge-stream": "^1.0.0",
