@@ -219,6 +219,14 @@ class MeteorDesktopBundler {
         }
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
+            const desktopPath = './.desktop';
+            const settings = this.getSettings(desktopPath, files[0]);
+            if (!settings.desktopHCP) {
+                console.warn('[meteor-desktop] not preparing desktop.asar beacuse desktopHCP is ' +
+                    'set to false');
+                return;
+            }
+
             console.time('[meteor-desktop]: Preparing desktop.asar took');
             const requireLocal = files[0].require.bind(files[0]);
 
@@ -250,7 +258,7 @@ class MeteorDesktopBundler {
                 ElectronAppScaffold =
                     requireLocal('meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
-                file.error({
+                files[0].error({
                     message: 'error while trying to require dependency, are you sure you have ' +
                     `meteor-desktop installed and using npm3? ${e}`
                 });
@@ -269,7 +277,6 @@ class MeteorDesktopBundler {
             const depsManager = new DependenciesManager(
                 context, scaffold.getDefaultPackageJson().dependencies);
 
-            const desktopPath = './.desktop';
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
@@ -284,7 +291,7 @@ class MeteorDesktopBundler {
             });
 
             // Pass information about build type to the settings.json.
-            const settings = this.getSettings(desktopPath, files[0]);
+
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
             settings.desktopVersion = version;
             settings.compatibilityVersion =
