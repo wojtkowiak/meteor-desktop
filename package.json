@@ -74,7 +74,6 @@
     "electron": "1.4.3",
     "electron-builder": "7.13.0",
     "electron-packager": "8.1.0",
-    "electron-rebuild": "1.2.0",
     "glob": "7.1.1",
     "hash-files": "1.1.1",
     "lodash": "4.16.4",
