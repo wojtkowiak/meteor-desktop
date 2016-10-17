@@ -220,24 +220,42 @@ class MeteorDesktopBundler {
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
             console.time('[meteor-desktop]: Preparing desktop.asar took');
-
             const requireLocal = files[0].require.bind(files[0]);
 
             /* TODO: warn about unexpected versions */
             // When the meteor app requires a different from meteor-desktop version of those deps,
             // here we might receive an unexpected version.
-            const asar = requireLocal('asar');
-            const shell = requireLocal('shelljs');
-            const glob = requireLocal('glob');
-            const babel = requireLocal('babel-core');
-            const hash = requireLocal('hash-files');
-            const node6Preset = requireLocal('babel-preset-node6');
-            const es2015Preset = requireLocal('babel-preset-es2015');
-            const uglify = requireLocal('uglify-js');
+            let asar;
+            let shell;
+            let glob;
+            let babel;
+            let hash;
+            let node6Preset;
+            let es2015Preset;
+            let uglify;
 
-            const DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
-            const ElectronAppScaffold =
-                requireLocal('meteor-desktop/dist/electronAppScaffold').default;
+            let DependenciesManager;
+            let ElectronAppScaffold;
+            try {
+                asar = requireLocal('asar');
+                shell = requireLocal('shelljs');
+                glob = requireLocal('glob');
+                babel = requireLocal('babel-core');
+                hash = requireLocal('hash-files');
+                node6Preset = requireLocal('babel-preset-node6');
+                es2015Preset = requireLocal('babel-preset-es2015');
+                uglify = requireLocal('uglify-js');
+
+                DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
+                ElectronAppScaffold =
+                    requireLocal('meteor-desktop/dist/electronAppScaffold').default;
+            } catch (e) {
+                file.error({
+                    message: 'error while trying to require dependency, are you sure you have ' +
+                    `meteor-desktop installed and using npm3? ${e}`
+                });
+                return;
+            }
 
             const context = {
                 env: {
