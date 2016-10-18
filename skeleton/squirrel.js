@@ -1,8 +1,11 @@
 /* eslint-disable import/no-dynamic-require */
-
 import path from 'path';
 import { spawnSync } from 'child_process';
 import fs from 'fs-plus';
+import os from 'os';
+import electron from 'electron';
+
+const { app, autoUpdater } = electron;
 
 /**
  * Basic Squirrel.Mac and Squirrel.Windows support.
@@ -12,7 +15,7 @@ export default class Squirrel {
 
     /**
      * Runs Update.exe from Squirrel with provided arguments.
-     * @param {Array} args - arguments
+     * @param {Array} args - Update.exe arguments
      */
     static spawnUpdate(args) {
         const updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
@@ -59,7 +62,7 @@ export default class Squirrel {
     static loadCustomHooks(desktopPath) {
         let hooks;
         try {
-            const HooksClass = require(path.join(desktopPath, 'squirrelEvents.js')).default;             // eslint-disable-line global-require
+            const HooksClass = require(path.join(desktopPath, 'squirrelEvents.js')).default; // eslint-disable-line global-require
             hooks = new HooksClass(this);
         } catch (e) {
             hooks = {};
@@ -113,5 +116,55 @@ export default class Squirrel {
         return true;
     }
 
+    /**
+     * Sets the correct feed url to the auto updater and by default runs an update check.
+     * @param {App} context - reference to the App
+     */
+    static setUpAutoUpdater(context) {
+        if (context.settings.autoUpdateFeedUrl && context.settings.autoUpdateFeedUrl.trim() !== '') {
+            const version = app.getVersion();
+            let platform = '';
+            if (context.os.isWindows) {
+                platform = os.arch() === 'ia32' ? 'win32' : 'win64';
+            }
+            if (context.os.isOsx) {
+                platform = `${os.platform()}_${os.arch()}`;
+            }
+            let feed = context.settings.autoUpdateFeedUrl;
+            feed = feed.replace(':version', version);
+            feed = feed.replace(':platform', platform);
+            context.l.info(`seting autoupdate feed to url: ${feed}`);
+
+            autoUpdater.on('error', (err) => {
+                context.l.error('autoUpdater reported an error:', err);
+            });
+            autoUpdater.on('checking-for-update', () => {
+                context.l.info('autoUpdater is checking for updates');
+            });
+
+            autoUpdater.on('update-available', () => {
+                context.l.info('autoUpdater reported an update is available');
+            });
+
+            autoUpdater.on('update-not-available', () => {
+                context.l.info('autoUpdater reported an update is not available');
+            });
+
+            autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+                context.l.info('autoUpdater reported an update was downloaded with version:',
+                    releaseName);
+            });
+
+            autoUpdater.setFeedURL(
+                feed,
+                context.settings.autoUpdateFeedHeaders ?
+                    context.settings.autoUpdateFeedHeaders : undefined
+            );
+            // Check for updates unless the developer wants to do it himself.
+            if (!context.settings.autoUpdateManualCheck) {
+                autoUpdater.checkForUpdates();
+            }
+        }
+    }
 }
 

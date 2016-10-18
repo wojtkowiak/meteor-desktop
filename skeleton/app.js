@@ -1,20 +1,21 @@
 /* eslint-disable import/no-unresolved */
-/* eslint-disable global-require */
+/* eslint-disable global-require, import/no-dynamic-require */
 
 import electron from 'electron';
 import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
-import os from 'os';
+
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
 import winston from 'winston';
 import Module from './modules/module';
 import LoggerManager from './loggerManager';
 import DesktopPathResolver from './desktopPathResolver';
+import WindowSettings from './windowSettings';
 import Squirrel from './squirrel';
 
-const { app, BrowserWindow, dialog, autoUpdater } = electron;
+const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
 process.env.NODE_PATH = join(__dirname, 'node_modules');
@@ -23,10 +24,13 @@ require('module').Module._initPaths(); // eslint-disable-line
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
+ * @class
  */
 class App {
 
     constructor() {
+        // Until user defined handling will be loaded it is good to register something
+        // temporarily.
         this.catchUncaughtExceptions();
 
         this.getOsSpecificValues();
@@ -55,13 +59,12 @@ class App {
         }
 
         // System events emitter.
-        this.systemEvents = new Events();
+        this.eventsBus = new Events();
 
         this.desktop = null;
         this.app = app;
         this.window = null;
         this.windowAlreadyLoaded = false;
-        this.autoUpdater = null;
         this.webContents = null;
         this.modules = {};
         this.localServer = null;
@@ -79,12 +82,12 @@ class App {
         this.prepareWindowSettings();
 
         this.meteorAppVersionChange = false;
-        this.desktopVersionChange = null;
-        this.systemEvents.on('newVersionReady', (desktopVersion) => {
+        this.pendingDesktopVersion = null;
+        this.eventsBus.on('newVersionReady', (desktopVersion) => {
             this.meteorAppVersionChange = true;
-            this.desktopVersionChange = desktopVersion;
+            this.pendingDesktopVersion = desktopVersion;
         });
-        this.systemEvents.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
+        this.eventsBus.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
@@ -103,38 +106,12 @@ class App {
         this.userDataDir = app.getPath('userData');
     }
 
-
     /**
      * Checks whether this is a production build.
      * @returns {boolean}
      */
     isProduction() {
         return ('env' in this.settings && this.settings.env === 'prod');
-    }
-
-
-
-    /**
-     * Merges window settings specific to current os.
-     */
-    mergeOsSpecificWindowSettings() {
-        ['windows', 'linux', 'osx'].forEach(system => {
-            if (
-                this.os[`is${system[0].toUpperCase()}${system.substring(1)}`] &&
-                (`_${system}`) in this.settings.window
-            ) {
-                assignIn(this.settings.window, this.settings.window[`_${system}`]);
-            }
-        });
-    }
-
-    /**
-     * Merges window dev settings.
-     */
-    mergeWindowDevSettings() {
-        if (!this.isProduction() && 'windowDev' in this.settings) {
-            assignIn(this.settings.window, this.settings.windowDev);
-        }
     }
 
     /**
@@ -163,13 +140,6 @@ class App {
         process.on('uncaughtException', (error) => {
             this.l.error(error);
             try {
-                if (this.systemEvents) {
-                    this.systemEvents.emit('unhandledException');
-                }
-            } catch (e) {
-                this.l.warn('could not emit unhandledException');
-            }
-            try {
                 this.window.close();
             } catch (e) {
                 // Empty catch block... nasty...
@@ -182,31 +152,182 @@ class App {
         });
     }
 
+
     /**
-     * Applies os specific settings and sets proper icon path.
+     * Applies dev, os specific and variables to window settings.
      */
     prepareWindowSettings() {
         if (!('window' in this.settings)) {
             this.settings.window = {};
         }
-        this.mergeWindowDevSettings();
-        this.mergeOsSpecificWindowSettings();
-        this.applyVars(this.settings.window);
-        console.log(this.settings.window);
+        if (!this.isProduction()) {
+            WindowSettings.mergeWindowDevSettings(this.settings);
+        }
+        WindowSettings.mergeOsSpecificWindowSettings(this.settings, this.os);
+        WindowSettings.applyVars(this.settings.window, this.desktopPath);
     }
 
-    applyVars(object) {
-        Object.keys(object).forEach((key) => {
-           if (key[0] !== '_') {
-               if (typeof object[key] === 'object') {
-                   this.applyVars(object[key]);
-               } else if (typeof object[key] === 'string') {
-                   if (~object[key].indexOf('@assets')) {
-                       object[key] = path.join(this.desktopPath, 'assets', object[key].replace(/@assets\//gmi, ''));
-                   }
-               }
-           }
+    /**
+     * Loads and initializes all plugins listed in settings.json.
+     */
+    loadPlugins() {
+        if ('plugins' in this.settings) {
+            Object.keys(this.settings.plugins).forEach((plugin) => {
+                try {
+                    this.l.debug(`loading plugin: ${plugin}`);
+                    this.modules[plugin] = require(plugin);
+
+                    const Plugin = this.modules[plugin];
+                    this.loggerManager.configureLogger(plugin);
+
+                    this.modules[plugin] = new Plugin(
+                        winston,
+                        this.app,
+                        this.settings,
+                        this.eventsBus,
+                        this.modules,
+                        this.settings.plugins[plugin],
+                        Module
+                    );
+                } catch (e) {
+                    // TODO: its probably safer not to exit here
+                    // but a strategy for handling this would be better.
+                    this.l.error(`error while loading plugin: ${e}`);
+                }
+            });
+        }
+    }
+
+    /**
+     * Loads and initializes internal and app modules.
+     */
+    loadModules() {
+        // Load internal modules. Scan for files in /modules.
+        shell.ls(join(__dirname, 'modules', '*.js')).forEach((file) => {
+            if (!~file.indexOf('module.js')) {
+                this.loadModule(true, file);
+            }
         });
+
+        // Now go through each directory in .desktop/modules.
+        fs.readdirSync(join(this.desktopPath, 'modules')).forEach((dirName) => {
+            try {
+                const modulePath = join(this.desktopPath, 'modules', dirName);
+                if (fs.lstatSync(modulePath).isDirectory()) {
+                    this.loadModule(false, modulePath, dirName);
+                }
+            } catch (e) {
+                this.l.error(`error while trying to load module in dir ${dirName}: ${e}`);
+            }
+        });
+    }
+
+    /**
+     * Tries to read a module's module.json file.
+     * @param modulePath
+     * @returns {{settings: {}, moduleName: *}}
+     */
+    static readModuleConfiguration(modulePath) {
+        let settings = {};
+        let moduleName = null;
+        const moduleJson = JSON.parse(
+            fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
+        );
+        if ('settings' in moduleJson) {
+            settings = moduleJson.settings;
+        }
+        if ('name' in moduleJson) {
+            moduleName = moduleJson.name;
+        }
+        // Inject extractedFilesPath.
+        if ('extract' in moduleJson) {
+            settings.extractedFilesPath =
+                join(__dirname, '..', 'extracted', moduleName);
+        }
+        return { settings, moduleName };
+    }
+
+    /**
+     * Load a module.
+     * @param {boolean} internal - Whether that is an internal module.
+     * @param {string} modulePath - Path to the module.
+     * @param {string} dirName - Directory name of the module.
+     */
+    loadModule(internal, modulePath, dirName = '') {
+        let moduleName = path.parse(modulePath).name;
+        let settings = {};
+        let indexPath = '';
+
+        if (!internal) {
+            // module.json is mandatory, but we can live without it.
+            try {
+                const result = App.readModuleConfiguration(modulePath);
+                assignIn(settings, result.settings);
+                if (result.moduleName) {
+                    moduleName = result.moduleName;
+                }
+            } catch (e) {
+                this.l.warn(`could not load ${path.join(modulePath, 'module.json')}`);
+            }
+            this.l.debug(`loading module: ${dirName} => ${moduleName}`);
+            indexPath = path.join(modulePath, 'index.js');
+        } else {
+            this.l.debug(`loading internal module: ${moduleName}`);
+            indexPath = modulePath;
+        }
+
+        const AppModule = require(indexPath).default;
+        this.loggerManager.configureLogger(moduleName);
+
+        if (internal && moduleName === 'autoupdate') {
+            settings = this.prepareAutoupdateSettings();
+        }
+
+        this.modules[moduleName] = new AppModule(
+            winston,
+            this.app,
+            this.settings,
+            this.eventsBus,
+            this.modules,
+            settings,
+            Module
+        );
+    }
+
+    /**
+     * Tries to load desktop.js.
+     */
+    loadDesktopJs() {
+        try {
+            const desktopJsPath = join(this.desktopPath, 'desktop.js');
+            this.loggerManager.configureLogger('desktop');
+            const Desktop = require(desktopJsPath).default;
+            this.desktop = new Desktop(
+                winston,
+                this.app,
+                this.settings,
+                this.eventsBus,
+                this.modules,
+                Module
+            );
+            this.eventsBus.emit('desktopLoaded', this.desktop);
+            this.l.debug('desktop loaded');
+        } catch (e) {
+            this.l.error('could not load desktop.js', e);
+        }
+    }
+
+    /**
+     * Util function for emitting events on the event bus.
+     * @param {string} event - event name
+     * @param {[*]}    args  - event's arguments
+     */
+    emit(event, ...args) {
+        try {
+            this.eventsBus.emit(event, ...args);
+        } catch (e) {
+            this.l.error(`error while emitting '${event}' event: ${e}`);
+        }
     }
 
     /**
@@ -219,40 +340,21 @@ class App {
     onReady() {
         this.l.info('ready fired');
 
-        this.setUpAutoUpdater();
+        Squirrel.setUpAutoUpdater(this);
+
+        this.emit('beforePluginsLoad');
 
         this.loadPlugins();
-        try {
-            this.systemEvents.emit('beforeModulesLoad');
-        } catch (e) {
-            this.l.error(`error while handling 'beforeModulesLoad' event: ${e}`);
-        }
+
+        this.emit('beforeModulesLoad');
 
         this.loadModules();
 
-        try {
-            this.systemEvents.emit('beforeDesktopLoad');
-        } catch (e) {
-            this.l.error(`error while handling 'beforeDesktopLoad' event: ${e}`);
-        }
+        this.emit('beforeDesktopLoad');
 
+        this.loadDesktopJs();
 
-        try {
-            const desktopJsPath = join(this.desktopPath, 'desktop.js');
-            const desktop = require(desktopJsPath);
-            this.desktop = desktop(
-                winston,
-                this.app,
-                this.settings,
-                this.systemEvents,
-                this.modules,
-                Module
-            );
-            this.systemEvents.emit('desktopLoaded', this.desktop);
-            this.l.debug('desktop loaded');
-        } catch (e) {
-            this.l.warn('could not load desktop.js', e);
-        }
+        this.emit('afterLoading');
 
         this.localServer = this.modules.localServer;
 
@@ -266,47 +368,10 @@ class App {
             this.modules.autoupdate.getDirectory(),
             this.modules.autoupdate.getParentDirectory()
         );
+
+        this.emit('afterInitialization');
     }
 
-    setUpAutoUpdater() {
-        if (this.settings.autoUpdateFeedUrl && this.settings.autoUpdateFeedUrl.trim() !== '') {
-            const version = app.getVersion();
-            let platform = '';
-            if (this.os.isWindows) {
-                platform = os.arch() === 'ia32' ? 'win32' : 'win64';
-            }
-            if (this.os.isOsx) {
-                platform = os.platform() + '_' + os.arch();
-            }
-            let feed = this.settings.autoUpdateFeedUrl;
-            feed = feed.replace(':version', version);
-            feed = feed.replace(':platform', platform);
-            this.l.info(feed);
-
-            autoUpdater.on('error', (err) => {
-                this.l.error('autoUpdater reported an error:', err);
-            });
-            autoUpdater.on('checking-for-update', () => {
-                this.l.info('autoUpdater is checking for updates');
-            });
-
-            autoUpdater.on('update-available', () => {
-                this.l.info('autoUpdater reported an update is available');
-            });
-
-            autoUpdater.on('update-not-available', () => {
-                this.l.info('autoUpdater reported an update is not available');
-            });
-
-            autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-                this.l.info('autoUpdater reported an update was downloaded with version:', releaseName);
-                this.systemEvents.emit('autoUpdaterUpdateDownloaded', releaseNotes, releaseName, releaseDate, updateURL);
-            });
-            autoUpdater.setFeedURL(feed, this.settings.autoUpdateFeedHeaders ? this.settings.autoUpdateFeedHeaders : undefined);
-            autoUpdater.checkForUpdates();
-            this.autoUpdater = autoUpdater;
-        }
-    }
 
     /**
      * On server restart point chrome to the new port.
@@ -317,115 +382,19 @@ class App {
     }
 
     /**
-     * Loads and initializes all plugins listed in settings.json.
+     * Returns prepared autoupdate module settings.
+     * @returns {{dataPath: *, desktopBundlePath: String, bundleStorePath: *, initialBundlePath,
+      * webAppStartupTimeout: number}}
      */
-    loadPlugins() {
-        if ('plugins' in this.settings) {
-            Object.keys(this.settings.plugins).forEach(plugin => {
-
-                try {
-                    this.l.debug(`loading plugin: ${plugin}`);
-                    this.modules[plugin] = require(plugin);
-                    const Plugin = this.modules[plugin];
-                    this.loggerManager.configureLogger(plugin);
-                    this.modules[plugin] = new Plugin(
-                        winston,
-                        this.app,
-                        this.settings,
-                        this.systemEvents,
-                        this.modules,
-                        this.settings.plugins[plugin],
-                        Module
-                    );
-                } catch (e) {
-                    // TODO: its probably safer not to exit here, but a strategy for handling this would be better.
-                    this.l.error(`error while loading plugin: ${e}`);
-                }
-
-            });
-        }
-    }
-
-    /**
-     * Loads and initializes internal and app modules.
-     */
-    loadModules() {
-        let moduleName;
-
-        // Load internal modules. Scan for files in /modules.
-        shell.ls(join(__dirname, 'modules', '*.js')).forEach(file => {
-            if (!~file.indexOf('module.js')) {
-                moduleName = path.parse(file).name;
-                this.l.debug(`loading module: ${file}`);
-                this.modules[moduleName] = require(file);
-                const InternalModule = this.modules[moduleName];
-                const settings = {};
-                if (moduleName === 'autoupdate') {
-                    settings.dataPath = this.userDataDir;
-                    settings.desktopBundlePath = __dirname;
-                    settings.bundleStorePath = this.userDataDir;
-                    settings.initialBundlePath = path.join(__dirname, '..', 'meteor.asar');
-                    settings.webAppStartupTimeout =
-                        this.settings.webAppStartupTimeout ?
-                            this.settings.webAppStartupTimeout : 20000;
-                }
-                this.loggerManager.configureLogger(moduleName);
-                this.modules[moduleName] = new InternalModule(
-                    winston,
-                    this.app,
-                    this.settings,
-                    this.systemEvents,
-                    this.modules,
-                    settings,
-                    Module
-                );
-            }
-        });
-
-        // Now go through each directory. If there is a index.js then it should be a module.
-        fs.readdirSync(join(this.desktopPath, 'modules')).forEach(dir => {
-            try {
-                const modulePath = join(this.desktopPath, 'modules', dir);
-                if (fs.lstatSync(modulePath).isDirectory()) {
-                    moduleName = path.parse(modulePath).name;
-                    this.l.debug(`loading module: ${dir} => ${moduleName}`);
-                    let settings = {};
-                    // module.json is mandatory, but we can live without it.
-                    try {
-                        let moduleJson = {};
-                        moduleJson = JSON.parse(
-                            fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
-                        );
-                        if ('settings' in moduleJson) {
-                            settings = moduleJson.settings;
-                        }
-                        if ('name' in moduleJson) {
-                            moduleName = moduleJson.name;
-                        }
-                        if ('extract' in moduleJson) {
-                            settings['extractedFilesPath'] =
-                                join(__dirname, '..', 'extracted', moduleName);
-                        }
-                    } catch (e) {
-                        this.l.warn(`could not load ${path.join(modulePath, 'module.json')}`);
-                    }
-                    this.modules[moduleName] = require(path.join(modulePath, 'index.js'));
-                    const AppModule = this.modules[moduleName];
-                    this.loggerManager.configureLogger(moduleName);
-                    this.modules[moduleName] = new AppModule(
-                        winston,
-                        this.app,
-                        this.settings,
-                        this.systemEvents,
-                        this.modules,
-                        settings,
-                        Module
-                    );
-                }
-            } catch (e) {
-                this.l.warn(e);
-            }
-        });
+    prepareAutoupdateSettings() {
+        return {
+            dataPath: this.userDataDir,
+            desktopBundlePath: __dirname,
+            bundleStorePath: this.userDataDir,
+            initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
+            webAppStartupTimeout: this.settings.webAppStartupTimeout ?
+                this.settings.webAppStartupTimeout : 20000
+        };
     }
 
     /**
@@ -433,7 +402,7 @@ class App {
      * @param {number} code - error code from local server
      */
     onStartupFailed(code) {
-        this.systemEvents.emit('startupFailed');
+        this.eventsBus.emit('startupFailed');
         dialog.showErrorBox('Startup error', 'Could not initialize app. Please contact' +
             ` your support. Error code: ${code}`);
         this.app.quit();
@@ -445,7 +414,8 @@ class App {
      */
     onServerReady(port) {
         const windowSettings = {
-            width: 800, height: 600,
+            width: 800,
+            height: 600,
             webPreferences: {
                 nodeIntegration: false, // node integration must to be off
                 preload: join(__dirname, 'preload.js')
@@ -465,14 +435,13 @@ class App {
         this.window = new BrowserWindow(windowSettings);
         this.webContents = this.window.webContents;
 
-        this.systemEvents.emit('windowOpened', this.window);
+        this.eventsBus.emit('windowOpened', this.window);
 
         // Here we are catching reloads triggered by hot code push.
-        this.webContents.on('will-navigate', event => {
+        this.webContents.on('will-navigate', (event) => {
             // We need to block it.
             event.preventDefault();
 
-            console.log('refresh', this.meteorAppVersionChange);
             if (this.meteorAppVersionChange) {
                 this.updateToNewVersion();
             }
@@ -486,7 +455,7 @@ class App {
                     this.updateToNewVersion();
                 } else {
                     this.windowAlreadyLoaded = true;
-                    this.systemEvents.emit('beforeLoadingFinished');
+                    this.eventsBus.emit('beforeLoadingFinished');
                     this.window.show();
                     this.window.focus();
                     if (this.settings.devtron && !this.isProduction()) {
@@ -494,20 +463,28 @@ class App {
                     }
                 }
             }
-            console.log('loadingFinished');
-            this.systemEvents.emit('loadingFinished');
+            this.eventsBus.emit('loadingFinished');
         });
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
 
+    /**
+     * Updates to the new version received from hot code push.
+     */
     updateToNewVersion() {
-        this.systemEvents.emit(
-            'beforeReload', this.modules.autoupdate.getPendingVersion());
+        try {
+            this.eventsBus.emit(
+                'beforeReload', this.modules.autoupdate.getPendingVersion());
+        } catch (e) {
+            this.l.warn('error while emitting beforeReload', e);
+        }
 
-        if (this.settings.desktopHCP && this.settings.desktopVersion !== this.desktopVersionChange) {
+        if (this.settings.desktopHCP &&
+            this.settings.desktopVersion !== this.pendingDesktopVersion
+        ) {
             this.l.info('relaunching to use different version of desktop.asar');
             app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
-            app.exit(0)
+            app.exit(0);
         } else {
             // Firing reset routine.
             this.modules.autoupdate.onReset();
@@ -522,4 +499,4 @@ class App {
     }
 }
 
-const appInstance = new App();
+const appInstance = new App(); // eslint-disable-line no-unused-vars

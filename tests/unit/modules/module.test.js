@@ -8,20 +8,29 @@ import rewire from 'rewire';
 
 chai.use(sinonChai);
 chai.use(dirty);
-const { describe, it } = global;
+const { describe, it, before, after } = global;
 const { expect } = chai;
 
 const Electron = {
 };
-mockery.registerMock('electron', Electron);
-mockery.enable({
-    warnOnReplace: false,
-    warnOnUnregistered: false
-});
 
-const Module = rewire('../../../skeleton/modules/module.js');
+let Module;
 
 describe('Module', () => {
+    before(() => {
+        mockery.registerMock('electron', Electron);
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+        Module = rewire('../../../skeleton/modules/module.js');
+    });
+
+    after(() => {
+        mockery.deregisterMock('electron');
+        mockery.disable();
+    });
+
     describe('#sendInternal', () => {
         it('should throw when no reference to renderer set yet', () => {
             expect(Module.sendInternal.bind(module, 'test')).to.throw(

@@ -1,20 +1,17 @@
-- uncaught exception custom handling
-- autodetect port on which meteor is running
+- handling electron events
+- autologin
 - prepare dev env
+- example module test
+- example app test
+
+- autodetect port on which meteor is running
 - check plugin version from plugin
 - logs in a devtool extension
 - forbid global install, npm list --depth 1 --global packagename > /dev/null 2>&1
-- licenses
 - ipc async answer
 
 - https://github.com/jamielob/reloader/
-
-- do not hide window in standard, hide it thorugh splashcreen plugin
-
-- how to read local files in browser
-
-- tests
-- tests for app
+- do not hide window in standard, hide it through splashcreen plugin
 
 - write about events
 - write about extract, extractedFilePath
@@ -32,10 +29,3 @@
 - move autoupdate to npm plugin
 - non transpiled dir
 - path to assets that could be downloaded from meteor app
-
-
-
-Test:
-- coverage
-- dependencies manager
-

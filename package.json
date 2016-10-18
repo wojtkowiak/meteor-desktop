@@ -11,9 +11,10 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha \"tests/+(unit|functional)/**/*.test.js\"",
-    "test-org": "mocha --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\"",
-    "test-watch": "watch \"npm run test-org\" --wait 2 dist tests/unit tests/functional scaffold skeleton",
+    "test-org": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\"",
+    "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
     "lint": "eslint -c .eslintrc **/*.js",
+    "coverage-html": "nyc report --reporter=lcov",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "version": "node dist/scripts/propagateVersion.js && git add plugins",

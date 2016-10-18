@@ -10,6 +10,7 @@
     },
     "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
     "autoUpdateFeedHeaders": {},
+    "autoUpdateManualCheck": false,
     "webAppStartupTimeout": 60000,
     "window": {
         "fullscreen": false,

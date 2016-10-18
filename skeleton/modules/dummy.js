@@ -12,4 +12,4 @@ const dummy = new Module('dummyModule');
 // Nothing to do here since Module is already setting this reference for us.
 dummy.on('setRendererReference', Function.prototype);
 
-module.exports = function Dummy() {};
+export default function Dummy() {};

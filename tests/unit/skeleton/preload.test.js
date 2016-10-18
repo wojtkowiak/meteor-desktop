@@ -9,19 +9,28 @@ import rewire from 'rewire';
 chai.use(sinonChai);
 chai.use(dirty);
 
-const { describe, it } = global;
+const { describe, it, before, after } = global;
 const { expect } = chai;
 
 const Electron = {};
-mockery.registerMock('electron', Electron);
-mockery.enable({
-    warnOnReplace: false,
-    warnOnUnregistered: false
-});
 
-const Desktop = rewire('../../../skeleton/preload.js');
+let Desktop;
 
 describe('Desktop', () => {
+    before(() => {
+        mockery.registerMock('electron', Electron);
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+        Desktop = rewire('../../../skeleton/preload.js');
+    });
+
+    after(() => {
+        mockery.deregisterMock('electron');
+        mockery.disable();
+    });
+
     function testSend(event, module) {
         const ipcMock = { send: sinon.stub() };
         const revertIpc = Desktop.__set__('ipc', ipcMock);

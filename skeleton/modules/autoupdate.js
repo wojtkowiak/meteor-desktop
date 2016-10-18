@@ -46,9 +46,9 @@ const { join } = path;
  *
  * @constructor
  */
-class HCPClient {
+export default class HCPClient {
 
-    constructor(log, app, appSettings, systemEvents, modules, settings, Module) {
+    constructor(log, app, appSettings, eventsBus, modules, settings, Module) {
         // Get the automatically predefined logger instance.
         this.log = log.loggers.get('autoupdate');
 
@@ -61,13 +61,13 @@ class HCPClient {
         this.startupTimer = null;
         this.window = null;
 
-        this.systemEvents = systemEvents;
+        this.eventsBus = eventsBus;
 
         // We want this to be initialized before loading the desktop part.
-        this.systemEvents.on('beforeDesktopLoad', this.init.bind(this));
+        this.eventsBus.on('beforeDesktopLoad', this.init.bind(this));
 
         // We will need a reference to the BrowserWindow object once it will be available.
-        this.systemEvents.on('windowOpened', (window) => {
+        this.eventsBus.on('windowOpened', (window) => {
             this.window = window;
             // Start the startup timer.
             this.startStartupTimer();
@@ -323,7 +323,7 @@ class HCPClient {
 
         // Only reload if we have a pending asset bundle to reload.
         if (this.pendingAssetBundle) {
-            this.systemEvents.emit('revertVersionReady');
+            this.eventsBus.emit('revertVersionReady');
             this.log.warn(`will try to revert to ${this.pendingAssetBundle.getVersion()}`);
             this.window.reload();
         }
@@ -483,7 +483,7 @@ class HCPClient {
      * @private
      */
     notifyNewVersionReady(version, desktopVersion) {
-        this.systemEvents.emit('newVersionReady', desktopVersion.version);
+        this.eventsBus.emit('newVersionReady', desktopVersion.version);
         this.module.send(
             'onNewVersionReady',
             version
@@ -580,5 +580,3 @@ class HCPClient {
         return true;
     }
 }
-
-module.exports = HCPClient;

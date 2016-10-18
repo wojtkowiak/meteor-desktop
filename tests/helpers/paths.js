@@ -3,7 +3,7 @@ import path from 'path';
 const { join, resolve } = path;
 
 const testsPath = resolve('tests');
-const testsTmpPath = resolve(path.join(testsPath, '_tmp_'));
+const testsTmpPath = resolve(path.join(testsPath, '.__tmp'));
 
 const fixturesPath = 'fixtures';
 const projectDir = 'meteorProject';

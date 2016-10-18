@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, global-require */
 // These test were ported and adapted from here
 // https://github.com/meteor/cordova-plugin-meteor-webapp/blob/master/tests/www/tests.js
 
@@ -44,17 +44,11 @@ import {
 } from '../../helpers/autoupdate/localServer';
 import { getFakeLogger } from '../../helpers/meteorDesktop';
 
-mockery.registerMock('original-fs', fs);
-mockery.enable({
-    warnOnReplace: false,
-    warnOnUnregistered: false
-});
-
-const HCPClient = require('../../../skeleton/modules/autoupdate.js');
+let HCPClient;
 
 chai.use(sinonChai);
 chai.use(dirty);
-const { describe, it } = global;
+const { describe, it, before, after } = global;
 const { expect } = chai;
 
 const showLogs = false;
@@ -113,7 +107,7 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             constructor() {
                 this.on = () => {};
             }
-            send(event, message) {
+            send(event, message) { // eslint-disable-line class-methods-use-this
                 if (printLogs) {
                     console.log('module event sent from hcp:', event, message);
                 }
@@ -232,7 +226,7 @@ function shutdownMeteorServer() {
     meteorServer.httpServerInstance.close();
     meteorServer.httpServerInstance.destroy();
     meteorServer.receivedRequests = [];
-    meteorServer = null;
+    // meteorServer = null;
 }
 
 function waitForTestToFail(delay, done) {
@@ -251,6 +245,17 @@ describe('autoupdate', () => {
     before(() => {
         shell.rm('-rf', paths.autoUpdateVersionsPath);
         shell.mkdir('-p', paths.autoUpdateVersionsPath);
+        mockery.registerMock('original-fs', fs);
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+        HCPClient = require('../../../skeleton/modules/autoupdate.js');
+    });
+
+    after(() => {
+        mockery.deregisterMock('original-fs');
+        mockery.disable();
     });
 
     describe('when updating from the bundled app version to a downloaded version', () => {
@@ -885,7 +890,7 @@ describe('autoupdate', () => {
 
         it('should fallback to last known good version', async(done) => {
             await (() =>
-                new Promise((resolve) =>
+                new Promise(resolve =>
                     downloadAndServeVersionLocally('version2', 'version3', resolve)
                 ))();
 
@@ -915,6 +920,11 @@ describe('autoupdate', () => {
     });
 
     describe('when version is blacklisted', () => {
+        afterEach(() => {
+            shutdownMeteorServer();
+            shutdownLocalServer();
+        });
+
         it('should not download it', async(done) => {
             meteorServer = await serveVersion('version2');
             const autoupdate = await setUpAutoupdate(showLogs, () => {

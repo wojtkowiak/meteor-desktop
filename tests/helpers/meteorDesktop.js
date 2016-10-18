@@ -47,6 +47,7 @@ export function createTestInstance() {
             log: class {
                 constructor() {
                     this.info = sinon.stub();
+                    this.error = (...args) => console.error(args);
                 }
             }
         }
