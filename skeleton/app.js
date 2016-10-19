@@ -43,7 +43,6 @@ class App {
         this.settings = {
             devTools: false
         };
-        dialog.showErrorBox('Application', this.userDataDir);
 
         this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
         this.loadSettings();

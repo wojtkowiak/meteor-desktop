@@ -250,7 +250,7 @@ describe('autoupdate', () => {
             warnOnReplace: false,
             warnOnUnregistered: false
         });
-        HCPClient = require('../../../skeleton/modules/autoupdate.js');
+        HCPClient = require('../../../skeleton/modules/autoupdate.js').default;
     });
 
     after(() => {

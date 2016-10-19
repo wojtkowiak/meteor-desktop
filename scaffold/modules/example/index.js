@@ -24,7 +24,7 @@ export default class Example {
         // Instead hook to `afterLoading` or `beforeDesktopLoad` events.
         // This will also ensure plugins providing things like splash screens will be able
         // to start as quickly as possible.
-        this.eventsBus.on('afterLoading', () => {
+        eventsBus.on('afterLoading', () => {
             this.init();
         });
     }
