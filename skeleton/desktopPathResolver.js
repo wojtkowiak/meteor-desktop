@@ -91,10 +91,11 @@ export default class DesktopPathResolver {
                         if (desktopVersion.version) {
                             if (desktopVersion.version !== initialDesktopVersion) {
                                 desktopPath =
-                                    join(
+                                    path.resolve(join(
                                         __dirname,
+                                        '..',
                                         `${desktopVersion.version}_desktop.asar`
-                                    );
+                                    ));
                                 log.warn('will use desktop.asar from last known good version ' +
                                     `at: ${desktopPath}`);
                             } else {
@@ -125,9 +126,10 @@ export default class DesktopPathResolver {
                     );
                 if (desktopVersion.version) {
                     if (desktopVersion.version !== initialDesktopVersion) {
-                        desktopPath = join(
+                        desktopPath = path.resolve(join(
                             __dirname,
-                            `${desktopVersion.version}_desktop.asar`);
+                            '..',
+                            `${desktopVersion.version}_desktop.asar`));
                         log.info('will use desktop.asar from last downloaded version ' +
                             `at: ${desktopPath}`);
                     } else {

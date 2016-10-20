@@ -205,7 +205,6 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
-        console.log(deps);
         return md5(JSON.stringify(deps));
     }
 
@@ -223,7 +222,7 @@ class MeteorDesktopBundler {
             const desktopPath = './.desktop';
             const settings = this.getSettings(desktopPath, files[0]);
             if (!settings.desktopHCP) {
-                console.warn('[meteor-desktop] not preparing desktop.asar beacuse desktopHCP is ' +
+                console.warn('[meteor-desktop] not preparing desktop.asar because desktopHCP is ' +
                     'set to false');
                 return;
             }

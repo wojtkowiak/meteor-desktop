@@ -121,9 +121,10 @@ class App {
             this.settings = JSON.parse(
                 fs.readFileSync(join(this.desktopPath, 'settings.json')), 'UTF-8');
         } catch (e) {
+
             this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
-                ' this application.');
+                ' this application.' + e);
 
             if (this.app && this.app.quit) {
                 this.app.quit();
@@ -388,7 +389,7 @@ class App {
     prepareAutoupdateSettings() {
         return {
             dataPath: this.userDataDir,
-            desktopBundlePath: __dirname,
+            desktopBundlePath: this.isProduction() ? path.resolve(__dirname, '..') : __dirname,
             bundleStorePath: this.userDataDir,
             initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
             webAppStartupTimeout: this.settings.webAppStartupTimeout ?

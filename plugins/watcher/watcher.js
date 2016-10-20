@@ -1,18 +1,44 @@
 /* eslint-disable no-console */
 const fs = Npm.require('fs');
+const path = Npm.require('path');
 
 function saveNewVersion(version, versionFile) {
     fs.writeFileSync(versionFile, JSON.stringify({
         version
     }, null, 2), 'UTF-8');
 }
-if (!('omega:meteor-desktop-bundler' in Package || !__METEOR_DESKTOP_BUNDLER)) {
+
+/**
+ * Tries to read a settings.json file from desktop dir.
+ *
+ * @param {Object} file        - The file being processed by the build plugin.
+ * @param {string} desktopPath - Path to the desktop dir.
+ * @returns {Object}
+ */
+function getSettings(desktopPath) {
+    let settings = {};
+    try {
+        settings = JSON.parse(
+            this.fs.readFileSync(path.join(desktopPath, 'settings.json'), 'UTF-8')
+        );
+    } catch (e) {
+        return {};
+    }
+    return settings;
+}
+
+const desktopPath = './.desktop';
+const settings = getSettings(desktopPath);
+if (!('desktopHCP' in settings) || !settings.desktopHCP) {
+    console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
+        '.desktop/settings.json or desktopHCP is set to false');
+} else if (!('omega:meteor-desktop-bundler' in Package || !__METEOR_DESKTOP_BUNDLER)) {
     console.info('[meteor-desktop] .desktop HCP will not work because web.cordova architecture ' +
         'is missing. Run Meteor\'s mobile target or with --mobile-server.');
 } else {
     const chokidar = Npm.require('chokidar');
     const hash = Npm.require('hash-files');
-    const path = Npm.require('path');
+
 
     // TODO: any better way of getting this path?
     const rootPath = path.resolve(path.join(process.cwd(), '..', '..', '..', '..', '..'));
