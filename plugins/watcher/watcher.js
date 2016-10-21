@@ -27,7 +27,10 @@ function getSettings(desktopPath) {
     return settings;
 }
 
-const desktopPath = './.desktop';
+// TODO: any better way of getting this path?
+const rootPath = path.resolve(path.join(process.cwd(), '..', '..', '..', '..', '..'));
+const desktopPath = path.resolve(path.join(rootPath, '.desktop'));
+
 const settings = getSettings(desktopPath);
 if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
@@ -38,12 +41,6 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
 } else {
     const chokidar = Npm.require('chokidar');
     const hash = Npm.require('hash-files');
-
-
-    // TODO: any better way of getting this path?
-    const rootPath = path.resolve(path.join(process.cwd(), '..', '..', '..', '..', '..'));
-
-    const desktopPath = path.resolve(path.join(rootPath, '.desktop'));
     const versionFile = path.join(rootPath, 'version.desktop');
 
     let version;

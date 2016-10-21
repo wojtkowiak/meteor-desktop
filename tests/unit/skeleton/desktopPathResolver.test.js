@@ -33,7 +33,6 @@ describe('DesktopPathResolver', () => {
     });
 
     describe('#resolveDesktopPath', () => {
-
         let readFileSyncStub;
 
         function prepareFsStubs(desktopVersion, initialMeteorVersion, autoUpdateJson) {
@@ -291,8 +290,5 @@ describe('DesktopPathResolver', () => {
 
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
-
-
     });
-
 });
