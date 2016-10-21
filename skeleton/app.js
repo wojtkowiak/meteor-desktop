@@ -124,7 +124,7 @@ class App {
 
             this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
-                ' this application.' + e);
+                ' this application.');
 
             if (this.app && this.app.quit) {
                 this.app.quit();
