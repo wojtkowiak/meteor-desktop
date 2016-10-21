@@ -87,6 +87,8 @@ class App {
             this.pendingDesktopVersion = desktopVersion;
         });
         this.eventsBus.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
+        this.eventsBus.on('removeUncaughtExceptionListener',
+            () => (process.removeListener('uncaughtException', this.catchUncaughtExceptions)));
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
@@ -137,21 +139,23 @@ class App {
      * Register on uncaughtExceptions so we can handle them.
      */
     catchUncaughtExceptions() {
-        process.on('uncaughtException', (error) => {
-            this.l.error(error);
-            try {
-                this.window.close();
-            } catch (e) {
-                // Empty catch block... nasty...
-            }
-            setTimeout(() => {
-                dialog.showErrorBox('Application', 'Internal error occurred. Restart this ' +
-                    'application. If the problem persists, contact support or try to reinstall.');
-                this.app.quit();
-            }, 500);
-        });
+        this.uncaughtExceptionHandler = this.uncaughtExceptionHandler.bind(this);
+        process.on('uncaughtException', this.uncaughtExceptionHandler);
     }
 
+    uncaughtExceptionHandler(error) {
+        this.l.error(error);
+        try {
+            this.window.close();
+        } catch (e) {
+            // Empty catch block... nasty...
+        }
+        setTimeout(() => {
+            dialog.showErrorBox('Application', 'Internal error occurred. Restart this ' +
+                'application. If the problem persists, contact support or try to reinstall.');
+            this.app.quit();
+        }, 500);
+    }
 
     /**
      * Applies dev, os specific and variables to window settings.
@@ -372,7 +376,6 @@ class App {
         this.emit('afterInitialization');
     }
 
-
     /**
      * On server restart point chrome to the new port.
      * @param {number} port - port on which the app is served
@@ -389,7 +392,7 @@ class App {
     prepareAutoupdateSettings() {
         return {
             dataPath: this.userDataDir,
-            desktopBundlePath: this.isProduction() ? path.resolve(__dirname, '..') : __dirname,
+            desktopBundlePath: path.resolve(__dirname, '..'),
             bundleStorePath: this.userDataDir,
             initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
             webAppStartupTimeout: this.settings.webAppStartupTimeout ?

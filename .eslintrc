@@ -23,7 +23,9 @@
             "original-fs",
             "electron",
             "electron-debug",
-            "rimraf"
+            "rimraf",
+            "process",
+            "devtron"
         ]
     },
     "rules": {

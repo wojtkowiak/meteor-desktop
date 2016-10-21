@@ -1,5 +1,3 @@
-// TODO: we have a Chrome 51 in Electron now - this must be rewritten to ES6!
-
 // This is a modified version of
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
 
@@ -34,15 +32,16 @@
  * @WARNING This file must take care not to leak the imported modules to the Browser window!
  * See https://github.com/atom/electron/issues/1753#issuecomment-104719851.
  */
-var _ = require('lodash');
-var ipc = require('electron').ipcRenderer;
+const _ = require('lodash');
+const ipc = require('electron').ipcRenderer;
 
 let devtron = null;
 try {
-    devtron = require('devtron');
-    window.__devtron = {require: require, process: process};
-} catch (e) {
+    devtron = require('devtron'); // eslint-disable-line global-require
 
+    window.__devtron = { require, process }; // eslint-disable-line no-underscore-dangle
+} catch (e) {
+    // If that fails, then probably this is production build and devtron is not available.
 }
 
 /**
@@ -53,13 +52,14 @@ try {
  * @param {...*=}  args  - event's arguments
  */
 
+const Desktop = new (class {
 
-var Desktop = {
-    devtron,
-    onceEventListeners: {},
-    eventListeners: {},
-    registeredInIpc: {},
-
+    constructor() {
+        this.devtron = devtron;
+        this.onceEventListeners = {};
+        this.eventListeners = {};
+        this.registeredInIpc = {};
+    }
     /**
      * Adds a callback to internal listeners placeholders and registers real ipc hooks.
      *
@@ -68,13 +68,12 @@ var Desktop = {
      * @param {ipcListener} callback - callback to fire when event arrives
      * @param {boolean}     once     - whether this should be fired only once
      */
-    addToListeners: function addToListeners(module, event, callback, once) {
-        var self = this;
+    addToListeners(module, event, callback, once) {
         let listeners = 'eventListeners';
         if (once) {
             listeners = 'onceEventListeners';
         }
-        var eventName = this.getEventName(module, event);
+        const eventName = this.getEventName(module, event);
         if (eventName in this[listeners]) {
             this[listeners][eventName].push(callback);
         } else {
@@ -82,17 +81,17 @@ var Desktop = {
         }
         if (!(eventName in this.registeredInIpc)) {
             this.registeredInIpc[eventName] = true;
-            ipc.on(eventName, function ipcOn(/* event, ...args */) {
-                if (eventName in self.eventListeners) {
-                    _.invokeMap(self.eventListeners[eventName], 'apply', undefined, arguments);
+            ipc.on(eventName, (...args) => {
+                if (eventName in this.eventListeners) {
+                    _.invokeMap(this.eventListeners[eventName], 'apply', undefined, args);
                 }
-                if (eventName in self.onceEventListeners) {
-                    _.invokeMap(self.onceEventListeners[eventName], 'apply', undefined, arguments);
+                if (eventName in this.onceEventListeners) {
+                    _.invokeMap(this.onceEventListeners[eventName], 'apply', undefined, args);
                 }
-                self.onceEventListeners[eventName] = [];
+                this.onceEventListeners[eventName] = [];
             });
         }
-    },
+    }
 
     /**
      * Invokes callback when the specified IPC event is fired.
@@ -101,9 +100,9 @@ var Desktop = {
      * @param {string} event         - the name of an event
      * @param {ipcListener} callback - function to invoke when `event` is triggered
      */
-    on: function on(module, event, callback) {
+    on(module, event, callback) {
         this.addToListeners(module, event, callback);
-    },
+    }
 
     /**
      * Invokes a callback once when the specified IPC event is fired.
@@ -112,9 +111,9 @@ var Desktop = {
      * @param {string} event         - the name of an event
      * @param {ipcListener} callback - function to invoke when `event` is triggered
      */
-    once: function once(module, event, callback) {
+    once(module, event, callback) {
         this.addToListeners(module, event, callback, true);
-    },
+    }
 
     /**
      * Unregisters a callback.
@@ -123,63 +122,55 @@ var Desktop = {
      * @param {string} event      - the name of an event
      * @param {function} callback - listener to unregister
      */
-    removeListener: function removeListener(module, event, callback) {
-        var i;
-        var self = this;
-        var eventName = this.getEventName(module, event);
-        ['eventListeners', 'onceEventListeners'].forEach(function removeListenerFrom(listeners) {
-            if (eventName in self[listeners]) {
-                for (i = self[listeners][eventName].length - 1; i >= 0; i--) {
-                    if (self[listeners][eventName][i] === callback) {
-                        self[listeners][eventName].splice(i, 1);
-                    }
+    removeListener(module, event, callback) {
+        const eventName = this.getEventName(module, event);
+        ['eventListeners', 'onceEventListeners'].forEach((listeners) => {
+            if (eventName in this[listeners]) {
+                if (~this[listeners][eventName].indexOf(callback)) {
+                    this[listeners][eventName].splice(
+                        this[listeners][eventName].indexOf(callback), 1);
                 }
             }
         });
-    },
+    }
 
     /**
      * Unregisters all callbacks.
      *
-     * @param {string} module     - module name
-     * @param {string} event      - the name of an event
+     * @param {string} module - module name
+     * @param {string} event  - the name of an event
      */
-    removeAllListeners: function removeAllListeners(module, event) {
-        var eventName = this.getEventName(module, event);
+    removeAllListeners(module, event) {
+        const eventName = this.getEventName(module, event);
         this.onceEventListeners[eventName] = [];
         this.eventListeners[eventName] = [];
-    },
+    }
 
     /**
      * Send an event to the main Electron process.
      *
      * @param {String} module - module name
      * @param {String} event  - the name of an event
-     * @param {...*} arg      - additional arguments to pass to event handler
+     * @param {...*} args     - additional arguments to pass to event handler
      */
-    send: function send(/* module, event , ...args */) {
-        var args = Array.prototype.slice.call(arguments);
-        var module = args.shift();
-        args[0] = this.getEventName(module, args[0]);
-        ipc.send.apply(null, args);
-    },
+    send(module, event, ...args) {
+        const eventName = this.getEventName(module, event);
+        ipc.send(eventName, ...args);
+    }
 
     /**
      * Send an global event to the main Electron process.
      *
-     * @param {String} event - the name of an event
-     * @param {...*} arg     - additional arguments to pass to event handler
+     * @param {...*} args - arguments to the ipc.send(event, arg1, arg2)
      */
-    sendGlobal: function send(/* event , ...args */) {
-        var args = Array.prototype.slice.call(arguments);
-        ipc.send.apply(ipc, args);
-    },
-
-    getEventName: function getEventName(module, event) {
-        return module + '__' + event;
+    sendGlobal(...args) { // eslint-disable-line
+        ipc.send(...args);
     }
-};
 
+    getEventName(module, event) { // eslint-disable-line
+        return `${module}__${event}`;
+    }
+})();
 
 /**
  * @global
