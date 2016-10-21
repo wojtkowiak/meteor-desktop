@@ -2,6 +2,11 @@
 const fs = Npm.require('fs');
 const path = Npm.require('path');
 
+/**
+ * Saves version hash to the version file.
+ * @param {string} version
+ * @param {string} versionFile
+ */
 function saveNewVersion(version, versionFile) {
     fs.writeFileSync(versionFile, JSON.stringify({
         version
@@ -11,7 +16,6 @@ function saveNewVersion(version, versionFile) {
 /**
  * Tries to read a settings.json file from desktop dir.
  *
- * @param {Object} file        - The file being processed by the build plugin.
  * @param {string} desktopPath - Path to the desktop dir.
  * @returns {Object}
  */
@@ -19,7 +23,7 @@ function getSettings(desktopPath) {
     let settings = {};
     try {
         settings = JSON.parse(
-            this.fs.readFileSync(path.join(desktopPath, 'settings.json'), 'UTF-8')
+            fs.readFileSync(path.join(desktopPath, 'settings.json'), 'UTF-8')
         );
     } catch (e) {
         return {};
