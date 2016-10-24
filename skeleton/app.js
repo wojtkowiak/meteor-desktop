@@ -18,8 +18,9 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-process.env.NODE_PATH = join(__dirname, 'node_modules');
-require('module').Module._initPaths(); // eslint-disable-line
+// To make desktop.asar's downloaded through HCP work, we need to provide them a path to
+// node_modules.
+require('module').globalPaths.push(path.resolve(join(__dirname, '..', 'node_modules')));
 
 /**
  * This is the main app which is a skeleton for the whole integration.
@@ -392,7 +393,7 @@ class App {
     prepareAutoupdateSettings() {
         return {
             dataPath: this.userDataDir,
-            desktopBundlePath: path.resolve(__dirname, '..'),
+            desktopBundlePath: this.userDataDir,
             bundleStorePath: this.userDataDir,
             initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
             webAppStartupTimeout: this.settings.webAppStartupTimeout ?

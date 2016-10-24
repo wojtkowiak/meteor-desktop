@@ -345,7 +345,8 @@ describe('autoupdate', () => {
                         .downloadedAssetBundleWithVersion('version2')
                 ).to.exist();
 
-                autoupdate.startupDidComplete(() => {
+                autoupdate.startupDidComplete((status) => {
+                    expect(status[0].state).to.be.true();
                     expect(
                         autoupdate
                             .assetBundleManager
@@ -411,7 +412,8 @@ describe('autoupdate', () => {
                         .downloadedAssetBundleWithVersion('version2')
                 ).to.exist();
 
-                autoupdate.startupDidComplete(() => {
+                autoupdate.startupDidComplete((status) => {
+                    expect(status[0].state).to.be.true();
                     expect(
                         autoupdate
                             .assetBundleManager

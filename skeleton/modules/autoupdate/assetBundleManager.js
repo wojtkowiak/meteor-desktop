@@ -40,15 +40,10 @@ import shell from 'shelljs';
 import AssetBundle from './assetBundle';
 import AssetBundleDownloader from './assetBundleDownloader';
 import AssetManifest from './assetManifest';
+import utils from './utils';
 
-function exists(checkPath) {
-    try {
-        fs.accessSync(checkPath);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+const { rimrafWithRetries } = utils;
+
 class AssetBundleManager {
 
     /**
@@ -61,7 +56,8 @@ class AssetBundleManager {
      * @constructor
      */
     constructor(
-        log, configuration, initialAssetBundle, versionsDirectory, desktopBundlePath, appSettings) {
+        log, configuration, initialAssetBundle, versionsDirectory, desktopBundlePath, appSettings
+    ) {
         this.log = log.getLoggerFor('AssetBundleManager');
 
         this.appSettings = appSettings;
@@ -257,22 +253,26 @@ class AssetBundleManager {
      * Removes unnecessary versions.
      *
      * @param {AssetBundle} assetBundleToKeep
+     * @returns {Promise}
      */
     removeAllDownloadedAssetBundlesExceptForVersion(assetBundleToKeep) {
         const desktopVersionToKeep = assetBundleToKeep.desktopVersion;
+        const promises = [];
         Object.keys(this.downloadedAssetBundlesByVersion).forEach(
             (assetVersion) => {
                 const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];
                 const version = assetBundle.getVersion();
                 if (version !== assetBundleToKeep.getVersion()) {
                     const desktopVersion = assetBundle.desktopVersion;
-                    console.log('version desktop to delete', desktopVersion);
                     if (desktopVersion.version && desktopVersionToKeep.version &&
                         desktopVersion.version !== desktopVersionToKeep.version) {
                         this.log.info(`pruned old ${desktopVersion.version}_desktop.asar`);
 
                         try {
-                            originalFs.unlinkSync(path.join(this.desktopBundlePath, `${desktopVersion.version}_desktop.asar`));
+                            originalFs.unlinkSync(
+                                path.join(this.desktopBundlePath,
+                                `${desktopVersion.version}_desktop.asar`)
+                            );
                         } catch (e) {
                             // Theoretically no harm if we could not delete it...
                         }
@@ -281,11 +281,25 @@ class AssetBundleManager {
                     // process.noAsar shelljs tried to remove files inside asar instead of just
                     // deleting the archive. `del` also could not delete asar archive. Rimraf is ok
                     // because it accepts custom fs object.
-                    rimraf.sync(path.join(this.versionsDirectory, version), originalFs);
+                    promises.push(
+                        // This will be an array of Promises that always are resolved.
+                        new Promise((resolve) => {
+                            const pathToDelete = path.join(this.versionsDirectory, version);
+                            rimrafWithRetries(pathToDelete, originalFs)
+                                .then(() => {
+                                    this.log.info(`pruned old version dir ${version}`);
+                                    resolve({ pathToDelete, state: true });
+                                }).catch((e) => {
+                                    this.log.error(
+                                        `error while pruning old version dir ${version}`);
+                                    resolve({ pathToDelete, state: false, reason: e });
+                                });
+                        })
+                    );
                     delete this.downloadedAssetBundlesByVersion[version];
-                    this.log.info(`pruned old version dir ${version}`);
                 }
             });
+        return Promise.all(promises);
     }
 
     /**
@@ -368,7 +382,6 @@ class AssetBundleManager {
         }
     }
 
-
     /**
      * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
      */
@@ -383,7 +396,7 @@ class AssetBundleManager {
             );
 
             if (assetBundle.desktopVersion.version !== this.appSettings.desktopVersion &&
-                !exists(desktopPath)
+                !fs.existsSync(desktopPath)
             ) {
                 assetBundle.getOwnAssets().some((asset) => {
                     if (~asset.filePath.indexOf('desktop.asar')) {
@@ -543,12 +556,17 @@ class AssetBundleManager {
     moveExistingDownloadDirectoryIfNeeded() {
         shell.config.fatal = true;
 
-        if (exists(this.downloadDirectory)) {
-            if (exists(this.partialDownloadDirectory)) {
+        if (fs.existsSync(this.downloadDirectory)) {
+            if (fs.existsSync(this.partialDownloadDirectory)) {
                 try {
+                    // Using rimraf specifically instead of shelljs.rm because despite using
+                    // process.noAsar shelljs tried to remove files inside asar instead of just
+                    // deleting the archive. `del` also could not delete asar archive. Rimraf is ok
+                    // because it accepts custom fs object.
                     rimraf.sync(this.partialDownloadDirectory, originalFs);
                 } catch (e) {
                     this.log.error('could not delete partial download directory.');
+                    return;
                 }
             }
 

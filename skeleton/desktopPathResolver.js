@@ -92,8 +92,7 @@ export default class DesktopPathResolver {
                             if (desktopVersion.version !== initialDesktopVersion) {
                                 desktopPath =
                                     path.resolve(join(
-                                        __dirname,
-                                        '..',
+                                        userDataDir,
                                         `${desktopVersion.version}_desktop.asar`
                                     ));
                                 log.warn('will use desktop.asar from last known good version ' +
@@ -127,8 +126,7 @@ export default class DesktopPathResolver {
                 if (desktopVersion.version) {
                     if (desktopVersion.version !== initialDesktopVersion) {
                         desktopPath = path.resolve(join(
-                            __dirname,
-                            '..',
+                            userDataDir,
                             `${desktopVersion.version}_desktop.asar`));
                         log.info('will use desktop.asar from last downloaded version ' +
                             `at: ${desktopPath}`);

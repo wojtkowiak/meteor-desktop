@@ -370,12 +370,14 @@ export default class HCPClient {
             this.assetBundleManager
                 .removeAllDownloadedAssetBundlesExceptForVersion(
                     this.currentAssetBundle
-                );
-
-            if (typeof onVersionsCleanedUp === 'function') {
-                onVersionsCleanedUp();
-            }
-            this.module.send('onVersionsCleanedUp');
+                )
+                .then((status) => {
+                    // Some of the clearing operations may have failed but we can live with it.
+                    if (typeof onVersionsCleanedUp === 'function') {
+                        onVersionsCleanedUp(status);
+                    }
+                    this.module.send('onVersionsCleanedUp', status);
+                });
         });
     }
 
