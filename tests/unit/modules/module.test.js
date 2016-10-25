@@ -60,5 +60,11 @@ describe('Module', () => {
             expect(module.getEventName('event')).to.equal('test__event');
         });
     });
+    describe('#getResponseEventName', () => {
+        it('should return namespaced response event name', () => {
+            const module = new Module('test');
+            expect(module.getResponseEventName('event')).to.equal('test__event___response');
+        });
+    });
 });
 

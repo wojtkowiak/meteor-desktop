@@ -124,7 +124,6 @@ class App {
             this.settings = JSON.parse(
                 fs.readFileSync(join(this.desktopPath, 'settings.json')), 'UTF-8');
         } catch (e) {
-
             this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
                 ' this application.');
@@ -146,6 +145,15 @@ class App {
 
     uncaughtExceptionHandler(error) {
         this.l.error(error);
+
+        if (this.eventsBus) {
+            try {
+                this.eventsBus.emit('unhandledException')
+            } catch (e) {
+                // Well...
+            }
+        }
+
         try {
             this.window.close();
         } catch (e) {
@@ -180,7 +188,7 @@ class App {
             Object.keys(this.settings.plugins).forEach((plugin) => {
                 try {
                     this.l.debug(`loading plugin: ${plugin}`);
-                    this.modules[plugin] = require(plugin);
+                    this.modules[plugin] = require(plugin).default;
 
                     const Plugin = this.modules[plugin];
                     this.loggerManager.configureLogger(plugin);
@@ -459,7 +467,7 @@ class App {
                     this.updateToNewVersion();
                 } else {
                     this.windowAlreadyLoaded = true;
-                    this.eventsBus.emit('beforeLoadingFinished');
+                    this.eventsBus.emit('beforeLoadFinish');
                     this.window.show();
                     this.window.focus();
                     if (this.settings.devtron && !this.isProduction()) {

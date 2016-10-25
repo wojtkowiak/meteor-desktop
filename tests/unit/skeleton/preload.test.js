@@ -57,6 +57,36 @@ describe('Desktop', () => {
             testSend('event', 'desktop');
         });
     });
+    describe('#fetch', () => {
+        it('should send namespaced fetch ipc', (done) => {
+            const ipcMock = { on: sinon.stub(),
+                send: sinon.stub() };
+            const revertIpc = Desktop.__set__('ipc', ipcMock);
+            const desktop = Desktop.__get__('Desktop');
+            const arg1 = { some: 'data' };
+            const arg2 = 'test';
+            const event = 'yyy';
+            const module = 'desktop';
+
+            desktop.fetch(module, event, 10, arg1, arg2)
+                .then(() => {
+                    revertIpc();
+                    done(new Error('should not resolve'));
+                })
+                .catch(() => {
+                    try {
+                        expect(ipcMock.send).to.be.calledWith(`${module}__${event}`, 1, arg1, arg2);
+                        expect(desktop.onceEventListeners)
+                            .to.have.a.property(`${module}__${event}___response`);
+                        revertIpc();
+                        done();
+                    } catch (e) {
+                        done(e);
+                    }
+                });
+        });
+    });
+
 
     function prepareOnOrOnceTest(ipcMock, callbacks, once, module, event) {
         const revertIpc = Desktop.__set__('ipc', ipcMock);
@@ -230,6 +260,13 @@ describe('Desktop', () => {
         it('should return namespaced event name', () => {
             const desktop = Desktop.__get__('Desktop');
             expect(desktop.getEventName('desktop', 'event')).to.equal('desktop__event');
+        });
+    });
+
+    describe('#getResponseEventName', () => {
+        it('should return namespaced response event name', () => {
+            const desktop = Desktop.__get__('Desktop');
+            expect(desktop.getResponseEventName('desktop', 'event')).to.equal('desktop__event___response');
         });
     });
 });

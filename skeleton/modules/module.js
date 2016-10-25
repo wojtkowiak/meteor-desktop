@@ -40,6 +40,18 @@ export default class Module {
     }
 
     /**
+     * Sends and IPC event response for a provided fetch id.
+     *
+     * @param {string} event   - event name
+     * @param {number} fetchId - fetch id that came with then event you are
+     *                           responding to
+     * @param {...*=}  data    - data to send
+     */
+    respond(event, fetchId, ...data) {
+        Module.sendInternal(this.getResponseEventName(event), fetchId, ...data);
+    }
+
+    /**
      * Registers a callback to a IPC event.
      *
      * @param {string}   event    - event name
@@ -95,6 +107,17 @@ export default class Module {
      */
     getEventName(event) {
         return `${this.name}__${event}`;
+    }
+
+    /**
+     * Concatenates event name with response postfix.
+     *
+     * @param {string} event - event name
+     * @returns {string}
+     * @private
+     */
+    getResponseEventName(event) {
+        return `${this.getEventName(event)}___response`;
     }
 
     /**

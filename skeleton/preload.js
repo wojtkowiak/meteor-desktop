@@ -52,6 +52,9 @@ try {
  * @param {...*=}  args  - event's arguments
  */
 
+/**
+ * @class
+ */
 const Desktop = new (class {
 
     constructor() {
@@ -59,6 +62,8 @@ const Desktop = new (class {
         this.onceEventListeners = {};
         this.eventListeners = {};
         this.registeredInIpc = {};
+        this.fetchCallCounter = 0;
+        this.fetchTimeoutTimers = {};
     }
     /**
      * Adds a callback to internal listeners placeholders and registers real ipc hooks.
@@ -67,13 +72,15 @@ const Desktop = new (class {
      * @param {string}      event    - the name of an event
      * @param {ipcListener} callback - callback to fire when event arrives
      * @param {boolean}     once     - whether this should be fired only once
+     * @param {boolean}     response - whether we are listening for fetch response
      */
-    addToListeners(module, event, callback, once) {
+    addToListeners(module, event, callback, once, response = false) {
         let listeners = 'eventListeners';
         if (once) {
             listeners = 'onceEventListeners';
         }
-        const eventName = this.getEventName(module, event);
+        const eventName = response ? this.getResponseEventName(module, event) :
+            this.getEventName(module, event);
         if (eventName in this[listeners]) {
             this[listeners][eventName].push(callback);
         } else {
@@ -110,9 +117,10 @@ const Desktop = new (class {
      * @param {string} module        - module name
      * @param {string} event         - the name of an event
      * @param {ipcListener} callback - function to invoke when `event` is triggered
+     * @param {boolean} response     - whether we are listening for fetch response
      */
-    once(module, event, callback) {
-        this.addToListeners(module, event, callback, true);
+    once(module, event, callback, response = false) {
+        this.addToListeners(module, event, callback, true, response);
     }
 
     /**
@@ -158,6 +166,31 @@ const Desktop = new (class {
         ipc.send(eventName, ...args);
     }
 
+    fetch(module, event, timeout = 2000, ...args) {
+        const eventName = this.getEventName(module, event);
+        if (this.fetchCallCounter === Number.MAX_SAFE_INTEGER) {
+            this.fetchCallCounter = 0;
+        }
+        this.fetchCallCounter += 1;
+        const fetchId = this.fetchCallCounter;
+
+        return new Promise((resolve, reject) => {
+            this.once(module, event,
+                (responsEvent, id, ...responseArgs) => {
+                    if (id === fetchId) {
+                        clearTimeout(this.fetchTimeoutTimers[fetchId]);
+                        delete this.fetchTimeoutTimers[fetchId];
+                        resolve(...responseArgs);
+                    }
+                }, true
+            );
+            this.fetchTimeoutTimers[fetchId] = setTimeout(() => {
+                reject();
+            }, timeout);
+            ipc.send(eventName, fetchId, ...args);
+        });
+    }
+
     /**
      * Send an global event to the main Electron process.
      *
@@ -167,9 +200,30 @@ const Desktop = new (class {
         ipc.send(...args);
     }
 
+    /**
+     * Concatenates module name with event name.
+     *
+     * @param {String} module - module name
+     * @param {string} event - event name
+     * @returns {string}
+     * @private
+     */
     getEventName(module, event) { // eslint-disable-line
         return `${module}__${event}`;
     }
+
+    /**
+     * Concatenates event name with response postfix.
+     *
+     * @param {String} module - module name
+     * @param {string} event - event name
+     * @returns {string}
+     * @private
+     */
+    getResponseEventName(module, event) {
+        return `${this.getEventName(module, event)}___response`;
+    }
+
 })();
 
 /**
