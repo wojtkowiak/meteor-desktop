@@ -4,12 +4,12 @@
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
-### What is this?
+## What is this?
 
 This is a complete implementation of integration between `Meteor` and `Electron` aiming to achieve the same level of developer experience like `Meteor` gives. 
 To make it clear from the start, this is a **desktop client** - it is just like your mobile clients with `Cordova` - but for desktops with `Electron`. It also features a full hot code push implementation - which means you can release updates the same way you are used to.  
 
-### Prerequisites
+## Prerequisites
 
  - Meteor >= `1.3.4`<sup>__*1__</sup>
  - at least basic [Electron](http://electron.atom.io/) framework knowledge
@@ -18,7 +18,7 @@ To make it clear from the start, this is a **desktop client** - it is just like 
 <sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
 <sup>__*2__ you can always build with `--server-only` so you do not actually have to have android sdk or xcode to go on with your project</sup>
 
-#### Quick start
+### Quick start
 ```bash
  cd /your/meteor/app
  meteor npm install --save-dev meteor-desktop
@@ -33,9 +33,9 @@ To make it clear from the start, this is a **desktop client** - it is just like 
  # or in one command `npm run desktop -- --init` 
 ```
 
-## Documentation
+# Documentation
 
-### Architecture
+## Architecture
 
 If you have ever been using any `Cordova` plugins before you will find this approach alike. In `Cordova` every plugin exposes its native code through a JS api available in some global namespace like `cordova.plugins`. The approach used here is similar.
 
@@ -47,7 +47,7 @@ Below is a high level architecture diagram of this integration.
 
 ![High level architecture](high-level-arch.png)
 
-### Scaffolding your desktop app
+## Scaffolding your desktop app
 
 If you have not run the example from the Quick start paragraph, first you need to scaffold a `.desktop` dir in which your `Electron`'s main process code lives.
 To do that run: (assuming `npm install --save-dev meteor-desktop` did add a `desktop` entry in the `package.json scripts` section)
@@ -71,7 +71,7 @@ This will generate an exemplary `.desktop` dir. Lets take a look what we can fin
 
 Tak a look into the files. Most of them have meaningful comments inside.
 
-#### settings.json
+### settings.json
 
 field|default|description
 -----|-------|-----------
@@ -86,6 +86,6 @@ field|default|description
 `autoUpdateCheckOnStart`|true|whether to check for updates on app start
  
 
-#### Devtron
+### Devtron
 
-#### desktopHCP - `.desktop` hot code push module
+### desktopHCP - `.desktop` hot code push module
