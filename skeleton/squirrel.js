@@ -161,7 +161,7 @@ export default class Squirrel {
                     context.settings.autoUpdateFeedHeaders : undefined
             );
             // Check for updates unless the developer wants to do it himself.
-            if (!context.settings.autoUpdateManualCheck) {
+            if (!context.settings.autoUpdateCheckOnStart) {
                 autoUpdater.checkForUpdates();
             }
         }

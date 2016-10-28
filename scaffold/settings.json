@@ -4,13 +4,11 @@
     "devTools": true,
     "devtron": true,
     "desktopHCP": true,
-    "desktopHCPSettings": {
-        "ignoreCompatibilityVersion": false,
-        "blockAppUpdateOnDesktopIncompatibility": true
-    },
+    "desktopHCPIgnoreCompatibilityVersion": false,
     "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
     "autoUpdateFeedHeaders": {},
-    "autoUpdateManualCheck": false,
+    "autoUpdateCheckOnStart": true,
+    "rebuildBinaryPackages": false,
     "webAppStartupTimeout": 60000,
     "window": {
         "fullscreen": false,

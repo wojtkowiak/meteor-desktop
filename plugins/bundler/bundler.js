@@ -14,11 +14,9 @@ fs.existsSync = (function existsSync(pathToCheck) {
     }
 }).bind(fs);
 
-if (!fs.existsSync(versionFile)) {
-    fs.writeFileSync(versionFile, JSON.stringify({
-        version: null
-    }, null, 2), 'UTF-8');
-}
+fs.writeFileSync(versionFile, JSON.stringify({
+    version: null,
+}, null, 2), 'UTF-8');
 
 /*
  * Important! This is a POC.
@@ -184,7 +182,7 @@ class MeteorDesktopBundler {
 
             return depsManager.getDependencies();
         } catch (e) {
-            file.error({ message: e.message });
+            file.error({message: e.message});
             return {};
         }
     }
@@ -333,7 +331,7 @@ class MeteorDesktopBundler {
                 es2015Preset : node6Preset;
 
             glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
-                let { code } = babel.transformFileSync(file, {
+                let {code} = babel.transformFileSync(file, {
                     presets: [preset]
                 });
                 if (settings.env === 'prod' && uglifyingEnabled) {
@@ -382,7 +380,7 @@ class MeteorDesktopBundler {
 
 if (typeof Plugin !== 'undefined') {
     Plugin.registerCompiler(
-        { extensions: ['desktop'] },
+        {extensions: ['desktop']},
         () => new MeteorDesktopBundler(Plugin.fs)
     );
 }

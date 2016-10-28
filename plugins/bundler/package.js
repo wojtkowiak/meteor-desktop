@@ -21,6 +21,6 @@ Package.onUse(function onUse(api) {
     api.use('isobuild:compiler-plugin@1.0.0');
     api.addFiles([
         'dummy.js'
-    ], 'web.cordova');
+    ], 'server');
     api.export('__METEOR_DESKTOP_BUNDLER', 'server');
 });

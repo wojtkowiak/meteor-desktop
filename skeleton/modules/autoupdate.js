@@ -537,38 +537,22 @@ export default class HCPClient {
             this.log.debug(`got desktop version information: ${desktopVersion.version} ` +
                 `(compatibility: ${desktopVersion.compatibilityVersion})`);
 
-            let blockAppUpdateOnDesktopIncompatibility = true;
             let ignoreCompatibilityVersion = false;
 
-            if ('desktopHCPSettings' in this.appSettings &&
-                'blockAppUpdateOnDesktopIncompatibility' in this.appSettings.desktopHCPSettings) {
-                blockAppUpdateOnDesktopIncompatibility =
-                    this.appSettings.desktopHCPSettings.blockAppUpdateOnDesktopIncompatibility;
-            }
-
-            if ('desktopHCPSettings' in this.appSettings &&
-                'ignoreCompatibilityVersion' in this.appSettings.desktopHCPSettings) {
+            if ('desktopHCPIgnoreCompatibilityVersion' in this.appSettings) {
                 ignoreCompatibilityVersion =
-                    this.appSettings.desktopHCPSettings.ignoreCompatibilityVersion;
+                    this.appSettings.desktopHCPIgnoreCompatibilityVersion;
             }
 
             if (this.appSettings.compatibilityVersion !== desktopVersion.compatibilityVersion) {
                 if (!ignoreCompatibilityVersion) {
-                    if (blockAppUpdateOnDesktopIncompatibility) {
-                        this.log.warn('Skipping downloading new version because the .desktop ' +
-                            'compatibility version have changed and is potentially incompatible.');
-                        this.notifyError('Skipping downloading new version because the .desktop ' +
-                            'compatibility version have changed and is potentially incompatible ' +
-                            `(${this.appSettings.compatibilityVersion} != ` +
-                            `${desktopVersion.compatibilityVersion})`);
-                        return false;
-                    }
-                    this.log.warn('Allowing download of new meteor app version despite ' +
-                        'incompatible .desktop. (blockAppUpdateOnDesktopIncompatibility)');
-                    this.notifyWarning('Allowing download of new meteor app version despite ' +
-                        'incompatible .desktop. (blockAppUpdateOnDesktopIncompatibility)' +
+                    this.log.warn('Skipping downloading new version because the .desktop ' +
+                        'compatibility version have changed and is potentially incompatible.');
+                    this.notifyError('Skipping downloading new version because the .desktop ' +
+                        'compatibility version have changed and is potentially incompatible ' +
                         `(${this.appSettings.compatibilityVersion} != ` +
                         `${desktopVersion.compatibilityVersion})`);
+                    return false;
                 } else {
                     this.log.warn('Allowing download of new meteor app version with ' +
                         'potentially incompatible .desktop. (ignoreCompatibilityVersion)');
