@@ -113,12 +113,12 @@ test.serial(async t => {
     // Your assertions...
 
     /*
-    const title = await window.getTitle();
-    t.is(title, 'my app <title>');
+     const title = await window.getTitle();
+     t.is(title, 'my app <title>');
 
-    // NOTE:
-    // avoid using await in assertions like
-    // t.is(await window.getTitle(), 'my app <title>');
-    // it makes Power Assert not producing it's useful graphs
-    */
+     // NOTE:
+     // avoid using await in assertions like
+     // t.is(await window.getTitle(), 'my app <title>');
+     // it makes Power Assert not producing it's useful graphs
+     */
 });

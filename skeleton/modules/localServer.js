@@ -19,8 +19,8 @@ import fs from 'fs-plus';
  */
 export default class LocalServer {
 
-    constructor(log) {
-        this.log = log.loggers.get('localServer');
+    constructor({ log }) {
+        this.log = log;
         this.httpServerInstance = null;
         this.server = null;
         this.retries = 0;

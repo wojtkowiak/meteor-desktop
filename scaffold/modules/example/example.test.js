@@ -3,11 +3,12 @@ import { Application } from 'spectron';
 import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
+import electron from 'electron';
 import {
-    getElectronPath, constructModule, createTestAppWithModule, send, fetch,
+    constructModule, createTestAppWithModule, send, fetch,
     fireEventsBusEventAndWaitForAnother
 } from
-    'meteor-desktop-plugin-test-suite';
+    'meteor-desktop-test-suite';
 
 /**
  * This is an example of functional test for your module.
@@ -55,7 +56,7 @@ test.after(
 test.beforeEach(async (t) => {
     // Every test start a new instance of the test app.
     t.context.app = new Application({
-        path: getElectronPath(),
+        path: electron,
         args: [appDir],
         env: { ELECTRON_ENV: 'test' }
     });

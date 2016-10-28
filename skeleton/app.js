@@ -207,10 +207,9 @@ class App {
                     this.modules[plugin] = require(plugin).default;
 
                     const Plugin = this.modules[plugin];
-                    this.loggerManager.configureLogger(plugin);
 
                     this.modules[plugin] = new Plugin({
-                        log: winston.loggers.get(plugin),
+                        log: this.loggerManager.configureLogger(plugin),
                         skeletonApp: this,
                         appSettings: this.settings,
                         eventsBus: this.eventsBus,
@@ -306,14 +305,13 @@ class App {
         }
 
         const AppModule = require(indexPath).default;
-        this.loggerManager.configureLogger(moduleName);
 
         if (internal && moduleName === 'autoupdate') {
             settings = this.prepareAutoupdateSettings();
         }
 
         this.modules[moduleName] = new AppModule({
-            log: winston.loggers.get(moduleName),
+            log: this.loggerManager.configureLogger(moduleName),
             skeletonApp: this,
             appSettings: this.settings,
             eventsBus: this.eventsBus,
@@ -329,10 +327,10 @@ class App {
     loadDesktopJs() {
         try {
             const desktopJsPath = join(this.desktopPath, 'desktop.js');
-            this.loggerManager.configureLogger('desktop');
+
             const Desktop = require(desktopJsPath).default;
             this.desktop = new Desktop({
-                log: winston.loggers.get('desktop'),
+                log: this.loggerManager.configureLogger('desktop'),
                 skeletonApp: this,
                 appSettings: this.settings,
                 eventsBus: this.eventsBus,

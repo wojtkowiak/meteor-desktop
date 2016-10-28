@@ -11,7 +11,6 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
-    "test-org": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\"",
     "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage-html": "nyc report --reporter=lcov",
@@ -83,8 +82,7 @@
     "semver-regex": "1.0.0",
     "shelljs": "0.7.5",
     "single-line-log": "1.1.2",
-    "uglify-js": "2.7.4",
-    "meteor-desktop-test-suite": "0.0.15"
+    "uglify-js": "2.7.4"
   },
   "repository": {
     "type": "git",

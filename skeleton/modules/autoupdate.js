@@ -48,9 +48,9 @@ const { join } = path;
  */
 export default class HCPClient {
 
-    constructor(log, app, appSettings, eventsBus, modules, settings, Module) {
+    constructor({log, appSettings, eventsBus, settings, Module}) {
         // Get the automatically predefined logger instance.
-        this.log = log.loggers.get('autoupdate');
+        this.log = log;
 
         // Register this as a Meteor Desktop module.
         this.module = new Module('autoupdate');
