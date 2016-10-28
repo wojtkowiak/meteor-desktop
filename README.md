@@ -23,7 +23,7 @@
 ### What is this?
 
 This is a complete implementation of integration between `Meteor` and `Electron` aiming to achieve the same level of developer experience like `Meteor` gives. 
-To make it clear from the start, this is a **desktop client** - it is just like your mobile clients with `cordova` - but for desktops with `Electron`. It also features a full hot code push implementation - which means you can release updates the same way you are used to.  
+To make it clear from the start, this is a **desktop client** - it is just like your mobile clients with `Cordova` - but for desktops with `Electron`. It also features a full hot code push implementation - which means you can release updates the same way you are used to.  
 
 ### Prerequisites
 
@@ -36,7 +36,12 @@ To make it clear from the start, this is a **desktop client** - it is just like 
 
 ## Documentation
 
-### Starting - scaffolding
+### Architecture
+
+If you have ever been using any `Cordova` plugins before you will find this approach alike. In `Cordova` every plugin exposes its native code through a JS api available in some global namespace like `cordova.plugins`. The approach used here is similar.  
+In `Electron` app, there are two processes running along in your app. The so-called `main process` and `renderer process`. Main process is just a JS code executed in `node`, and the renderer is a `Chromium` process. In this integration your `Meteor` app is run in a the `renderer` process and your desktop specific code is run in the `main` process.     
+
+#### scaffolding
 
 If you have not run the example from the top of this readme, first you need to scaffold a `.desktop` dir in which your `Electron`'s main process code lives.
 To do that run: (assuming `npm install --save-dev meteor-desktop` did add a `desktop` entry in the `package.json scripts` section)
@@ -58,8 +63,8 @@ This will generate an exemplary `.desktop` dir. Lets take a look what we can fin
     squirrelEvents.js         # handling of squirrel.windows events
 ```
 
-### What do you call a module?
+Tak a look into the files. Now we will explain them further.
 
-A module is a encapsulated piece of code, that can have its own npm dependencies. Module's API is published in a form or IPC events
+#### architecture
 
 ![High level architecture](high-level-arch.png)

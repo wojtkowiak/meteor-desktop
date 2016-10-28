@@ -36,8 +36,8 @@ const rootPath = path.resolve(path.join(process.cwd(), '..', '..', '..', '..', '
 const desktopPath = path.resolve(path.join(rootPath, '.desktop'));
 
 const settings = getSettings(desktopPath);
+console.log(global);
 
-console.log(Package['omega:meteor-desktop-bundler']);
 if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
         '.desktop/settings.json or desktopHCP is set to false');
