@@ -79,14 +79,14 @@
     },
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.0.25",
+            "version": "0.0.28",
             "windowSettings": {
                 "width": 800,
                 "height": 600
             }
         },
         "meteor-desktop-localstorage": {
-            "version": "0.0.4"
+            "version": "0.0.8"
         }
     },
     "uglify": true,

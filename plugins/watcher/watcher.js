@@ -39,10 +39,7 @@ const settings = getSettings(desktopPath);
 if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
         '.desktop/settings.json or desktopHCP is set to false');
-} else if (!('omega:meteor-desktop-bundler' in Package || !__METEOR_DESKTOP_BUNDLER)) {
-    console.info('[meteor-desktop] .desktop HCP will not work because web.cordova architecture ' +
-        'is missing. Run Meteor\'s mobile target or with --mobile-server.');
-} else {
+} else if ('omega:meteor-desktop-bundler' in Package && __METEOR_DESKTOP_BUNDLER) {
     const chokidar = Npm.require('chokidar');
     const hash = Npm.require('hash-files');
     const versionFile = path.join(rootPath, 'version.desktop');
@@ -92,4 +89,7 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
             });
         console.log(`[meteor-desktop] Watching ${desktopPath} for changes.`);
     }
+} else {
+    console.info('[meteor-desktop] .desktop HCP will not work because web.cordova architecture ' +
+        'is missing. Run Meteor\'s mobile target or with --mobile-server.');
 }

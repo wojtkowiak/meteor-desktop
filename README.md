@@ -8,23 +8,31 @@
 
 ```bash
  cd /your/meteor/app
- npm install --save-dev meteor-desktop
+ meteor npm install --save-dev meteor-desktop
+ # you need to have mobile platform added
  meteor --mobile-server=127.0.0.1:3000
  
  # open new terminal
+
  npm run desktop -- init
  npm run desktop
+
+ # or in one command `npm run desktop -- --init` 
 ```
 
 ### What is this?
 
 This is a complete implementation of integration between `Meteor` and `Electron` aiming to achieve the same level of developer experience like `Meteor` gives. 
-To make it clear from the start, this is a **desktop client** - it is just like your mobile clients with `cordova` - but for desktops with `Electron`. It also features a full hot code push implementation - which means you can release updates the same way you are used to.
+To make it clear from the start, this is a **desktop client** - it is just like your mobile clients with `cordova` - but for desktops with `Electron`. It also features a full hot code push implementation - which means you can release updates the same way you are used to.  
 
 ### Prerequisites
 
- - Meteor >= `1.3.3`
- - At least basic [Electron](http://electron.atom.io/) framework knowledge  
+ - Meteor >= `1.3.4`<sup>__*1__</sup>
+ - at least basic [Electron](http://electron.atom.io/) framework knowledge
+ - mobile platform added to project<sup>__*2__</sup>  
+
+<sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
+<sup>__*2__ you can always build with `--server-only` so you do not actually have to have android sdk or xcode to go on with your project</sup>
 
 ## Documentation
 

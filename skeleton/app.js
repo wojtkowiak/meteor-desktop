@@ -88,8 +88,6 @@ class App {
             this.pendingDesktopVersion = desktopVersion;
         });
         this.eventsBus.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
-        this.eventsBus.on('removeUncaughtExceptionListener',
-            () => (process.removeListener('uncaughtException', this.catchUncaughtExceptions)));
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
@@ -136,24 +134,41 @@ class App {
     }
 
     /**
+     * Removes default uncaught exception listener.
+     * But still leaves logging and emitting
+     */
+    removeUncaughtExceptionListener() {
+        process.removeListener('uncaughtException', this.uncaughtExceptionHandler);
+    }
+
+    /**
+     * Logs the error and emits an unhandledException event on the events bus.
+     * @param error
+     */
+    emitErrorAndLogIt(error) {
+        try {
+            this.l.error(error);
+            if (this.eventsBus) {
+                this.eventsBus.emit('unhandledException', error);
+            }
+        } catch (e) {
+            // Well...
+        }
+    }
+
+    /**
      * Register on uncaughtExceptions so we can handle them.
      */
     catchUncaughtExceptions() {
         this.uncaughtExceptionHandler = this.uncaughtExceptionHandler.bind(this);
+        process.on('uncaughtException', this.emitErrorAndLogIt.bind(this));
         process.on('uncaughtException', this.uncaughtExceptionHandler);
     }
 
-    uncaughtExceptionHandler(error) {
-        this.l.error(error);
-
-        if (this.eventsBus) {
-            try {
-                this.eventsBus.emit('unhandledException')
-            } catch (e) {
-                // Well...
-            }
-        }
-
+    /**
+     * Default uncaught exception handler.
+     */
+    uncaughtExceptionHandler() {
         try {
             this.window.close();
         } catch (e) {
@@ -165,6 +180,7 @@ class App {
             this.app.quit();
         }, 500);
     }
+
 
     /**
      * Applies dev, os specific and variables to window settings.
@@ -193,15 +209,15 @@ class App {
                     const Plugin = this.modules[plugin];
                     this.loggerManager.configureLogger(plugin);
 
-                    this.modules[plugin] = new Plugin(
-                        winston,
-                        this.app,
-                        this.settings,
-                        this.eventsBus,
-                        this.modules,
-                        this.settings.plugins[plugin],
+                    this.modules[plugin] = new Plugin({
+                        log: winston.loggers.get(plugin),
+                        skeletonApp: this,
+                        appSettings: this.settings,
+                        eventsBus: this.eventsBus,
+                        modules: this.modules,
+                        settings: this.settings.plugins[plugin],
                         Module
-                    );
+                    });
                 } catch (e) {
                     // TODO: its probably safer not to exit here
                     // but a strategy for handling this would be better.
@@ -262,9 +278,9 @@ class App {
 
     /**
      * Load a module.
-     * @param {boolean} internal - Whether that is an internal module.
-     * @param {string} modulePath - Path to the module.
-     * @param {string} dirName - Directory name of the module.
+     * @param {boolean} internal   - whether that is an internal module
+     * @param {string}  modulePath - path to the module
+     * @param {string}  dirName    - directory name of the module
      */
     loadModule(internal, modulePath, dirName = '') {
         let moduleName = path.parse(modulePath).name;
@@ -296,15 +312,15 @@ class App {
             settings = this.prepareAutoupdateSettings();
         }
 
-        this.modules[moduleName] = new AppModule(
-            winston,
-            this.app,
-            this.settings,
-            this.eventsBus,
-            this.modules,
+        this.modules[moduleName] = new AppModule({
+            log: winston.loggers.get(moduleName),
+            skeletonApp: this,
+            appSettings: this.settings,
+            eventsBus: this.eventsBus,
+            modules: this.modules,
             settings,
             Module
-        );
+        });
     }
 
     /**
@@ -315,14 +331,14 @@ class App {
             const desktopJsPath = join(this.desktopPath, 'desktop.js');
             this.loggerManager.configureLogger('desktop');
             const Desktop = require(desktopJsPath).default;
-            this.desktop = new Desktop(
-                winston,
-                this.app,
-                this.settings,
-                this.eventsBus,
-                this.modules,
+            this.desktop = new Desktop({
+                log: winston.loggers.get('desktop'),
+                skeletonApp: this,
+                appSettings: this.settings,
+                eventsBus: this.eventsBus,
+                modules: this.modules,
                 Module
-            );
+            });
             this.eventsBus.emit('desktopLoaded', this.desktop);
             this.l.debug('desktop loaded');
         } catch (e) {

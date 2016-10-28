@@ -11,7 +11,8 @@
         "Meteor": true,
         "WebAppLocalServer": true,
         "Desktop": true,
-        "Profile": true
+        "Profile": true,
+        "__METEOR_DESKTOP_BUNDLER": true
     },
     "parserOptions": {
         "ecmaVersion": 2017,

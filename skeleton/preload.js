@@ -44,6 +44,10 @@ try {
     // If that fails, then probably this is production build and devtron is not available.
 }
 
+if (process.env.NODE_ENV === 'test') {
+    window.electronRequire = require;
+}
+
 /**
  * Callback passed to ipc on/once methods.
  *
@@ -157,15 +161,25 @@ const Desktop = new (class {
     /**
      * Send an event to the main Electron process.
      *
-     * @param {String} module - module name
-     * @param {String} event  - the name of an event
-     * @param {...*} args     - additional arguments to pass to event handler
+     * @param {string} module - module name
+     * @param {string} event  - the name of an event
+     * @param {...*} args     - arguments to send with the event
      */
     send(module, event, ...args) {
         const eventName = this.getEventName(module, event);
         ipc.send(eventName, ...args);
     }
 
+    /**
+     * Fetches some data from main process by sending an IPC event and waiting for a response.
+     * Returns a promise that resolves when the response is received.
+     *
+     * @param {string} module  - module name
+     * @param {string} event   - the name of an event
+     * @param {number} timeout - how long to wait for the response in milliseconds
+     * @param {...*} args      - arguments to send with the event
+     * @returns {Promise}
+     */
     fetch(module, event, timeout = 2000, ...args) {
         const eventName = this.getEventName(module, event);
         if (this.fetchCallCounter === Number.MAX_SAFE_INTEGER) {
@@ -203,7 +217,7 @@ const Desktop = new (class {
     /**
      * Concatenates module name with event name.
      *
-     * @param {String} module - module name
+     * @param {string} module - module name
      * @param {string} event - event name
      * @returns {string}
      * @private
@@ -215,7 +229,7 @@ const Desktop = new (class {
     /**
      * Concatenates event name with response postfix.
      *
-     * @param {String} module - module name
+     * @param {string} module - module name
      * @param {string} event - event name
      * @returns {string}
      * @private

@@ -1,36 +1,39 @@
 import process from 'process';
-import { dialog } from 'electron';
+import { app, dialog } from 'electron';
+
 /**
- * Represents the native desktop side.
+ * Entry point to your native desktop code.
  *
  * @class
  */
 export default class Desktop {
-
     /**
-     * @param {Object} log          - Winston logger instance
-     * @param {Object} app          - reference to the Electron app
-     * @param {Object} appSettings  - settings.json object
-     * @param {Object} eventsBus    - event emitter for listening or emitting events
-     *                                side
-     * @param {Object} modules      - reference to all loaded modules
-     * @param {Object} Module       - reference to Module class
+     * @param {Object} log         - Winston logger instance
+     * @param {Object} skeletonApp - reference to the skeleton app instance
+     * @param {Object} appSettings - settings.json contents
+     * @param {Object} eventsBus   - event emitter for listening or emitting events
+     *                               shared across skeleton app and every module/plugin
+     * @param {Object} modules     - references to all loaded modules
+     * @param {Object} Module      - reference to the Module class
      * @constructor
      */
-    constructor(log, app, appSettings, eventsBus, modules, Module) {
+    constructor({ log, skeletonApp, appSettings, eventsBus, modules, Module }) {
+        /**
+         * You can delete unused var from the param destructuring.
+         * Left them here just to emphasize what is passed.
+         * You can also just have a one `config` param and do `Object.assign(this, config);`
+         */
         const desktop = new Module('desktop');
         // Get the automatically predefined logger instance.
-        this.log = log.loggers.get('desktop');
-        this.app = app;
+        this.log = log;
 
         // From Meteor use this by invoking Desktop.send('desktop', 'closeApp');
         desktop.on('closeApp', () => app.quit());
 
         // We need to handle gracefully potential problems.
         // Lets remove the default handler and replace it with ours.
-        eventsBus.emit('removeUncaughtExceptionListener');
-        // eventsBus can be used also for emitting events, not only for listening on events
-        // provided by the skeleton.
+        skeletonApp.removeUncaughtExceptionListener();
+
         process.on('uncaughtException', this.uncaughtExceptionHandler.bind(this));
 
         // Chrome problems should also be handled. The `windowOpened` event has a `window`
