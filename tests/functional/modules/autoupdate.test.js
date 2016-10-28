@@ -82,11 +82,11 @@ function exists(checkPath) {
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
                                errorCallback = Function.prototype, printErrorLogs = false,
                                testMode = true) {
-    const autoupdate = new HCPClient(
-        getFakeLogger(printLogs, printErrorLogs),
-        {}, {},
+    const autoupdate = new HCPClient({
+        log: getFakeLogger(printLogs, printErrorLogs),
+        appSettings: {},
         // fake systemEvents
-        {
+        eventsBus: {
             on() {
             },
             emit(event) {
@@ -95,17 +95,18 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
                     onNewVersionReady();
                 }
             }
-        }, {},
-        {
+        },
+        settings: {
             dataPath: paths.autoUpdateVersionsPath,
             bundleStorePath: paths.autoUpdateVersionsPath,
             initialBundlePath: paths.fixtures.bundledWww,
             test: testMode,
             webAppStartupTimeout: 200
         },
-        class Module {
+        Module: class Module {
             constructor() {
-                this.on = () => {};
+                this.on = () => {
+                };
             }
             send(event, message) { // eslint-disable-line class-methods-use-this
                 if (printLogs) {
@@ -116,8 +117,9 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
                 }
             }
         }
-    );
+    });
     autoupdate.init();
+
     autoupdate.window = {
         reload() {
         }

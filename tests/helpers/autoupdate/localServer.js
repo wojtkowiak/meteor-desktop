@@ -5,7 +5,7 @@ import dirty from 'dirty-chai';
 import LocalServer from '../../../skeleton/modules/localServer';
 
 chai.use(dirty);
-const { expect } = chai;
+const {expect} = chai;
 
 let localServer;
 let localServerPort;
@@ -25,16 +25,17 @@ export function setUpLocalServer(mainPath, parentPath) {
         localServerPort = port;
         resolve(localServer);
     }
+
     if (!localServer) {
         return new Promise((promiseResolve, promiseReject) => {
             resolve = promiseResolve;
             reject = promiseReject;
             localServer = new LocalServer({
-                loggers: {
-                    get: () => ({
-                        warn() {},
-                        info() {}
-                    })
+                log: {
+                    warn() {
+                    },
+                    info() {
+                    }
                 }
             });
             localServer.setCallbacks(() => reject(), onServerReady, () => resolve());

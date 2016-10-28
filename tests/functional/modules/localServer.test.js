@@ -25,13 +25,12 @@ let localPort;
 function getLocalServer(path) {
     return new Promise((resolve, reject) => {
         const localServer = new LocalServer({
-            loggers: {
-                get: () => ({
+            log: {
                     warn() {},
                     info() {}
-                })
+                }
             }
-        });
+        );
         function onStartupFailed() {
             reject();
         }

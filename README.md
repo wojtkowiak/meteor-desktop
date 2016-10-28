@@ -45,12 +45,16 @@ npm run desktop -- init
 ```
 This will generate an exemplary `.desktop` dir. Lets tak a look what we can find there:
 ```
-    assets              <dir>
-    import              <dir>
-    modules             <dir>
-    desktop.js
-    settings.json
-    squirrelEvents.js
-```    
+    assets              <dir> # place all your assets here
+    import              <dir> # all code you do not want to structure into modules  
+    modules             <dir> # your desktop modules (check modules section for explanation) 
+    desktop.js                # your Electron main process entry point - treated like a module
+    desktop.test.js           # functional test for you desktop app
+    settings.json             # your app settings
+    squirrelEvents.js         # handling of squirrel.windows events
+```
+
+
+
 
 ![High level architecture](high-level-arch.png)
