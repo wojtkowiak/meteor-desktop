@@ -36,25 +36,30 @@ To make it clear from the start, this is a **desktop client** - it is just like 
 
 ## Documentation
 
-### Starting
+### Starting - scaffolding
 
 If you have not run the example from the top of this readme, first you need to scaffold a `.desktop` dir in which your `Electron`'s main process code lives.
 To do that run: (assuming `npm install --save-dev meteor-desktop` did add a `desktop` entry in the `package.json scripts` section)
 ```bash
 npm run desktop -- init
 ```
-This will generate an exemplary `.desktop` dir. Lets tak a look what we can find there:
+This will generate an exemplary `.desktop` dir. Lets take a look what we can find there:
 ```
     assets              <dir> # place all your assets here
     import              <dir> # all code you do not want to structure into modules  
-    modules             <dir> # your desktop modules (check modules section for explanation) 
+    modules             <dir> # your desktop modules (check modules section for explanation)
+      example           <dir> # module example
+        index.js              # entrypoint of the example module
+        example.test.js       # functional test for the example module
+        module.json           # module configuration  
     desktop.js                # your Electron main process entry point - treated like a module
     desktop.test.js           # functional test for you desktop app
     settings.json             # your app settings
     squirrelEvents.js         # handling of squirrel.windows events
 ```
 
+### What do you call a module?
 
-
+A module is a encapsulated piece of code, that can have its own npm dependencies. Module's API is published in a form or IPC events
 
 ![High level architecture](high-level-arch.png)
