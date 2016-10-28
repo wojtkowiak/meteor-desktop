@@ -44,7 +44,7 @@ try {
     // If that fails, then probably this is production build and devtron is not available.
 }
 
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'test' && window) {
     window.electronRequire = require;
 }
 

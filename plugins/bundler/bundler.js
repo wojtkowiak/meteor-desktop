@@ -241,6 +241,7 @@ class MeteorDesktopBundler {
             let node6Preset;
             let es2015Preset;
             let uglify;
+            let del;
 
             let DependenciesManager;
             let ElectronAppScaffold;
@@ -248,6 +249,7 @@ class MeteorDesktopBundler {
                 asar = requireLocal('asar');
                 shell = requireLocal('shelljs');
                 glob = requireLocal('glob');
+                del = requireLocal('del');
                 babel = requireLocal('babel-core');
                 hash = requireLocal('hash-files');
                 node6Preset = requireLocal('babel-preset-node6');
@@ -282,6 +284,9 @@ class MeteorDesktopBundler {
 
             shell.rm('-rf', desktopTmpPath);
             shell.cp('-rf', desktopPath, desktopTmpPath);
+            del.sync([
+                path.join(desktopTmpPath, '**', '*.test.js')
+            ]);
 
             const configs = this.gatherModuleConfigs(shell, modulesPath, files[0]);
             const dependencies = this.getDependencies(desktopPath, files[0], configs, depsManager);
