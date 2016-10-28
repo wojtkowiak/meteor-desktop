@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
