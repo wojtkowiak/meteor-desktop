@@ -16,6 +16,7 @@ To make it clear from the start, this is a **desktop client** - it is just like 
  - mobile platform added to project<sup>__*2__</sup>  
 
 <sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
+
 <sup>__*2__ you can always build with `--server-only` so you do not actually have to have android sdk or xcode to go on with your project</sup>
 
 ### Quick start
