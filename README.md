@@ -77,16 +77,42 @@ Tak a look into the files. Most of them have meaningful comments inside.
 field|default|description
 -----|-------|-----------
 `name`|My Meteor App|just a name for your project
+`version`||version of the desktop app
 `projectName`|MyMeteorApp|this will be used as a `name` in the generated app's package.json
 `devTools`|true|whether to install and open `devTools`, set automatically to false when building with `--production`
-`devtron`|true|check whether to install `devtron`, set automatically to false when building with `--production`
-`desktopHCP`|true|whether to use `.desktop` hot code push module - (more)[]
+`devtron`|true|check whether to install `devtron`, set automatically to false when building with `--production`, (more)[https://github.com/wojtkowiak/meteor-desktop/tree/master#devtron]
+`desktopHCP`|true|whether to use `.desktop` hot code push module - (more)[https://github.com/wojtkowiak/meteor-desktop/tree/master#desktophcp---desktop-hot-code-push-module]
 `desktopHCPIgnoreCompatibilityVersion`|false|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
 `autoUpdateFeedUrl`|http://127.0.0.1/update/:platform/:version|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), params are automatically set
 `autoUpdateFeedHeaders`|{}}|http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
 `autoUpdateCheckOnStart`|true|whether to check for updates on app start
- 
+`rebuildNativeNodeModules`|false|turn on or off recompiling native modules -> (more)[https://github.com/wojtkowiak/meteor-desktop/tree/master#native-modules-support]
+`webAppStartupTimeout`|60000|amount of time after which the downloaded version is considered faulty if Meteor app did not start - (more)[https://github.com/wojtkowiak/meteor-desktop/tree/master#hot-code-push-support]
+`window`||Production options for the main window - see (here)[https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions]
+`windowDev`||Development options for the main window, applied on to of production options
+`uglify`|true|whether to process the production build with uglify
+`plugins`||npm packages that are meteor-desktop plugins
+`dependencies`|{}|the same like in `package.json`
+`packageJsonFields`||fields to add to the generated `package.json` in your desktop app
+`builderOptions`||
+`packagerOptions`||
+
+### Hot code push support
+https://guide.meteor.com/mobile.html#recovering-from-faulty-versions
+
+### How to write plugins
+
+Plugin is basically a module exported to a npm package.
+
+
+### Native modules support
+
+This integration fully supports rebuilding native modules (npm packages with native node modules) against `Electron`'s `node` version. However to speed up the build time, it is **switched off by default**. 
+
+If you have any of those in your dependencies, or you know that one of the packages or plugins is using it, you should turn it on by setting `rebuildNativeNodeModules` to true in your `settings.json`. Currently there is no mechanism present that detects whether the rebuild should be run so it is fired on every build. A cleverer approach is planned before `1.0`. 
 
 ### Devtron
 
-### desktopHCP - `.desktop` hot code push module
+(`Devtron`)[http://electron.atom.io/devtron/] is installed and activated by default. It is automatically removed when building with `--production`.
+
+#### desktopHCP - `.desktop` hot code push module

@@ -40,6 +40,8 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
         '.desktop/settings.json or desktopHCP is set to false');
 } else if ('omega:meteor-desktop-bundler' in Package) {
+    console.log(Package['omega:meteor-desktop-bundler']);
+
     const chokidar = Npm.require('chokidar');
     const hash = Npm.require('hash-files');
     const versionFile = path.join(rootPath, 'version.desktop');

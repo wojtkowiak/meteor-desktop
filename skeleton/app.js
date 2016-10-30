@@ -214,7 +214,8 @@ class App {
                         appSettings: this.settings,
                         eventsBus: this.eventsBus,
                         modules: this.modules,
-                        settings: this.settings.plugins[plugin],
+                        settings: typeof this.settings.plugins[plugin] === 'object' ?
+                            this.settings.plugins[plugin] : {},
                         Module
                     });
                 } catch (e) {

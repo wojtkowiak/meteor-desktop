@@ -2,7 +2,6 @@
 const fs = Plugin.fs;
 const path = Plugin.path;
 const versionFile = './version.desktop';
-const versionJsonFile = './version.desktop.json';
 const Future = Npm.require('fibers/future');
 const md5 = Npm.require('md5');
 
@@ -14,9 +13,23 @@ fs.existsSync = (function existsSync(pathToCheck) {
     }
 }).bind(fs);
 
-fs.writeFileSync(versionFile, JSON.stringify({
-    version: null,
-}, null, 2), 'UTF-8');
+function addToGitIgnore() {
+    let gitIgnore;
+    try {
+        gitIgnore = fs.readFileSync('./.gitignore', 'utf8');
+        gitIgnore += '\nversion.desktop\n';
+        fs.writeFileSync('./.gitignore', gitIgnore);
+    } catch (e) {
+        console.warn('[meteor-desktop] could not add version.desktop to .gitignore, please do it manually');
+    }
+}
+
+if (!fs.existsSync(versionFile)) {
+    fs.writeFileSync(versionFile, JSON.stringify({
+        version: 'initial',
+    }, null, 2), 'UTF-8');
+    addToGitIgnore();
+}
 
 /*
  * Important! This is a POC.
@@ -182,7 +195,7 @@ class MeteorDesktopBundler {
 
             return depsManager.getDependencies();
         } catch (e) {
-            file.error({message: e.message});
+            file.error({ message: e.message });
             return {};
         }
     }
@@ -212,25 +225,37 @@ class MeteorDesktopBundler {
      * @param {Array} files - Array with files to process.
      */
     processFilesForTarget(files) {
-        if (files[0].getArch() !== 'web.cordova') {
+        let inputFile = null;
+        files.forEach((file) => {
+            console.log(file.getArch(), file.getArch() === 'web.cordova', file.getPackageName(),file.getPackageName() === 'omega:meteor-desktop-bundler', file.getPathInPackage(),file.getPathInPackage() === 'version.desktop');
+            if (file.getArch() === 'web.cordova' &&
+                file.getPackageName() === 'omega:meteor-desktop-bundler' &&
+                file.getPathInPackage() === 'version.desktop'
+            ) {
+                inputFile = file;
+            }
+        });
+        if (inputFile === null) {
             return;
         }
+        console.log('processing ehe');
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
             const desktopPath = './.desktop';
-            const settings = this.getSettings(desktopPath, files[0]);
+            const settings = this.getSettings(desktopPath, inputFile);
             if (!settings.desktopHCP) {
-                console.warn('[meteor-desktop] not preparing desktop.asar because desktopHCP is ' +
-                    'set to false');
+                console.warn('[meteor-desktop] not preparing desktop.asar because desktopHCP ' +
+                    'is set to false');
                 return;
             }
+            console.log('inside');
 
             console.time('[meteor-desktop]: Preparing desktop.asar took');
-            const requireLocal = files[0].require.bind(files[0]);
-
+            const requireLocal = inputFile.require.bind(inputFile);
+            console.log('inside2');
             /* TODO: warn about unexpected versions */
-            // When the meteor app requires a different from meteor-desktop version of those deps,
-            // here we might receive an unexpected version.
+            // When the meteor app requires a different from meteor-desktop version of those
+            // deps here we might receive an unexpected version.
             let asar;
             let shell;
             let glob;
@@ -258,13 +283,13 @@ class MeteorDesktopBundler {
                 ElectronAppScaffold =
                     requireLocal('meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
-                files[0].error({
+                inputFile.error({
                     message: 'error while trying to require dependency, are you sure you have ' +
                     `meteor-desktop installed and using npm3? ${e}`
                 });
                 return;
             }
-
+            console.log('inside3');
             const context = {
                 env: {
                     isProductionBuild: () => process.env.NODE_ENV === 'production',
@@ -273,10 +298,13 @@ class MeteorDesktopBundler {
                     }
                 }
             };
+
+            console.log('processing1');
+
             const scaffold = new ElectronAppScaffold(context);
             const depsManager = new DependenciesManager(
                 context, scaffold.getDefaultPackageJson().dependencies);
-
+            console.log('inside4');
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
@@ -286,9 +314,9 @@ class MeteorDesktopBundler {
                 path.join(desktopTmpPath, '**', '*.test.js')
             ]);
 
-            const configs = this.gatherModuleConfigs(shell, modulesPath, files[0]);
-            const dependencies = this.getDependencies(desktopPath, files[0], configs, depsManager);
-
+            const configs = this.gatherModuleConfigs(shell, modulesPath, inputFile);
+            const dependencies = this.getDependencies(desktopPath, inputFile, configs, depsManager);
+            console.log('inside5');
             const version = hash.sync({
                 files: [`${desktopPath}${path.sep}**`]
             });
@@ -298,7 +326,7 @@ class MeteorDesktopBundler {
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
             settings.desktopVersion = version;
             settings.compatibilityVersion =
-                this.calculateCompatibilityVersion(dependencies, desktopPath, files[0]);
+                this.calculateCompatibilityVersion(dependencies, desktopPath, inputFile);
             fs.writeFileSync(
                 path.join(desktopTmpPath, 'settings.json'), JSON.stringify(settings, null, 4)
             );
@@ -331,7 +359,7 @@ class MeteorDesktopBundler {
                 es2015Preset : node6Preset;
 
             glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
-                let {code} = babel.transformFileSync(file, {
+                let { code } = babel.transformFileSync(file, {
                     presets: [preset]
                 });
                 if (settings.env === 'prod' && uglifyingEnabled) {
@@ -340,11 +368,9 @@ class MeteorDesktopBundler {
                 fs.writeFileSync(file, code);
             });
 
-            const inputFile = files[0];
-
             const future = new Future();
             const resolve = future.resolver();
-
+            console.log('processing2');
             asar.createPackage(
                 desktopTmpPath,
                 './desktop.asar',
@@ -354,23 +380,29 @@ class MeteorDesktopBundler {
             );
             future.wait();
 
-            const versionFileJSON = JSON.stringify({
+            const versionObject = {
                 version: settings.desktopVersion,
                 compatibilityVersion: settings.compatibilityVersion
-            }, null, 2);
+            };
 
             inputFile.addAsset({
                 path: 'version.desktop.json',
-                data: versionFileJSON
+                data: JSON.stringify(versionObject, null, 2)
             });
 
             inputFile.addAsset({
                 path: 'desktop.asar',
                 data: fs.readFileSync('./desktop.asar')
             });
-
-            fs.writeFileSync(versionJsonFile, versionFileJSON, 'UTF-8');
-
+            console.log('processing3');
+            inputFile.addJavaScript({
+                sourcePath: inputFile.getPathInPackage(),
+                path: inputFile.getPathInPackage(),
+                data: `METEOR_DESKTOP_VERSION = ${JSON.stringify(versionObject)};`,
+                hash: inputFile.getSourceHash(),
+                sourceMap: null
+            });
+            console.log('processing4');
             shell.rm('./desktop.asar');
             shell.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
@@ -380,7 +412,7 @@ class MeteorDesktopBundler {
 
 if (typeof Plugin !== 'undefined') {
     Plugin.registerCompiler(
-        {extensions: ['desktop']},
+        { extensions: ['desktop'] },
         () => new MeteorDesktopBundler(Plugin.fs)
     );
 }
