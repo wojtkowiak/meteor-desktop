@@ -48,6 +48,23 @@ Below is a high level architecture diagram of this integration.
 
 ![High level architecture](high-level-arch.png)
 
+#### How does this work with Meteor?
+> <sup>or how hacky is this?</sup>
+
+The main goal was to provide a non hacky integration without actually submitting any desktop 
+oriented pull request to `Meteor`.
+The whole concept is based on taking the `web.cordova` build, modifying it as little as possible 
+and running it in the `Electron`'s renderer process. The current `cordova` integration 
+architecture is more or less conceptually replicated. 
+
+Currently the only modification that the mobile build is subjected to is injecting the `Meteor.isDesktop` variable. 
+ 
+To obtain the mobile build, this integration takes the build from either `
+.meteor/local/cordova-build` (version `< 1.3.4.1`) or from `.meteor/local/build/programs/web.cordova`.
+Because `index.html` and `program.json` are not present in the `web.cordova` directory, they are
+just downloaded from the running project.
+
+
 ## Scaffolding your desktop app
 
 If you have not run the example from the Quick start paragraph, first you need to scaffold a `.desktop` dir in which your `Electron`'s main process code lives.
@@ -83,7 +100,7 @@ field|description
 `devtron`|check whether to install `devtron`, set automatically to false when building with `--production`, [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#devtron)
 `desktopHCP`|whether to use `.desktop` hot code push module - [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#desktophcp---desktop-hot-code-push-module)
 <sup>`desktopHCPIgnoreCompatibilityVersion`</sup>|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
-`autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), params are automatically set
+`autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
 `autoUpdateFeedHeaders`|http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
 `autoUpdateCheckOnStart`|whether to check for updates on app start
 `rebuildNativeNodeModules`|turn on or off recompiling native modules -> [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#native-modules-support)
@@ -103,6 +120,8 @@ https://guide.meteor.com/mobile.html#recovering-from-faulty-versions
 ### How to write plugins
 
 Plugin is basically a module exported to a npm package.
+
+### Squirrel autoupdate support
 
 
 ### Native modules support
