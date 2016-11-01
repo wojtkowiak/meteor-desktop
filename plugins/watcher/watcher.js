@@ -38,34 +38,31 @@ const desktopPath = path.resolve(path.join(rootPath, '.desktop'));
 const settings = getSettings(desktopPath);
 if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
-        '.desktop/settings.json or desktopHCP is set to false');
+        '.desktop/settings.json or desktopHCP is set to false.  Remove this plugin if you do ' +
+        'not want to use desktopHCP.');
 } else if ('omega:meteor-desktop-bundler' in Package) {
-    console.log(Package['omega:meteor-desktop-bundler']);
-
     const chokidar = Npm.require('chokidar');
     const hash = Npm.require('hash-files');
     const versionFile = path.join(rootPath, 'version.desktop');
 
-    let version;
+    const version = Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version;
 
-    try {
-        version = JSON.parse(
-            fs.readFileSync(versionFile, 'UTF-8')
-        ).version;
-    } catch (e) {
-        throw new Error('[meteor-desktop] there is no version.desktop file. Are you sure you have ' +
-            'omega:meteor-desktop-bundler package added to your project?');
-    }
+    if (version) {
+        try {
+            fs.readFileSync(versionFile, 'UTF-8');
+        } catch (e) {
+            throw new Error('[meteor-desktop] there is no version.desktop file. Are you sure you ' +
+                'have omega:meteor-desktop-bundler package added to your project?');
+        }
 
-    if (version !== null) {
         const currentVersion = hash.sync({
             files: [`${desktopPath}${path.sep}**`]
         });
 
         if (currentVersion !== version) {
             // TODO: something meteor'ish to print to stdout?
-            console.info('[meteor-desktop] Initial .desktop version inconsistency found. Files have ' +
-                'changed during the build, triggering desktop rebuild.');
+            console.info('[meteor-desktop] Initial .desktop version inconsistency found. Files ' +
+                'have changed during the build, triggering desktop rebuild.');
             saveNewVersion(currentVersion, versionFile);
         } else {
             const watcher = chokidar.watch(desktopPath, {
@@ -83,19 +80,19 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
                     }
                     // Simple 2s debounce.
                     timeout = setTimeout(() => {
-                        console.log(`[meteor-desktop] ${filePath} have been changed, triggering desktop ` +
-                            'rebuild.');
+                        console.log(`[meteor-desktop] ${filePath} have been changed, triggering` +
+                        ' desktop rebuild.');
                         saveNewVersion(hash.sync({
                             files: [`${desktopPath}${path.sep}**`]
                         }), versionFile);
                     }, 2000);
                 });
-            console.log(`[meteor-desktop] Watching ${desktopPath} for changes.`);
+            console.log(`[meteor-desktop] watching ${desktopPath} for changes.`);
         }
     } else {
-        console.info('[meteor-desktop] .desktop HCP will not work because either web.cordova architecture ' +
-            'is missing or the bundler had troubles with creating desktop.asar. Be sure that you are running mobile ' +
-            'target or with --mobile-server.');
+        console.info('[meteor-desktop] .desktop HCP will not work because either web.cordova ' +
+            'architecture is missing or the bundler had troubles with creating desktop.asar. Be' +
+            ' sure that you are running mobile target or with --mobile-server.');
     }
 } else {
     throw new Error('[meteor-desktop] bundler plugin was not detected. Are you sure you have ' +

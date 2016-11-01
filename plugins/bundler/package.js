@@ -20,7 +20,7 @@ Package.onUse(function onUse(api) {
     api.versionsFrom('1.2.1');
     api.use('isobuild:compiler-plugin@1.0.0');
     api.addFiles([
-        'version.desktop'
-    ], 'server');
+        'version._desktop_.js'
+    ]);
     api.export('METEOR_DESKTOP_VERSION', 'server');
 });
