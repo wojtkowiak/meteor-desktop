@@ -1,8 +1,14 @@
 ![Logo](meteor-desktop.png)
 
-# Meteor Desktop - WIP do not use yet
+# Meteor Desktop - WIP do not use yet 
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
+
+[![npm version](https://img.shields.io/npm/v/meteor-desktop.svg)](https://npmjs.org/package/meteor-desktop)
+<sup>Travis</sup> [![Travis Build Status](https://travis-ci.org/wojtkowiak/meteor-desktop.svg?branch=master)](https://travis-ci.org/wojtkowiak/meteor-desktop-splash-screen) 
+<sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop) 
+<sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop)
+
 
 ## What is this?
 
