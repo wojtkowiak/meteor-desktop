@@ -234,16 +234,23 @@ class MeteorDesktopBundler {
      */
     processFilesForTarget(files) {
         let inputFile = null;
+        let versionFile = null;
         let requireLocal = null;
+
+        // We need to find the files we are interested in.
+        // version._desktop_.js -> METEOR_DESKTOP_VERSION is put there
+        // version.desktop -> this file is in the root dir of the project so we can use it's
+        //                    `require` to load things from app's node_modules
         files.forEach((file) => {
             if (file.getArch() === 'web.cordova') {
                 if (file.getPackageName() === 'omega:meteor-desktop-bundler' &&
                     file.getPathInPackage() === 'version._desktop_.js'
                 ) {
-                    inputFile = file;
+                    versionFile = file;
                 }
                 if (file.getPackageName() === null && file.getPathInPackage() === 'version.desktop') {
                     requireLocal = file.require.bind(file);
+                    inputFile = file;
                 }
             } else if (file.getArch() !== 'web.browser' && this.version &&
                 file.getPathInPackage() === 'version._desktop_.js'
@@ -259,7 +266,7 @@ class MeteorDesktopBundler {
             }
         });
 
-        if (inputFile === null || requireLocal === null) {
+        if (inputFile === null || requireLocal === null || versionFile === null) {
             return;
         }
 
@@ -320,10 +327,8 @@ class MeteorDesktopBundler {
             };
 
             const scaffold = new ElectronAppScaffold(context);
-            console.log(scaffold.getDefaultPackageJson().dependencies);
             const depsManager = new DependenciesManager(
                 context, scaffold.getDefaultPackageJson().dependencies);
-            console.log(depsManager.dependencies);
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
@@ -412,7 +417,7 @@ class MeteorDesktopBundler {
                 path: 'desktop.asar',
                 data: fs.readFileSync('./desktop.asar')
             });
-            inputFile.addJavaScript({
+            versionFile.addJavaScript({
                 sourcePath: inputFile.getPathInPackage(),
                 path: inputFile.getPathInPackage(),
                 data: `METEOR_DESKTOP_VERSION = ${JSON.stringify(versionObject)};`,
