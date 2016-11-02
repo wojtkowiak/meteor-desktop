@@ -11,6 +11,9 @@ import {
     'meteor-desktop-test-suite';
 
 /**
+ * For this to work, init testing with `npm run desktop -- init-tests-support`.
+ * This will add necessary packages to your `devDependencies` and add `desktop-test` to scripts.
+ *
  * This is an example of functional test for your module.
  *
  * You could test your module from the built app, like in desktop.test.js.

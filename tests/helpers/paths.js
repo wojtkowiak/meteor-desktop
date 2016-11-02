@@ -2,7 +2,7 @@ import path from 'path';
 
 const { join, resolve } = path;
 
-const testsPath = resolve('tests');
+const testsPath = resolve(path.join(__dirname, '..', '..', 'tests'));
 const testsTmpPath = resolve(path.join(testsPath, '.__tmp'));
 
 const fixturesPath = 'fixtures';

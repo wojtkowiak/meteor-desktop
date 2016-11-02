@@ -15,11 +15,6 @@ const { describe, it } = global;
 const { expect } = chai;
 
 const Electron = {};
-mockery.registerMock('electron', Electron);
-mockery.enable({
-    warnOnReplace: false,
-    warnOnUnregistered: false
-});
 
 const meteorDesktop = require('../helpers/meteorDesktop');
 
@@ -29,6 +24,19 @@ const {
 
 describe('desktop', () => {
     let MeteorDesktop;
+
+    before(() => {
+        mockery.registerMock('electron', Electron);
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    after(() => {
+        mockery.deregisterMock('electron');
+        mockery.disable();
+    });
 
     beforeEach(() => {
         MeteorDesktop = createTestInstance();

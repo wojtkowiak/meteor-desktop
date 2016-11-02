@@ -17,7 +17,7 @@ To make it clear from the start, this is a **desktop client** - it is just like 
 
 <sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
 
-<sup>__*2__ you can always build with `--server-only` so you do not actually have to have android sdk or xcode to go on with your project</sup>
+<sup>__*2__ you can always build with `--server-only` if you do not want to have mobile clients,  you do not actually have to have android sdk or xcode to go on with your project</sup>
 
 ### Quick start
 ```bash
@@ -80,7 +80,7 @@ This will generate an exemplary `.desktop` dir. Lets take a look what we can fin
 ├── import                     # all code you do not want to structure into modules  
 ├── modules                    # your desktop modules (check modules section for explanation)
 │    └── example               # module example
-│         ├── index.js         #  entrypoint of the example module
+│         ├── index.js         # entrypoint of the example module
 │         ├── example.test.js  # functional test for the example module
 │         └── module.json      # module configuration  
 ├── desktop.js                 # your Electron main process entry point - treated like a module
@@ -124,6 +124,7 @@ field|description
 The `desktop.js` is the entrypoint of your desktop app. Let's take a look what references we 
 receive in the constructor.
 ```javascript
+    /**
      * @param {Object} log         - Winston logger instance
      * @param {Object} skeletonApp - reference to the skeleton app instance
      * @param {Object} appSettings - settings.json contents
@@ -135,29 +136,30 @@ receive in the constructor.
      */
     constructor({ log, skeletonApp, appSettings, eventsBus, modules, Module })
 ```
+Some of the references are describe in detail below:
 
 #### `skeletonApp`
 
-This is a reference to the Skeleton App. Currently there are only two methods you can call.
-`isProduction` - whether this is a production build
+This is a reference to the Skeleton App. Currently there are only two methods you can call.  
+`isProduction` - whether this is a production build  
 `removeUncaughtExceptionListener` - removes the default handler so you can put your own in place
 
 #### `eventsBus`
 
 This is just an `EventEmitter` that is an event bus meant to be used across all entities running 
-in the `Electron`'s main process (`desktop`). Currently there are several events emitted on the 
-bus byt the Skeleton App that you may find useful:
+in the `Electron`'s main process (`.desktop`). Currently there are several events emitted on the 
+bus by the `Skeleton App` that you may find useful:
 
 event name|payload|description
 ----------|-------|------------
 `unhandledException`| |emitted on any unhandled exceptions, by hooking to it you can run code before any other handler will be executed   
-`desktopLoaded`|`(desktop)`|emitted after loading `desktop.js`, carries the desktop class reference
-`startupFailed`| |emitted when the Skeleton App could not start you Meteor app  
-`loadingFinished`| |emitted when the Meteor App finished loading (also after HCP reload)  
-`beforeLoadFinish`| |emitted when the Meteor App finished loading, but just before the window is shown  
-`windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (Chrome window with Meteor app) is  created, passes a reference to this window 
-`newVersionReady`|`(version)`|emitted when a new Meteor bundle was downloaded and is ready to be applied  
-`revertVersionReady`|`(version)`|emitted just before the Meteor app version will be reverted (due to faulty version fallback mechanism) be applied  
+`desktopLoaded`|`(desktop)`|emitted after loading `desktop.js`, carries the reference to `Desktop` instance 
+`startupFailed`| |emitted when the `Skeleton App` could not start you `Meteor` app  
+`loadingFinished`| |emitted when the `Meteor` app finished loading (also after HCP reload)  
+`beforeLoadFinish`| |emitted when the `Meteor` app finished loading, but just before the window is shown  
+`windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (`Chrome` window with `Meteor` app) is  created, passes a reference to this window 
+`newVersionReady`|`(version)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
+`revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 `beforePluginsLoad`| |emitted before plugins are loaded
 `beforeModulesLoad`| |emitted before modules from `.desktop` are loaded
 `beforeDesktopJsLoad`| |emitted before `desktop.js` is loaded
@@ -170,15 +172,13 @@ i.e. `myModule.initalized`.
 #### `modules`
 
 Object with references to other modules and plugins. Plugins are under their name i.e. 
-`modules['meteor-desktop-splash-screen]`. Modules are under the name from `module.json`. 
+`modules['meteor-desktop-splash-screen]`.  
+Modules are under the name from `module.json`. 
 Internal modules such as `autoupdate` and `localServer` are also there. You can also get 
-reference to the `desktop.js` by `modules['desktop']` (the reference is also passed in the 
-`desktopLoaded` event).
+reference to the `desktop.js` from `modules['desktop']` (note that the reference is also passed in 
+the `desktopLoaded` event).
 
 ### Writing modules
-
-
-
 
 ### Hot code push support
 https://guide.meteor.com/mobile.html#recovering-from-faulty-versions
@@ -219,3 +219,18 @@ automatically removed when building with `--production`. As the communication be
 
 ### Testing desktop app and modules
 
+### `MD_LOG_LEVEL`
+`MD_LOG_LEVEL` env var is used to set the logger verbosity. Currently before `1.0` it is set to 
+`ALL` but you can change it to any of `INFO, WARN, ERROR, DEBUG, VERBOSE, TRACE`. You can also 
+select multiple levels joining them with a comma i.e.: `INFO,WARN`.
+
+### Roadmap 
+> <sup>aka road to 1.0</sup>
+
+This version should be considered as beta version.  
+Any feedback/feature requests/PR is highly welcomed and anticipated.  
+There is rough plan to publish a release candidate around January 2017. Until that expect things to 
+change rapidly and many frequent 0.X.X releases.
+You can find the roadmap filtering by milestone and `accepted` tag on the github issues list [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).  
+
+### Changelog

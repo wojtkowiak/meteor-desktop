@@ -11,7 +11,9 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
+    "test2": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/integration/prepare.js \"tests/+(integration)/**/*.test.js\"",
     "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
+    "test-watch2": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(integration)/**/*.test.js\" --watch",
     "lint": "eslint -c .eslintrc **/*.js",
     "coverage-html": "nyc report --reporter=lcov",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
@@ -24,7 +26,8 @@
     "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
-    "develop": "npm-run-all --parallel build-watch test-watch"
+    "develop": "npm-run-all --parallel build-watch test-watch",
+    "desktop": "meteor-desktop"
   },
   "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
   "license": "MIT",
@@ -101,9 +104,8 @@
       "node_modules",
       "plugins",
       "tests",
-      "lib",
       "scaffold",
-      "lib/scripts"
+      "lib/scripts/propagateVersion.js"
     ],
     "require": [
       "babel-core/register"

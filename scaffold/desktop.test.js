@@ -4,9 +4,14 @@ import path from 'path';
 import { Application } from 'spectron';
 
 /**
+ * For this to work, init testing with `npm run desktop -- init-tests-support`.
+ * This will add necessary packages to your `devDependencies` and add `desktop-test` to scripts.
+ *
  * This is an example of functional test for your desktop app.
  * Remember that you need to rebuild your desktop app if you made changes in .desktop. You can
  * do that with `npm run desktop -- build`.
+ * There is a plan for using desktop.asar built from omega:meteor-desktop-bundler so that you could
+ * avoid manual rebuild.
  */
 
 test.beforeEach(async t => {
