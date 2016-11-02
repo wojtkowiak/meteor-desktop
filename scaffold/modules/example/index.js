@@ -23,14 +23,14 @@ export default class Example {
         this.module = new Module(moduleJson.name);
 
         // Get the automatically predefined logger instance.
-        this.log = log.loggers.get(moduleJson.name);
+        this.log = log;
         this.eventsBus = eventsBus;
 
         // Never do time consuming or blocking things directly in the constructor.
-        // Instead hook to `afterLoading` or `beforeDesktopLoad` events.
+        // Instead hook to `afterLoading` or `beforeDesktopJsLoad` events.
         // This will also ensure plugins providing things like splash screens will be able
         // to start as quickly as possible.
-        this.eventsBus.on('afterLoading', () => {
+        this.eventsBus.on('desktopLoaded', () => {
             this.init();
         });
     }

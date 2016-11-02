@@ -36,10 +36,10 @@ export default class Desktop {
 
         process.on('uncaughtException', this.uncaughtExceptionHandler.bind(this));
 
-        // Chrome problems should also be handled. The `windowOpened` event has a `window`
-        // reference. This is the current Electron renderer process (Chrome) displaying your Meteor
-        // app.
-        eventsBus.on('windowOpened', (window) => {
+        // Chrome problems should also be handled. The `windowCreated` event has a `window`
+        // reference. This is the reference to the current Electron renderer process (Chrome)
+        // displaying your Meteor app.
+        eventsBus.on('windowCreated', (window) => {
             window.webContents.on('crashed', this.windowCrashedHandler.bind(this));
             window.on('unresponsive', this.windowUnresponsiveHandler.bind(this));
         });
@@ -93,9 +93,9 @@ export default class Desktop {
             { type: 'error', buttons: ['Restart', 'Shutdown'], title, message, detail: details },
             (response) => {
                 if (response === 0) {
-                    this.app.relaunch();
+                    app.relaunch();
                 }
-                this.app.exit(0);
+                app.exit(0);
             }
         );
     }

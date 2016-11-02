@@ -109,6 +109,7 @@ class App {
     /**
      * Checks whether this is a production build.
      * @returns {boolean}
+     * @api
      */
     isProduction() {
         return ('env' in this.settings && this.settings.env === 'prod');
@@ -136,6 +137,7 @@ class App {
     /**
      * Removes default uncaught exception listener.
      * But still leaves logging and emitting
+     * @api
      */
     removeUncaughtExceptionListener() {
         process.removeListener('uncaughtException', this.uncaughtExceptionHandler);
@@ -170,7 +172,7 @@ class App {
      */
     uncaughtExceptionHandler() {
         try {
-            this.window.close();
+            // this.window.close();
         } catch (e) {
             // Empty catch block... nasty...
         }
@@ -338,6 +340,7 @@ class App {
                 modules: this.modules,
                 Module
             });
+            this.modules.desktop = this.desktop;
             this.eventsBus.emit('desktopLoaded', this.desktop);
             this.l.debug('desktop loaded');
         } catch (e) {
@@ -378,11 +381,10 @@ class App {
 
         this.loadModules();
 
-        this.emit('beforeDesktopLoad');
+        this.emit('beforeDesktopJsLoad');
 
+        // desktopLoaded event in emitted from the inside of loadDesktopJs
         this.loadDesktopJs();
-
-        this.emit('afterLoading');
 
         this.localServer = this.modules.localServer;
 
@@ -462,7 +464,7 @@ class App {
         this.window = new BrowserWindow(windowSettings);
         this.webContents = this.window.webContents;
 
-        this.eventsBus.emit('windowOpened', this.window);
+        this.eventsBus.emit('windowCreated', this.window);
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event) => {

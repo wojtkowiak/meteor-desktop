@@ -16,7 +16,7 @@ export default class LoggerManager {
         this.fileLogConfiguration = {
             level: 'debug',
             filename: join($.userDataDir, 'run.log'),
-            handleExceptions: true,
+            handleExceptions: false,
             json: false,
             maxsize: 5242880, // 5MB
             maxFiles: 5,
@@ -24,7 +24,7 @@ export default class LoggerManager {
         };
         this.consoleLogConfiguration = {
             level: 'debug',
-            handleExceptions: true,
+            handleExceptions: false,
             json: false,
             colorize: true
         };

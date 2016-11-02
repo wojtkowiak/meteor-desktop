@@ -87,7 +87,7 @@ test('the test app', async t => await getApp(t));
 test.serial('if testEvent returns true for 1', async (t) => {
     const app = await getApp(t);
     await constructModule(app);
-    await fireEventsBusEventAndWaitForAnother(app, 'afterLoading', 'example.loaded');
+    await fireEventsBusEventAndWaitForAnother(app, 'desktopLoaded', 'example.loaded');
     const response = await fetch(app, 'example', 'testEvent', 1);
     // Fetch returns an array with the response event arguments.
     t.true(response[0]);
@@ -96,7 +96,7 @@ test.serial('if testEvent returns true for 1', async (t) => {
 test.serial('if testEvent returns false for 5', async (t) => {
     const app = await getApp(t);
     await constructModule(app);
-    await fireEventsBusEventAndWaitForAnother(app, 'afterLoading', 'example.loaded');
+    await fireEventsBusEventAndWaitForAnother(app, 'desktopLoaded', 'example.loaded');
     const response = await fetch(app, 'example', 'testEvent', 5);
     // Fetch returns an array with the response event arguments.
     t.false(response[0]);

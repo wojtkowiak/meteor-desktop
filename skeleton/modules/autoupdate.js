@@ -48,7 +48,7 @@ const { join } = path;
  */
 export default class HCPClient {
 
-    constructor({log, appSettings, eventsBus, settings, Module}) {
+    constructor({ log, appSettings, eventsBus, settings, Module }) {
         // Get the automatically predefined logger instance.
         this.log = log;
 
@@ -64,10 +64,10 @@ export default class HCPClient {
         this.eventsBus = eventsBus;
 
         // We want this to be initialized before loading the desktop part.
-        this.eventsBus.on('beforeDesktopLoad', this.init.bind(this));
+        this.eventsBus.on('beforeDesktopJsLoad', this.init.bind(this));
 
         // We will need a reference to the BrowserWindow object once it will be available.
-        this.eventsBus.on('windowOpened', (window) => {
+        this.eventsBus.on('windowCreated', (window) => {
             this.window = window;
             // Start the startup timer.
             this.startStartupTimer();
@@ -553,14 +553,13 @@ export default class HCPClient {
                         `(${this.appSettings.compatibilityVersion} != ` +
                         `${desktopVersion.compatibilityVersion})`);
                     return false;
-                } else {
-                    this.log.warn('Allowing download of new meteor app version with ' +
-                        'potentially incompatible .desktop. (ignoreCompatibilityVersion)');
-                    this.notifyWarning('Allowing download of new meteor app version with ' +
-                        'potentially incompatible .desktop. (ignoreCompatibilityVersion)' +
-                        `(${this.appSettings.compatibilityVersion} != ` +
-                        `${desktopVersion.compatibilityVersion})`);
                 }
+                this.log.warn('Allowing download of new meteor app version with ' +
+                    'potentially incompatible .desktop. (ignoreCompatibilityVersion)');
+                this.notifyWarning('Allowing download of new meteor app version with ' +
+                    'potentially incompatible .desktop. (ignoreCompatibilityVersion)' +
+                    `(${this.appSettings.compatibilityVersion} != ` +
+                    `${desktopVersion.compatibilityVersion})`);
             }
         }
         return true;

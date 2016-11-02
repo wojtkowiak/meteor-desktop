@@ -28,7 +28,7 @@
                 "height": 600
             }
         },
-        "meteor-desktop-localstorage": "0.0.10"
+        "meteor-desktop-localstorage": "0.0.11"
     },
     "dependencies": {},
     "packageJsonFields": {

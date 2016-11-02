@@ -40,7 +40,7 @@ To make it clear from the start, this is a **desktop client** - it is just like 
 
 If you have ever been using any `Cordova` plugins before you will find this approach alike. In `Cordova` every plugin exposes its native code through a JS api available in some global namespace like `cordova.plugins`. The approach used here is similar.
 
-In `Electron` app, there are two processes running along in your app. The so-called `main process` and `renderer process`. Main process is just a JS code executed in `node`, and the renderer is a `Chromium` process. In this integration your `Meteor` app is run in a the `renderer` process and your desktop specific code runs in the `main` process. They are communicating through IPC events. Basically the desktop side publishes its API as an IPC event listeners. In your `Meteor` code, calling it is a simple as `Desktop.send('module', 'event');`.  
+In `Electron` app, there are two processes running along in your app. The so-called `main process` and `renderer process`. Main process is just a JS code executed in `node`, and the renderer is a `Chromium` process. In this integration your `Meteor` app is run in the `renderer` process and your desktop specific code runs in the `main` process. They are communicating through IPC events. Basically the desktop side publishes its API as an IPC event listeners. In your `Meteor` code, calling it is a simple as `Desktop.send('module', 'event');`.  
 
 Code on the desktop side is preferred to be modular - that is just for simplifying testing and encapsulating functionalities into independent modules. However you do not have to follow this style, there is an `import` dir in which you can structure your code however you want. The basics of an `Electron` app are already in place (reffered as `Skeleton App`) and your code is loaded like a plugin to it.
 
@@ -72,24 +72,29 @@ To do that run: (assuming `npm install --save-dev meteor-desktop` did add a `des
 ```bash
 npm run desktop -- init
 ```
+
 This will generate an exemplary `.desktop` dir. Lets take a look what we can find there:
 ```
-    assets              <dir> # place all your assets here
-    import              <dir> # all code you do not want to structure into modules  
-    modules             <dir> # your desktop modules (check modules section for explanation)
-      example           <dir> # module example
-        index.js              # entrypoint of the example module
-        example.test.js       # functional test for the example module
-        module.json           # module configuration  
-    desktop.js                # your Electron main process entry point - treated like a module
-    desktop.test.js           # functional test for you desktop app
-    settings.json             # your app settings
-    squirrelEvents.js         # handling of squirrel.windows events
+.desktop
+├── assets                     # place all your assets here
+├── import                     # all code you do not want to structure into modules  
+├── modules                    # your desktop modules (check modules section for explanation)
+│    └── example               # module example
+│         ├── index.js         #  entrypoint of the example module
+│         ├── example.test.js  # functional test for the example module
+│         └── module.json      # module configuration  
+├── desktop.js                 # your Electron main process entry point - treated like a module
+├── desktop.test.js            # functional test for you desktop app
+├── settings.json              # your app settings
+└── squirrelEvents.js          # handling of squirrel.windows events
 ```
 
 Tak a look into the files. Most of them have meaningful comments inside.
 
 ### settings.json
+
+This is the main configuration file for your desktop app.
+Below you can find brief descriptions of the fields. 
 
 field|description
 -----|-----------
@@ -100,26 +105,100 @@ field|description
 `devtron`|check whether to install `devtron`, set automatically to false when building with `--production`, [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#devtron)
 `desktopHCP`|whether to use `.desktop` hot code push module - [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#desktophcp---desktop-hot-code-push-module)
 <sup>`desktopHCPIgnoreCompatibilityVersion`</sup>|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
-`autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
+`autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#desktophcp---desktop-hot-code-push-module)
 `autoUpdateFeedHeaders`|http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
 `autoUpdateCheckOnStart`|whether to check for updates on app start
-`rebuildNativeNodeModules`|turn on or off recompiling native modules -> [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#native-modules-support)
+`rebuildNativeNodeModules`|turn on or off recompiling native modules, [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#native-modules-support)
 `webAppStartupTimeout`|amount of time after which the downloaded version is considered faulty if Meteor app did not start - [more](https://github.com/wojtkowiak/meteor-desktop/tree/master#hot-code-push-support)
-`window`|Production options for the main window - see [here](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
-`windowDev`|Development options for the main window, applied on to of production options
+`window`|production options for the main window - see [here](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
+`windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify
-`plugins`|npm packages that are meteor-desktop plugins
-`dependencies`|the same like in `package.json`
+`plugins`|meteor-desktop plugins list
+`dependencies`|npm dependencies of your desktop app, the same like in `package.json`
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
-`builderOptions`|
-`packagerOptions`|
+`builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
+`packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
+
+### desktop.js
+
+The `desktop.js` is the entrypoint of your desktop app. Let's take a look what references we 
+receive in the constructor.
+```javascript
+     * @param {Object} log         - Winston logger instance
+     * @param {Object} skeletonApp - reference to the skeleton app instance
+     * @param {Object} appSettings - settings.json contents
+     * @param {Object} eventsBus   - event emitter for listening or emitting events
+     *                               shared across skeleton app and every module/plugin
+     * @param {Object} modules     - references to all loaded modules
+     * @param {Object} Module      - reference to the Module class
+     * @constructor
+     */
+    constructor({ log, skeletonApp, appSettings, eventsBus, modules, Module })
+```
+
+#### `skeletonApp`
+
+This is a reference to the Skeleton App. Currently there are only two methods you can call.
+`isProduction` - whether this is a production build
+`removeUncaughtExceptionListener` - removes the default handler so you can put your own in place
+
+#### `eventsBus`
+
+This is just an `EventEmitter` that is an event bus meant to be used across all entities running 
+in the `Electron`'s main process (`desktop`). Currently there are several events emitted on the 
+bus byt the Skeleton App that you may find useful:
+
+event name|payload|description
+----------|-------|------------
+`unhandledException`| |emitted on any unhandled exceptions, by hooking to it you can run code before any other handler will be executed   
+`desktopLoaded`|`(desktop)`|emitted after loading `desktop.js`, carries the desktop class reference
+`startupFailed`| |emitted when the Skeleton App could not start you Meteor app  
+`loadingFinished`| |emitted when the Meteor App finished loading (also after HCP reload)  
+`beforeLoadFinish`| |emitted when the Meteor App finished loading, but just before the window is shown  
+`windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (Chrome window with Meteor app) is  created, passes a reference to this window 
+`newVersionReady|`(version)`|emitted when a new Meteor bundle was downloaded and is ready to be applied  
+`revertVersionReady`|`(version)`|emitted just before the Meteor app version will be reverted (due to faulty version fallback mechanism) be applied  
+`beforePluginsLoad`| |emitted before plugins are loaded
+`beforeModulesLoad`| |emitted before modules from `.desktop` are loaded
+`beforeDesktopJsLoad`| |emitted before `desktop.js` is loaded
+`desktopLoaded`| |emitted after loading of plugins, modules and desktop.js 
+`afterInitialization`| |emitted after initialization of internal modules like HCP and local HTTP server
+
+Your can also emit events on this bus as well. A good practice is to namespace them like 
+i.e. `myModule.initalized`.
+
+#### `modules`
+
+Object with references to other modules and plugins. Plugins are under their name i.e. 
+`modules['meteor-desktop-splash-screen]`. Modules are under the name from `module.json`. 
+Internal modules such as `autoupdate` and `localServer` are also there. You can also get 
+reference to the `desktop.js` by `modules['desktop']` (the reference is also passed in the 
+`desktopLoaded` event).
+
+### Writing modules
+
+
+
 
 ### Hot code push support
 https://guide.meteor.com/mobile.html#recovering-from-faulty-versions
 
 ### How to write plugins
 
-Plugin is basically a module exported to a npm package.
+Plugin is basically a module exported to a npm package. `module.json` is not needed and not taken
+ into account because `name` and `dependencies` are already in `package.json`.  
+#### `meteorDependencies` in `package.json` 
+One extra feature is that you can also depend on Meteor packages through `meteorDependencies` 
+field in `package.json`. Check out [`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/package.json#L52) for example.  
+A good practice when your plugin contains a meteor plugin is to publish both at the same version. 
+You can then use `@version` in the `meteorDependecies` to indicate that the Meteor plugin's 
+version should be equal to npm package version.
+
+If you made a plugin, please let us know so that it can be listed here.
+##### List of known plugins:
+[`meteor-desktop-splashscreen`](https://github.com/wojtkowiak/meteor-desktop-splash-screen)  
+[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)
+
 
 ### Squirrel autoupdate support
 
@@ -132,6 +211,11 @@ If you have any of those in your dependencies, or you know that one of the packa
 
 ### Devtron
 
-[`Devtron`](http://electron.atom.io/devtron/) is installed and activated by default. It is automatically removed when building with `--production`.
+[`Devtron`](http://electron.atom.io/devtron/) is installed and activated by default. It is 
+automatically removed when building with `--production`. As the communication between your Meteor
+ app and the desktop side goes through IPC, this tool can be very handy because it can sniff on  
 
-#### desktopHCP - `.desktop` hot code push module
+### desktopHCP - `.desktop` hot code push module
+
+### Testing desktop app and modules
+

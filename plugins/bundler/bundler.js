@@ -155,7 +155,11 @@ class MeteorDesktopBundler {
         // Plugins are also a npm packages.
         if ('plugins' in settings) {
             dependencies.plugins = Object.keys(settings.plugins).reduce((plugins, plugin) => {
-                plugins[plugin] = settings.plugins[plugin].version;
+                if (typeof settings.plugins[plugin] === 'object') {
+                    plugins[plugin] = settings.plugins[plugin].version;
+                } else {
+                    plugins[plugin] = settings.plugins[plugin];
+                }
                 return plugins;
             }, {});
         }
@@ -230,8 +234,7 @@ class MeteorDesktopBundler {
      */
     processFilesForTarget(files) {
         let inputFile = null;
-        let requireLocal;
-
+        let requireLocal = null;
         files.forEach((file) => {
             if (file.getArch() === 'web.cordova') {
                 if (file.getPackageName() === 'omega:meteor-desktop-bundler' &&
@@ -317,8 +320,10 @@ class MeteorDesktopBundler {
             };
 
             const scaffold = new ElectronAppScaffold(context);
+            console.log(scaffold.getDefaultPackageJson().dependencies);
             const depsManager = new DependenciesManager(
                 context, scaffold.getDefaultPackageJson().dependencies);
+            console.log(depsManager.dependencies);
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
