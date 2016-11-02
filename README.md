@@ -156,7 +156,7 @@ event name|payload|description
 `loadingFinished`| |emitted when the Meteor App finished loading (also after HCP reload)  
 `beforeLoadFinish`| |emitted when the Meteor App finished loading, but just before the window is shown  
 `windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (Chrome window with Meteor app) is  created, passes a reference to this window 
-`newVersionReady|`(version)`|emitted when a new Meteor bundle was downloaded and is ready to be applied  
+`newVersionReady`|`(version)`|emitted when a new Meteor bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the Meteor app version will be reverted (due to faulty version fallback mechanism) be applied  
 `beforePluginsLoad`| |emitted before plugins are loaded
 `beforeModulesLoad`| |emitted before modules from `.desktop` are loaded
