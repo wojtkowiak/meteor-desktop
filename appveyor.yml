@@ -2,11 +2,6 @@ build: off
 
 os: unstable
 
-branches:
-  only:
-    - master
-    - beta
-
 skip_tags: true
 
 environment:
