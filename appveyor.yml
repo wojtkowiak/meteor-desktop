@@ -9,7 +9,6 @@ environment:
 
 cache:
   - node_modules -> package.json
-  - '%HOMEPATH%\AppData\Local\.meteor'
 
 install:
  # Download Meteor
@@ -18,6 +17,7 @@ install:
   - ps: Start-FileDownload 'https://s3.amazonaws.com/meteor-windows/InstallMeteor.exe'
   # Install meteor
   - .\installMeteor.exe /passive
+  - cmd: cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
   # Restart
   - ps: Start-Sleep -s 5
   - ps: Restart-Computer -Force
