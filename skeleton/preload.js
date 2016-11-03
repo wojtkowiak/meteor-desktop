@@ -11,19 +11,6 @@
 const _ = require('lodash');
 const ipc = require('electron').ipcRenderer;
 
-let devtron = null;
-try {
-    devtron = require('devtron'); // eslint-disable-line global-require
-
-    window.__devtron = { require, process }; // eslint-disable-line no-underscore-dangle
-} catch (e) {
-    // If that fails, then probably this is production build and devtron is not available.
-}
-
-if (process.env.NODE_ENV === 'test' && typeof window !== 'undefined') {
-    window.electronRequire = require;
-}
-
 /**
  * Callback passed to ipc on/once methods.
  *
@@ -38,7 +25,6 @@ if (process.env.NODE_ENV === 'test' && typeof window !== 'undefined') {
 const Desktop = new (class {
 
     constructor() {
-        this.devtron = devtron;
         this.onceEventListeners = {};
         this.eventListeners = {};
         this.registeredInIpc = {};
@@ -216,7 +202,24 @@ const Desktop = new (class {
 
 })();
 
-/**
- * @global
- */
-global.Desktop = Desktop;
+
+process.once('loaded', () => {
+    let devtron = null;
+
+    try {
+        devtron = require('devtron'); // eslint-disable-line global-require
+        global.__devtron = { require, process }; // eslint-disable-line no-underscore-dangle
+    } catch (e) {
+        // If that fails, then probably this is production build and devtron is not available.
+    }
+    if (process.env.NODE_ENV === 'test') {
+        global.electronRequire = require;
+        global.process = process;
+    }
+
+    /**
+     * @global
+     */
+    Desktop.devtron = devtron;
+    global.Desktop = Desktop;
+});
