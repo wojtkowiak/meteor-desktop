@@ -26,10 +26,8 @@ before_install:
 
 script:
     - npm test
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-            npm run prepare-integration-tests;
-            npm run test-integration;
-        fi
+    - npm run prepare-integration-tests
+    - npm run test-integration
 
 after_success:
   - npm run coverage

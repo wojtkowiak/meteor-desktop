@@ -8,3 +8,4 @@ npm-debug*
 coverage
 .nyc_output
 *.lcov
+version

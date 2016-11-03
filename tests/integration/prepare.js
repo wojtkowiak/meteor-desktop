@@ -15,8 +15,6 @@ shell.exec('meteor create test-desktop --release=METEOR@1.4.2', { cwd: testsTmpP
 
 const appDir = path.join(testsTmpPath, 'test-desktop');
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8'));
-const packages = Object.keys(packageJson.dependencies).map(
-    dep => `${dep}@${packageJson.dependencies[dep]}`).join(' ');
-console.log(`npm install ${packages}`);
+console.log(`npm install`);
 //shell.exec(`meteor npm install ${packages}`, { cwd: appDir });
 shell.exec(`meteor npm install ../../..`, { cwd: appDir });
