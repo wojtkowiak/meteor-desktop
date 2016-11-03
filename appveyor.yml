@@ -28,6 +28,6 @@ test_script:
   - npm --version
   - meteor --version
   - npm test
-  - npm run prepare-integration-test
+  - npm run prepare-integration-tests
   - npm run test-integration
 
