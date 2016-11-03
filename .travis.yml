@@ -20,9 +20,9 @@ before_install:
             sh -e /etc/init.d/xvfb start;
             export CXX=g++-4.8;
             sleep 8;
+            curl https://install.meteor.com | /bin/sh;
+            export PATH="$HOME/.meteor:$PATH";
       fi
-    - curl https://install.meteor.com | /bin/sh
-    - export PATH="$HOME/.meteor:$PATH"
 
 script:
     - npm test
