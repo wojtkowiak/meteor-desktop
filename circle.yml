@@ -5,9 +5,14 @@ machine:
 dependencies:
   pre:
     - npm install -g npm@3.x.x
+  cache_directories:
+    - ~/.meteor
   override:
+    - meteor || curl https://install.meteor.com | /bin/sh
     - npm install
 
 test:
   override:
     - npm test
+    - npm run prepare-integration-tests
+    - npm run test-integration
