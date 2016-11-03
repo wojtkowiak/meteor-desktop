@@ -20,14 +20,16 @@ before_install:
             sh -e /etc/init.d/xvfb start;
             export CXX=g++-4.8;
             sleep 8;
-        fi
+      fi
     - curl https://install.meteor.com | /bin/sh
     - export PATH="$HOME/.meteor:$PATH"
 
 script:
     - npm test
-    - npm run prepare-integration-tests
-    - npm run test-integration
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+            npm run prepare-integration-tests;
+            npm run test-integration;
+      fi
 
 after_success:
   - npm run coverage
