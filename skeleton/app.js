@@ -74,7 +74,7 @@ class App {
             process.env.NODE_ENV = 'production';
         } else {
             require('electron-debug')({
-                showDevTools: true,
+                showDevTools: process.env.ELECTRON_ENV !== 'test',
                 enabled: (this.settings.devTools !== undefined) ? this.settings.devTools : true
             });
         }
@@ -462,6 +462,8 @@ class App {
         assignIn(windowSettings, this.settings.window);
 
         this.window = new BrowserWindow(windowSettings);
+        this.window.on('closed', () => { this.window = null; });
+
         this.webContents = this.window.webContents;
 
         this.eventsBus.emit('windowCreated', this.window);
