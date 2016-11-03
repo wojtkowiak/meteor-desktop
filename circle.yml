@@ -5,9 +5,15 @@ machine:
 dependencies:
   pre:
     - npm install -g npm@3.x.x
+    - sudo sysctl fs.inotify.max_user_watches=524288
+  cache_directories:
+    - ~/.meteor
   override:
+    - meteor || curl https://install.meteor.com | /bin/sh
     - npm install
 
 test:
   override:
     - npm test
+    - npm run prepare-integration-tests
+    - npm run test-integration

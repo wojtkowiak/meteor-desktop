@@ -15,7 +15,7 @@
         "__METEOR_DESKTOP_BUNDLER": true
     },
     "parserOptions": {
-        "ecmaVersion": 2017,
+        "ecmaVersion": 7,
         "sourceType": "module"
     },
     "settings": {
@@ -53,6 +53,8 @@
             {
                 "devDependencies": [
                     "**/*.test.js",
+                    "**/scaffold/**/*.test.js",
+                    "**/integration/**/*.js",
                     "**/helpers/**/*.js",
                     "**/skeleton/**/*.js"
                 ]

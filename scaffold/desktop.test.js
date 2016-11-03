@@ -14,17 +14,18 @@ import { Application } from 'spectron';
  * avoid manual rebuild.
  */
 
-test.beforeEach(async t => {
+test.beforeEach(async (t) => {
     // Before each test we will spawn a new desktop app instance.
     t.context.app = new Application({
         path: electron,
+        requireName: 'electronRequire',
         args: [path.join(__dirname, '..', '.meteor', 'desktop-build')],
-        env: { ELECTRON_ENV: 'test', METEOR_DESKTOP_NO_SPLASH_SCREEN: 1 }
+        env: { NODE_ENV: 'test', ELECTRON_ENV: 'test', METEOR_DESKTOP_NO_SPLASH_SCREEN: 1 }
     });
     await t.context.app.start();
 });
 
-test.afterEach.always(async t => {
+test.afterEach.always(async (t) => {
     // Kill the app after the test.
     if (t.context.app && t.context.app.isRunning()) {
         await t.context.app.stop();
@@ -42,17 +43,6 @@ test.afterEach.always(async t => {
 function sendModuleEvent(app, module, event, ...args) {
     args.unshift(`${module}__${event}`);
     return app.electron.ipcRenderer.send.apply(app.electron.ipcRenderer, args);
-}
-
-/**
- * Waits...
- * @param {number} ms - milliseconds to wait
- * @returns {Promise}
- */
-function wait(ms) {
-    return new Promise((resolve) => {
-        setTimeout(() => resolve(), ms);
-    });
 }
 
 /**
@@ -76,14 +66,14 @@ function waitFor(functionReturningPromise, ms = 10000) {
                         invokerTimeout = setTimeout(invokeFunction, 500);
                     }
                 })
-                .catch(e => {
-                    invokerTimeout = setTimeout(invokeFunction, 500)
+                .catch(() => {
+                    invokerTimeout = setTimeout(invokeFunction, 500);
                 });
         invokeFunction();
         timeout = setTimeout(() => {
             clearTimeout(invokerTimeout);
             reject('timeout expired on waitFor');
-        }, ms)
+        }, ms);
     });
 }
 
@@ -98,11 +88,16 @@ async function waitForApp(t) {
     const window = app.browserWindow;
     // Wait for the main window for max 30seconds. Adjust to your app.
     await waitFor(window.isVisible, 30000);
-    t.is(await app.client.getWindowCount(), 2);
+    t.is(await app.client.getWindowCount(), 1);
+    await app.client.waitUntil(
+        async () => await app.client.execute(
+            () => document.readyState === 'complete'
+        )
+    );
     return { app, window };
 }
 
-test.serial('if app can be closed', async t => {
+test.serial('if app can be closed', async (t) => {
     const { app, window } = await waitForApp(t);
     await sendModuleEvent(app, 'desktop', 'closeApp');
     t.true(await app.client.getWindowCount() === 0);
@@ -112,7 +107,7 @@ test.serial('if app can be closed', async t => {
 });
 
 // Empty test.
-test.serial(async t => {
+test.serial('if window title is set properly', async (t) => {
     const { app, window } = await waitForApp(t);
 
     // Your assertions...
