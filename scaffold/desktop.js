@@ -54,7 +54,7 @@ export default class Desktop {
     windowCrashedHandler() {
         this.displayRestartDialog(
             'Application has crashed',
-            'Do you want to restart it?',
+            'Do you want to restart it?'
         );
     }
 
@@ -64,7 +64,7 @@ export default class Desktop {
     windowUnresponsiveHandler() {
         this.displayRestartDialog(
             'Application is not responding',
-            'Do you want to restart it?',
+            'Do you want to restart it?'
         );
     }
 
@@ -88,7 +88,7 @@ export default class Desktop {
      * @param {string} message - message shown in the dialog
      * @param {string} details - additional details to be displayed
      */
-    displayRestartDialog(title, message, details = null) {
+    displayRestartDialog(title, message, details = '') {
         dialog.showMessageBox(
             { type: 'error', buttons: ['Restart', 'Shutdown'], title, message, detail: details },
             (response) => {
