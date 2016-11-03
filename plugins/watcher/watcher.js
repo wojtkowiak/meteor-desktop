@@ -45,7 +45,10 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     const hash = Npm.require('hash-files');
     const versionFile = path.join(rootPath, 'version.desktop');
 
-    const version = Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version;
+
+    const version =
+        typeof Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION === 'object' ?
+        Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version : null;
 
     if (version) {
         try {
