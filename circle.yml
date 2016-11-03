@@ -5,6 +5,7 @@ machine:
 dependencies:
   pre:
     - npm install -g npm@3.x.x
+    - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
   cache_directories:
     - ~/.meteor
   override:
