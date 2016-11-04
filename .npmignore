@@ -17,3 +17,4 @@ meteor-desktop.png
 coverage
 .nyc_output
 plugins
+gh-md-toc
