@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import test from 'ava';
 import { Application } from 'spectron';
 import path from 'path';
@@ -5,7 +6,7 @@ import fs from 'fs';
 import shell from 'shelljs';
 import electron from 'electron';
 import {
-    constructModule, createTestAppWithModule, send, fetch,
+    constructModule, createTestAppWithModule, fetch,
     fireEventsBusEventAndWaitForAnother
 } from
     'meteor-desktop-test-suite';
@@ -58,7 +59,7 @@ test.after(
 
 test.beforeEach(async (t) => {
     // Every test start a new instance of the test app.
-    t.context.app = new Application({
+    t.context.app = new Application({ // eslint-disable-line no-param-reassign
         path: electron,
         args: [appDir],
         env: { ELECTRON_ENV: 'test' }
@@ -78,6 +79,7 @@ test.afterEach.always(async (t) => {
         );
         fs.unlinkSync(errorFile);
     } catch (e) {
+        // No error.txt present. That's good!
     }
 
     if (t.context.app && t.context.app.isRunning()) {

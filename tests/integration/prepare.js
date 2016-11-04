@@ -1,7 +1,7 @@
+/* eslint-disable no-console */
 require('reify');
-const shell = require('shelljs');
+const shell = require('shelljs/global');
 const path = require('path');
-const fs = require('fs');
 
 const testsPath = path.resolve(path.join(__dirname, '..', '..', 'tests'));
 const testsTmpPath = path.resolve(path.join(testsPath, '.__tmp'));
@@ -12,9 +12,6 @@ console.log('creating test dir');
 shell.mkdir('-p', testsTmpPath);
 console.log('creating test meteor app');
 shell.exec('meteor create test-desktop --release=METEOR@1.4.2', { cwd: testsTmpPath });
-
 const appDir = path.join(testsTmpPath, 'test-desktop');
-const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8'));
-console.log(`npm install`);
-//shell.exec(`meteor npm install ${packages}`, { cwd: appDir });
-shell.exec(`meteor npm install ../../..`, { cwd: appDir });
+console.log('npm install');
+shell.exec('meteor npm install ../../..', { cwd: appDir });

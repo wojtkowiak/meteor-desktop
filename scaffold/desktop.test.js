@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import test from 'ava';
 import electron from 'electron';
 import path from 'path';
@@ -42,7 +43,7 @@ test.afterEach.always(async (t) => {
  */
 function sendModuleEvent(app, module, event, ...args) {
     args.unshift(`${module}__${event}`);
-    return app.electron.ipcRenderer.send.apply(app.electron.ipcRenderer, args);
+    return app.electron.ipcRenderer.send(...args);
 }
 
 /**
@@ -98,7 +99,7 @@ async function waitForApp(t) {
 }
 
 test.serial('if app can be closed', async (t) => {
-    const { app, window } = await waitForApp(t);
+    const { app, window } = await waitForApp(t); // eslint-disable-line no-unused-vars
     await sendModuleEvent(app, 'desktop', 'closeApp');
     t.true(await app.client.getWindowCount() === 0);
 
@@ -108,7 +109,7 @@ test.serial('if app can be closed', async (t) => {
 
 // Empty test.
 test.serial('if window title is set properly', async (t) => {
-    const { app, window } = await waitForApp(t);
+    const { app, window } = await waitForApp(t); // eslint-disable-line no-unused-vars
 
     // Your assertions...
 

@@ -1,4 +1,4 @@
-// eslint-disable no-console
+/* eslint-disable no-console */
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
@@ -21,9 +21,7 @@ const { expect } = chai;
 
 /**
  * This is first experimental integration test.
- * @type {string}
  */
-
 
 let appDir = '';
 
@@ -157,7 +155,6 @@ describe('desktop', () => {
             expect(title).to.equal('test-desktop');
             const text = await app.client.getText('h1');
             expect(text).to.equal('Welcome to Meteor!');
-
         }).timeout(10 * 60000);
     });
 });

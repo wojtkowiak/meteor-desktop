@@ -13,7 +13,7 @@
     "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
     "test-integration": "mocha -t 10000 --compilers js:babel-core/register \"tests/+(integration)/**/*.test.js\"",
     "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:babel-core/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
-    "lint": "eslint -c .eslintrc **/*.js",
+    "lint": "eslint lib plugins scaffold skeleton tests",
     "prepare-integration-tests": "node tests/integration/prepare.js",
     "coverage-html": "nyc report --reporter=lcov",
     "coverage": "nyc report --reporter=text-lcov | coveralls",

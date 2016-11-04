@@ -8,7 +8,6 @@ import fs from 'fs-plus';
 
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
-import winston from 'winston';
 import Module from './modules/module';
 import LoggerManager from './loggerManager';
 import DesktopPathResolver from './desktopPathResolver';

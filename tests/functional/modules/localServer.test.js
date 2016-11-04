@@ -26,11 +26,10 @@ function getLocalServer(path) {
     return new Promise((resolve, reject) => {
         const localServer = new LocalServer({
             log: {
-                    warn() {},
-                    info() {}
-                }
+                warn() {},
+                info() {}
             }
-        );
+        });
         function onStartupFailed() {
             reject();
         }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import moduleJson from './module.json';
 
 /**
@@ -17,7 +18,8 @@ export default class Example {
     constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
         /**
          * You can delete unused vars from the param destructuring.
-         * Left them here just to emphasize what is passed.
+         * Left them here just to emphasize what is passed. Delete the eslint rule at the top
+         * when done.
          * You can also just have a one `config` param and do `Object.assign(this, config);`
          */
         this.module = new Module(moduleJson.name);

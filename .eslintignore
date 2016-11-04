@@ -1,1 +1,4 @@
 **/*{.,-}min.js
+tests/.__tmp
+tests/fixtures
+plugins/bundler/version._desktop_.js

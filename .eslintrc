@@ -15,7 +15,7 @@
         "__METEOR_DESKTOP_BUNDLER": true
     },
     "parserOptions": {
-        "ecmaVersion": 7,
+        "ecmaVersion": 8,
         "sourceType": "module"
     },
     "settings": {
@@ -26,7 +26,9 @@
             "electron-debug",
             "rimraf",
             "process",
-            "devtron"
+            "devtron",
+            "ava",
+            "meteor-desktop-test-suite"
         ]
     },
     "rules": {

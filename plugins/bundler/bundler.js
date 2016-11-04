@@ -1,7 +1,7 @@
 /* eslint-disable no-console, no-param-reassign */
 const fs = Plugin.fs;
 const path = Plugin.path;
-const versionFile = './version.desktop';
+const versionFilePath = './version.desktop';
 const Future = Npm.require('fibers/future');
 const md5 = Npm.require('md5');
 
@@ -27,8 +27,8 @@ function addToGitIgnore() {
     }
 }
 
-if (!fs.existsSync(versionFile)) {
-    fs.writeFileSync(versionFile, JSON.stringify({
+if (!fs.existsSync(versionFilePath)) {
+    fs.writeFileSync(versionFilePath, JSON.stringify({
         version: 'initial',
     }, null, 2), 'UTF-8');
     addToGitIgnore();

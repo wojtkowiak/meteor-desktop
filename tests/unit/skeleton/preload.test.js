@@ -215,7 +215,7 @@ describe('Desktop', () => {
 
             const callback = sinon.stub();
             const someObject = { someProp: 'test' };
-            let callback2 = function () {
+            let callback2 = function Callback2() {
                 expect(this.someProp).to.equal('test');
             };
             callback2 = callback2.bind(someObject);

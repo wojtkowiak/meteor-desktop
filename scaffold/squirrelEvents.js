@@ -19,7 +19,7 @@ export default class SquirrelEvents {
     /**
      * Invoked on first run.
      */
-    firstRun() {
+    firstRun() { // eslint-disable-line class-methods-use-this
     }
 
     /**

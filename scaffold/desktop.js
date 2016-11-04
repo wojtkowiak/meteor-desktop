@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import process from 'process';
 import { app, dialog } from 'electron';
 
@@ -20,7 +21,8 @@ export default class Desktop {
     constructor({ log, skeletonApp, appSettings, eventsBus, modules, Module }) {
         /**
          * You can delete unused var from the param destructuring.
-         * Left them here just to emphasize what is passed.
+         * Left them here just to emphasize what is passed. Delete the eslint rule at the top
+         * when done.
          * You can also just have a one `config` param and do `Object.assign(this, config);`
          */
         const desktop = new Module('desktop');
@@ -34,14 +36,14 @@ export default class Desktop {
         // Lets remove the default handler and replace it with ours.
         skeletonApp.removeUncaughtExceptionListener();
 
-        process.on('uncaughtException', this.uncaughtExceptionHandler.bind(this));
+        process.on('uncaughtException', Desktop.uncaughtExceptionHandler);
 
         // Chrome problems should also be handled. The `windowCreated` event has a `window`
         // reference. This is the reference to the current Electron renderer process (Chrome)
         // displaying your Meteor app.
         eventsBus.on('windowCreated', (window) => {
-            window.webContents.on('crashed', this.windowCrashedHandler.bind(this));
-            window.on('unresponsive', this.windowUnresponsiveHandler.bind(this));
+            window.webContents.on('crashed', Desktop.windowCrashedHandler);
+            window.on('unresponsive', Desktop.windowUnresponsiveHandler);
         });
 
         // Consider setting a crash reporter ->
@@ -51,8 +53,8 @@ export default class Desktop {
     /**
      * Window crash handler.
      */
-    windowCrashedHandler() {
-        this.displayRestartDialog(
+    static windowCrashedHandler() {
+        Desktop.displayRestartDialog(
             'Application has crashed',
             'Do you want to restart it?'
         );
@@ -61,8 +63,8 @@ export default class Desktop {
     /**
      * Window's unresponsiveness handler.
      */
-    windowUnresponsiveHandler() {
-        this.displayRestartDialog(
+    static windowUnresponsiveHandler() {
+        Desktop.displayRestartDialog(
             'Application is not responding',
             'Do you want to restart it?'
         );
@@ -72,10 +74,10 @@ export default class Desktop {
      * JS's uncaught exception handler.
      * @param {string} error - error message
      */
-    uncaughtExceptionHandler(error) {
+    static uncaughtExceptionHandler(error) {
         // Consider sending a log somewhere, it is good be aware your users are having problems,
         // right?
-        this.displayRestartDialog(
+        Desktop.displayRestartDialog(
             'Application encountered an error',
             'Do you want to restart it?',
             error
@@ -88,7 +90,7 @@ export default class Desktop {
      * @param {string} message - message shown in the dialog
      * @param {string} details - additional details to be displayed
      */
-    displayRestartDialog(title, message, details = '') {
+    static displayRestartDialog(title, message, details = '') {
         dialog.showMessageBox(
             { type: 'error', buttons: ['Restart', 'Shutdown'], title, message, detail: details },
             (response) => {

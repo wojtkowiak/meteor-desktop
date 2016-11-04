@@ -5,7 +5,7 @@ import dirty from 'dirty-chai';
 import LocalServer from '../../../skeleton/modules/localServer';
 
 chai.use(dirty);
-const {expect} = chai;
+const { expect } = chai;
 
 let localServer;
 let localServerPort;

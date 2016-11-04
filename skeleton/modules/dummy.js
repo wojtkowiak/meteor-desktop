@@ -5,11 +5,11 @@
  * @type {Module}
  */
 
-import Module from './module.js';
+import Module from './module';
 
 const dummy = new Module('dummyModule');
 
 // Nothing to do here since Module is already setting this reference for us.
 dummy.on('setRendererReference', Function.prototype);
 
-export default function Dummy() {};
+export default function Dummy() {}
