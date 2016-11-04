@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 require('reify');
-const shell = require('shelljs/global');
+const shell = require('shelljs');
 const path = require('path');
 
 const testsPath = path.resolve(path.join(__dirname, '..', '..', 'tests'));
