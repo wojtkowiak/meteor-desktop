@@ -8,6 +8,7 @@ import path from 'path';
 import shell from 'shelljs';
 import electron from 'electron';
 import { Application } from 'spectron';
+import mockery from 'mockery';
 
 import paths from '../helpers/paths';
 import meteorDesktop from '../../lib/index';
@@ -94,20 +95,29 @@ describe('desktop', () => {
 
     describe('add to scripts', () => {
         let exitStub;
-        let cwdStub;
+
+        before(() => {
+            mockery.registerMock('path', {
+                resolve: dir => dir,
+                join: () => `${appDir}${path.sep}package.json`
+            });
+            mockery.enable({
+                warnOnReplace: false,
+                warnOnUnregistered: false
+            });
+        });
+        after(() => {
+            mockery.deregisterMock('path');
+            mockery.disable();
+            exitStub.restore();
+        });
+
         it('should add a `desktop` entry in package.json', () => {
             exitStub = sinon.stub(process, 'exit');
-            cwdStub = sinon.stub(process, 'cwd');
-            cwdStub.returns(appDir);
             require('../../lib/scripts/addToScripts'); // eslint-disable-line
             const packageJson = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
             expect(exitStub).to.have.callCount(0);
             expect(packageJson.scripts.desktop).to.be.equal('meteor-desktop');
-        });
-
-        after(() => {
-            exitStub.restore();
-            cwdStub.restore();
         });
     });
 
