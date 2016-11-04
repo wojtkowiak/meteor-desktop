@@ -1,15 +1,13 @@
 // This was inspiried by
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
 
-/**
- * Since we've disabled Node integration in the Browser window, we must selectively expose
- * main-process/Node modules via this script.
- *
- * @WARNING This file must take care not to leak the imported modules to the Browser window!
- * See https://github.com/atom/electron/issues/1753#issuecomment-104719851.
- */
+
 const _ = require('lodash');
 const ipc = require('electron').ipcRenderer;
+
+/**
+ * See https://github.com/atom/electron/issues/1753#issuecomment-104719851.
+ */
 
 /**
  * Callback passed to ipc on/once methods.
@@ -20,6 +18,8 @@ const ipc = require('electron').ipcRenderer;
  */
 
 /**
+ * Simple abstraction over electron's IPC. Securely wraps ipcRenderer.
+ * Available as `Desktop` global.
  * @class
  */
 const Desktop = new (class {
@@ -35,10 +35,11 @@ const Desktop = new (class {
      * Adds a callback to internal listeners placeholders and registers real ipc hooks.
      *
      * @param {string}      module   - module name
-     * @param {string}      event    - the name of an event
+     * @param {string}      event    - name of an event
      * @param {ipcListener} callback - callback to fire when event arrives
      * @param {boolean}     once     - whether this should be fired only once
      * @param {boolean}     response - whether we are listening for fetch response
+     * @private
      */
     addToListeners(module, event, callback, once, response = false) {
         let listeners = 'eventListeners';
@@ -70,8 +71,9 @@ const Desktop = new (class {
      * Invokes callback when the specified IPC event is fired.
      *
      * @param {string} module        - module name
-     * @param {string} event         - the name of an event
+     * @param {string} event         - name of an event
      * @param {ipcListener} callback - function to invoke when `event` is triggered
+     * @public
      */
     on(module, event, callback) {
         this.addToListeners(module, event, callback);
@@ -81,9 +83,10 @@ const Desktop = new (class {
      * Invokes a callback once when the specified IPC event is fired.
      *
      * @param {string} module        - module name
-     * @param {string} event         - the name of an event
+     * @param {string} event         - name of an event
      * @param {ipcListener} callback - function to invoke when `event` is triggered
      * @param {boolean} response     - whether we are listening for fetch response
+     * @public
      */
     once(module, event, callback, response = false) {
         this.addToListeners(module, event, callback, true, response);
@@ -93,8 +96,9 @@ const Desktop = new (class {
      * Unregisters a callback.
      *
      * @param {string} module     - module name
-     * @param {string} event      - the name of an event
+     * @param {string} event      - name of an event
      * @param {function} callback - listener to unregister
+     * @public
      */
     removeListener(module, event, callback) {
         const eventName = this.getEventName(module, event);
@@ -112,7 +116,8 @@ const Desktop = new (class {
      * Unregisters all callbacks.
      *
      * @param {string} module - module name
-     * @param {string} event  - the name of an event
+     * @param {string} event  - name of an event
+     * @public
      */
     removeAllListeners(module, event) {
         const eventName = this.getEventName(module, event);
@@ -124,8 +129,9 @@ const Desktop = new (class {
      * Send an event to the main Electron process.
      *
      * @param {string} module - module name
-     * @param {string} event  - the name of an event
+     * @param {string} event  - name of an event
      * @param {...*} args     - arguments to send with the event
+     * @public
      */
     send(module, event, ...args) {
         const eventName = this.getEventName(module, event);
@@ -137,10 +143,11 @@ const Desktop = new (class {
      * Returns a promise that resolves when the response is received.
      *
      * @param {string} module  - module name
-     * @param {string} event   - the name of an event
+     * @param {string} event   - name of an event
      * @param {number} timeout - how long to wait for the response in milliseconds
      * @param {...*} args      - arguments to send with the event
      * @returns {Promise}
+     * @public
      */
     fetch(module, event, timeout = 2000, ...args) {
         const eventName = this.getEventName(module, event);
@@ -171,6 +178,7 @@ const Desktop = new (class {
      * Send an global event to the main Electron process.
      *
      * @param {...*} args - arguments to the ipc.send(event, arg1, arg2)
+     * @public
      */
     sendGlobal(...args) { // eslint-disable-line
         ipc.send(...args);
@@ -192,7 +200,7 @@ const Desktop = new (class {
      * Concatenates event name with response postfix.
      *
      * @param {string} module - module name
-     * @param {string} event - event name
+     * @param {string} event  - event name
      * @returns {string}
      * @private
      */
@@ -217,9 +225,6 @@ process.once('loaded', () => {
         global.process = process;
     }
 
-    /**
-     * @global
-     */
     Desktop.devtron = devtron;
     global.Desktop = Desktop;
 });
