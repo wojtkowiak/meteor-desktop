@@ -174,8 +174,9 @@ class MeteorDesktopBundler {
                 }
                 if (moduleConfig.name in moduleDependencies) {
                     file.error({
-                        message: `duplicate name in 'module.json' in '${module}' - ` +
-                        'another module already registered the same name.'
+                        message: `duplicate name '${moduleConfig.name}' in 'module.json' in ` +
+                            `'${moduleConfig.dirName}' - another module already registered the ` +
+                            'same name.'
                     });
                 }
                 moduleDependencies[moduleConfig.name] = moduleConfig.dependencies;

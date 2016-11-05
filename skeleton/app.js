@@ -82,7 +82,7 @@ class App {
 
         this.meteorAppVersionChange = false;
         this.pendingDesktopVersion = null;
-        this.eventsBus.on('newVersionReady', (desktopVersion) => {
+        this.eventsBus.on('newVersionReady', (version, desktopVersion) => {
             this.meteorAppVersionChange = true;
             this.pendingDesktopVersion = desktopVersion;
         });

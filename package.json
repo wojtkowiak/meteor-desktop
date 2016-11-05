@@ -27,7 +27,7 @@
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
     "develop": "npm-run-all --parallel build-watch test-watch",
-    "desktop": "meteor-desktop"
+    "generate-docs": "jsdoc2md skeleton/preload.js > docs/api/desktop.md && jsdoc2md skeleton/modules/module.js > docs/api/module.md"
   },
   "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
   "license": "MIT",
@@ -46,6 +46,7 @@
     "eslint-plugin-import": "^2.0.1",
     "find-port": "2.0.1",
     "fs-plus": "^2.9.3",
+    "jsdoc-to-markdown": "^2.0.1",
     "merge-stream": "^1.0.0",
     "mocha": "^2.5.3",
     "mockery": "^2.0.0",

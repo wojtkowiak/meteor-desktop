@@ -485,10 +485,10 @@ export default class HCPClient {
      * @private
      */
     notifyNewVersionReady(version, desktopVersion) {
-        this.eventsBus.emit('newVersionReady', desktopVersion.version);
+        this.eventsBus.emit('newVersionReady', version, desktopVersion.version);
         this.module.send(
             'onNewVersionReady',
-            version
+            version, desktopVersion.version
         );
     }
 
