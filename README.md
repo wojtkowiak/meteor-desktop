@@ -74,12 +74,12 @@ Usage: meteor-desktop [command] [options]
               this will also work with -b
 ```
 #### `--build-meteor`
-If you just want to build, package or build installer without running the `Meteor` project 
-separately you can just use `-b` and all will be done automatically - this is useful when 
+If you just want to build the desktop app, package it or build installer without running the 
+`Meteor` project separately you can just use `-b` and all will be done automatically - this is useful when 
 for example building on a CI etc.
   
 #### `--android`
-When there is no mobiles platform in the project and `-b` is used, mobile platform is added 
+When there is no mobile platform in the project and `-b` is used, mobile platform is added 
 automatically and removed at the end of the build process. Normally an `ios` platform is added 
 but you can change this to `android` through this option.
    
@@ -125,9 +125,14 @@ Documentation
 If you have ever been using any `Cordova` plugins before you will find this approach alike. In `Cordova` every plugin exposes its native code through a JS api available in some global namespace like `cordova.plugins`. The approach used here is similar.
 
 In `Electron` app, there are two processes running along in your app. The so-called `main 
-process` and `renderer process`. Main process is just a JS code executed in `node`, and the renderer is a `Chromium` process. In this integration your `Meteor` app is run in the `renderer` process and your desktop specific code runs in the `main` process. They are communicating through IPC events. Basically the desktop side publishes its API as an IPC event listeners. In your `Meteor` code, calling it is as simple as `Desktop.send('module', 'event');`.  
+process` and `renderer process`. Main process is just a JS code executed in `node`, and the 
+renderer is a `Chromium` process. In this integration your `Meteor` app is being run in the 
+`renderer` process and your desktop specific code runs in the `main` process. They are 
+communicating through IPC events. Basically, the desktop side publishes its API as an IPC event 
+listeners. In your `Meteor` code, calling it is as simple as `Desktop.send('module', 'event');`.  
 
-Code on the desktop side is preferred to be modular - that is just for simplifying testing and encapsulating functionalities into independent modules. However you do not have to follow this style, there is an `import` dir in which you can structure your code however you want. The basics of an `Electron` app are already in place (reffered as `Skeleton App`) and your code is loaded like a plugin to it.
+Code on the desktop side is preferred to be modular - that is just for simplifying testing and 
+encapsulating functionalities into independent modules. However, you do not have to follow this style, there is an `import` dir in which you can structure your code however you want. The basics of an `Electron` app are already in place (reffered as `Skeleton App`) and your code is loaded like a plugin to it.
 
 Below is a high level architecture diagram of this integration.
 
@@ -256,12 +261,13 @@ event name|payload|description
 `newVersionReady`|`(version, desktopVersion)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 
-Your can also emit events on this bus as well. A good practice is to namespace them like 
-i.e. `myModule.initalized`.
+Your can also emit events on this bus as well. A good practice is to namespace them using dots,
+like for instance `myModule.initalized`.
 
 #### `modules`
 
-Object with references to other modules and plugins. Plugins can be found under their names i.e. `modules['meteor-desktop-splash-screen]`.  
+Object with references to other modules and plugins. Plugins can be found under their names i.e., 
+`modules['meteor-desktop-splash-screen]`.  
 Any module can be found under the name from `module.json`. 
 Internal modules such as `autoupdate` and `localServer` are also there. You can also get reference to the `desktop.js` from `modules['desktop']` (note that the reference is also passed in 
 the `desktopLoaded` event).
@@ -282,13 +288,14 @@ Every module lives in its own directory and has to have a `module.json` file. Cu
  only four fields there supported:
 - `name` - name of your module, will be used as a key in `modules` object
 - `dependencies` - list of npm deps
-- `extract` - list of files that should be excluded from packing into `.asar` i.e. executables
+- `extract` - list of files that should be excluded from packing into `.asar` (e.g. executables, 
+files meant to be changed etc)
 - `settings` - this object is passed as `settings` field in the object passed to module constructor 
 
 #### `extract`
 A little bit more about this. Files should be listed in a form of relative path to the module 
-directory without any leading slashes i.e. `extract: [ "dir/something.exe" ]` will be matched to `
-.desktop/modules/myModule/dir/something.exe`.
+directory without any leading slashes, for example `extract: [ "dir/something.exe" ]` will be 
+matched to `.desktop/modules/myModule/dir/something.exe`.
 
 To path to your extracted files is added to your module `settings` as `extractedFilesPath`
 . So your module constructor can look like this:
@@ -308,10 +315,10 @@ The faulty version recovery is also in place - [more about it here](https://guid
 `webAppStartupTimeout` field in `settings.json`.  
 
 Versions are downloaded and served from [`userData`](https://github.com/electron/electron/blob/master/docs/api/app.md#appgetpathname) directory.
-There you can find `autoupdate.json` and `versions` dir. If you want to fall back to first 
+There you can find `autoupdate.json` and `versions` dir. If you want to return to first 
 bundled version just delete them.
 
-You can also analyze `autoupdate.log` if you are having any issues.
+You can also analyze `autoupdate.log` if you are experiencing any issues.
 
 ## `Meteor.isDesktop`
 
@@ -325,7 +332,8 @@ Use it to declare your API on the desktop side.
 ```javascript
     this.module = new Module('myModuleName');
 ```
-[Documentation of the Module API](docs/api/module.md) - basically it reflects [`ipcMain`](https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
+[Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`]
+(https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
 
 The only addition is the `respond` method which is a convenient method of sending response to 
 `Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
@@ -421,7 +429,8 @@ https://github.com/ArekSredzki/electron-release-server
 
 ## Native modules support
 
-This integration fully supports rebuilding native modules (npm packages with native node modules) against `Electron`'s `node` version. However to speed up build time, it is **switched off by default**. 
+This integration fully supports rebuilding native modules (npm packages with native node modules)
+ against `Electron`'s `node` version. However, to speed up build time, it is **switched off by default**. 
 
 If you have any of those in your dependencies, or you know that one of the packages or plugins is using it, you should turn it on by setting `rebuildNativeNodeModules` to true in your `settings.json`. Currently there is no mechanism present that detects whether the rebuild should be run so it is fired on every build. A cleverer approach is planned before `1.0`. 
 
@@ -454,7 +463,7 @@ for more examples.
 ## `MD_LOG_LEVEL`
 `MD_LOG_LEVEL` env var is used to set the logger verbosity. Currently before `1.0` it is set to 
 `ALL` but you can change it to any of `INFO, WARN, ERROR, DEBUG, VERBOSE, TRACE`. You can also 
-select multiple levels joining them with a comma i.e.: `INFO,WARN`.
+select multiple levels joining them with a comma, for example: `INFO,WARN`.
 
 ## Packaging
 
@@ -487,8 +496,8 @@ You can find the roadmap filtering by milestone and `accepted` tag on the github
 
 ## Contribution
 
-PRs are always welcome and encouraged. If you will need help at any stage of preparing a PR just 
-file an issue. It is also good to file a feature request issue before you will start working to 
+PRs are always welcome and encouraged. If you need help at any stage of preparing a PR, just 
+file an issue. It is also good, to file a feature request issue before you start working to 
 discuss the need and implementation approach.
 
 Currently this package does not work when linked with `npm link`. To set up your dev environment 
