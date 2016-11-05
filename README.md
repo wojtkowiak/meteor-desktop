@@ -252,7 +252,7 @@ event name|payload|description
 `beforeLoadFinish`| |emitted when the `Meteor` app finished loading, but just before the window is shown  
 `loadingFinished`| |emitted when the `Meteor` app finished loading (also after HCP reload)  
 `windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (`Chrome` window with `Meteor` app) is  created, passes a reference to this window 
-`newVersionReady`|`(version)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
+`newVersionReady`|`(version, desktopVersion)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 
 Your can also emit events on this bus as well. A good practice is to namespace them like 
@@ -384,6 +384,7 @@ your project)
 - if your run a production build of your desktop app it will not receive updates from project run
  from `meteor` command unless you run it with `--production` - that is because development build 
  has `devtron` added and therefore the `compatibilityVersion` is different  
+- after reload logs will no longer be shown in the console
 
 ## How to write plugins
 
@@ -488,6 +489,14 @@ You can find the roadmap filtering by milestone and `accepted` tag on the github
 PRs are always welcome and encouraged. If you will need help at any stage of preparing a PR just 
 file an issue. It is also good to file a feature request issue before you will start working to 
 discuss the need and implementation approach.
+
+Currently this package does not work when linked with `npm link`. To set up your dev environment 
+it is best to create a clean `Meteor` project, add `meteor-desktop` to dependencies with a relative
+ path to the place where you have cloned this repo and in scripts add `desktop` with `node
+ ./path/to/meteor-desktop/dist/bin/cli.js`.  
+ Also to make changes in the desktop HCP plugins run `Meteor` project with `METEOR_PACKAGE_DIRS` 
+ set to `/absolute/path/to/meteor-desktop/plugins` so that they will be taken from the cloned repo. 
+  
 
 ## FAQ
 
