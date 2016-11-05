@@ -1,6 +1,6 @@
 ![Logo](meteor-desktop.png)
 
-# Meteor Desktop - WIP do not use yet 
+# Meteor Desktop <sup>beta version<sup>
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
@@ -87,6 +87,7 @@ Documentation
 =================
   * [Architecture](#architecture)
      * [How does this work with Meteor?](#how-does-this-work-with-meteor)
+     * [How the Electron app is structured?](#how-the-electron-app-is-structured)
   * [Scaffolding your desktop app](#scaffolding-your-desktop-app)
      * [settings.json](#settingsjson)
         * [Applying different window options for different OS](#applying-different-window-options-for-different-os)
@@ -153,6 +154,16 @@ To obtain the mobile build, this integration takes the build from either
 `.meteor/local/cordova-build` (version `< 1.3.4.1`) or from `.meteor/local/build/programs/web.cordova`.
 Because `index.html` is not present in the `web.cordova` directory and `program.json` lacks 
 `version` field, they are just downloaded from the running project.
+
+#### How the `Electron` app is structured?
+
+The produced `Electron` app consists barely of 4 files:
+
+- `app.asar` - bundled `Skeleton App` and `node_modules` (including all your dependencies from 
+`settings.json` and modules)
+- `meteor.asar` - your `Meteor` app bundled to an `.asar`
+- `desktop.asar` - processed contents for `.destkop`
+- `package.json` - `Electron` requires a `package.json` to be present
 
 ## Scaffolding your desktop app
 
