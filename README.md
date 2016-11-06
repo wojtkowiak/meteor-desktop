@@ -40,7 +40,7 @@ push implementation - which means you can release updates the same way you are u
  npm run desktop -- init
  npm run desktop
 
- # or in one command `npm run desktop -- --init` 
+ # or in one command `npm run desktop -- --scaffold` 
 ```
 
 ## Usage `--help`
@@ -65,7 +65,7 @@ Usage: meteor-desktop [command] [options]
     -p, --port <port>                     port on which meteor is running, when with -b this will be passed to meteor when obtaining the build
     --production                          builds meteor app with the production switch, uglifies contents of .desktop, packs app to app.asar
     -a, --android                         force add android as a mobile platform instead of ios
-    -i, --init                            will scaffold .desktop if not present
+    -s, --scaffold                        will scaffold .desktop if not present
     --ia32                                generate 32bit installer
     --win                                 generate also a Windows installer on Mac
     -V, --version                         output the version number
