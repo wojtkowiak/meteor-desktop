@@ -103,7 +103,7 @@ describe('desktop', () => {
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.desktop)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.assets)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.splashScreen)).to.be.true();
-            expect(fs.existsSync(MeteorDesktop.env.paths.desktop.installGif)).to.be.true();
+            expect(fs.existsSync(MeteorDesktop.env.paths.desktop.loadingGif)).to.be.true();
             expect(fs.existsSync(MeteorDesktop.env.paths.desktop.meteorIco)).to.be.true();
             logStub.restore();
         });

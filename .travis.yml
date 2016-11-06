@@ -1,10 +1,22 @@
 language: node_js
 
-node_js: "4"
+node_js:
+ - 4
+ - 6
 
 os:
-- linux
-- osx
+ - linux
+ - osx
+
+env:
+  matrix:
+    - TEST=normal
+    - TEST=integration
+
+matrix:
+  exclude:
+    - env: TEST=integration
+      os: osx
 
 addons:
   apt:
@@ -20,20 +32,26 @@ before_install:
             sh -e /etc/init.d/xvfb start;
             export CXX=g++-4.8;
             sleep 8;
-            curl https://install.meteor.com | /bin/sh;
-            export PATH="$HOME/.meteor:$PATH";
+            if [[ "$TEST" == "integration" ]]; then
+                curl https://install.meteor.com | /bin/sh;
+                export PATH="$HOME/.meteor:$PATH";
+            fi
       fi
 
 script:
-    - npm test
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    - if [[ "$TEST" == "normal" ]]; then
+        npm test;
+      fi
+    - if [[ "$TEST" == "integration" ]]; then
             npm run prepare-integration-tests;
             npm run test-integration;
       fi
 
 after_success:
-  - npm run coverage
-  - npm run report-coverage
+  - if [[ "$TEST" == "normal" ]]; then
+      npm run coverage;
+      npm run report-coverage;
+    fi
 
 cache:
   directories:
