@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Until we would have a `web.desktop` arch in Meteor we need to provide a way to distinguish
  * the desktop specific code. The easiest approach is to have a Meteor.isDesktop. Since we do not
