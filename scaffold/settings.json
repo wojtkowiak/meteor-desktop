@@ -56,10 +56,10 @@
         "dmg": {
             "icon": ".desktop/assets/meteor.icns",
             "background": ".desktop/assets/dmgBackground.png",
-            "iconSize": 90,
+            "iconSize": 54,
             "contents": [
-                { "x": 405, "y": 190, "type": "link", "path": "/Applications" },
-                { "x": 78, "y": 190, "type": "file" }
+                { "x": 377, "y": 190, "type": "link", "path": "/Applications" },
+                { "x": 63, "y": 190, "type": "file" }
             ],
             "window": {
                 "width": 480,
