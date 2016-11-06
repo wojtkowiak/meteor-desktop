@@ -121,7 +121,7 @@ describe('desktop', () => {
         });
     });
 
-    describe('build with params --init -b', () => {
+    describe('build with params --scaffold -b', () => {
         let exitStub;
         let app;
 
@@ -146,7 +146,7 @@ describe('desktop', () => {
             MeteorDesktop = meteorDesktop(
                 appDir,
                 appDir,
-                { ddpUrl: 'http://127.0.0.1:3080', init: true, build: true }
+                { ddpUrl: 'http://127.0.0.1:3080', scaffold: true, build: true }
             );
             // Build the app.
             await MeteorDesktop.build();
