@@ -44,7 +44,7 @@
         },
         "squirrelWindows": {
             "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
-            "loadingGif": ".desktop/assets/install.gif"
+            "loadingGif": ".desktop/assets/loading.gif"
         },
         "icon": ".desktop/assets/meteor.ico",
         "appId": "meteor.app",
