@@ -12,9 +12,9 @@ tests
 .travis.yml
 appveyor.yml
 circle.yml
-high-level-arch.png
-meteor-desktop.png
 coverage
 .nyc_output
 plugins
 gh-md-toc
+docs
+

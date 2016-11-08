@@ -1,4 +1,4 @@
-![Logo](meteor-desktop.png)
+![Logo](docs/meteor-desktop.png)
 
 # Meteor Desktop <sup>beta version<sup>
 ###### aka Meteor Electron Desktop Client
@@ -9,7 +9,7 @@
 <sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv/branch/master?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop)
 <sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master)
 
-![Demo](demo.gif)
+![Demo](docs/demo.gif)
 
 ## What is this?
 
@@ -139,7 +139,7 @@ encapsulating functionalities into independent modules. However, you do not have
 
 Below is a high level architecture diagram of this integration.
 
-![High level architecture](high-level-arch.png)
+![High level architecture](docs/high-level-arch.png)
 
 #### How does this work with Meteor?
 > <sup>or how hacky is this?</sup>
@@ -473,7 +473,7 @@ If you have any of those in your dependencies, or you know that one of the packa
 automatically removed when building with `--production`. As the communication between your Meteor
  app and the desktop side goes through IPC, this tool can be very handy because it can sniff on 
  IPC messages.
-<kbd>![devtron IPC sniff](devtron_ipc.gif)</kbd>
+<kbd>![devtron IPC sniff](docs/devtron_ipc.gif)</kbd>
 
 ## Testing desktop app and modules
 
