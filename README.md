@@ -91,6 +91,7 @@ Documentation
   * [Scaffolding your desktop app](#scaffolding-your-desktop-app)
      * [settings.json](#settingsjson)
         * [Applying different window options for different OS](#applying-different-window-options-for-different-os)
+        * [Supported dependency version types](#supported-dependency-version-types)
      * [desktop.js](#desktopjs)
         * [skeletonApp](#skeletonapp)
         * [eventsBus](#eventsbus)
@@ -216,7 +217,7 @@ field|description
 `windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify
 `plugins`|meteor-desktop plugins list
-`dependencies`|npm dependencies of your desktop app, the same like in `package.json`
+`dependencies`|npm dependencies of your desktop app, the same like in `package.json`, only explicit versions are supported - check [here](#supported-dependency-version-types)
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
@@ -225,6 +226,15 @@ field|description
 
 You can use `_windows`, `_osx`, `_linux` properties to set additional settings for different OS. 
 The default `settings.json` is already using that for setting a different icon for OSX.
+
+##### Supported dependency version types
+
+Only explicit versions are supported to avoid potential problems with different versions being 
+installed. It is no different from `Meteor` because the same applies to adding `Cordova` plugins.
+
+You can however use a local path to a npm package - and that will not be forbidden. But you need 
+to keep track what has been distributed to your clients and what your current code is expecting 
+when releasing a HCP update. 
 
 ### desktop.js
 
@@ -321,8 +331,7 @@ constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Modul
 
 Applications produced by this integration are fully compatible with `Meteor`'s hot code push 
 mechanism.  
-The faulty version recovery is also in place - [more about it here](https://guide.meteor
-.com/mobile.html#recovering-from-faulty-versions). You can configure the timeout via 
+The faulty version recovery is also in place - [more about it here](https://guide.meteor.com/mobile.html#recovering-from-faulty-versions). You can configure the timeout via 
 `webAppStartupTimeout` field in `settings.json`.  
 
 Versions are downloaded and served from [`userData`](https://github.com/electron/electron/blob/master/docs/api/app.md#appgetpathname) directory.
