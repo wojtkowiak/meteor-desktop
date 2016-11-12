@@ -34,7 +34,6 @@ install:
   - ps: if ($env:test -eq "integration") { Start-FileDownload 'https://s3.amazonaws.com/meteor-windows/InstallMeteor.exe' }
   # Install meteor
   - if %test%==integration .\installMeteor.exe /passive
-  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
   # Restart
   - ps: if ($env:test -eq "integration") { Start-Sleep -s 5 }
   - ps: if ($env:test -eq "integration") { Restart-Computer -Force }
@@ -46,5 +45,6 @@ test_script:
   - if %test%==integration meteor --version
   - if not %test%==integration npm test
   - if %test%==integration npm run prepare-integration-tests
+  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
   - if %test%==integration npm run test-integration
 

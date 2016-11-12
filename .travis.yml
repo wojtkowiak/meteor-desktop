@@ -33,7 +33,7 @@ before_install:
             export CXX=g++-4.8;
             sleep 8;
             if [[ "$TEST" == "integration" ]]; then
-                curl https://install.meteor.com | /bin/sh;
+                curl https://install.meteor.com/?release=1.4.2 | /bin/sh;
                 export PATH="$HOME/.meteor:$PATH";
             fi
       fi

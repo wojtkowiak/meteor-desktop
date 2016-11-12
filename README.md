@@ -5,9 +5,9 @@
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
 [![npm version](https://img.shields.io/npm/v/meteor-desktop.svg)](https://npmjs.org/package/meteor-desktop)
-<sup>Travis</sup> [![Travis Build Status](https://travis-ci.org/wojtkowiak/meteor-desktop.svg?branch=master)](https://travis-ci.org/wojtkowiak/meteor-desktop) 
-<sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop) 
-<sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop)
+<sup>Travis</sup> [![Travis Build Status](https://travis-ci.org/wojtkowiak/meteor-desktop.svg?branch=master)](https://travis-ci.org/wojtkowiak/meteor-desktop)
+<sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv/branch/master?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop)
+<sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master)
 
 ![Demo](demo.gif)
 
@@ -532,4 +532,5 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.1.1** - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
 - **0.1.0** - first public release
