@@ -89,8 +89,8 @@ export default class LocalServer {
          */
         server.use(modRewrite([
             '^/favicon.ico [R=404,L,NS]',
-            '^/(?!($|app|packages|merged-stylesheets.css|.*meteor_(?:js|css)_resource|' +
-            'cordova.js))(.*) /app/$2'
+            '^/(?!($|app|packages|merged-stylesheets(?:-prefixed)?.css|' +
+            '.*meteor_(?:js|css)_resource|cordova.js))(.*) /app/$2'
         ]));
 
         function setSourceMapHeader(req, res, next) {
