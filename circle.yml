@@ -9,7 +9,7 @@ dependencies:
   cache_directories:
     - ~/.meteor
   override:
-    - meteor || curl https://install.meteor.com | /bin/sh
+    - meteor || curl https://install.meteor.com/?release=1.4.2 | /bin/sh
     - npm install
 
 test:
