@@ -523,5 +523,6 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.1.2** - fixed [#10](https://github.com/wojtkowiak/meteor-desktop/issues/10)
 - **0.1.1** - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
 - **0.1.0** - first public release
