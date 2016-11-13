@@ -324,9 +324,10 @@ To path to your extracted files is added to your module `settings` as `extracted
 . So your module constructor can look like this:
 ```javascript
 import path from 'path';
-constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
-    this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
-}
+export default class Desktop {
+    constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
+        this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
+    }
 ```
 
 ## Hot code push support
@@ -503,9 +504,14 @@ Package is produced and saved in `.desktop-package` directory. You can pass opti
 This packages and builds installer using [`electron-builder`](https://github.com/electron-userland/electron-builder).  
 Installer is produced and saved in `.desktop-installer` directory. You can pass options via 
 `builderOptions` in `settings.json`.
-
+ 
 Please note that `electron-builder` does not use `electron-packager` to create a package. So the 
 options from `packagerOptions` are not taken into account.
+
+##### Building for linux
+Currently there are some defaults provided only for `Windows` and `Mac`. If you want to build for
+ `Linux` you need to add a [`linux`](https://github.com/electron-userland/electron-builder/wiki/Options#LinuxBuildOptions) section in your `builderOptions` and comply to these 
+ [requirements](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build#linux). 
 
 
 ## Roadmap 
