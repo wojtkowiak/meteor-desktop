@@ -88,6 +88,7 @@ Documentation
   * [Architecture](#architecture)
      * [How does this work with Meteor?](#how-does-this-work-with-meteor)
      * [How the Electron app is structured?](#how-the-electron-app-is-structured)
+     * [Where is my app.on('ready')?](#where-is-my-apponready)
   * [Scaffolding your desktop app](#scaffolding-your-desktop-app)
      * [settings.json](#settingsjson)
         * [Applying different window options for different OS](#applying-different-window-options-for-different-os)
@@ -162,8 +163,19 @@ The produced `Electron` app consists barely of 4 files:
 - `app.asar` - bundled `Skeleton App` and `node_modules` (including all your dependencies from 
 `settings.json` and modules)
 - `meteor.asar` - your `Meteor` app bundled to an `.asar`
-- `desktop.asar` - processed contents for `.destkop`
+- `desktop.asar` - processed contents from `.desktop`
 - `package.json` - `Electron` requires a `package.json` to be present
+
+While developing, the `app` is not asared so you can take a closer look at the `Skeleton` that is
+ produced by this integration. You will find it in the `.meteor/desktop-build` directory.
+
+#### Where is my `app.on('ready')`?
+
+The `app.on('ready')` is handled for you by the `Skeleton` app, but that does not mean you can 
+not hook into it. Basically, code that is in the constructor of `.desktop/desktop.js` and 
+all constructors of your modules is executed while being inside `ready`. Remember that is always 
+a good practice not to do time consuming tasks inside the constructors but instead delay those tasks
+by hooking to `beforeDesktopJsLoad`, `desktopLoaded` or `afterInitialization` on the `eventsBus`.
 
 ## Scaffolding your desktop app
 
