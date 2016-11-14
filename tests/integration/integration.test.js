@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
 import electron from 'electron';
-import { Application } from 'spectron';
+import {Application} from 'spectron';
 import mockery from 'mockery';
 
 import paths from '../helpers/paths';
@@ -143,6 +143,7 @@ describe('desktop', () => {
             });
             // Load plugins directly from the package instead of those published to atmosphere.
             process.env.METEOR_PACKAGE_DIRS = path.resolve(path.join(__dirname, '..', '..', 'plugins'));
+            process.env.MONGO_URL = 'none';
             MeteorDesktop = meteorDesktop(
                 appDir,
                 appDir,
@@ -156,7 +157,11 @@ describe('desktop', () => {
                 path: electron,
                 args: [path.join(appDir, '.meteor', 'desktop-build')],
                 requireName: 'electronRequire',
-                env: { NODE_ENV: 'test', ELECTRON_ENV: 'test', METEOR_DESKTOP_NO_SPLASH_SCREEN: 1 }
+                env: {
+                    NODE_ENV: 'test',
+                    ELECTRON_ENV: 'test',
+                    METEOR_DESKTOP_NO_SPLASH_SCREEN: 1
+                }
             });
             await app.start();
             await waitForApp(app);
