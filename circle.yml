@@ -8,6 +8,8 @@ dependencies:
     - sudo sysctl fs.inotify.max_user_watches=524288
   cache_directories:
     - ~/.meteor
+    - ~/.electron
+    - ~/.yarn-cache
   override:
     - meteor || curl https://install.meteor.com/?release=1.4.2 | /bin/sh
     - npm install

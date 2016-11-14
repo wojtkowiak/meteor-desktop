@@ -24,6 +24,7 @@ cache:
   - '%APPDATA%\npm\node_modules'
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
+  - '%LOCALAPPDATA%/Yarn'
 
 install:
  # Download Meteor

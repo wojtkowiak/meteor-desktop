@@ -56,6 +56,9 @@ after_success:
 cache:
   directories:
     - node_modules
+    - $HOME/.electron
+    - $HOME/.npm
+    - $HOME/.yarn-cache
 
 notifications:
   email:
