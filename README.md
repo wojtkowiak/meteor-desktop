@@ -88,6 +88,7 @@ Documentation
   * [Architecture](#architecture)
      * [How does this work with Meteor?](#how-does-this-work-with-meteor)
      * [How the Electron app is structured?](#how-the-electron-app-is-structured)
+     * [Where is my app.on('ready')?](#where-is-my-apponready)
   * [Scaffolding your desktop app](#scaffolding-your-desktop-app)
      * [settings.json](#settingsjson)
         * [Applying different window options for different OS](#applying-different-window-options-for-different-os)
@@ -163,8 +164,19 @@ The produced `Electron` app consists barely of 4 files:
 - `app.asar` - bundled `Skeleton App` and `node_modules` (including all your dependencies from 
 `settings.json` and modules)
 - `meteor.asar` - your `Meteor` app bundled to an `.asar`
-- `desktop.asar` - processed contents for `.destkop`
+- `desktop.asar` - processed contents from `.desktop`
 - `package.json` - `Electron` requires a `package.json` to be present
+
+While developing, the `app` is not asared so you can take a closer look at the `Skeleton` that is
+ produced by this integration. You will find it in the `.meteor/desktop-build` directory.
+
+#### Where is my `app.on('ready')`?
+
+The `app.on('ready')` is handled for you by the `Skeleton` app, but that does not mean you can 
+not hook into it. Basically, code that is in the constructor of `.desktop/desktop.js` and 
+all constructors of your modules is executed while being inside `ready`. Remember that is always 
+a good practice not to do time consuming tasks inside the constructors but instead delay those tasks
+by hooking to `beforeDesktopJsLoad`, `desktopLoaded` or `afterInitialization` on the `eventsBus`.
 
 ## Scaffolding your desktop app
 
@@ -322,9 +334,10 @@ To path to your extracted files is added to your module `settings` as `extracted
 . So your module constructor can look like this:
 ```javascript
 import path from 'path';
-constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
-    this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
-}
+export default class Desktop {
+    constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
+        this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
+    }
 ```
 
 ## Hot code push support
@@ -500,9 +513,14 @@ Package is produced and saved in `.desktop-package` directory. You can pass opti
 This packages and builds installer using [`electron-builder`](https://github.com/electron-userland/electron-builder).  
 Installer is produced and saved in `.desktop-installer` directory. You can pass options via 
 `builderOptions` in `settings.json`.
-
+ 
 Please note that `electron-builder` does not use `electron-packager` to create a package. So the 
 options from `packagerOptions` are not taken into account.
+
+##### Building for linux
+Currently there are some defaults provided only for `Windows` and `Mac`. If you want to build for
+ `Linux` you need to add a [`linux`](https://github.com/electron-userland/electron-builder/wiki/Options#LinuxBuildOptions) section in your `builderOptions` and comply to these 
+ [requirements](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build#linux). 
 
 
 ## Roadmap 
@@ -532,5 +550,6 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.1.2** - fixed [#10](https://github.com/wojtkowiak/meteor-desktop/issues/10)
 - **0.1.1** - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
 - **0.1.0** - first public release

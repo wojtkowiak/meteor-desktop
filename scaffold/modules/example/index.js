@@ -29,7 +29,7 @@ export default class Example {
         this.eventsBus = eventsBus;
 
         // Never do time consuming or blocking things directly in the constructor.
-        // Instead hook to `afterLoading` or `beforeDesktopJsLoad` events.
+        // Instead hook to 'beforeDesktopJsLoad`, `desktopLoaded` or `afterInitialization` events.
         // This will also ensure plugins providing things like splash screens will be able
         // to start as quickly as possible.
         this.eventsBus.on('desktopLoaded', () => {
