@@ -11,7 +11,7 @@ dependencies:
     - ~/.electron
     - ~/.yarn-cache
   override:
-    - meteor || curl https://install.meteor.com/?release=1.4.2 | /bin/sh
+    - meteor || curl https://install.meteor.com/?release=1.4.2.1 | /bin/sh
     - npm install
 
 test:
