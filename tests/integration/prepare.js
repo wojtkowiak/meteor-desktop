@@ -15,3 +15,4 @@ shell.exec('meteor create test-desktop --release=METEOR@1.4.2.1', { cwd: testsTm
 const appDir = path.join(testsTmpPath, 'test-desktop');
 console.log('npm install');
 shell.exec('meteor npm install ../../..', { cwd: appDir });
+shell.exec('npm install --save babel-runtime', { cwd: appDir });
