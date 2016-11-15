@@ -465,6 +465,23 @@ class App {
 
         this.webContents = this.window.webContents;
 
+        if (this.settings.devtron && !this.isProduction()) {
+            // Print some fancy status to the console if in development.
+            this.webContents.executeJavaScript(`
+                console.log('%c   meteor-desktop   ', 
+                \`background:linear-gradient(#47848F,#DE4B4B);border:1px solid #3E0E02;
+                color:#fff;display:block;text-shadow:0 3px 0 rgba(0,0,0,0.5);
+                box-shadow:0 1px 0 rgba(255,255,255,0.4) inset,0 5px 3px -5px rgba(0,0,0,0.5),
+                0 -13px 5px -10px rgba(255,255,255,0.4) inset;
+                line-height:20px;text-align:center;font-weight:700;font-size:20px\`);
+                console.log(\`%cdesktop version: ${this.settings.desktopVersion}\\n` +
+                `desktop compatibility version: ${this.settings.compatibilityVersion}\\n` +
+                'meteor bundle version:' +
+                ` ${this.modules.autoupdate.currentAssetBundle.getVersion()}\\n\`` +
+                ', \'font-size: 9px;color:#222\');'
+            );
+        }
+
         this.eventsBus.emit('windowCreated', this.window);
 
         // Here we are catching reloads triggered by hot code push.
