@@ -147,7 +147,13 @@ describe('desktop', () => {
             MeteorDesktop = meteorDesktop(
                 appDir,
                 appDir,
-                { ddpUrl: 'http://127.0.0.1:3080', scaffold: true, build: true }
+                {
+                    ddpUrl: 'http://127.0.0.1:3080',
+                    scaffold: true,
+                    build: true,
+                    skipMobileBuild: !!process.env.TRAVIS,
+                    forceCordovaBuild: !!process.env.TRAVIS
+                }
             );
             // Build the app.
             await MeteorDesktop.build();
