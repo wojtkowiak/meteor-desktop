@@ -46,7 +46,9 @@ push implementation - which means you can release updates the same way you are u
 ## Usage `--help`
 
 ```
-Usage: meteor-desktop [command] [options]
+// Assumming you have a `desktop` script in npm scripts that equals to "meteor-desktop"
+Usage: npm run desktop -- [command] [options]
+
   Commands:
 
     init                       scaffolds .desktop dir in the meteor app
@@ -541,6 +543,8 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.1.3** - added warning for possible console syntax mistake when invoking with command or 
+option (missing ` -- ` delimiter)
 - **0.1.2** - fixed [#10](https://github.com/wojtkowiak/meteor-desktop/issues/10)
 - **0.1.1** - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
 - **0.1.0** - first public release
