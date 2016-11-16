@@ -80,7 +80,7 @@ export default class Desktop {
         Desktop.displayRestartDialog(
             'Application encountered an error',
             'Do you want to restart it?',
-            error
+             error.message
         );
     }
 
