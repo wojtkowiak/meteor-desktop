@@ -200,7 +200,7 @@ question('Do you want to use another path (yes/no)? ')
         return spawn(npm, ['run', 'test'], path.join(resolvedPath, 'meteor-desktop-localstorage'));
     })
     .then(function() {
-        return spawn(npm, ['run', 'desktop', '--', '-b'], path.join(resolvedPath, 'meteor-desktop-test-app'));
+        return spawn(npm, ['run', 'desktop', '--', 'build', '-b'], path.join(resolvedPath, 'meteor-desktop-test-app'));
     })
     .then(function() {
         return spawn(npm, ['run', 'test-desktop'], path.join(resolvedPath, 'meteor-desktop-test-app'));
