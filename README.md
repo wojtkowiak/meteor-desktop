@@ -514,7 +514,12 @@ Package is produced and saved in `.desktop-package` directory. You can pass opti
 
 This packages and builds installer using [`electron-builder`](https://github.com/electron-userland/electron-builder).  
 Installer is produced and saved in `.desktop-installer` directory. You can pass options via 
-`builderOptions` in `settings.json`.
+`builderOptions` in `settings.json`.  
+If you do not pass any target platforms via `--win`, `--linux` or `--mac` it will build for your 
+current platform. If at least one the platform is specified, the current platform will not be 
+added automatically. So if you want to build Windows and Mac at the same time, being on Mac, 
+you need to pass `--win --mac`, not only `--win`. To check what targets you can build on certain platform and what does it require 
+check [Multi-Platform-Build](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build)
  
 Please note that `electron-builder` does not use `electron-packager` to create a package. So the 
 options from `packagerOptions` are not taken into account.
