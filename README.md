@@ -575,6 +575,12 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.2.0**
+    * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
+    file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
+    * development environment setup script was added
+    * specifying target platforms for `build-installer` is now not restricted - 
+    check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
 - **0.1.4**  
     * fixed [#22](https://github.com/wojtkowiak/meteor-desktop/issues/22)  
     * fixed bug in uncaught exception handler in the scaffold - check [here](https://github.com/wojtkowiak/meteor-desktop/commit/1dc8347f18d2ebc1dfb3f875a66e1d5206441af8)
