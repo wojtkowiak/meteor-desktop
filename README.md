@@ -232,6 +232,7 @@ field|description
 `uglify`|whether to process the production build with uglify
 `plugins`|meteor-desktop plugins list
 `dependencies`|npm dependencies of your desktop app, the same like in `package.json`, only explicit versions are supported - check [here](#supported-dependency-version-types)
+`linkPackages`|array of packages names you want to link (runs `npm link <packageName>` for every package listed)
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
@@ -406,6 +407,11 @@ The `compatibilityVersion` is calculated from combined list of:
  - dependencies from all modules in `.desktop/modules`
  - major and minor version of `meteor-desktop` (X.X.Y - only X.X is taken)
  - major version from `settings.json` (X.Y.Y - only X is taken).
+ 
+Be aware that when it comes to linked packages (via `linkPackages` in `settings.json`) the 
+explicitly declared version (the one in `settings.json` or modules) is taken into account, not the 
+actual one from package's package.json.  
+Generally, it is a bad idea to build production app with linked packages. This is now allowed but will be disabled before `1.0`.
  
 Until 1.0 major and minor version of `meteor-desktop` will be used. From 1.0, semver will be 
 followed and only major version change will mean that a version is backwards incompatible. 
