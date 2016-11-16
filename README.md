@@ -538,6 +538,18 @@ PRs are always welcome and encouraged. If you need help at any stage of preparin
 file an issue. It is also good, to file a feature request issue before you start working to 
 discuss the need and implementation approach.
 
+##### ! devEnvSetup.js !
+To help you contribute, there is a development environment setup script. If you have this repo 
+cloned and already did a `npm install`, you can just run it with `node devEnvSetup.js`.
+However if you did not yet clone this repo just do:
+```
+mkdir tmp
+wget https://github.com/wojtkowiak/meteor-desktop/blob/master/devEnvSetup.js
+npm install cross-spawn shelljs
+node devEnvSetup.js
+```
+This script assumes you have `npm`, `git` and `meteor` available from the command line.
+
 Currently this package does not work when linked with `npm link`. To set up your dev environment 
 it is best to create a clean `Meteor` project, add `meteor-desktop` to dependencies with a relative
  path to the place where you have cloned this repo and in scripts add `desktop` with `node
