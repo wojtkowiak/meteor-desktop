@@ -410,8 +410,9 @@ The `compatibilityVersion` is calculated from combined list of:
  
 Be aware that when it comes to linked packages (via `linkPackages` in `settings.json`) the 
 explicitly declared version (the one in `settings.json` or modules) is taken into account, not the 
-actual one from package's package.json.  
-Generally, it is a bad idea to build production app with linked packages. This is now allowed but will be disabled before `1.0`.
+actual one from package's package.json. The same applies to packages added from local paths.  
+Generally, it is a bad idea to build production app with linked/local packages. This is now allowed 
+but will be disabled before `1.0`.
  
 Until 1.0 major and minor version of `meteor-desktop` will be used. From 1.0, semver will be 
 followed and only major version change will mean that a version is backwards incompatible. 
