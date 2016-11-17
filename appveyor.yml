@@ -24,6 +24,7 @@ cache:
   - '%APPDATA%\npm\node_modules'
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
+  - '%LOCALAPPDATA%/Yarn'
 
 install:
  # Download Meteor
@@ -45,6 +46,6 @@ test_script:
   - if %test%==integration meteor --version
   - if not %test%==integration npm test
   - if %test%==integration npm run prepare-integration-tests
-  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
+  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2_1\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
   - if %test%==integration npm run test-integration
 

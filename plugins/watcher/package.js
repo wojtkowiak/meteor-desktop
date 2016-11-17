@@ -14,7 +14,7 @@ Npm.depends({
 });
 
 Package.onUse(function onUse(api) {
-    api.versionsFrom('METEOR@1.2.1');
+    api.versionsFrom('METEOR@1.3.3');
     api.use('ecmascript');
     api.use([
         'omega:meteor-desktop-bundler@0.1.4',

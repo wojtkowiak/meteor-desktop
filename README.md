@@ -1,4 +1,4 @@
-![Logo](meteor-desktop.png)
+![Logo](docs/meteor-desktop.png)
 
 # Meteor Desktop <sup>beta version<sup>
 ###### aka Meteor Electron Desktop Client
@@ -9,7 +9,7 @@
 <sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv/branch/master?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop)
 <sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master)
 
-![Demo](demo.gif)
+![Demo](docs/demo.gif)
 
 ## What is this?
 
@@ -94,6 +94,7 @@ Documentation
   * [Scaffolding your desktop app](#scaffolding-your-desktop-app)
      * [settings.json](#settingsjson)
         * [Applying different window options for different OS](#applying-different-window-options-for-different-os)
+        * [Supported dependency version types](#supported-dependency-version-types)
      * [desktop.js](#desktopjs)
         * [skeletonApp](#skeletonapp)
         * [eventsBus](#eventsbus)
@@ -140,7 +141,7 @@ encapsulating functionalities into independent modules. However, you do not have
 
 Below is a high level architecture diagram of this integration.
 
-![High level architecture](high-level-arch.png)
+![High level architecture](docs/high-level-arch.png)
 
 #### How does this work with Meteor?
 > <sup>or how hacky is this?</sup>
@@ -230,7 +231,8 @@ field|description
 `windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify
 `plugins`|meteor-desktop plugins list
-`dependencies`|npm dependencies of your desktop app, the same like in `package.json`
+`dependencies`|npm dependencies of your desktop app, the same like in `package.json`, only explicit versions are supported - check [here](#supported-dependency-version-types)
+`linkPackages`|array of packages names you want to link (runs `npm link <packageName>` for every package listed)
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
@@ -239,6 +241,15 @@ field|description
 
 You can use `_windows`, `_osx`, `_linux` properties to set additional settings for different OS. 
 The default `settings.json` is already using that for setting a different icon for OSX.
+
+##### Supported dependency version types
+
+Only explicit versions are supported to avoid potential problems with different versions being 
+installed. It is no different from `Meteor` because the same applies to adding `Cordova` plugins.
+
+You can however use a local path to a npm package - and that will not be forbidden. But you need 
+to keep track what has been distributed to your clients and what your current code is expecting 
+when releasing a HCP update. 
 
 ### desktop.js
 
@@ -336,8 +347,7 @@ export default class Desktop {
 
 Applications produced by this integration are fully compatible with `Meteor`'s hot code push 
 mechanism.  
-The faulty version recovery is also in place - [more about it here](https://guide.meteor
-.com/mobile.html#recovering-from-faulty-versions). You can configure the timeout via 
+The faulty version recovery is also in place - [more about it here](https://guide.meteor.com/mobile.html#recovering-from-faulty-versions). You can configure the timeout via 
 `webAppStartupTimeout` field in `settings.json`.  
 
 Versions are downloaded and served from [`userData`](https://github.com/electron/electron/blob/master/docs/api/app.md#appgetpathname) directory.
@@ -397,6 +407,11 @@ The `compatibilityVersion` is calculated from combined list of:
  - dependencies from all modules in `.desktop/modules`
  - major and minor version of `meteor-desktop` (X.X.Y - only X.X is taken)
  - major version from `settings.json` (X.Y.Y - only X is taken).
+ 
+Be aware that when it comes to linked packages (via `linkPackages` in `settings.json`) the 
+explicitly declared version (the one in `settings.json` or modules) is taken into account, not the 
+actual one from package's package.json.  
+Generally, it is a bad idea to build production app with linked packages. This is now allowed but will be disabled before `1.0`.
  
 Until 1.0 major and minor version of `meteor-desktop` will be used. From 1.0, semver will be 
 followed and only major version change will mean that a version is backwards incompatible. 
@@ -466,7 +481,7 @@ If you have any of those in your dependencies, or you know that one of the packa
 automatically removed when building with `--production`. As the communication between your Meteor
  app and the desktop side goes through IPC, this tool can be very handy because it can sniff on 
  IPC messages.
-<kbd>![devtron IPC sniff](devtron_ipc.gif)</kbd>
+<kbd>![devtron IPC sniff](docs/devtron_ipc.gif)</kbd>
 
 ## Testing desktop app and modules
 
@@ -505,7 +520,12 @@ Package is produced and saved in `.desktop-package` directory. You can pass opti
 
 This packages and builds installer using [`electron-builder`](https://github.com/electron-userland/electron-builder).  
 Installer is produced and saved in `.desktop-installer` directory. You can pass options via 
-`builderOptions` in `settings.json`.
+`builderOptions` in `settings.json`.  
+If you do not pass any target platforms via `--win`, `--linux` or `--mac` it will build for your 
+current platform. If at least one the platform is specified, the current platform will not be 
+added automatically. So if you want to build Windows and Mac at the same time, being on Mac, 
+you need to pass `--win --mac`, not only `--win`. To check what targets you can build on certain platform and what does it require 
+check [Multi-Platform-Build](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build)
  
 Please note that `electron-builder` does not use `electron-packager` to create a package. So the 
 options from `packagerOptions` are not taken into account.
@@ -531,6 +551,18 @@ PRs are always welcome and encouraged. If you need help at any stage of preparin
 file an issue. It is also good, to file a feature request issue before you start working to 
 discuss the need and implementation approach.
 
+##### ! devEnvSetup.js !
+To help you contribute, there is a development environment setup script. If you have this repo 
+cloned and already did a `npm install`, you can just run it with `node devEnvSetup.js`.
+However if you did not yet clone this repo just do:
+```
+mkdir tmp
+wget https://github.com/wojtkowiak/meteor-desktop/blob/master/devEnvSetup.js
+npm install cross-spawn shelljs
+node devEnvSetup.js
+```
+This script assumes you have `npm`, `git` and `meteor` available from the command line.
+
 Currently this package does not work when linked with `npm link`. To set up your dev environment 
 it is best to create a clean `Meteor` project, add `meteor-desktop` to dependencies with a relative
  path to the place where you have cloned this repo and in scripts add `desktop` with `node
@@ -543,6 +575,12 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 ## Changelog
 
+- **0.2.0**
+    * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
+    file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
+    * development environment setup script was added
+    * specifying target platforms for `build-installer` is now not restricted - 
+    check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
 - **0.1.4**  
     * fixed [#22](https://github.com/wojtkowiak/meteor-desktop/issues/22)  
     * fixed bug in uncaught exception handler in the scaffold - check [here](https://github.com/wojtkowiak/meteor-desktop/commit/1dc8347f18d2ebc1dfb3f875a66e1d5206441af8)

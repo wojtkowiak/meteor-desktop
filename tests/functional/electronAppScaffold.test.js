@@ -1,6 +1,7 @@
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import fs from 'fs';
+import shell from 'shelljs';
 
 import { createTestInstance, StubLog } from '../helpers/meteorDesktop';
 
@@ -26,8 +27,9 @@ describe('electronAppScaffold', () => {
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.preload)).to.be.true();
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.modules)).to.be.true();
                 expect(fs.existsSync(MeteorDesktop.env.paths.electronApp.packageJson)).to.be.true();
-
+                shell.rm('-rf', MeteorDesktop.env.paths.electronApp);
                 logStub.restore();
+
                 done();
             }).catch((e) => { done(e); logStub.restore(); });
         });

@@ -11,11 +11,7 @@ os:
 env:
   matrix:
     - TEST=normal
-
-matrix:
-  exclude:
-    - env: TEST=integration
-      os: osx
+    - TEST=integration
 
 addons:
   apt:
@@ -31,11 +27,12 @@ before_install:
             sh -e /etc/init.d/xvfb start;
             export CXX=g++-4.8;
             sleep 8;
-            if [[ "$TEST" == "integration" ]]; then
-                curl https://install.meteor.com/?release=1.4.2 | /bin/sh;
-                export PATH="$HOME/.meteor:$PATH";
-            fi
       fi
+    - if [[ "$TEST" == "integration" ]]; then
+            curl https://install.meteor.com/?release=1.4.2.1 | /bin/sh;
+            export PATH="$HOME/.meteor:$PATH";
+      fi
+
 
 script:
     - if [[ "$TEST" == "normal" ]]; then
@@ -55,6 +52,9 @@ after_success:
 cache:
   directories:
     - node_modules
+    - $HOME/.electron
+    - $HOME/.npm
+    - $HOME/.yarn-cache
 
 notifications:
   email:

@@ -123,7 +123,10 @@ describe('desktop', () => {
             const deps = MeteorDesktop.desktop.getDependencies();
             expect(deps).to.deep.equal({
                 fromSettings: { 'some-package': '1.2.3' },
-                plugins: { 'meteor-desktop-splash-screen': '0.0.22' },
+                plugins: {
+                    'meteor-desktop-splash-screen': '0.0.30',
+                    'meteor-desktop-localstorage': '0.0.11'
+                },
                 modules: {
                     someModule: { dependency: '1.0.1' },
                     someModule2: { dependency2: '0.0.5' }
