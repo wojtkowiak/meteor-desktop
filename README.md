@@ -581,6 +581,8 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
     * development environment setup script was added
     * specifying target platforms for `build-installer` is now not restricted - 
     check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
+    * `electron` was updated to `1.4.6`
+    * `electron-builder` was updated to `8.6.0`
 - **0.1.4**  
     * fixed [#22](https://github.com/wojtkowiak/meteor-desktop/issues/22)  
     * fixed bug in uncaught exception handler in the scaffold - check [here](https://github.com/wojtkowiak/meteor-desktop/commit/1dc8347f18d2ebc1dfb3f875a66e1d5206441af8)
