@@ -20,6 +20,6 @@ shell.exec('meteor npm install ../../..', { cwd: appDir });
 shell.exec('npm install --save babel-runtime', { cwd: appDir });
 if (process.env.TRAVIS) {
     shell.config.fatal = false;
-    shell.exec('meteor add-platform android', { cwd: appDir });
+    shell.exec('meteor add-platform ios', { cwd: appDir });
     shell.exec('meteor build ../build --server=127.0.0.1:3000', { cwd: appDir });
 }
