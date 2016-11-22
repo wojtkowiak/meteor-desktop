@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
 import electron from 'electron';
-import {Application} from 'spectron';
+import { Application } from 'spectron';
 import mockery from 'mockery';
 
 import paths from '../helpers/paths';
@@ -82,7 +82,7 @@ describe('desktop', () => {
     let MeteorDesktop;
 
     before(() => {
-        appDir = path.join(paths.testsTmpPath, 'test-desktop');
+        appDir = path.join(paths.testsIntegrationTmpPath, 'test-desktop');
     });
 
     beforeEach(() => {

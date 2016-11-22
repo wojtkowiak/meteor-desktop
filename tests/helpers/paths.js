@@ -4,6 +4,7 @@ const { join, resolve } = path;
 
 const testsPath = resolve(path.join(__dirname, '..', '..', 'tests'));
 const testsTmpPath = resolve(path.join(testsPath, '.__tmp'));
+const testsIntegrationTmpPath = resolve(path.join(testsPath, '.__tmp_int'));
 
 const fixturesPath = 'fixtures';
 const projectDir = 'meteorProject';
@@ -26,6 +27,7 @@ const cli = resolve(join(__dirname, '..', 'bin', 'cli.js'));
 export default {
     testsPath,
     testsTmpPath,
+    testsIntegrationTmpPath,
     testProjectInstallPath,
     autoUpdateVersionsPath,
     fixtures,
