@@ -8,6 +8,8 @@ os:
  - linux
  - osx
 
+osx_image: xcode8.1
+
 env:
   matrix:
     - TEST=normal
