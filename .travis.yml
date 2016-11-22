@@ -50,11 +50,11 @@ after_success:
     fi
 
 cache:
+  yarn: true
   directories:
     - node_modules
     - $HOME/.electron
     - $HOME/.npm
-    - $HOME/.yarn-cache
 
 notifications:
   email:
