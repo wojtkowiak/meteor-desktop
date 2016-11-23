@@ -575,7 +575,7 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 ## FAQ
 
 ## Changelog
-- **0.2.1** fixed `rebuildNativeNodeModules`
+- **0.2.1** - fixed `rebuildNativeNodeModules`
 - **0.2.0**
     * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
     file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
