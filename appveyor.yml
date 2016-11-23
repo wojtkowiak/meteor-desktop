@@ -20,13 +20,13 @@ platform:
   - x64
 
 cache:
-  - node_modules
-  - '%APPDATA%\npm\node_modules'
-  - '%APPDATA%\npm-cache'
-  - '%USERPROFILE%\.electron'
-  - '%LOCALAPPDATA%\Yarn'
-  - '%LOCALAPPDATA%\.meteor'
-  - tests/.__tmp_int
+  - node_modules -> appveyor.yml
+  - '%APPDATA%\npm\node_modules -> appveyor.yml'
+  - '%APPDATA%\npm-cache -> appveyor.yml'
+  - '%USERPROFILE%\.electron -> appveyor.yml'
+  - '%LOCALAPPDATA%\Yarn -> appveyor.yml'
+  - '%LOCALAPPDATA%\.meteor -> appveyor.yml'
+  - tests/.__tmp_int -> appveyor.yml
 
 install:
   - ps: Install-Product node $env:nodejs_version
