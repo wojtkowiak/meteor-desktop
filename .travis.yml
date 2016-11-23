@@ -8,6 +8,8 @@ os:
  - linux
  - osx
 
+osx_image: xcode8.1
+
 env:
   matrix:
     - TEST=normal
@@ -21,7 +23,6 @@ addons:
       - g++-4.8
 
 before_install:
-    - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
             export DISPLAY=:99.0;
             sh -e /etc/init.d/xvfb start;
@@ -29,8 +30,15 @@ before_install:
             sleep 8;
       fi
     - if [[ "$TEST" == "integration" ]]; then
-            curl https://install.meteor.com/?release=1.4.2.1 | /bin/sh;
             export PATH="$HOME/.meteor:$PATH";
+            if [[ $(npm -v) != 4* ]]; then npm i -g npm@4; fi;
+
+            if hash meteor 2>/dev/null;
+            then
+                meteor --version;
+            else
+                curl https://install.meteor.com/?release=1.4.2.3 | /bin/sh;
+            fi;
       fi
 
 
@@ -50,11 +58,13 @@ after_success:
     fi
 
 cache:
+  yarn: true
   directories:
     - node_modules
     - $HOME/.electron
     - $HOME/.npm
-    - $HOME/.yarn-cache
+    - $HOME/.meteor
+    - tests/.__tmp_int
 
 notifications:
   email:

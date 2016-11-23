@@ -6,9 +6,9 @@ skip_tags: true
 
 environment:
   matrix:
-    - nodejs_version: "4.4.0"
+    - nodejs_version: "4.6.2"
       test: "normal"
-    - nodejs_version: "4.4.0"
+    - nodejs_version: "4.6.2"
       test: "integration"
     - nodejs_version: "6.9.1"
       test: "integration"
@@ -20,24 +20,39 @@ platform:
   - x64
 
 cache:
-  - node_modules
-  - '%APPDATA%\npm\node_modules'
-  - '%APPDATA%\npm-cache'
-  - '%USERPROFILE%\.electron'
-  - '%LOCALAPPDATA%/Yarn'
+  - node_modules -> appveyor.yml
+  - '%APPDATA%\npm\node_modules -> appveyor.yml'
+  - '%APPDATA%\npm-cache -> appveyor.yml'
+  - '%USERPROFILE%\.electron -> appveyor.yml'
+  - '%LOCALAPPDATA%\Yarn -> appveyor.yml'
+  - '%LOCALAPPDATA%\.meteor -> appveyor.yml'
+  - tests/.__tmp_int -> appveyor.yml
 
 install:
- # Download Meteor
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm@next
+  - npm install -g npm@4
   - npm prune
   - npm install
-  - ps: if ($env:test -eq "integration") { Start-FileDownload 'https://s3.amazonaws.com/meteor-windows/InstallMeteor.exe' }
-  # Install meteor
-  - if %test%==integration .\installMeteor.exe /passive
-  # Restart
-  - ps: if ($env:test -eq "integration") { Start-Sleep -s 5 }
-  - ps: if ($env:test -eq "integration") { Restart-Computer -Force }
+  - ps: $env:Path += ";$env:LOCALAPPDATA\.meteor"
+  - ps: echo "$env:Path"
+  - ps: >-
+      if ($env:test -eq "integration") {
+        if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -eq $null) {
+          Start-FileDownload 'https://s3.amazonaws.com/meteor-windows/InstallMeteor.exe'
+          $env:meteordownloaded="yes"
+        }
+      }
+  - dir
+  - if exist InstallMeteor.exe InstallMeteor.exe /passive
+  - ps: If (Test-Path $env:LOCALAPPDATA\.meteor\packages\meteor-tool) { Get-ChildItem $env:LOCALAPPDATA\.meteor\packages\meteor-tool }
+  - ps: if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -ne $null) { Get-Command "meteor" }
+  - ps: $env:meteordownloaded
+  - ps: >-
+      if ($env:meteordownloaded -eq "yes") {
+        echo "i am here"
+        Start-Sleep -s 5
+        Restart-Computer -Force
+      }
 
 # Post-install test scripts.
 test_script:
@@ -46,6 +61,6 @@ test_script:
   - if %test%==integration meteor --version
   - if not %test%==integration npm test
   - if %test%==integration npm run prepare-integration-tests
-  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2_1\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
+  - if %test%==integration cd C:\Users\appveyor\AppData\Local\.meteor\packages\meteor-tool\1.4.2_3\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid && rmdir /S /Q node_modules && npm install
   - if %test%==integration npm run test-integration
 

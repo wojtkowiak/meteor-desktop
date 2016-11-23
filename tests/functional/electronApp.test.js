@@ -67,7 +67,7 @@ describe('electronApp', () => {
             );
             expect(packageJson.dependencies).to.have.a.property('some-package', '1.2.3');
             expect(packageJson.dependencies).to.have.a.property(
-                'meteor-desktop-splash-screen', '0.0.30');
+                'meteor-desktop-splash-screen', '0.0.31');
             expect(packageJson.dependencies).to.have.a.property('dependency', '1.0.1');
             expect(packageJson.dependencies).to.have.a.property('dependency2', '0.0.5');
         });
