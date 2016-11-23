@@ -6,9 +6,9 @@ skip_tags: true
 
 environment:
   matrix:
-    - nodejs_version: "4.4.0"
+    - nodejs_version: "4.6.2"
       test: "normal"
-    - nodejs_version: "4.4.0"
+    - nodejs_version: "4.6.2"
       test: "integration"
     - nodejs_version: "6.9.1"
       test: "integration"
