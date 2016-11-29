@@ -575,7 +575,10 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 ## FAQ
 
 ## Changelog
-- **0.2.1** - fixed `rebuildNativeNodeModules`
+- **0.2.2** - republished `0.2.1` because of published plugins being in a unknown, erroneous 
+state [meteor#8113](https://github.com/meteor/meteor/issues/8113)   
+- **0.2.1** - fixed `rebuildNativeNodeModules` which stopped working after update of 
+`electron-builder`
 - **0.2.0**
     * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
     file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
