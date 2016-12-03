@@ -205,6 +205,10 @@ export default class HCPClient {
         this.pendingAssetBundle = null;
     }
 
+    /**
+     * Reverts to either last known good version or the initial version if there is none available.
+     * @private
+     */
     useLastKnownGoodVersion() {
         const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
         this.log.debug(`last known good version is ${this.config.lastKnownGoodVersion}`);
@@ -247,6 +251,16 @@ export default class HCPClient {
             return this.pendingAssetBundle.getVersion();
         }
         return null;
+    }
+
+
+    /**
+     * Returns the currently used asset bundle.
+     *
+     * @returns {null|AssetBundle}
+     */
+    getCurrentAssetBundle() {
+        return this.currentAssetBundle;
     }
 
     /**

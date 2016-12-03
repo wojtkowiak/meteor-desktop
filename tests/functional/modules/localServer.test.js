@@ -10,9 +10,12 @@ import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
 import fetch from 'node-fetch';
+import path from 'path';
 
 import paths from '../../helpers/paths';
+import { getFakeLogger } from '../../helpers/meteorDesktop';
 import LocalServer from '../../../skeleton/modules/localServer';
+import AssetBundle from '../../../skeleton/modules/autoupdate/assetBundle';
 
 chai.use(sinonChai);
 chai.use(dirty);
@@ -20,15 +23,15 @@ const { describe, it } = global;
 const { expect } = chai;
 
 let localPort;
-// const oneYearInSeconds = 60 * 60 * 24 * 365;
+const oneYearInSeconds = 60 * 60 * 24 * 365;
 
-function getLocalServer(path) {
+function getLocalServer(bundlePath, settings) {
+    const fakeLogger = getFakeLogger(false, false);
     return new Promise((resolve, reject) => {
         const localServer = new LocalServer({
-            log: {
-                warn() {},
-                info() {}
-            }
+            log: fakeLogger,
+            settings
+
         });
         function onStartupFailed() {
             reject();
@@ -41,7 +44,11 @@ function getLocalServer(path) {
 
         }
         localServer.setCallbacks(onStartupFailed, onServerReady, onServerRestarted);
-        localServer.init(path);
+        const assetBundle = new AssetBundle(
+            fakeLogger,
+            bundlePath
+        );
+        localServer.init(assetBundle, paths.fixtures.desktop);
     });
 }
 
@@ -59,17 +66,18 @@ async function expectIndexPageToBeServed(response) {
 describe('localServer', () => {
     let localServer;
 
-    before(async () => {
-        localServer = await getLocalServer(paths.fixtures.bundledWww);
-    });
-
-    after(() => {
-        localServer.httpServerInstance.destroy();
-    });
-
     describe('the local server', () => {
+        before(async () => {
+            localServer =
+                await getLocalServer(paths.fixtures.bundledWww, { localFilesystem: true });
+        });
+
+        after(() => {
+            localServer.httpServerInstance.destroy();
+        });
+
         it('should serve index.html for /', async () => {
-            expectIndexPageToBeServed(await fetchFromLocalServer('/'));
+            await expectIndexPageToBeServed(await fetchFromLocalServer('/'));
         });
         it('should serve assets based on the URL in the manifest', async () => {
             // The file path is app/some-file, while the URL is /some-file
@@ -78,21 +86,13 @@ describe('localServer', () => {
             const body = await response.text();
             expect(body).to.contain('some-file');
         });
+
         it('should serve index.html for any URL that does not correspond to an asset', async () => {
-            expectIndexPageToBeServed(await fetchFromLocalServer('/anything'));
-        });
-        it('should serve index.html when accessing an asset through /application', async () => {
-            expectIndexPageToBeServed(
-                await fetchFromLocalServer('/application/packages/meteor.js'));
+            await expectIndexPageToBeServed(await fetchFromLocalServer('/anything'));
         });
 
         it('should serve index.html for an asset that is not in the manifest', async () => {
-            expectIndexPageToBeServed(await fetchFromLocalServer('/not-in-manifest'));
-        });
-
-        it('should serve index.html when accessing an asset that is not in the manifest through' +
-            ' /application', async () => {
-            expectIndexPageToBeServed(await fetchFromLocalServer('/application/not-in-manifest'));
+            await expectIndexPageToBeServed(await fetchFromLocalServer('/not-in-manifest'));
         });
 
         it('should not serve index.html for a non-existing /favicon.ico', async () => {
@@ -103,16 +103,14 @@ describe('localServer', () => {
         it('should set the X-SourceMap header for an asset with a source map', async () => {
             const response = await fetchFromLocalServer('/app/template.mobileapp.js');
             expect(response.headers.get('X-SourceMap')).to.contain(
-                '/app/template.mobileapp.js.map');
+                '/app/979b20f66caf126704c250fbd29ce253c6cb490e.map');
         });
 
         it('should serve the source map for an asset', async () => {
-            const response = await fetchFromLocalServer('/app/template.mobileapp.js.map');
+            const response = await fetchFromLocalServer('/app/979b20f66caf126704c250fbd29ce253c6cb490e.map');
             expect(response.status).to.equal(200);
             const body = await response.text();
-            // Not supported now.
-            // expect(response.headers.get('Cache-Control')).to.contain(
-            //  'max-age=' + oneYearInSeconds);
+            expect(response.headers.get('Cache-Control')).to.contain(`max-age=${oneYearInSeconds}`);
             expect(body).to.contain('"sources":["meteor://💻app/template.mobileapp.js"]');
         });
 
@@ -179,42 +177,62 @@ describe('localServer', () => {
                 expect(response.headers.get('Content-Type')).to.contain('application/octet-stream');
             });
         });
+
+        it('should set the ETag header based on the asset hash', async () => {
+            const response = await fetchFromLocalServer('/packages/meteor.js');
+            expect(response.headers.get('ETag'))
+                .to.contain('57d11a30155349aa5106f8150cee35eac5f4764c');
+        });
+
+        it(
+            'should set the Cache-Control header with a max-age of one year for a request with a cache buster',
+            async () => {
+                const response =
+                    await fetchFromLocalServer('/packages/meteor.js?9418708e9519b747d9d631d85ea85b90c0b5c70c');
+                expect(response.headers.get('Cache-Control')).to.contain(`max-age=${oneYearInSeconds}`);
+            }
+        );
+
+        it('should set the Cache-Control: no-cache header for a request without a cache buster', async () => {
+            const response = await fetchFromLocalServer('/packages/meteor.js');
+            expect(response.headers.get('Cache-Control')).to.contain('no-cache');
+        });
+
+        describe('local filesystem', () => {
+            it('should send a file using local-filesystem alias', async () => {
+                // Lets try to fetch exactly this file :)
+                const response =
+                    await fetchFromLocalServer(`/local-filesystem/${path.join(__dirname, 'localServer.test.js')}`);
+                const body = await response.text();
+                expect(body).to.contain('should send a file using local-filesystem alias');
+            });
+        });
+
+        describe('desktop assets', () => {
+            it('should send a desktop asset using ___desktop alias', async () => {
+                const response =
+                    await fetchFromLocalServer('/___desktop/loading.gif');
+                expect(response.headers.get('Content-Type')).to.contain('image/gif');
+            });
+        });
+    });
+
+    describe('when expose local filesystem is disabled', () => {
+        before(async () => {
+            localServer =
+                await getLocalServer(paths.fixtures.bundledWww, { localFilesystem: false });
+        });
+
+        after(() => {
+            localServer.httpServerInstance.destroy();
+        });
+
+        it('should not send a file using local-filesystem alias', async () => {
+            // Lets try to fetch exactly this file :)
+            const response =
+                await fetchFromLocalServer(
+                    `/local-filesystem/${path.join(__dirname, 'localServer.test.js')}`);
+            expect(response.status).to.equal(404);
+        });
     });
 });
-
-
-// TODO: When we will switch to reading manifest in localServer, comply also to these:
-/*
-
-it("should set the ETag header based on the asset hash", function(done) {
-    pendingOnAndroid();
-
-    fetchFromLocalServer("/packages/meteor.js").then(function(response) {
-        expect(response.headers.get("ETag")).toContain("57d11a30155349aa5106f8150cee35eac5f4764c");
-        done();
-    });
-});
-
-it("should set the Cache-Control header with a max-age of one year for a request with a
-    cache buster", function(done) {
-    pendingOnAndroid();
-
-    fetchFromLocalServer("/packages/meteor.js?9418708e9519b747d9d631d85ea85b90c0b5c70c")
-    .then(function(response) {
-        expect(response.headers.get("Cache-Control")).toContain("max-age=" + oneYearInSeconds);
-        done();
-    });
-});
-
-it("should set the Cache-Control: no-cache header for a request without a cache buster",
- function(done) {
-    pendingOnAndroid();
-
-    fetchFromLocalServer("/packages/meteor.js").then(function(response) {
-        expect(response.headers.get("Cache-Control")).toContain("no-cache");
-        done();
-    });
-});
-
-*/
-

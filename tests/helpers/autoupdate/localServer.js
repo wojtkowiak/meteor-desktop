@@ -2,6 +2,8 @@ import fetch from 'node-fetch';
 import chai from 'chai';
 import dirty from 'dirty-chai';
 
+import { getFakeLogger } from '../../helpers/meteorDesktop';
+import AssetBundle from '../../../skeleton/modules/autoupdate/assetBundle';
 import LocalServer from '../../../skeleton/modules/localServer';
 
 chai.use(dirty);
@@ -26,6 +28,23 @@ export function setUpLocalServer(mainPath, parentPath) {
         resolve(localServer);
     }
 
+    const fakeLogger = getFakeLogger();
+    let parentAssetBundle;
+
+    if (parentPath) {
+        parentAssetBundle = new AssetBundle(
+            fakeLogger,
+            parentPath
+        );
+    }
+
+    const assetBundle = new AssetBundle(
+        fakeLogger,
+        mainPath,
+        undefined,
+        parentAssetBundle
+    );
+
     if (!localServer) {
         return new Promise((promiseResolve, promiseReject) => {
             resolve = promiseResolve;
@@ -39,14 +58,14 @@ export function setUpLocalServer(mainPath, parentPath) {
                 }
             });
             localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-            localServer.init(mainPath, parentPath, false, false);
+            localServer.init(assetBundle, '', false, false);
         });
     }
     return new Promise((promiseResolve, promiseReject) => {
         resolve = promiseResolve;
         reject = promiseReject;
         localServer.setCallbacks(() => reject(), onServerReady, () => resolve());
-        localServer.init(mainPath, parentPath, true, false);
+        localServer.init(assetBundle, '', true, false);
     });
 }
 

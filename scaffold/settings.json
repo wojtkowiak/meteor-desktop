@@ -11,6 +11,7 @@
     "autoUpdateCheckOnStart": true,
     "rebuildNativeNodeModules": false,
     "webAppStartupTimeout": 60000,
+    "exposeLocalFilesystem": false,
     "window": {
         "icon": "@assets/meteor.png",
         "_windows": {

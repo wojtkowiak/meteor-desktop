@@ -1,12 +1,13 @@
 import http from 'http';
 import connect from 'connect';
-import serveStatic from 'serve-static';
-import modRewrite from 'connect-modrewrite';
 import findPort from 'find-port';
 import enableDestroy from 'server-destroy';
 import url from 'url';
 import path from 'path';
 import fs from 'fs-plus';
+import send from 'send';
+
+const oneYearInSeconds = 60 * 60 * 24 * 365;
 
 /**
  * Simple local HTTP server tailored for meteor app bundle.
@@ -19,7 +20,7 @@ import fs from 'fs-plus';
  */
 export default class LocalServer {
 
-    constructor({ log }) {
+    constructor({ log, settings = { localFilesystem: false } }) {
         this.log = log;
         this.httpServerInstance = null;
         this.server = null;
@@ -31,6 +32,10 @@ export default class LocalServer {
         this.errors = [];
         this.errors[0] = 'Could not find free port.';
         this.errors[1] = 'Could not start http server.';
+
+        this.localFilesystemUrl = '/local-filesystem/';
+        this.desktopAssetsUrl = '/___desktop/';
+        this.settings = settings;
     }
 
     /**
@@ -49,84 +54,218 @@ export default class LocalServer {
     /**
      * Initializes the module. Configures `connect` and searches for free port.
      *
-     * @param {string} serverPath       - path for the resources to serve
-     * @param {string} parentServerPath - path for the parent resources
+     * @param {AssetBundle} assetBundle - asset bundle from the autoupdate
+     * @param {string} desktopPath      - path to desktop.asar
      * @param {boolean} restart         - are we restarting the server?
      * @param {boolean} randomPort      - whether to choose a random port from those found
      *                                    to be free
      */
-    init(serverPath, parentServerPath, restart, randomPort = true) {
+    init(assetBundle, desktopPath, restart, randomPort = true) {
         // `connect` will do the job!
+        const self = this;
         const server = connect();
-        this.serverPath = serverPath;
-        this.parentServerPath = parentServerPath;
 
         if (restart) {
             if (this.httpServerInstance) {
                 this.httpServerInstance.destroy();
             }
         }
-        this.log.info('will serve from: ', serverPath, parentServerPath);
-
-        // Here, instead of reading the manifest and serving assets based on urls defined there,
-        // we are making a shortcut implementation which is just doing a simple regex rewrite to
-        // the urls.
-
-        // TODO: is serving on actual manifest better in any way? or faster?
-        // Answer 1: It would be better to have it so we would not have to check for a sourcemap
-        // file existence.
-        // Answer 2: We can not set a proper Cache header without manifest.
-        // Answer 3: We will still serve files that have been deleted in the new version - hard
-        // to say if that is a real problem.
+        this.log.info('will serve from: ', assetBundle.getDirectoryUri());
 
         /**
-         * Everything that is:
-         * - not starting with `app` or `packages`
-         * - not a merged-stylesheets.css
-         * - not with `meteor_[js/css]_resource` in the name
-         * - not a cordova.js file
-         * should be taken from /app/ path.
+         * Responds with HTTP status code and a message.
+         *
+         * @param {Object} res     - response object
+         * @param {number} code    - http response code
+         * @param {string} message - message
          */
-        server.use(modRewrite([
-            '^/favicon.ico [R=404,L,NS]',
-            '^/(?!($|app|packages|merged-stylesheets(?:-prefixed)?.css|' +
-            '.*meteor_(?:js|css)_resource|cordova.js))(.*) /app/$2'
-        ]));
+        function respondWithCode(res, code, message) {
+            /* eslint-disable */
+            res._headers = {};
+            res._headerNames = {};
+            res.statusCode = code;
+            /* eslint-enable */
+            res.setHeader('Content-Type', 'text/plain; charset=UTF-8');
+            res.setHeader('Content-Length', Buffer.byteLength(message));
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            res.end(message);
+        }
 
-        function setSourceMapHeader(req, res, next) {
-            const parsedUrl = url.parse(req.url);
-            const ext = path.extname(parsedUrl.pathname);
-            // Now here it would be very useful to actually read the manifest and server sourcemaps
-            // according to it. For now just checking if a sourcemap for a file exits.
-            if ((ext === '.js' || ext === '.css') && (
-                    fs.existsSync(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
-                    (parentServerPath &&
-                    fs.existsSync(path.join(parentServerPath, `${parsedUrl.pathname}.map`)))
-                )
-            ) {
-                res.setHeader('X-SourceMap', `${parsedUrl.pathname}.map?${parsedUrl.query}`);
+        /**
+         * If there is a path for a source map - adds a X-SourceMap header pointing to it.
+         *
+         * @param {Asset}  asset - currently sent asset
+         * @param {Object} res   - response object
+         */
+        function addSourceMapHeader(asset, res) {
+            if (asset.sourceMapUrlPath) {
+                res.setHeader('X-SourceMap', asset.sourceMapUrlPath);
             }
-            next();
         }
 
-        server.use(setSourceMapHeader);
-
-        // Serve files as static from the main directory.
-        server.use(serveStatic(serverPath),
-            {});
-
-        if (parentServerPath) {
-            // Server files from the parent directory as the main bundle has only changed files.
-            server.use(serveStatic(parentServerPath),
-                {});
+        /**
+         * If there is a hash, adds an ETag header with it.
+         *
+         * @param {Asset}  asset - currently sent asset
+         * @param {Object} res   - response object
+         */
+        function addETagHeader(asset, res) {
+            if (asset.hash) {
+                res.setHeader('ETag', asset.hash);
+            }
         }
 
-        // As last resort we will serve index.html.
-        server.use(modRewrite([
-            '^(.*) /index.html'
-        ]));
+        /**
+         * If the manifest defines the file as cacheable and query has a cache buster (i.e.
+         * hash added to it after ?) adds a Cache-Control header letting know Chrome that this
+         * file can be cached. If that is not the case, no-cache is passed.
+         *
+         * @param {Asset}  asset     - currently sent asset
+         * @param {Object} res       - response object
+         * @param {string} fullUrl   - url
+         */
+        function addCacheHeader(asset, res, fullUrl) {
+            const shouldCache = asset.cacheable && (/[0-9a-z]{40}/).test(fullUrl);
+            res.setHeader('Cache-Control', shouldCache ? `max-age=${oneYearInSeconds}` : 'no-cache');
+        }
 
-        server.use(serveStatic(serverPath), {});
+
+        /**
+         * Provides assets defined in the manifest.
+         *
+         * @param {Object} req    - request object
+         * @param {Object} res    - response object
+         * @param {Function} next - called on handler miss
+         */
+        function AssetHandler(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+
+            // Check if we have an asset for that url defined.
+            /** @type {Asset} */
+            const asset = assetBundle.assetForUrlPath(parsedUrl.pathname);
+
+            return asset ?
+                send(req, encodeURIComponent(asset.getFile()), { etag: false, cacheControl: false })
+                    .on('file', () =>
+                        addSourceMapHeader(asset, res),
+                        addETagHeader(asset, res),
+                        addCacheHeader(asset, res, req.url)
+                    )
+                    .pipe(res)
+                :
+                next();
+        }
+
+        /**
+         * Right now this is only used to serve cordova.js and it might seems like an overkill but
+         * it will be used later for serving desktop specific files bundled into meteor bundle.
+         *
+         * @param {Object} req    - request object
+         * @param {Object} res    - response object
+         * @param {Function} next - called on handler miss
+         */
+        function WwwHandler(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+
+            if (parsedUrl.pathname !== '/cordova.js') {
+                return next();
+            }
+            const parentAssetBundle = assetBundle.getParentAssetBundle();
+            // We need to obtain a path for the initial asset bundle which usually is the parent
+            // asset bundle, but if there were not HCPs yet, the main asset bundle is the
+            // initial one.
+            const initialAssetBundlePath =
+                parentAssetBundle ?
+                    parentAssetBundle.getDirectoryUri() : assetBundle.getDirectoryUri();
+
+            const filePath = path.join(initialAssetBundlePath, parsedUrl.pathname);
+
+            return fs.existsSync(filePath) ?
+                send(req, encodeURIComponent(filePath)).pipe(res) : next();
+        }
+
+        /**
+         * Provides files from the filesystem on a specified url alias.
+         *
+         * @param {Object} req        - request object
+         * @param {Object} res        - response object
+         * @param {Function} next     - called on handler miss
+         * @param {string} urlAlias   - url alias on which to serve the files
+         * @param {string=} localPath - serve files only from this path
+         */
+        function FilesystemHandler(req, res, next, urlAlias, localPath) {
+            const parsedUrl = url.parse(req.url);
+            if (!parsedUrl.pathname.startsWith(urlAlias)) {
+                return next();
+            }
+
+            const bareUrl = parsedUrl.pathname.substr(urlAlias.length);
+
+            let filePath;
+            if (localPath) {
+                filePath = path.join(localPath, bareUrl);
+                if (filePath.toLowerCase().lastIndexOf(localPath.toLowerCase(), 0) !== 0) {
+                    return respondWithCode(res, 400, 'Wrong path.');
+                }
+            } else {
+                filePath = bareUrl;
+            }
+            return fs.existsSync(filePath) ?
+                send(req, encodeURIComponent(filePath)).pipe(res) :
+                respondWithCode(res, 404, 'File does not exist.');
+        }
+
+
+        /**
+         * Serves files from the entire filesystem if enabled in settings.
+         *
+         * @param {Object} req        - request object
+         * @param {Object} res        - response object
+         * @param {Function} next     - called on handler miss
+         */
+        function LocalFilesystemHandler(req, res, next) {
+            if (!self.settings.localFilesystem) {
+                return next();
+            }
+            return FilesystemHandler(req, res, next, self.localFilesystemUrl);
+        }
+
+        /**
+         * Serves files from the assets directory.
+         *
+         * @param {Object} req        - request object
+         * @param {Object} res        - response object
+         * @param {Function} next     - called on handler miss
+         */
+        function DesktopAssetsHandler(req, res, next) {
+            return FilesystemHandler(req, res, next, self.desktopAssetsUrl, path.join(desktopPath, 'assets'));
+        }
+
+        /**
+         * Serves index.html as the last resort.
+         *
+         * @param {Object} req        - request object
+         * @param {Object} res        - response object
+         * @param {Function} next     - called on handler miss
+         */
+        function IndexHandler(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+            if (!parsedUrl.pathname.startsWith(self.localFilesystemUrl) &&
+                parsedUrl.pathname !== '/favicon.ico'
+            ) {
+                /** @type {Asset} */
+                const indexFile = assetBundle.getIndexFile();
+                send(req, encodeURIComponent(indexFile.getFile())).pipe(res);
+            } else {
+                next();
+            }
+        }
+
+        server.use(AssetHandler);
+        server.use(WwwHandler);
+        server.use(LocalFilesystemHandler);
+        server.use(DesktopAssetsHandler);
+        server.use(IndexHandler);
 
         this.server = server;
 

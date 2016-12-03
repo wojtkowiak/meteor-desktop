@@ -311,6 +311,9 @@ class App {
         if (internal && moduleName === 'autoupdate') {
             settings = this.prepareAutoupdateSettings();
         }
+        if (internal && moduleName === 'localServer') {
+            settings = { localFilesystem: this.settings.exposeLocalFilesystem };
+        }
 
         this.modules[moduleName] = new AppModule({
             log: this.loggerManager.configureLogger(moduleName),
@@ -394,8 +397,8 @@ class App {
         );
 
         this.localServer.init(
-            this.modules.autoupdate.getDirectory(),
-            this.modules.autoupdate.getParentDirectory()
+            this.modules.autoupdate.getCurrentAssetBundle(),
+            this.desktopPath
         );
 
         this.emit('afterInitialization');
@@ -535,8 +538,8 @@ class App {
 
             // Reinitialize the local server.
             this.localServer.init(
-                this.modules.autoupdate.getDirectory(),
-                this.modules.autoupdate.getParentDirectory(),
+                this.modules.autoupdate.getCurrentAssetBundle(),
+                this.desktopPath,
                 true
             );
         }

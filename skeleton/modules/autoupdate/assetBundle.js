@@ -180,6 +180,14 @@ export default class AssetBundle {
     }
 
     /**
+     * Get index.html path.
+     * @returns {string}
+     */
+    getIndexFile() {
+        return this.indexFile;
+    }
+
+    /**
      * Directory uri getter.
      * @returns {string}
      */
@@ -302,13 +310,13 @@ export default class AssetBundle {
      *
      * @param {string} urlPath - Url path of the asset.
      *
-     * @returns {Asset}
+     * @returns {Asset|null}
      */
     assetForUrlPath(urlPath) {
-        let asset;
+        let asset = null;
         if (urlPath in this.ownAssetsByURLPath) {
             asset = this.ownAssetsByURLPath[urlPath];
-        } else if (this.parentAssetBundle !== null) {
+        } else if (this.parentAssetBundle) {
             asset = this.parentAssetBundle.assetForUrlPath(urlPath);
         }
         return asset;
