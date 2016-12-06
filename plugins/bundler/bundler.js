@@ -295,6 +295,54 @@ class MeteorDesktopBundler {
             let uglify;
             let del;
 
+            /**
+             * https://github.com/wojtkowiak/meteor-desktop/issues/33
+             *
+             * Below we are saving to a safe place a String.to prototype to restore it later.
+             *
+             * Without this this plugin would break building for Android - causing either the
+             * built app to be broken or a 'No Java files found that extend CordovaActivity' error
+             * to be displayed during build.
+             *
+             * Here is an attempt to describe the bug's mechanism...
+             *
+             * Cordova at each build tries to update file that extends CordovaActivity (even if
+             * it is not necessary). To locate that file it just greps through source files
+             * trying to locate that file:
+             * https://github.com/apache/cordova-android/blob/6.1.x/bin/templates/cordova/lib/prepare.js#L196
+             * usually it finds it in the default file which is 'MainActivity.java'.
+             *
+             * Later, a `sed` is applied to that file:
+             * https://github.com/apache/cordova-android/blob/6.1.x/bin/templates/cordova/lib/prepare.js#L207
+             *
+             * Unfortunately this line fails and cleans the file contents, leaving it blank.
+             * Therefore the built app is broken and on the next build the error appears because
+             * the file was left empty and there are no files that extend the 'CordovaActivity` now.
+             *
+             * Now the fun part. Why does shelljs's sed cleans the file? Look:
+             * `shell.sed(/package [\w\.]*;/, 'package ' + pkg + ';', java_files[0]).to(destFile);`
+             * the part with `.to(destFile)` writes the output - and it this case writes an
+             * empty file. It happens because cordova is using shelljs at version 0.5.x while
+             * this plugin uses 0.7.x. At first it seemed like cordova-android would use the
+             * package from wrong node_modules but that scenario was verified not to be the case.
+             *
+             * Instead take a look how version 0.5.3 loads `.to` method:
+             * https://github.com/shelljs/shelljs/blob/v0.5.3/shell.js#L58
+             * It adds it to a String's prototype. `sed` returns a `ShellString` which returns
+             * plain string, which has `to` method from the prototype. Well, messing with builtin
+             * objects prototypes is an anti-pattern for a reason...
+             *
+             * Even though 0.7.5 does not add `to` to String's prototype anymore:
+             * https://github.com/shelljs/shelljs/blob/v0.7.5/shell.js#L72
+             * after first use of any command it somehow magically replaces that
+             * String.prototype.to to its own. I am using the term 'magically' because from reading
+             * the code I could not actually understand how does that happen.
+             * Finally, because `to` implementation differs between those versions, when cordova
+             * uses it by accident it does not receive the results of `sed` writing an empty file
+             * as a result.
+             */
+            const StringPrototypeToOriginal = String.prototype.to;
+
             let DependenciesManager;
             let ElectronAppScaffold;
             try {
@@ -312,6 +360,9 @@ class MeteorDesktopBundler {
                 ElectronAppScaffold =
                     requireLocal('meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
+                // Look at the declaration of StringPrototypeToOriginal for explanation.
+                String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
+
                 inputFile.error({
                     message: 'error while trying to require dependency, are you sure you have ' +
                     `meteor-desktop installed and using npm3? ${e}`
@@ -429,6 +480,9 @@ class MeteorDesktopBundler {
             shell.rm('./desktop.asar');
             shell.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
+
+            // Look at the declaration of StringPrototypeToOriginal for explanation.
+            String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
         });
     }
 }
