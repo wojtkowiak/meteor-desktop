@@ -227,6 +227,7 @@ field|description
 `autoUpdateCheckOnStart`|whether to check for updates on app start
 `rebuildNativeNodeModules`|turn on or off recompiling native modules, [more](#native-modules-support)
 `webAppStartupTimeout`|amount of time after which the downloaded version is considered faulty if Meteor app did not start - [more](#hot-code-push-support)
+`exposeLocalFilesystem`|turns on or off local filesystem exposure over url alias, [more](#accessing-local-filesystem-in-meteor)
 `window`|production options for the main window - see [here](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
 `windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify
@@ -358,9 +359,31 @@ You can also analyze `autoupdate.log` if you are experiencing any issues.
 
 ## `Meteor.isDesktop`
 
-In your `Meteor` app to run a part of the code only in the desktop context you can use `Meteor
-.isDesktop`. Use it the same way you would use `Meteor.isClient` or `Meteor.isCordova`.
+In your `Meteor` app to run a part of the code only in the desktop context you can use `Meteor.isDesktop`. Use it the same way you would use `Meteor.isClient` or `Meteor.isCordova`.
+
+## Accessing local filesystem in Meteor
+
+Local filesystem is exposed under and url alias (similarly to [Cordova integration](https://guide.meteor.com/mobile.html#accessing-local-files)). 
+This feature is disabled by default so you need to enable it first by setting 
+`exposeLocalFilesystem` in your `settings.json` to `true`. Files are exposed under 
+`\local-filesystem\<absolute-path>` url.
+
+You can use some convenience methods:
+- **`Desktop.getFileUrl(absolutePath)`** - returns an url to a file
+- **`Desktop.fetchFile(absolutePath)`** - invokes `fetch` on a file's url and returns it's 
+`Promise` 
+
+## Accessing `.desktop/assets` in Meteor
+
+Assets are exposed over an url alias `\___desktop\<asset-path>`.
+So for to display an image named `test.png` from `.desktop/assets` you should use a 
+`\___desktop\test.png` url.
  
+You can use some convenience methods:
+- **`Desktop.getAssetUrl(assetPath)`** - returns an asset's url
+- **`Desktop.fetchAsset(assetPath)`** - invokes `fetch` on an asset's url and returns it's 
+`Promise` 
+
 ## `Desktop` and `Module`
 
 ### `Module` - desktop side
@@ -368,8 +391,7 @@ Use it to declare your API on the desktop side.
 ```javascript
     this.module = new Module('myModuleName');
 ```
-[Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`]
-(https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
+[Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`](https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
 
 The only addition is the `respond` method which is a convenient method of sending response to 
 `Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
