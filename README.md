@@ -575,6 +575,7 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 ## FAQ
 
 ## Changelog
+- **0.2.3** - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
 - **0.2.2** - republished `0.2.1` because of published plugins being in a unknown, erroneous 
 state [meteor#8113](https://github.com/meteor/meteor/issues/8113)   
 - **0.2.1** - fixed `rebuildNativeNodeModules` which stopped working after update of 
