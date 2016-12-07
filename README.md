@@ -593,6 +593,9 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
  Also to make changes in the desktop HCP plugins run `Meteor` project with `METEOR_PACKAGE_DIRS` 
  set to `/absolute/path/to/meteor-desktop/plugins` so that they will be taken from the cloned repo. 
   
+## Built with `meteor-desktop`
+
+- [yaBeat](http://www.yabeat.com)
 
 ## FAQ
 
