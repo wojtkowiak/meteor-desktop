@@ -123,7 +123,7 @@ question('Do you want to use another path (yes/no)? ')
             });
         }
         console.log('\nCreating meteor-desktop-test-app');
-        exec('meteor create meteor-desktop-test-app --release=METEOR@1.4.2.1');
+        exec('meteor create meteor-desktop-test-app --release=METEOR@1.4.2.3');
 
         console.log('Installing deps in meteor-desktop...\n');
         return spawn(npm, ['install'], path.join(resolvedPath, 'meteor-desktop'));
