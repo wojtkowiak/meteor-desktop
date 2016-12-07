@@ -17,4 +17,5 @@ coverage
 plugins
 gh-md-toc
 docs
-
+.eslintignore
+yarn.lock
