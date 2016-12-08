@@ -558,6 +558,9 @@ Currently there are some defaults provided only for `Windows` and `Mac`. If you 
  `Linux` you need to add a [`linux`](https://github.com/electron-userland/electron-builder/wiki/Options#LinuxBuildOptions) section in your `builderOptions` and comply to these 
  [requirements](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build#linux). 
 
+##### Building for Windows Store (AppX)
+Change `target: ["appx"]` in `win` section of `builderOptions`. In case of problems please refer to 
+[electron-builder](https://github.com/electron-userland/electron-builder) documentation.
 
 ## Roadmap 
 > <sup>aka road to 1.0</sup>
