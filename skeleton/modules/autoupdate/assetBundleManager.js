@@ -194,10 +194,10 @@ class AssetBundleManager {
                 }
                 this.assetBundleDownloader = null;
 
-                // There is no need to redownload the initial version.
+                // There is no need to re-download the initial version.
                 if (this.initialAssetBundle.getVersion() === version) {
                     this.log.debug('No redownload of initial version.');
-                    this.didFinishDownloadingAssetBundle(this.initialAssetBundle);
+                    this.didFinishDownloadingAssetBundle(this.initialAssetBundle, true);
                     return;
                 }
 
@@ -371,12 +371,19 @@ class AssetBundleManager {
     /**
      * Success handler.
      *
-     * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
+     * @param {AssetBundle} assetBundle      - Asset bundle which was downloaded.
+     * @param {boolean} isInitialAssetBundle - whether this is the initial asset bundle
      * @private
      */
-    didFinishDownloadingAssetBundle(assetBundle) {
+    didFinishDownloadingAssetBundle(assetBundle, isInitialAssetBundle = false) {
         this.assetBundleDownloader = null;
-        this.handleDesktopBundle(assetBundle);
+
+        // We will not be able to write into meteor.asar. Avoid that. It is not necessary for
+        // initial bundle.
+        if (!isInitialAssetBundle) {
+            this.handleDesktopBundle(assetBundle);
+        }
+
         if (this.callback !== null) {
             this.callback.onFinishedDownloadingAssetBundle(assetBundle);
         }
