@@ -579,6 +579,7 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 Add `target: ["dmg"]` to `mac` section of `builderOptions`.
 
 ## Changelog
+- **0.2.6** - added some additional log messages
 - **0.2.5** - republished `0.2.4`
 - **0.2.4** - fixed [#40](https://github.com/wojtkowiak/meteor-desktop/issues/40) [[#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)]
 - **0.2.3** - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
