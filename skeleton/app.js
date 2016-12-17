@@ -83,6 +83,7 @@ class App {
         this.meteorAppVersionChange = false;
         this.pendingDesktopVersion = null;
         this.eventsBus.on('newVersionReady', (version, desktopVersion) => {
+            this.l.debug(`received newVersionReady ${desktopVersion ? '(desktop update present)' : ''}`);
             this.meteorAppVersionChange = true;
             this.pendingDesktopVersion = desktopVersion;
         });
@@ -461,7 +462,9 @@ class App {
         assignIn(windowSettings, this.settings.window);
 
         this.window = new BrowserWindow(windowSettings);
-        this.window.on('closed', () => { this.window = null; });
+        this.window.on('closed', () => {
+            this.window = null;
+        });
 
         this.webContents = this.window.webContents;
 
@@ -485,20 +488,24 @@ class App {
         this.eventsBus.emit('windowCreated', this.window);
 
         // Here we are catching reloads triggered by hot code push.
-        this.webContents.on('will-navigate', (event) => {
+        this.webContents.on('will-navigate', (event, url) => {
+            this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
             // We need to block it.
             event.preventDefault();
 
             if (this.meteorAppVersionChange) {
+                this.meteorAppVersionChange = false;
                 this.updateToNewVersion();
             }
-            this.meteorAppVersionChange = false;
         });
 
         // The app was loaded.
         this.webContents.on('did-stop-loading', () => {
+            this.l.debug('received did-stop-loading, assuming meteor webapp has loaded');
             if (!this.windowAlreadyLoaded) {
                 if (this.meteorAppVersionChange) {
+                    this.l.verbose('there is a new version downloaded already, performing HCP' +
+                        ' reset');
                     this.updateToNewVersion();
                 } else {
                     this.windowAlreadyLoaded = true;
@@ -516,6 +523,7 @@ class App {
      * Updates to the new version received from hot code push.
      */
     updateToNewVersion() {
+        this.l.verbose('entering update to new HCP version procedure');
         try {
             this.eventsBus.emit(
                 'beforeReload', this.modules.autoupdate.getPendingVersion());
