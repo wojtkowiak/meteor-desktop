@@ -605,6 +605,8 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
   
 ## Built with `meteor-desktop`
 
+Built an app using meteor-desktop? File an issue to list it here.
+
 - [yaBeat](http://www.yabeat.com)
 
 ## FAQ
