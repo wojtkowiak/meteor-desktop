@@ -378,11 +378,7 @@ class AssetBundleManager {
     didFinishDownloadingAssetBundle(assetBundle, isInitialAssetBundle = false) {
         this.assetBundleDownloader = null;
 
-        // We will not be able to write into meteor.asar. Avoid that. It is not necessary for
-        // initial bundle.
-        if (!isInitialAssetBundle) {
-            this.handleDesktopBundle(assetBundle);
-        }
+        this.handleDesktopBundle(assetBundle, isInitialAssetBundle);
 
         if (this.callback !== null) {
             this.callback.onFinishedDownloadingAssetBundle(assetBundle);
@@ -391,29 +387,39 @@ class AssetBundleManager {
 
     /**
      * @param {AssetBundle} assetBundle - Asset bundle which was downloaded.
+     * @param {boolean} isInitialAssetBundle - whether this is the initial asset bundle
+     * @private
      */
-    handleDesktopBundle(assetBundle) {
+    handleDesktopBundle(assetBundle, isInitialAssetBundle = false) {
         if (assetBundle.desktopVersion.version) {
-            assetBundle.writeDesktopVersion();
-            // If there is a new version of desktop.asar copy it with a name changed so it
-            // will contain the version.
+            // We will not be able to write into meteor.asar. Avoid that. It is not necessary for
+            // initial bundle.
+            if (!isInitialAssetBundle) {
+                assetBundle.writeDesktopVersion();
+            } else {
+                this.log.debug('skipping writing desktop version into' +
+                    ' initial version');
+            }
+            // If there is a new version of desktop.asar copy it desktop bundle path.
             const desktopPath = path.join(
                 this.desktopBundlePath,
                 `${assetBundle.desktopVersion.version}_desktop.asar`
             );
 
-            if (assetBundle.desktopVersion.version !== this.appSettings.desktopVersion &&
-                !fs.existsSync(desktopPath)
-            ) {
+            if (!fs.existsSync(desktopPath)) {
                 assetBundle.getOwnAssets().some((asset) => {
                     if (~asset.filePath.indexOf('desktop.asar')) {
                         // TODO: need more efficient way of copying asar archive
                         originalFs.writeFileSync(
                             desktopPath, originalFs.readFileSync(asset.getFile()));
+                        this.log.debug('copied desktop.asar to', desktopPath);
                         return true;
                     }
                     return false;
                 });
+            } else {
+                this.log.debug('skipping copying desktop.asar because the version is already' +
+                    ' downloaded');
             }
         }
     }
