@@ -17,10 +17,6 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-// To make desktop.asar's downloaded through HCP work, we need to provide them a path to
-// node_modules.
-require('module').globalPaths.push(path.resolve(join(__dirname, '..', 'node_modules')));
-
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
@@ -46,6 +42,14 @@ class App {
 
         this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
         this.loadSettings();
+
+        // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
+        // node_modules.
+        const nodeModulesPath = [__dirname, 'node_modules'];
+        if (!this.isProduction()) {
+            nodeModulesPath.splice(1, 0, '..');
+        }
+        require('module').globalPaths.push(path.resolve(join(...nodeModulesPath)));
 
         if (Squirrel.handleSquirrelEvents(this.desktopPath)) {
             app.quit();
