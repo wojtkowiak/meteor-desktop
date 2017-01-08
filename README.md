@@ -624,11 +624,12 @@ Add `target: ["dmg"]` to `mac` section of `builderOptions`.
     * building for Windows Store is now possible (thanks to hard work of 
     [@develar](https://github.com/develar))
     * default dependencies for `Skeleton App` were updated 
-    [[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468)]
+    [[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468), 
+    [1d1075a](https://github.com/wojtkowiak/meteor-desktop/commit/1d1075a1eec288c1372ccd001c197fab29f71980)]
     (this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
     updates)
-    * `electron` was updated to `1.4.12`
-    * `electron-builder` was updated to `10.8.0`
+    * `electron` was updated to `1.4.13`
+    * `electron-builder` was updated to `11.2.0`
     * `electron-packager` was updated to `8.4.0`
 - **0.2.5** - republished `0.2.4`
 - **0.2.4** - fixed [#40](https://github.com/wojtkowiak/meteor-desktop/issues/40) [[#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)]
