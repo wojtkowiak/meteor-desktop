@@ -631,6 +631,7 @@ Add `target: ["dmg"]` to `mac` section of `builderOptions`.
     * `electron` was updated to `1.4.13`
     * `electron-builder` was updated to `11.2.0`
     * `electron-packager` was updated to `8.4.0`
+- **0.2.6** - added some additional log messages
 - **0.2.5** - republished `0.2.4`
 - **0.2.4** - fixed [#40](https://github.com/wojtkowiak/meteor-desktop/issues/40) [[#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)]
 - **0.2.3** - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
