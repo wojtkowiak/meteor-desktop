@@ -545,8 +545,11 @@ class App {
             this.settings.desktopVersion !== this.pendingDesktopVersion
         ) {
             this.l.info('relaunching to use different version of desktop.asar');
-            app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
-            app.exit(0);
+            // Give winston a chance to write the logs.
+            setImmediate(() => {
+                app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+                app.exit(0);
+            });
         } else {
             // Firing reset routine.
             this.modules.autoupdate.onReset();
