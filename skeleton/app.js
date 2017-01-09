@@ -159,7 +159,7 @@ class App {
         try {
             this.l.error(error);
             if (this.eventsBus) {
-                this.eventsBus.emit('unhandledException', error);
+                this.emit('unhandledException', error);
             }
         } catch (e) {
             // Well...
@@ -352,7 +352,7 @@ class App {
                 Module
             });
             this.modules.desktop = this.desktop;
-            this.eventsBus.emit('desktopLoaded', this.desktop);
+            this.emit('desktopLoaded', this.desktop);
             this.l.debug('desktop loaded');
         } catch (e) {
             this.l.error('could not load desktop.js', e);
@@ -442,7 +442,7 @@ class App {
      * @param {number} code - error code from local server
      */
     onStartupFailed(code) {
-        this.eventsBus.emit('startupFailed');
+        this.emit('startupFailed');
         dialog.showErrorBox('Startup error', 'Could not initialize app. Please contact' +
             ` your support. Error code: ${code}`);
         this.app.quit();
@@ -489,7 +489,7 @@ class App {
             );
         }
 
-        this.eventsBus.emit('windowCreated', this.window);
+        this.emit('windowCreated', this.window);
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event, url) => {
@@ -512,8 +512,9 @@ class App {
                         ' reset');
                     this.updateToNewVersion();
                 } else {
+                    this.l.debug('showing main window');
                     this.windowAlreadyLoaded = true;
-                    this.eventsBus.emit('beforeLoadFinish');
+                    this.emit('beforeLoadFinish');
                     this.window.show();
                     this.window.focus();
                     if (this.settings.devtron && !this.isProduction()) {
@@ -521,7 +522,7 @@ class App {
                     }
                 }
             }
-            this.eventsBus.emit('loadingFinished');
+            this.emit('loadingFinished');
         });
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
@@ -531,12 +532,8 @@ class App {
      */
     updateToNewVersion() {
         this.l.verbose('entering update to new HCP version procedure');
-        try {
-            this.eventsBus.emit(
-                'beforeReload', this.modules.autoupdate.getPendingVersion());
-        } catch (e) {
-            this.l.warn('error while emitting beforeReload', e);
-        }
+        this.emit(
+            'beforeReload', this.modules.autoupdate.getPendingVersion());
 
         if (this.settings.desktopHCP &&
             this.settings.desktopVersion !== this.pendingDesktopVersion
@@ -549,9 +546,11 @@ class App {
             });
         } else {
             // Firing reset routine.
+            this.l.debug('firing onReset from autoupdate');
             this.modules.autoupdate.onReset();
 
             // Reinitialize the local server.
+            this.l.debug('resetting local server');
             this.localServer.init(
                 this.modules.autoupdate.getCurrentAssetBundle(),
                 this.desktopPath,
