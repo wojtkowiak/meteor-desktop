@@ -460,6 +460,10 @@ class App {
             show: false
         };
 
+        if (process.env.METEOR_DESKTOP_SHOW_MAIN_WINDOW_ON_STARTUP) {
+            windowSettings.show = true;
+        }
+
         assignIn(windowSettings, this.settings.window);
 
         windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
