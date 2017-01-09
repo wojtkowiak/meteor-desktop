@@ -456,21 +456,14 @@ class App {
         const windowSettings = {
             width: 800,
             height: 600,
-            webPreferences: {
-                nodeIntegration: false, // node integration must to be off
-                preload: join(__dirname, 'preload.js')
-            },
+            webPreferences: {},
             show: false
         };
 
-        if ('webPreferences' in this.settings.window &&
-            'nodeIntegration' in this.settings.window.webPreferences &&
-            this.settings.window.webPreferences.nodeIntegration === true) {
-            // Too risky to allow that... sorry.
-            this.settings.window.webPreferences.nodeIntegration = false;
-        }
-
         assignIn(windowSettings, this.settings.window);
+
+        windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
+        windowSettings.webPreferences.preload = join(__dirname, 'preload.js');
 
         this.window = new BrowserWindow(windowSettings);
         this.window.on('closed', () => {
