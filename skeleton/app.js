@@ -43,6 +43,10 @@ class App {
         this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
         this.loadSettings();
 
+        if ('meteorDesktopVersion' in this.settings) {
+            this.l.debug(`skeleton version ${this.settings.meteorDesktopVersion}`);
+        }
+
         // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
         // node_modules.
         const nodeModulesPath = [__dirname, 'node_modules'];
@@ -478,7 +482,7 @@ class App {
         if (this.settings.devtron && !this.isProduction()) {
             // Print some fancy status to the console if in development.
             this.webContents.executeJavaScript(`
-                console.log('%c   meteor-desktop   ', 
+                console.log('%c   meteor-desktop   ',
                 \`background:linear-gradient(#47848F,#DE4B4B);border:1px solid #3E0E02;
                 color:#fff;display:block;text-shadow:0 3px 0 rgba(0,0,0,0.5);
                 box-shadow:0 1px 0 rgba(255,255,255,0.4) inset,0 5px 3px -5px rgba(0,0,0,0.5),
