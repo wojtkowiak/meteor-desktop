@@ -471,7 +471,12 @@ Plugin is basically a module exported to a npm package. `module.json` is not nee
  into account because `name` and `dependencies` are already in `package.json`. Also you can not use 
  the `extract` functionality as that only works in modules. Plugin `settings` are set and taken 
  from the `plugins` section of `settings.json`. [Here](scaffold/settings.json#L26) is an example of passing settings to splash 
- screen plugin.  
+ screen plugin.
+ 
+ While developing you will probably need to make use of `linkPackages` in `settings.json`, so that 
+ your npm-packaged plugin would be linked instead of downloaded. However the advised approach is 
+ to make the development test driven - meaning that you should make your tests the main way of 
+ verifying whether the plugin does what it should.
 #### `meteorDependencies` in `package.json` 
 One extra feature is that you can also depend on Meteor packages through `meteorDependencies` 
 field in `package.json`. Check out [`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/package.json#L52) for example.  
