@@ -104,6 +104,8 @@ Documentation
      * [extract](#extract)
   * [Hot code push support](#hot-code-push-support)
   * [Meteor.isDesktop](#meteorisdesktop)
+  * [Accessing local filesystem in Meteor](#accessing-local-filesystem-in-meteor)
+  * [Accessing .desktop/assets in Meteor](#accessing-desktopassets-in-meteor)
   * [<code>Desktop</code> and <code>Module</code>](#desktop-and-module)
      * [Module - desktop side](#module---desktop-side)
      * [Desktop - Meteor side](#desktop---meteor-side)
@@ -120,9 +122,12 @@ Documentation
   * [MD_LOG_LEVEL](#md_log_level)
   * [Packaging](#packaging)
   * [Building installer](#building-installer)
+    * [Building for linux](#building-for-linux)
+    * [Building for Windows Store (AppX)](#building-for-windows-store-appx)
   * [Roadmap](#roadmap)
   * [Contribution](#contribution)
-  * [FAQ](#faq)
+  * [Built with meteor-desktop](#built-with-meteor-desktop)
+  * [FAQ](#faq)  
   * [Changelog](#changelog)
 
 ## Architecture
@@ -149,7 +154,7 @@ Below is a high level architecture diagram of this integration.
 The main goal was to provide a non hacky integration without actually submitting any desktop 
 oriented pull request to `Meteor`.
 The whole concept is based on taking the `web.cordova` build, modifying it as little as possible 
-and running it in the `Electron`'s renderer process. The current `cordova` integration 
+and running it in the `Electron's` renderer process. The current `cordova` integration 
 architecture is more or less conceptually replicated. 
 
 Currently the only modification that the mobile build is subjected to is injecting the `Meteor.isDesktop` variable. 
@@ -182,7 +187,8 @@ by hooking to `beforeDesktopJsLoad`, `desktopLoaded` or `afterInitialization` on
 
 ## Scaffolding your desktop app
 
-If you have not run the example from the Quick start paragraph, first you need to scaffold a `.desktop` dir in which your `Electron`'s main process code lives.
+If you have not run the example from the Quick start paragraph, first you need to scaffold a 
+`.desktop` dir in which your `Electron's` main process code lives.
 To do that run: (assuming `npm install --save-dev meteor-desktop` did add successfully a `desktop` 
 entry in the `package.json scripts` section)
 ```bash
@@ -227,6 +233,7 @@ field|description
 `autoUpdateCheckOnStart`|whether to check for updates on app start
 `rebuildNativeNodeModules`|turn on or off recompiling native modules, [more](#native-modules-support)
 `webAppStartupTimeout`|amount of time after which the downloaded version is considered faulty if Meteor app did not start - [more](#hot-code-push-support)
+`exposeLocalFilesystem`|turns on or off local filesystem exposure over url alias, [more](#accessing-local-filesystem-in-meteor)
 `window`|production options for the main window - see [here](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
 `windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify
@@ -279,7 +286,7 @@ This is a reference to the Skeleton App. Currently there are only two methods yo
 #### `eventsBus`
 
 This is just an `EventEmitter` that is an event bus meant to be used across all entities running 
-in the `Electron`'s main process (`.desktop`). Currently there are several events emitted on the 
+in the `Electron's` main process (`.desktop`). Currently there are several events emitted on the 
 bus by the `Skeleton App` that you may find useful:
 
 event name|payload|description
@@ -358,9 +365,31 @@ You can also analyze `autoupdate.log` if you are experiencing any issues.
 
 ## `Meteor.isDesktop`
 
-In your `Meteor` app to run a part of the code only in the desktop context you can use `Meteor
-.isDesktop`. Use it the same way you would use `Meteor.isClient` or `Meteor.isCordova`.
+In your `Meteor` app to run a part of the code only in the desktop context you can use `Meteor.isDesktop`. Use it the same way you would use `Meteor.isClient` or `Meteor.isCordova`.
+
+## Accessing local filesystem in Meteor
+
+Local filesystem is exposed under and url alias (similarly to [Cordova integration](https://guide.meteor.com/mobile.html#accessing-local-files)). 
+This feature is disabled by default so you need to enable it first by setting 
+`exposeLocalFilesystem` in your `settings.json` to `true`. Files are exposed under 
+`\local-filesystem\<absolute-path>` url.
+
+You can use some convenience methods:
+- **`Desktop.getFileUrl(absolutePath)`** - returns an url to a file
+- **`Desktop.fetchFile(absolutePath)`** - invokes `fetch` on a file's url and returns it's 
+`Promise` 
+
+## Accessing `.desktop/assets` in Meteor
+
+Assets are exposed over an url alias `\___desktop\<asset-path>`.
+So for to display an image named `test.png` from `.desktop/assets` you should use a 
+`\___desktop\test.png` url.
  
+You can use some convenience methods:
+- **`Desktop.getAssetUrl(assetPath)`** - returns an asset's url
+- **`Desktop.fetchAsset(assetPath)`** - invokes `fetch` on an asset's url and returns it's 
+`Promise` 
+
 ## `Desktop` and `Module`
 
 ### `Module` - desktop side
@@ -368,8 +397,7 @@ Use it to declare your API on the desktop side.
 ```javascript
     this.module = new Module('myModuleName');
 ```
-[Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`]
-(https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
+[Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`](https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
 
 The only addition is the `respond` method which is a convenient method of sending response to 
 `Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
@@ -472,7 +500,8 @@ https://github.com/ArekSredzki/electron-release-server
 ## Native modules support
 
 This integration fully supports rebuilding native modules (npm packages with native node modules)
- against `Electron`'s `node` version. However, to speed up build time, it is **switched off by default**. 
+ against `Electron's` `node` version. However, to speed up build time, it is **switched off by 
+ default**. 
 
 If you have any of those in your dependencies, or you know that one of the packages or plugins is using it, you should turn it on by setting `rebuildNativeNodeModules` to true in your `settings.json`. Currently there is no mechanism present that detects whether the rebuild should be run so it is fired on every build. A cleverer approach is planned before `1.0`. 
 
@@ -536,6 +565,9 @@ Currently there are some defaults provided only for `Windows` and `Mac`. If you 
  `Linux` you need to add a [`linux`](https://github.com/electron-userland/electron-builder/wiki/Options#LinuxBuildOptions) section in your `builderOptions` and comply to these 
  [requirements](https://github.com/electron-userland/electron-builder/wiki/Multi-Platform-Build#linux). 
 
+##### Building for Windows Store (AppX)
+Change `target: ["appx"]` in `win` section of `builderOptions`. In case of problems please refer to 
+[electron-builder](https://github.com/electron-userland/electron-builder) documentation.
 
 ## Roadmap 
 > <sup>aka road to 1.0</sup>
@@ -571,6 +603,11 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
  Also to make changes in the desktop HCP plugins run `Meteor` project with `METEOR_PACKAGE_DIRS` 
  set to `/absolute/path/to/meteor-desktop/plugins` so that they will be taken from the cloned repo. 
   
+## Built with `meteor-desktop`
+
+Built an app using meteor-desktop? File an issue to list it here.
+
+- [yaBeat](http://www.yabeat.com)
 
 ## FAQ
 
@@ -579,6 +616,21 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 Add `target: ["dmg"]` to `mac` section of `builderOptions`.
 
 ## Changelog
+- **0.3.0**
+    * `localServer` was rewritten to use `send` instead of `serve-static` 
+    [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
+    * url aliases for local filesystem and `.desktop/assets` added 
+    ([more](#accessing-local-filesystem-in-meteor))
+    * building for Windows Store is now possible (thanks to hard work of 
+    [@develar](https://github.com/develar))
+    * default dependencies for `Skeleton App` were updated 
+    [[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468), 
+    [1d1075a](https://github.com/wojtkowiak/meteor-desktop/commit/1d1075a1eec288c1372ccd001c197fab29f71980)]
+    (this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
+    updates)
+    * `electron` was updated to `1.4.13`
+    * `electron-builder` was updated to `11.2.0`
+    * `electron-packager` was updated to `8.4.0`
 - **0.2.6** - added some additional log messages
 - **0.2.5** - republished `0.2.4`
 - **0.2.4** - fixed [#40](https://github.com/wojtkowiak/meteor-desktop/issues/40) [[#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)]

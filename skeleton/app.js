@@ -17,10 +17,6 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-// To make desktop.asar's downloaded through HCP work, we need to provide them a path to
-// node_modules.
-require('module').globalPaths.push(path.resolve(join(__dirname, '..', 'node_modules')));
-
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
@@ -46,6 +42,18 @@ class App {
 
         this.desktopPath = DesktopPathResolver.resolveDesktopPath(this.userDataDir, this.l);
         this.loadSettings();
+
+        if ('meteorDesktopVersion' in this.settings) {
+            this.l.debug(`skeleton version ${this.settings.meteorDesktopVersion}`);
+        }
+
+        // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
+        // node_modules.
+        const nodeModulesPath = [__dirname, 'node_modules'];
+        if (!this.isProduction()) {
+            nodeModulesPath.splice(1, 0, '..');
+        }
+        require('module').globalPaths.push(path.resolve(join(...nodeModulesPath)));
 
         if (Squirrel.handleSquirrelEvents(this.desktopPath)) {
             app.quit();
@@ -151,7 +159,7 @@ class App {
         try {
             this.l.error(error);
             if (this.eventsBus) {
-                this.eventsBus.emit('unhandledException', error);
+                this.emit('unhandledException', error);
             }
         } catch (e) {
             // Well...
@@ -312,6 +320,9 @@ class App {
         if (internal && moduleName === 'autoupdate') {
             settings = this.prepareAutoupdateSettings();
         }
+        if (internal && moduleName === 'localServer') {
+            settings = { localFilesystem: this.settings.exposeLocalFilesystem };
+        }
 
         this.modules[moduleName] = new AppModule({
             log: this.loggerManager.configureLogger(moduleName),
@@ -341,7 +352,7 @@ class App {
                 Module
             });
             this.modules.desktop = this.desktop;
-            this.eventsBus.emit('desktopLoaded', this.desktop);
+            this.emit('desktopLoaded', this.desktop);
             this.l.debug('desktop loaded');
         } catch (e) {
             this.l.error('could not load desktop.js', e);
@@ -395,8 +406,8 @@ class App {
         );
 
         this.localServer.init(
-            this.modules.autoupdate.getDirectory(),
-            this.modules.autoupdate.getParentDirectory()
+            this.modules.autoupdate.getCurrentAssetBundle(),
+            this.desktopPath
         );
 
         this.emit('afterInitialization');
@@ -431,7 +442,7 @@ class App {
      * @param {number} code - error code from local server
      */
     onStartupFailed(code) {
-        this.eventsBus.emit('startupFailed');
+        this.emit('startupFailed');
         dialog.showErrorBox('Startup error', 'Could not initialize app. Please contact' +
             ` your support. Error code: ${code}`);
         this.app.quit();
@@ -445,21 +456,18 @@ class App {
         const windowSettings = {
             width: 800,
             height: 600,
-            webPreferences: {
-                nodeIntegration: false, // node integration must to be off
-                preload: join(__dirname, 'preload.js')
-            },
+            webPreferences: {},
             show: false
         };
 
-        if ('webPreferences' in this.settings.window &&
-            'nodeIntegration' in this.settings.window.webPreferences &&
-            this.settings.window.webPreferences.nodeIntegration === true) {
-            // Too risky to allow that... sorry.
-            this.settings.window.webPreferences.nodeIntegration = false;
+        if (process.env.METEOR_DESKTOP_SHOW_MAIN_WINDOW_ON_STARTUP) {
+            windowSettings.show = true;
         }
 
         assignIn(windowSettings, this.settings.window);
+
+        windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
+        windowSettings.webPreferences.preload = join(__dirname, 'preload.js');
 
         this.window = new BrowserWindow(windowSettings);
         this.window.on('closed', () => {
@@ -471,7 +479,7 @@ class App {
         if (this.settings.devtron && !this.isProduction()) {
             // Print some fancy status to the console if in development.
             this.webContents.executeJavaScript(`
-                console.log('%c   meteor-desktop   ', 
+                console.log('%c   meteor-desktop   ',
                 \`background:linear-gradient(#47848F,#DE4B4B);border:1px solid #3E0E02;
                 color:#fff;display:block;text-shadow:0 3px 0 rgba(0,0,0,0.5);
                 box-shadow:0 1px 0 rgba(255,255,255,0.4) inset,0 5px 3px -5px rgba(0,0,0,0.5),
@@ -485,7 +493,7 @@ class App {
             );
         }
 
-        this.eventsBus.emit('windowCreated', this.window);
+        this.emit('windowCreated', this.window);
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event, url) => {
@@ -508,13 +516,17 @@ class App {
                         ' reset');
                     this.updateToNewVersion();
                 } else {
+                    this.l.debug('showing main window');
                     this.windowAlreadyLoaded = true;
-                    this.eventsBus.emit('beforeLoadFinish');
+                    this.emit('beforeLoadFinish');
                     this.window.show();
                     this.window.focus();
+                    if (this.settings.devtron && !this.isProduction()) {
+                        this.webContents.executeJavaScript('Desktop.devtron.install()');
+                    }
                 }
             }
-            this.eventsBus.emit('loadingFinished');
+            this.emit('loadingFinished');
         });
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
@@ -524,27 +536,28 @@ class App {
      */
     updateToNewVersion() {
         this.l.verbose('entering update to new HCP version procedure');
-        try {
-            this.eventsBus.emit(
-                'beforeReload', this.modules.autoupdate.getPendingVersion());
-        } catch (e) {
-            this.l.warn('error while emitting beforeReload', e);
-        }
+        this.emit(
+            'beforeReload', this.modules.autoupdate.getPendingVersion());
 
         if (this.settings.desktopHCP &&
             this.settings.desktopVersion !== this.pendingDesktopVersion
         ) {
             this.l.info('relaunching to use different version of desktop.asar');
-            app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
-            app.exit(0);
+            // Give winston a chance to write the logs.
+            setImmediate(() => {
+                app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+                app.exit(0);
+            });
         } else {
             // Firing reset routine.
+            this.l.debug('firing onReset from autoupdate');
             this.modules.autoupdate.onReset();
 
             // Reinitialize the local server.
+            this.l.debug('resetting local server');
             this.localServer.init(
-                this.modules.autoupdate.getDirectory(),
-                this.modules.autoupdate.getParentDirectory(),
+                this.modules.autoupdate.getCurrentAssetBundle(),
+                this.desktopPath,
                 true
             );
         }

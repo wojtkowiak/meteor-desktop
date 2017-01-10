@@ -28,6 +28,7 @@
             "process",
             "devtron",
             "ava",
+            "send",
             "meteor-desktop-test-suite"
         ]
     },

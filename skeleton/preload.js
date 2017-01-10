@@ -31,6 +31,45 @@ const Desktop = new (class {
         this.fetchCallCounter = 0;
         this.fetchTimeoutTimers = {};
     }
+
+    /**
+     * Just a convenience method for getting an url for a file from the local file system.
+     * @param {string} absolutePath - absolute path to the file
+     * @returns {string}
+     */
+    getFileUrl(absolutePath) { // eslint-disable-line
+        return `/local-filesystem/${absolutePath}`;
+    }
+
+    /**
+     * Just a convenience method for getting an url for a file from the assets directory.
+     * @param {string} assetPath - file path relative to assets directory
+     * @returns {string}
+     */
+    getAssetUrl(assetPath) { // eslint-disable-line
+        return `/___desktop/${assetPath}`;
+    }
+
+    /**
+     * Just a convenience method for getting a file from the local file system.
+     * Returns a promise from `fetch`.
+     * @param {string} absolutePath - absolute path to the file
+     * @returns {Promise}
+     */
+    fetchFile(absolutePath) {
+        return fetch(this.getFileUrl(absolutePath, false));
+    }
+
+    /**
+     * Just a convenience method for getting a file from the assets directory.
+     * Returns a promise from `fetch`.
+     * @param {string} assetPath - file path relative to assets directory
+     * @returns {Promise}
+     */
+    fetchAsset(assetPath) {
+        return fetch(this.getAssetUrl(assetPath, false));
+    }
+
     /**
      * Adds a callback to internal listeners placeholders and registers real ipc hooks.
      *

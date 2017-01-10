@@ -77,7 +77,7 @@ export default class DesktopPathResolver {
             ) {
                 // If it is blacklisted lets check if we have last known good version.
                 if (autoupdateConfig.lastKnownGoodVersion) {
-                    // But is the last know good version is different from the initial version?
+                    // But is the last know good version different from the initial version?
                     if (autoupdateConfig.lastKnownGoodVersion !==
                         autoupdateConfig.lastSeenInitialVersion
                     ) {

@@ -269,4 +269,18 @@ describe('Desktop', () => {
             expect(desktop.getResponseEventName('desktop', 'event')).to.equal('desktop__event___response');
         });
     });
+
+    describe('#getFileUrl', () => {
+        it('should return an url to a file from local filesystem', () => {
+            const desktop = Desktop.__get__('Desktop');
+            expect(desktop.getFileUrl('C:/test.txt')).to.equal('/local-filesystem/C:/test.txt');
+        });
+    });
+
+    describe('#getAssetUrl', () => {
+        it('should return an url to an asset', () => {
+            const desktop = Desktop.__get__('Desktop');
+            expect(desktop.getAssetUrl('meteor.ico')).to.equal('/___desktop/meteor.ico');
+        });
+    });
 });
