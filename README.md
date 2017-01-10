@@ -128,7 +128,7 @@ Documentation
   * [Contribution](#contribution)
   * [Built with meteor-desktop](#built-with-meteor-desktop)
   * [FAQ](#faq)  
-  * [Changelog](#changelog)
+  * [Changelog](CHANGELOG.md)
 
 ## Architecture
 
@@ -621,42 +621,5 @@ Built an app using meteor-desktop? File an issue to list it here.
 Add `target: ["dmg"]` to `mac` section of `builderOptions`.
 
 ## Changelog
-- **0.3.0**
-    * `localServer` was rewritten to use `send` instead of `serve-static` 
-    [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
-    * url aliases for local filesystem and `.desktop/assets` added 
-    ([more](#accessing-local-filesystem-in-meteor))
-    * building for Windows Store is now possible (thanks to hard work of 
-    [@develar](https://github.com/develar))
-    * default dependencies for `Skeleton App` were updated 
-    [[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468), 
-    [1d1075a](https://github.com/wojtkowiak/meteor-desktop/commit/1d1075a1eec288c1372ccd001c197fab29f71980)]
-    (this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
-    updates)
-    * `electron` was updated to `1.4.13`
-    * `electron-builder` was updated to `11.2.0`
-    * `electron-packager` was updated to `8.4.0`
-- **0.2.6** - added some additional log messages
-- **0.2.5** - republished `0.2.4`
-- **0.2.4** - fixed [#40](https://github.com/wojtkowiak/meteor-desktop/issues/40) [[#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)]
-- **0.2.3** - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
-- **0.2.2** - republished `0.2.1` because of published plugins being in a unknown, erroneous 
-state [meteor#8113](https://github.com/meteor/meteor/issues/8113)   
-- **0.2.1** - fixed `rebuildNativeNodeModules` which stopped working after update of 
-`electron-builder`
-- **0.2.0**
-    * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
-    file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
-    * development environment setup script was added
-    * specifying target platforms for `build-installer` is now not restricted - 
-    check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
-    * `electron` was updated to `1.4.6`
-    * `electron-builder` was updated to `8.6.0`
-- **0.1.4**  
-    * fixed [#22](https://github.com/wojtkowiak/meteor-desktop/issues/22)  
-    * fixed bug in uncaught exception handler in the scaffold - check [here](https://github.com/wojtkowiak/meteor-desktop/commit/1dc8347f18d2ebc1dfb3f875a66e1d5206441af8)
-- **0.1.3** - added warning for possible console syntax mistake when invoking with command or 
-option (missing ` -- ` delimiter)
-- **0.1.2** - fixed [#10](https://github.com/wojtkowiak/meteor-desktop/issues/10)
-- **0.1.1** - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
-- **0.1.0** - first public release
+
+is [here](CHANGELOG.md)
