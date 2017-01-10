@@ -382,7 +382,7 @@ You can use some convenience methods:
 ## Accessing `.desktop/assets` in Meteor
 
 Assets are exposed over an url alias `\___desktop\<asset-path>`.
-So for to display an image named `test.png` from `.desktop/assets` you should use a 
+So to display an image named `test.png` from `.desktop/assets` you should use a 
 `\___desktop\test.png` url.
  
 You can use some convenience methods:
