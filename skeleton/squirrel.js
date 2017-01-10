@@ -155,6 +155,12 @@ export default class Squirrel {
                     releaseName);
             });
 
+            if (process.platform === 'darwin' && !context.isProduction()) {
+                context.l.info('disabling autoUpdate because on Mac in development build it' +
+                    ' would not work anyway (app needs to be signed)');
+                return;
+            }
+
             autoUpdater.setFeedURL(
                 feed,
                 context.settings.autoUpdateFeedHeaders ?
