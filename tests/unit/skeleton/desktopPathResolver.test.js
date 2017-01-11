@@ -56,13 +56,12 @@ describe('DesktopPathResolver', () => {
             prepareFsStubs(1, 2, {
                 lastSeenInitialVersion: 1
             });
-            const warnStub = sinon.spy();
+            const infoStub = sinon.spy();
             const desktopPath = DesktopPathResolver
                 .resolveDesktopPath(__dirname, {
-                    info: () => {},
-                    warn: warnStub
+                    info: infoStub
                 });
-            expect(warnStub).to.be.calledWithMatch(sinon.match('will use desktop.asar from' +
+            expect(infoStub).to.be.calledWithMatch(sinon.match('will use desktop.asar from' +
                 ' initial version because the initial version of meteor app has changed'));
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
@@ -109,15 +108,14 @@ describe('DesktopPathResolver', () => {
                 blacklistedVersions: []
             });
             const infoStub = sinon.spy();
-            const warnStub = sinon.spy();
             readFileSyncStub
                 .withArgs(sinon.match('546').and(sinon.match('_desktop.json')))
                 .returns(JSON.stringify({ version: 1 }));
 
             const desktopPath = DesktopPathResolver
-                .resolveDesktopPath(__dirname, { info: infoStub, warn: warnStub });
+                .resolveDesktopPath(__dirname, { info: infoStub });
 
-            expect(warnStub.firstCall).to.be.calledWithMatch(sinon.match(
+            expect(infoStub.secondCall).to.be.calledWithMatch(sinon.match(
                 'will use desktop.asar from initial version because last downloaded version is ' +
                 'using it'));
 
@@ -132,15 +130,14 @@ describe('DesktopPathResolver', () => {
                 blacklistedVersions: []
             });
             const infoStub = sinon.spy();
-            const warnStub = sinon.spy();
             readFileSyncStub
                 .withArgs(sinon.match('546').and(sinon.match('_desktop.json')))
                 .returns(JSON.stringify({}));
 
             const desktopPath = DesktopPathResolver
-                .resolveDesktopPath(__dirname, { info: infoStub, warn: warnStub });
+                .resolveDesktopPath(__dirname, { info: infoStub });
 
-            expect(warnStub.firstCall).to.be.calledWithMatch(sinon.match(
+            expect(infoStub.secondCall).to.be.calledWithMatch(sinon.match(
                 'will use desktop.asar from initial version because last downloaded version does ' +
                 'not contain new desktop version'));
 
@@ -252,23 +249,23 @@ describe('DesktopPathResolver', () => {
                 blacklistedVersions: ['123']
             });
 
-            const infoStub = sinon.spy();
+            const warnStub = sinon.spy();
 
             readFileSyncStub
                 .withArgs(sinon.match('120').and(sinon.match('_desktop.json')))
                 .returns(JSON.stringify({ version: 1 }));
 
             const desktopPath = DesktopPathResolver
-                .resolveDesktopPath(__dirname, { info: infoStub });
+                .resolveDesktopPath(__dirname, { info: Function.prototype, warn: warnStub });
 
-            expect(infoStub.secondCall).to.be.calledWithMatch(sinon.match(
+            expect(warnStub.firstCall).to.be.calledWithMatch(sinon.match(
                 'will use desktop.asar from last known good version which is ' +
                 'apparently the initial bundle'));
 
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
 
-        it('should use initial version no last known good version is present', () => {
+        it('should use initial version when no last known good version is present', () => {
             prepareFsStubs(1, 1, {
                 lastSeenInitialVersion: 1,
                 lastDownloadedVersion: '123',

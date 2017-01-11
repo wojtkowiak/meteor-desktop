@@ -65,7 +65,7 @@ export default class DesktopPathResolver {
             DesktopPathResolver.readJsonFile(join(userDataDir, 'autoupdate.json'));
 
         if (autoupdateConfig.lastSeenInitialVersion !== initialVersion) {
-            log.warn('will use desktop.asar from initial version because the initial version ' +
+            log.info('will use desktop.asar from initial version because the initial version ' +
             `of meteor app has changed: ${desktopPath}`);
             return desktopPath;
         }
@@ -108,7 +108,7 @@ export default class DesktopPathResolver {
                                 `version : ${desktopPath}`);
                         }
                     } else {
-                        log.info('will use desktop.asar from last known good version which is ' +
+                        log.warn('will use desktop.asar from last known good version which is ' +
                             `apparently the initial bundle: ${desktopPath}`);
                     }
                 } else {
@@ -131,11 +131,11 @@ export default class DesktopPathResolver {
                         log.info('will use desktop.asar from last downloaded version ' +
                             `at: ${desktopPath}`);
                     } else {
-                        log.warn('will use desktop.asar from initial version because last ' +
+                        log.info('will use desktop.asar from initial version because last ' +
                             `downloaded version is using it: ${desktopPath}`);
                     }
                 } else {
-                    log.warn('will use desktop.asar from initial version because last ' +
+                    log.info('will use desktop.asar from initial version because last ' +
                         'downloaded version does not contain new desktop version: ' +
                         `${desktopPath}`);
                 }

@@ -407,16 +407,23 @@ class AssetBundleManager {
             );
 
             if (!fs.existsSync(desktopPath)) {
-                assetBundle.getOwnAssets().some((asset) => {
-                    if (~asset.filePath.indexOf('desktop.asar')) {
-                        // TODO: need more efficient way of copying asar archive
-                        originalFs.writeFileSync(
-                            desktopPath, originalFs.readFileSync(asset.getFile()));
-                        this.log.debug('copied desktop.asar to', desktopPath);
-                        return true;
-                    }
-                    return false;
-                });
+                if (isInitialAssetBundle) {
+                    const initialDesktopPath = path.resolve(path.join(__dirname, '..', '..', '..', 'desktop.asar'));
+                    originalFs.writeFileSync(
+                        desktopPath, originalFs.readFileSync(initialDesktopPath));
+                    this.log.debug('copied initial desktop.asar to', desktopPath);
+                } else {
+                    assetBundle.getOwnAssets().some((asset) => {
+                        if (~asset.filePath.indexOf('desktop.asar')) {
+                            // TODO: need more efficient way of copying asar archive
+                            originalFs.writeFileSync(
+                                desktopPath, originalFs.readFileSync(asset.getFile()));
+                            this.log.debug('copied desktop.asar to', desktopPath);
+                            return true;
+                        }
+                        return false;
+                    });
+                }
             } else {
                 this.log.debug('skipping copying desktop.asar because the version is already' +
                     ' downloaded');

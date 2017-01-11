@@ -380,6 +380,8 @@ export default class HCPClient {
         this.config.lastKnownGoodVersion = this.currentAssetBundle.getVersion();
         this.saveConfig();
 
+        this.eventsBus.emit('startupDidComplete');
+
         setImmediate(() => {
             this.assetBundleManager
                 .removeAllDownloadedAssetBundlesExceptForVersion(
