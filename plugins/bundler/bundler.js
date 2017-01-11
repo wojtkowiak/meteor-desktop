@@ -225,6 +225,9 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
+        if (process.env.METEOR_DESKTOP_DEBUG_DESKTOP_COMPATIBILITY_VERSION) {
+            console.log('[meteor-desktop] compatibility version calculated from', deps);
+        }
         return md5(JSON.stringify(deps));
     }
 
