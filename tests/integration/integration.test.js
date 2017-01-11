@@ -163,7 +163,7 @@ describe('desktop', () => {
                 path: electron,
                 args: [path.join(appDir, '.meteor', 'desktop-build')],
                 requireName: 'electronRequire',
-                startTimeout: 30000,
+                startTimeout: 60000,
                 env: {
                     NODE_ENV: 'test',
                     ELECTRON_ENV: 'test',
