@@ -168,11 +168,17 @@ describe('desktop', () => {
                     NODE_ENV: 'test',
                     ELECTRON_ENV: 'test',
                     METEOR_DESKTOP_NO_SPLASH_SCREEN: 1
-                }
+                },
+                chromeDriverLogPath: path.join(__dirname, 'chrome.log')
             });
-            await app.start();
-            await waitForApp(app);
-
+            try {
+                await app.start();
+                await waitForApp(app);
+            } catch (e) {
+                console.log(e);
+                console.log(e.trace);
+                console.log(fs.readFileSync(path.join(__dirname, 'chrome.log'), 'utf-8'));
+            }
             const title = await app.client.getTitle();
             expect(title).to.equal('test-desktop');
             const text = await app.client.getText('h1');

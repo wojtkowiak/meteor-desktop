@@ -78,7 +78,7 @@
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
     "electron": "1.4.14",
-    "electron-builder": "11.2.3",
+    "electron-builder": "11.2.4",
     "electron-builder-squirrel-windows": "11.2.1",
     "electron-packager": "8.5.0",
     "glob": "7.1.1",

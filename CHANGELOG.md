@@ -1,7 +1,7 @@
 #### v0.3.1 <sup>11.10.2017</sup>
 
 * `electron` was updated to `1.4.14`
-* `electron-builder` was updated to `11.2.3`
+* `electron-builder` was updated to `11.2.4`
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
 * `electron-packager` was updated to `8.5.0`
 
