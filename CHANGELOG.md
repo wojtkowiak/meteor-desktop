@@ -1,5 +1,7 @@
-#### v0.3.1 <sup>11.10.2017</sup>
+## v0.4.0 <sup>11.10.2017</sup>
 
+* added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
+* various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/40)
 * `electron` was updated to `1.4.14`
 * `electron-builder` was updated to `11.2.4`
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
