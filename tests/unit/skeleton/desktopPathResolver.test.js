@@ -265,7 +265,7 @@ describe('DesktopPathResolver', () => {
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
 
-        it('should use initial version no last known good version is present', () => {
+        it('should use initial version when no last known good version is present', () => {
             prepareFsStubs(1, 1, {
                 lastSeenInitialVersion: 1,
                 lastDownloadedVersion: '123',
