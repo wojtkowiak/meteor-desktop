@@ -124,7 +124,7 @@ describe('desktop', () => {
             expect(deps).to.deep.equal({
                 fromSettings: { 'some-package': '1.2.3' },
                 plugins: {
-                    'meteor-desktop-splash-screen': '0.0.31',
+                    'meteor-desktop-splash-screen': '0.1.0',
                     'meteor-desktop-localstorage': '0.0.11'
                 },
                 modules: {
