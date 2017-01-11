@@ -234,6 +234,7 @@ field|description
 `rebuildNativeNodeModules`|turn on or off recompiling native modules, [more](#native-modules-support)
 `webAppStartupTimeout`|amount of time after which the downloaded version is considered faulty if Meteor app did not start - [more](#hot-code-push-support)
 `exposeLocalFilesystem`|turns on or off local filesystem exposure over url alias, [more](#accessing-local-filesystem-in-meteor)
+`showWindowOnStartupDidComplete`|normally, main window appears after Chromes `did-stop-loading` event, set this to `true` if you want to depened on Meteor's `startupDidComplete` event
 `window`|production options for the main window - see [here](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions)
 `windowDev`|development options for the main window, applied on top of production options
 `uglify`|whether to process the production build with uglify

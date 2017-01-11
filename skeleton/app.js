@@ -95,6 +95,7 @@ class App {
             this.meteorAppVersionChange = true;
             this.pendingDesktopVersion = desktopVersion;
         });
+        this.eventsBus.on('startupDidComplete', this.handleAppStartup.bind(this, true));
         this.eventsBus.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
 
         this.app.on('ready', this.onReady.bind(this));
@@ -509,26 +510,39 @@ class App {
 
         // The app was loaded.
         this.webContents.on('did-stop-loading', () => {
-            this.l.debug('received did-stop-loading, assuming meteor webapp has loaded');
-            if (!this.windowAlreadyLoaded) {
-                if (this.meteorAppVersionChange) {
-                    this.l.verbose('there is a new version downloaded already, performing HCP' +
-                        ' reset');
-                    this.updateToNewVersion();
-                } else {
-                    this.l.debug('showing main window');
-                    this.windowAlreadyLoaded = true;
-                    this.emit('beforeLoadFinish');
-                    this.window.show();
-                    this.window.focus();
-                    if (this.settings.devtron && !this.isProduction()) {
-                        this.webContents.executeJavaScript('Desktop.devtron.install()');
-                    }
-                }
-            }
-            this.emit('loadingFinished');
+            this.l.debug('received did-stop-loading');
+            this.handleAppStartup(false);
         });
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
+    }
+
+    handleAppStartup(startupDidCompleteEvent) {
+        if (this.settings.showWindowOnStartupDidComplete) {
+            if (!startupDidCompleteEvent) {
+                return;
+            }
+            this.l.debug('received startupDidComplete');
+        }
+        this.l.info('assuming meteor webapp has loaded');
+        if (!this.windowAlreadyLoaded) {
+            if (this.meteorAppVersionChange) {
+                this.l.verbose('there is a new version downloaded already, performing HCP' +
+                    ' reset');
+                this.updateToNewVersion();
+            } else {
+                this.windowAlreadyLoaded = true;
+                this.l.debug('showing main window');
+                this.emit('beforeLoadFinish');
+                this.window.show();
+                this.window.focus();
+                if (this.settings.devtron && !this.isProduction()) {
+                    this.webContents.executeJavaScript('Desktop.devtron.install()');
+                }
+            }
+        } else {
+            this.l.debug('window already loaded');
+        }
+        this.emit('loadingFinished');
     }
 
     /**
