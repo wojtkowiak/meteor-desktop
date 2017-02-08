@@ -489,8 +489,9 @@ version should be equal to npm package version.
 
 If you made a plugin, please let us know so that it can be listed here.
 ##### List of known plugins:
+[`meteor-desktop-system-notifications`](https://github.com/tzapu/meteor-desktop-system-notifications)  
 [`meteor-desktop-splashscreen`](https://github.com/wojtkowiak/meteor-desktop-splash-screen)  
-[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)
+[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)  
 
 ## Squirrel autoupdate support
 
