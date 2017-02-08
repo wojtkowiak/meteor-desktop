@@ -582,9 +582,14 @@ Change `target: ["appx"]` in `win` section of `builderOptions`. In case of probl
 
 This version should be considered as beta version.  
 Any feedback/feature requests/PR is highly welcomed and highly anticipated.  
-There is rough plan to publish a release candidate around January 2017. Until that expect things to 
+There is rough plan to publish a release candidate around June 2017. Until that expect things to 
 change rapidly and many frequent 0.X.X releases.
-You can find the roadmap filtering by milestone and `accepted` tag on the github issues list [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).  
+
+If you want to check what is planned and what I am working on, first you can check accepted 
+issues on github [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).
+More internal tasks and roadmap are maintained on Taiga 
+[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban). The project is public so 
+you can also comment in Taiga.
 
 ## Contribution
 
