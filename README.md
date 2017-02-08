@@ -598,6 +598,11 @@ PRs are always welcome and encouraged. If you need help at any stage of preparin
 file an issue. It is also good, to file a feature request issue before you start working to 
 discuss the need and implementation approach.
 
+If you want, you can always contribute by donating:
+
+<a href='https://pledgie.com/campaigns/33341'><img alt='Click here to lend your support to: meteor-desktop and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33341.png?skin_name=chrome' border='0' ></a>
+
+
 ##### ! devEnvSetup.js !
 To help you contribute, there is a development environment setup script. If you have this repo 
 cloned and already did a `npm install`, you can just run it with `node devEnvSetup.js`.
