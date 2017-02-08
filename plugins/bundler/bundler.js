@@ -324,10 +324,10 @@ class MeteorDesktopBundler {
              *
              * Now the fun part. Why does shelljs's sed cleans the file? Look:
              * `shell.sed(/package [\w\.]*;/, 'package ' + pkg + ';', java_files[0]).to(destFile);`
-             * the part with `.to(destFile)` writes the output - and it this case writes an
+             * the part with `.to(destFile)` writes the output - and in this case writes an
              * empty file. It happens because cordova is using shelljs at version 0.5.x while
              * this plugin uses 0.7.x. At first it seemed like cordova-android would use the
-             * package from wrong node_modules but that scenario was verified not to be the case.
+             * package from wrong node_modules but that scenario was verified not to be true.
              *
              * Instead take a look how version 0.5.3 loads `.to` method:
              * https://github.com/shelljs/shelljs/blob/v0.5.3/shell.js#L58
