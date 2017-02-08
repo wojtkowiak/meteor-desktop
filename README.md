@@ -351,6 +351,7 @@ export default class Desktop {
     constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
         this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
     }
+}
 ```
 
 ## Hot code push support
