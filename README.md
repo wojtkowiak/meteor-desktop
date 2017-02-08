@@ -589,9 +589,9 @@ change rapidly and many frequent 0.X.X releases.
 
 If you want to check what is planned and what I am working on, first you can check accepted 
 issues on github [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).
-More internal tasks and roadmap are maintained on Taiga 
+You can see the backlog and roadmap in form of epics on Taiga 
 [here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban). The project is public so 
-you can also comment in Taiga.
+you can also comment and vote there.
 
 ## Contribution
 
