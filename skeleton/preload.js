@@ -207,7 +207,7 @@ const Desktop = new (class {
                 }, true
             );
             this.fetchTimeoutTimers[fetchId] = setTimeout(() => {
-                reject();
+                reject('timeout');
             }, timeout);
             ipc.send(eventName, fetchId, ...args);
         });

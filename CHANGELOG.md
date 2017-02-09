@@ -1,4 +1,15 @@
-## v0.4.0 <sup>11.10.2017</sup>
+## v0.5.0 <sup>08.02.2017</sup>
+
+* `Desktop.fetch` rejects with `timeout` string in case of timeout
+* you can now see internal backlog of this project in Taiga
+[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap 
+will be published in form of epics 
+* `electron` was updated to `1.4.15`
+* `electron-builder` was updated to `13.0.0`
+* `electron-builder-squirrel-windows` was updated to `13.2.0`
+* `electron-packager` was updated to `8.5.10`
+
+## v0.4.0 <sup>11.01.2017</sup>
 
 * added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
 * various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/40)
@@ -7,7 +18,7 @@
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
 * `electron-packager` was updated to `8.5.0`
 
-## v0.3.0 <sup>10.10.2017</sup>
+## v0.3.0 <sup>10.01.2017</sup>
 
 * `localServer` was rewritten to use `send` instead of `serve-static` 
 [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]

@@ -351,6 +351,7 @@ export default class Desktop {
     constructor({ log, skeletonApp, appSettings, eventsBus, modules, settings, Module }) {
         this.pathToExe = path.join(settings.extractedFilesPath, 'dir/something.exe');
     }
+}
 ```
 
 ## Hot code push support
@@ -489,8 +490,9 @@ version should be equal to npm package version.
 
 If you made a plugin, please let us know so that it can be listed here.
 ##### List of known plugins:
+[`meteor-desktop-system-notifications`](https://github.com/tzapu/meteor-desktop-system-notifications)  
 [`meteor-desktop-splashscreen`](https://github.com/wojtkowiak/meteor-desktop-splash-screen)  
-[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)
+[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)  
 
 ## Squirrel autoupdate support
 
@@ -582,15 +584,25 @@ Change `target: ["appx"]` in `win` section of `builderOptions`. In case of probl
 
 This version should be considered as beta version.  
 Any feedback/feature requests/PR is highly welcomed and highly anticipated.  
-There is rough plan to publish a release candidate around January 2017. Until that expect things to 
+There is rough plan to publish a release candidate around June 2017. Until that expect things to 
 change rapidly and many frequent 0.X.X releases.
-You can find the roadmap filtering by milestone and `accepted` tag on the github issues list [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).  
+
+If you want to check what is planned and what I am working on, first you can check accepted 
+issues on github [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).
+You can see the backlog and roadmap in form of epics on Taiga 
+[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban). The project is public so 
+you can also comment and vote there.
 
 ## Contribution
 
 PRs are always welcome and encouraged. If you need help at any stage of preparing a PR, just 
 file an issue. It is also good, to file a feature request issue before you start working to 
 discuss the need and implementation approach.
+
+If you want, you can always contribute by donating:
+
+<a href='https://pledgie.com/campaigns/33341'><img alt='Click here to lend your support to: meteor-desktop and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33341.png?skin_name=chrome' border='0' ></a>
+
 
 ##### ! devEnvSetup.js !
 To help you contribute, there is a development environment setup script. If you have this repo 
