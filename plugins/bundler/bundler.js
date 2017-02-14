@@ -34,6 +34,13 @@ if (!fs.existsSync(versionFilePath)) {
     addToGitIgnore();
 }
 
+
+function toCamelCase(name) {
+    return name
+        .replace(/-(.)/g, $1 => $1.toUpperCase())
+        .replace(/-/g, '');
+}
+
 /*
  * Important! This is a POC.
  *
@@ -46,7 +53,19 @@ if (!fs.existsSync(versionFilePath)) {
 class MeteorDesktopBundler {
     constructor(fileSystem) {
         this.fs = fileSystem;
+        this.deps = [
+            'asar',
+            'shelljs',
+            'glob',
+            'del',
+            'babel-core',
+            'hash-files',
+            'babel-preset-node6',
+            'babel-preset-es2015',
+            'uglify-js'
+        ];
         this.version = null;
+        this.requireLocal = null;
     }
 
     /**
@@ -212,12 +231,12 @@ class MeteorDesktopBundler {
     /**
      * Calculates a md5 from all dependencies.
      */
-    calculateCompatibilityVersion(dependencies, desktopPath, file, requireLocal) {
+    calculateCompatibilityVersion(dependencies, desktopPath, file) {
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
             `${dependency}:${dependencies[dependency]}`
         );
-        const mainCompatibilityVersion = requireLocal('meteor-desktop/package.json')
+        const mainCompatibilityVersion = this.requireLocal('meteor-desktop/package.json')
             .version
             .split('.');
         const desktopCompatibilityVersion = this.getSettings(desktopPath, file)
@@ -229,6 +248,80 @@ class MeteorDesktopBundler {
             console.log('[meteor-desktop] compatibility version calculated from', deps);
         }
         return md5(JSON.stringify(deps));
+    }
+
+    /**
+     * Tries to require a dependency from either apps node_module or meteor-desktop/node_modules.
+     * Also verifies if the version is correct.
+     *
+     * @param {string} dependency
+     * @param {string} version
+     * @returns {null|Object}
+     */
+    getDependency(dependency, version) {
+        let appScope = null;
+        let meteorDesktopScope = null;
+
+        try {
+            // Try to require the dependency from apps node_modules.
+            const requiredDependency = this.requireLocal(dependency);
+            // If that succeeded lets load the version information.
+            appScope = { dependency: requiredDependency, version: this.requireLocal(`${dependency}/package.json`).version };
+        } catch (e) {
+            // No harm at this moment...
+        }
+
+        try {
+            // Look for the dependency in meteor-desktop/node_modules.
+            // No need to check the version, npm ensures that.
+            meteorDesktopScope = this.requireLocal(`meteor-desktop/node_modules/${dependency}`);
+        } catch (e) {
+            // Also no harm...
+        }
+
+        if (appScope !== null && appScope.version === version) {
+            return appScope.dependency;
+        }
+        if (meteorDesktopScope !== null) {
+            return meteorDesktopScope;
+        }
+
+        return null;
+    }
+
+    /**
+     * Tries to find and require all node_modules dependencies.
+     * @returns {{}}
+     */
+    lookForAndRequireDependencies() {
+        const dependencies = {};
+        let versions;
+
+        try {
+            // Try to load the dependencies section from meteor-desktop so we will know what are
+            // the correct versions.
+            versions = this.requireLocal('meteor-desktop/package.json').dependencies;
+        } catch (e) {
+            throw new Error('could not load package.json from meteor-desktop, is meteor-desktop' +
+                ' installed?');
+        }
+
+        this.deps.forEach((dependency) => {
+            const dependencyCamelCased = toCamelCase(dependency);
+
+            // Lets try to find that dependency.
+            dependencies[dependencyCamelCased] =
+                this.getDependency(dependency, versions[dependency]);
+
+            if (dependencies[dependencyCamelCased] === null) {
+                throw new Error(
+                    `error while trying to require ${dependency}, are you sure you have ` +
+                    'meteor-desktop installed and using npm3?'
+                );
+            }
+        });
+
+        return dependencies;
     }
 
     /**
@@ -274,6 +367,8 @@ class MeteorDesktopBundler {
             return;
         }
 
+        this.requireLocal = requireLocal;
+
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
             const desktopPath = './.desktop';
             const settings = this.getSettings(desktopPath, inputFile);
@@ -285,17 +380,14 @@ class MeteorDesktopBundler {
 
             console.time('[meteor-desktop]: Preparing desktop.asar took');
 
-            /* TODO: warn about unexpected versions */
-            // When the meteor app requires a different from meteor-desktop version of those
-            // deps here we might receive an unexpected version.
             let asar;
-            let shell;
+            let shelljs;
             let glob;
-            let babel;
-            let hash;
-            let node6Preset;
-            let es2015Preset;
-            let uglify;
+            let babelCore;
+            let hashFiles;
+            let babelPresetNode6;
+            let babelPresetEs2015;
+            let uglifyJs;
             let del;
 
             /**
@@ -349,15 +441,18 @@ class MeteorDesktopBundler {
             let DependenciesManager;
             let ElectronAppScaffold;
             try {
-                asar = requireLocal('asar');
-                shell = requireLocal('shelljs');
-                glob = requireLocal('glob');
-                del = requireLocal('del');
-                babel = requireLocal('babel-core');
-                hash = requireLocal('hash-files');
-                node6Preset = requireLocal('babel-preset-node6');
-                es2015Preset = requireLocal('babel-preset-es2015');
-                uglify = requireLocal('uglify-js');
+                const deps = this.lookForAndRequireDependencies();
+                ({
+                    asar,
+                    shelljs,
+                    glob,
+                    del,
+                    babelCore,
+                    hashFiles,
+                    babelPresetNode6,
+                    babelPresetEs2015,
+                    uglifyJs
+                } = deps);
 
                 DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
                 ElectronAppScaffold =
@@ -367,8 +462,7 @@ class MeteorDesktopBundler {
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
 
                 inputFile.error({
-                    message: 'error while trying to require dependency, are you sure you have ' +
-                    `meteor-desktop installed and using npm3? ${e}`
+                    message: e
                 });
                 return;
             }
@@ -387,15 +481,15 @@ class MeteorDesktopBundler {
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
-            shell.rm('-rf', desktopTmpPath);
-            shell.cp('-rf', desktopPath, desktopTmpPath);
+            shelljs.rm('-rf', desktopTmpPath);
+            shelljs.cp('-rf', desktopPath, desktopTmpPath);
             del.sync([
                 path.join(desktopTmpPath, '**', '*.test.js')
             ]);
 
-            const configs = this.gatherModuleConfigs(shell, modulesPath, inputFile);
+            const configs = this.gatherModuleConfigs(shelljs, modulesPath, inputFile);
             const dependencies = this.getDependencies(desktopPath, inputFile, configs, depsManager);
-            const version = hash.sync({
+            const version = hashFiles.sync({
                 files: [`${desktopPath}${path.sep}**`]
             });
 
@@ -404,8 +498,7 @@ class MeteorDesktopBundler {
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
             settings.desktopVersion = version;
             settings.compatibilityVersion =
-                this.calculateCompatibilityVersion(dependencies, desktopPath, inputFile,
-                    requireLocal);
+                this.calculateCompatibilityVersion(dependencies, desktopPath, inputFile);
             fs.writeFileSync(
                 path.join(desktopTmpPath, 'settings.json'), JSON.stringify(settings, null, 4)
             );
@@ -421,7 +514,7 @@ class MeteorDesktopBundler {
                         const filePath = path.join(
                             modulesPath, moduleConfig.dirName, file);
 
-                        shell.rm(filePath);
+                        shelljs.rm(filePath);
                     });
                 }
             });
@@ -435,14 +528,14 @@ class MeteorDesktopBundler {
 
             // Uglify does not handle ES6 yet, so we will have to transpile to ES5 for now.
             const preset = (uglifyingEnabled && settings.env === 'prod') ?
-                es2015Preset : node6Preset;
+                babelPresetEs2015 : babelPresetNode6;
 
             glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
-                let { code } = babel.transformFileSync(file, {
+                let { code } = babelCore.transformFileSync(file, {
                     presets: [preset]
                 });
                 if (settings.env === 'prod' && uglifyingEnabled) {
-                    code = uglify.minify(code, options).code;
+                    code = uglifyJs.minify(code, options).code;
                 }
                 fs.writeFileSync(file, code);
             });
@@ -480,8 +573,8 @@ class MeteorDesktopBundler {
                 sourceMap: null
             });
             this.version = versionObject;
-            shell.rm('./desktop.asar');
-            shell.rm('-rf', desktopTmpPath);
+            shelljs.rm('./desktop.asar');
+            shelljs.rm('-rf', desktopTmpPath);
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
 
             // Look at the declaration of StringPrototypeToOriginal for explanation.
