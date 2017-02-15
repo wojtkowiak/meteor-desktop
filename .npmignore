@@ -19,3 +19,4 @@ gh-md-toc
 docs
 .eslintignore
 yarn.lock
+devEnvSetup.js

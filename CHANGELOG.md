@@ -1,3 +1,8 @@
+#### v0.5.1 <sup>15.02.2017</sup>
+- fixed `extracted` directory getting lost when building for platform/arch different from the 
+host
+- fixed dependency loading for desktopHCP `bundler` plugin 
+
 ## v0.5.0 <sup>08.02.2017</sup>
 
 * `Desktop.fetch` rejects with `timeout` string in case of timeout
