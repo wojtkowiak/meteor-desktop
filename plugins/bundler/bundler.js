@@ -244,7 +244,9 @@ class MeteorDesktopBundler {
             .split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
-        if (process.env.METEOR_DESKTOP_DEBUG_DESKTOP_COMPATIBILITY_VERSION) {
+        if (process.env.METEOR_DESKTOP_DEBUG_DESKTOP_COMPATIBILITY_VERSION ||
+            process.env.METEOR_DESKTOP_DEBUG
+        ) {
             console.log('[meteor-desktop] compatibility version calculated from', deps);
         }
         return md5(JSON.stringify(deps));
@@ -474,6 +476,13 @@ class MeteorDesktopBundler {
                     }
                 }
             };
+            const shelljsConfig = Object.assign({}, shelljs.config);
+            shelljs.config.fatal = true;
+
+            if (process.env.METEOR_DESKTOP_DEBUG) {
+                shelljs.config.silent = false;
+                shelljs.config.verbose = true;
+            }
 
             const scaffold = new ElectronAppScaffold(context);
             const depsManager = new DependenciesManager(
@@ -574,11 +583,22 @@ class MeteorDesktopBundler {
             });
             this.version = versionObject;
             shelljs.rm('./desktop.asar');
-            shelljs.rm('-rf', desktopTmpPath);
+
+            if (!process.env.METEOR_DESKTOP_DEBUG) {
+                shelljs.rm('-rf', desktopTmpPath);
+            }
+
             console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
 
             // Look at the declaration of StringPrototypeToOriginal for explanation.
             String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
+
+            shelljs.config.fatal = shelljsConfig.fatal;
+
+            if (process.env.METEOR_DESKTOP_DEBUG) {
+                shelljs.config.silent = shelljsConfig.silent;
+                shelljs.config.verbose = shelljsConfig.verbose;
+            }
         });
     }
 }
