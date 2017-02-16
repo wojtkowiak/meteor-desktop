@@ -459,6 +459,8 @@ Watcher just watches for file changes and triggers project rebuilds.
 also be 
 distributed to your mobile clients and cause unnecessary updates in case you only made changes in
  `.desktop`
+- files that are excluded from `desktop.asar` (via `extract` settings in a desktop module) are 
+not updated, nor checked for changes! 
 - if errors in your app prevented startup during development, change in `.desktop` will not 
 trigger project rebuild
 - if errors in `.desktop` prevented startup, watcher will not work and you need to make any 
