@@ -503,6 +503,7 @@ class MeteorDesktopBundler {
             const version = hashFiles.sync({
                 files: [`${desktopPath}${path.sep}**`]
             });
+            console.log(`[meteor-desktop] calculated .desktop hash version is ${version}`);
 
             // Pass information about build type to the settings.json.
 
@@ -576,6 +577,7 @@ class MeteorDesktopBundler {
                 path: 'desktop.asar',
                 data: fs.readFileSync('./desktop.asar')
             });
+
             versionFile.addJavaScript({
                 sourcePath: inputFile.getPathInPackage(),
                 path: inputFile.getPathInPackage(),
