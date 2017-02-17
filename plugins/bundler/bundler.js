@@ -484,11 +484,7 @@ class MeteorDesktopBundler {
             };
             const shelljsConfig = Object.assign({}, shelljs.config);
             shelljs.config.fatal = true;
-
-            if (process.env.METEOR_DESKTOP_DEBUG) {
-                shelljs.config.silent = false;
-                shelljs.config.verbose = true;
-            }
+            shelljs.config.silent = false;
 
             const scaffold = new ElectronAppScaffold(context);
             const depsManager = new DependenciesManager(
@@ -599,12 +595,7 @@ class MeteorDesktopBundler {
             // Look at the declaration of StringPrototypeToOriginal for explanation.
             String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
 
-            shelljs.config.fatal = shelljsConfig.fatal;
-
-            if (process.env.METEOR_DESKTOP_DEBUG) {
-                shelljs.config.silent = shelljsConfig.silent;
-                shelljs.config.verbose = shelljsConfig.verbose;
-            }
+            shelljs.config = shelljsConfig;
         });
     }
 }
