@@ -1,4 +1,4 @@
-#### v0.5.2 <sup>17.02.2017</sup>
+#### v0.5.3 <sup>17.02.2017</sup>
 - `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
 true`)   
 - `METEOR_DESKTOP_DEBUG` env var introduced (currently only prints additional info for `bundler` 
