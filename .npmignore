@@ -20,3 +20,4 @@ docs
 .eslintignore
 yarn.lock
 devEnvSetup.js
+*.js___jb_tmp___
