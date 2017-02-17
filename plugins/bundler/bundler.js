@@ -269,6 +269,9 @@ class MeteorDesktopBundler {
             const requiredDependency = this.requireLocal(dependency);
             // If that succeeded lets load the version information.
             appScope = { dependency: requiredDependency, version: this.requireLocal(`${dependency}/package.json`).version };
+            if (process.env.METEOR_DESKTOP_DEBUG) {
+                console.log(`found ${dependency}@${appScope.version} [required: ${version}]`);
+            }
         } catch (e) {
             // No harm at this moment...
         }
@@ -277,6 +280,9 @@ class MeteorDesktopBundler {
             // Look for the dependency in meteor-desktop/node_modules.
             // No need to check the version, npm ensures that.
             meteorDesktopScope = this.requireLocal(`meteor-desktop/node_modules/${dependency}`);
+            if (process.env.METEOR_DESKTOP_DEBUG) {
+                console.log(`found ${dependency} in meteor-desktop scope`);
+            }
         } catch (e) {
             // Also no harm...
         }
@@ -318,7 +324,7 @@ class MeteorDesktopBundler {
             if (dependencies[dependencyCamelCased] === null) {
                 throw new Error(
                     `error while trying to require ${dependency}, are you sure you have ` +
-                    'meteor-desktop installed and using npm3?'
+                    'meteor-desktop installed?'
                 );
             }
         });
