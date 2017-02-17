@@ -1,3 +1,8 @@
+#### v0.5.2 <sup>17.02.2017</sup>
+- `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
+true`)   
+- `METEOR_DESKTOP_DEBUG` env var was added (currently only work ) 
+
 #### v0.5.1 <sup>15.02.2017</sup>
 - fixed `extracted` directory getting lost when building for platform/arch different from the 
 host
