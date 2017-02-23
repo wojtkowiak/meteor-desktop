@@ -75,6 +75,7 @@ class App {
         this.webContents = null;
         this.modules = {};
         this.localServer = null;
+        this.currentPort = null;
 
         if (this.isProduction()) {
             // In case anything depends on this...
@@ -419,6 +420,8 @@ class App {
      * @param {number} port - port on which the app is served
      */
     onServerRestarted(port) {
+        this.emit('beforeLoadUrl', port, this.currentPort);
+        this.currentPort = port;
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
 
@@ -470,6 +473,8 @@ class App {
         windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
         windowSettings.webPreferences.preload = join(__dirname, 'preload.js');
 
+        this.currentPort = port;
+
         this.window = new BrowserWindow(windowSettings);
         this.window.on('closed', () => {
             this.window = null;
@@ -513,6 +518,8 @@ class App {
             this.l.debug('received did-stop-loading');
             this.handleAppStartup(false);
         });
+
+        this.emit('beforeLoadUrl', port, this.currentPort);
         this.webContents.loadURL(`http://127.0.0.1:${port}/`);
     }
 
