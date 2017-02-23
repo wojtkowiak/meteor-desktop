@@ -23,7 +23,7 @@
     "uglify": true,
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.1.0",
+            "version": "0.2.0",
             "windowSettings": {
                 "width": 800,
                 "height": 600
