@@ -1,3 +1,11 @@
+## v0.6.0 <sup>27.02.2017</sup>
+
+- added experimental fix for `localStorage` getting lost - you can enable it by adding `"experimentalLocalStorage": true` to `settings.json`
+- `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.2.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
+* `electron-builder` was updated to `13.11.1`
+* `electron-builder-squirrel-windows` was updated to `13.10.1`
+* `electron-packager` was updated to `8.5.2`
+
 #### v0.5.3 <sup>17.02.2017</sup>
 - `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
 true`)   
@@ -18,7 +26,7 @@ will be published in form of epics
 * `electron` was updated to `1.4.15`
 * `electron-builder` was updated to `13.0.0`
 * `electron-builder-squirrel-windows` was updated to `13.2.0`
-* `electron-packager` was updated to `8.5.10`
+* `electron-packager` was updated to `8.5.1`
 
 ## v0.4.0 <sup>11.01.2017</sup>
 
