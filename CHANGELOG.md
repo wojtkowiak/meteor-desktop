@@ -1,3 +1,7 @@
+#### v0.6.1 <sup>02.03.2017</sup>
+
+- `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.3.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
+
 ## v0.6.0 <sup>27.02.2017</sup>
 
 - added experimental fix for `localStorage` getting lost - you can enable it by adding `"experimentalLocalStorage": true` to `settings.json`
