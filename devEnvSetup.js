@@ -80,17 +80,10 @@ question('Do you want to use another path (yes/no)? ')
         }
         cd(resolvedPath);
         console.log('\n\nWill prepare dev env in: ' + resolvedPath + '\n');
-        if (resolvedPath !== projectsDir) {
-            if (!fs.existsSync(path.join(resolvedPath, 'meteor-desktop'))) {
-                return question('Do you want to clone meteor-desktop there (yes/no): ');
-            }
-        }
-        return 'no';
+        return !fs.existsSync(path.join(resolvedPath, 'meteor-desktop'));
     })
     .then(function(clone) {
-        if (clone === 'y' || clone === 'yes') {
-            cloneMeteorDesktop = true;
-        }
+        cloneMeteorDesktop = clone;
         return question('If you want to clone your fork(s) type your github account name or' +
             ' leave empty otherwise: ');
     })
