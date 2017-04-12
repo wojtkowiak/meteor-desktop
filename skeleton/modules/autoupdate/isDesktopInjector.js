@@ -10,9 +10,16 @@
 class IsDesktopInjector {
     constructor() {
         this.startupDidCompleteRegEx =
-            new RegExp('\\((\\w+.)(isCordova)\\)([\\S\\s]*?)(startupDidComplete)', 'gm');
+            new RegExp('\\.isCordova\\)[\\S\\s]*?startupDidComplete\\(', 'gm');
+
+        this.startupDidCompleteRegExReplace =
+            new RegExp('(\\(\\w+\\.)(?:isCordova)(\\)[\\S\\s]*?startupDidComplete\\()', 'gm');
+
         this.startupDidCompleteProductionRegEx =
-            new RegExp('(\\w+.)(isCordova)(&&\\w*\\.)(startupDidComplete)', 'gm');
+            new RegExp('\\.isCordova&&\\w*\\.startupDidComplete', 'gm');
+
+        this.startupDidCompleteProductionRegExReplace =
+            new RegExp('(\\w+\\.)(?:isCordova)(&&\\w*\\.startupDidComplete\\()', 'gm');
     }
     /**
      * Searches for and replaces two places in Meteor app:
@@ -34,21 +41,16 @@ class IsDesktopInjector {
         fileContents = fileContents.replace('.isCordova=!0', '.isDesktop=!0');
         fileContents = fileContents.replace('.isCordova = true', '.isDesktop = true');
 
-
-        if (this.startupDidCompleteRegEx.test(fileContents) ||
-            this.startupDidCompleteProductionRegEx.test(fileContents)
-        ) {
-            this.startupDidCompleteProductionRegEx.lastIndex = 0;
-            this.startupDidCompleteRegEx.lastIndex = 0;
-
+        if (this.startupDidCompleteRegEx.test(fileContents)) {
             fileContents = fileContents.replace(
-                this.startupDidCompleteRegEx,
-                '($1isDesktop)$3$4');
-
+                this.startupDidCompleteRegExReplace,
+                '$1isDesktop$2');
+            injectedStartupDidComplete = true;
+        }
+        if (this.startupDidCompleteProductionRegEx.test(fileContents)) {
             fileContents = fileContents.replace(
-                this.startupDidCompleteProductionRegEx,
-                '$1isDesktop$3$4');
-
+                this.startupDidCompleteProductionRegExReplace,
+                '$1isDesktop$2');
             injectedStartupDidComplete = true;
         }
 
@@ -56,6 +58,12 @@ class IsDesktopInjector {
             ~fileContents.indexOf('.isDesktop = true')) {
             injected = true;
         }
+
+        this.startupDidCompleteProductionRegEx.lastIndex = 0;
+        this.startupDidCompleteRegEx.lastIndex = 0;
+        this.startupDidCompleteProductionRegExReplace.lastIndex = 0;
+        this.startupDidCompleteRegExReplace.lastIndex = 0;
+
         return {
             fileContents,
             injectedStartupDidComplete,
