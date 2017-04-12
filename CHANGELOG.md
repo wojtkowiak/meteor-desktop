@@ -1,3 +1,8 @@
+#### v0.6.2 <sup>12.04.2017</sup>
+
+* fixed [#82](https://github.com/wojtkowiak/meteor-desktop/issues/82)   
+* `electron` was updated to `1.4.16`
+
 #### v0.6.1 <sup>02.03.2017</sup>
 
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.3.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
@@ -34,8 +39,8 @@ will be published in form of epics
 
 ## v0.4.0 <sup>11.01.2017</sup>
 
-* added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
-* various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/40)
+* added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/42)   
+* various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/51)
 * `electron` was updated to `1.4.14`
 * `electron-builder` was updated to `11.2.4`
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
