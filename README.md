@@ -613,7 +613,8 @@ cloned and already did a `npm install`, you can just run it with `node devEnvSet
 However if you did not yet clone this repo just do:
 ```
 mkdir tmp
-wget https://github.com/wojtkowiak/meteor-desktop/blob/master/devEnvSetup.js
+cd tmp
+wget https://raw.githubusercontent.com/wojtkowiak/meteor-desktop/master/devEnvSetup.js
 npm install cross-spawn shelljs
 node devEnvSetup.js
 ```
