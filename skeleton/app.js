@@ -435,6 +435,7 @@ class App {
             dataPath: this.userDataDir,
             desktopBundlePath: this.userDataDir,
             bundleStorePath: this.userDataDir,
+            customHCPUrl: this.settings.customHCPUrl || null,
             initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
             webAppStartupTimeout: this.settings.webAppStartupTimeout ?
                 this.settings.webAppStartupTimeout : 20000

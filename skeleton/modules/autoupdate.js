@@ -229,7 +229,10 @@ export default class HCPClient {
      * @private
      */
     checkForUpdates() {
-        const rootUrl = this.currentAssetBundle.getRootUrlString();
+        const rootUrl = this.settings.customHCPUrl ?
+            this.settings.customHCPUrl : this.currentAssetBundle.getRootUrlString();
+
+        this.log.verbose(`checking for updates on ${rootUrl}`);
         if (!rootUrl) {
             this.log.error('no rootUrl found in the current asset bundle');
             this.module.send(
