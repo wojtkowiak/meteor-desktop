@@ -307,6 +307,7 @@ event name|payload|description
 `newVersionReady`|`(version, desktopVersion)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 `beforfeLoadUrl`|`(port, lastPort)`|emitted before `webContents.loadURL` is invoked, in other words just before loading the Meteor app; `port` - the port on which the app is served, `lastPort` - the port on which the app was served previously (when HCP is applied) 
+`beforeReload`|`(pendingVersion, containsDesktopUpdate)`|emitted just before HCP reload
 
 Your can also emit events on this bus as well. A good practice is to namespace them using dots,
 like for instance `myModule.initalized`.
