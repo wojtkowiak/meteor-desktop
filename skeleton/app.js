@@ -558,12 +558,13 @@ class App {
      */
     updateToNewVersion() {
         this.l.verbose('entering update to new HCP version procedure');
-        this.emit(
-            'beforeReload', this.modules.autoupdate.getPendingVersion());
+        const desktopUpdate = this.settings.desktopHCP &&
+            this.settings.desktopVersion !== this.pendingDesktopVersion;
 
-        if (this.settings.desktopHCP &&
-            this.settings.desktopVersion !== this.pendingDesktopVersion
-        ) {
+        this.emit(
+            'beforeReload', this.modules.autoupdate.getPendingVersion(), desktopUpdate);
+
+        if (desktopUpdate) {
             this.l.info('relaunching to use different version of desktop.asar');
             // Give winston a chance to write the logs.
             setImmediate(() => {

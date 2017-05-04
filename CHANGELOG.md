@@ -1,3 +1,9 @@
+#### v0.7.0 <sup>04.05.2017</sup>
+
+- added `--meteor-settings <path>` cmd option to pass `--settings <path>` to meteor when building with `-b`
+* fix to make `-b` not fail because of [meteor#8592](https://github.com/meteor/meteor/issues/8592) 
+* documented `beforeReload` event
+
 #### v0.6.2 <sup>12.04.2017</sup>
 
 * fixed [#82](https://github.com/wojtkowiak/meteor-desktop/issues/82)   

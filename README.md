@@ -68,10 +68,14 @@ Usage: npm run desktop -- [command] [options]
     -t, --build-timeout <timeout_in_sec>  timeout value when waiting for meteor to build, default 600sec
     -p, --port <port>                     port on which meteor is running, when with -b this will be passed to meteor when obtaining the build
     --production                          builds meteor app with the production switch, uglifies contents of .desktop, packs app to app.asar
-    -a, --android                         force add android as a mobile platform instead of ios
+    -a, --android                         force adding android as a mobile platform instead of ios
     -s, --scaffold                        will scaffold .desktop if not present
-    --ia32                                generate 32bit installer
-    --win                                 generate also a Windows installer on Mac
+    --meteor-settings <path>              only with -b, adds --settings options to meteor
+    --ia32                                generate 32bit installer/package
+    --all-archs                           generate 32bit and 64bit installers
+    --win                                 generate Windows installer
+    --linux                               generate Linux installer
+    --mac                                 generate Mac installer
     -V, --version                         output the version number
 
   [ddp_url] - pass a ddp url if you want to use different one than used in meteor's --mobile-server
@@ -307,6 +311,7 @@ event name|payload|description
 `newVersionReady`|`(version, desktopVersion)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 `beforfeLoadUrl`|`(port, lastPort)`|emitted before `webContents.loadURL` is invoked, in other words just before loading the Meteor app; `port` - the port on which the app is served, `lastPort` - the port on which the app was served previously (when HCP is applied) 
+`beforeReload`|`(pendingVersion, containsDesktopUpdate)`|emitted just before HCP reload
 
 Your can also emit events on this bus as well. A good practice is to namespace them using dots,
 like for instance `myModule.initalized`.

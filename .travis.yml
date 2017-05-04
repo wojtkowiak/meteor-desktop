@@ -1,19 +1,16 @@
-language: node_js
-
-node_js:
- - 4
- - 6
+language: c
 
 os:
  - linux
  - osx
 
-osx_image: xcode8.1
-
 env:
-  matrix:
-    - TEST=normal
-    - TEST=integration
+ - TEST=normal NODE_VERSION=6
+ - TEST=normal NODE_VERSION=7
+ - TEST=normal NODE_VERSION=4
+ - TEST=integration NODE_VERSION=6
+ - TEST=integration NODE_VERSION=7
+ - TEST=integration NODE_VERSION=4
 
 addons:
   apt:
@@ -23,6 +20,10 @@ addons:
       - g++-4.8
 
 before_install:
+    - nvm install $NODE_VERSION
+    - nvm use --delete-prefix $NODE_VERSION || echo
+    - if [[ $(npm -v) != 4* ]]; then npm i -g npm@4; fi;
+    - npm install
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
             export DISPLAY=:99.0;
             sh -e /etc/init.d/xvfb start;
@@ -31,8 +32,6 @@ before_install:
       fi
     - if [[ "$TEST" == "integration" ]]; then
             export PATH="$HOME/.meteor:$PATH";
-            if [[ $(npm -v) != 4* ]]; then npm i -g npm@4; fi;
-
             if hash meteor 2>/dev/null;
             then
                 meteor --version;
