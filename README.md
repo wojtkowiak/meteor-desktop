@@ -68,10 +68,14 @@ Usage: npm run desktop -- [command] [options]
     -t, --build-timeout <timeout_in_sec>  timeout value when waiting for meteor to build, default 600sec
     -p, --port <port>                     port on which meteor is running, when with -b this will be passed to meteor when obtaining the build
     --production                          builds meteor app with the production switch, uglifies contents of .desktop, packs app to app.asar
-    -a, --android                         force add android as a mobile platform instead of ios
+    -a, --android                         force adding android as a mobile platform instead of ios
     -s, --scaffold                        will scaffold .desktop if not present
-    --ia32                                generate 32bit installer
-    --win                                 generate also a Windows installer on Mac
+    --meteor-settings <path>              only with -b, adds --settings options to meteor
+    --ia32                                generate 32bit installer/package
+    --all-archs                           generate 32bit and 64bit installers
+    --win                                 generate Windows installer
+    --linux                               generate Linux installer
+    --mac                                 generate Mac installer
     -V, --version                         output the version number
 
   [ddp_url] - pass a ddp url if you want to use different one than used in meteor's --mobile-server
