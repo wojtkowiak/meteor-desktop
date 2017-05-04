@@ -1,4 +1,4 @@
-#### v0.7.0 <sup>04.05.2017</sup>
+## v0.7.0 <sup>04.05.2017</sup>
 
 - added `--meteor-settings <path>` cmd option to pass `--settings <path>` to meteor when building with `-b`
 * fix to make `-b` not fail because of [meteor#8592](https://github.com/meteor/meteor/issues/8592) 
