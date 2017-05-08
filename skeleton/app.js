@@ -568,7 +568,7 @@ class App {
             this.l.info('relaunching to use different version of desktop.asar');
             // Give winston a chance to write the logs.
             setImmediate(() => {
-                app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+                app.relaunch({ args: process.argv.slice(1).concat('--hcp') });
                 app.exit(0);
             });
         } else {

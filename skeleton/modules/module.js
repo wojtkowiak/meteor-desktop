@@ -47,7 +47,7 @@ export default class Module {
      * @public
      */
     respond(event, fetchId, ...data) {
-        Module.sendInternal(this.getResponseEventName(event), fetchId, ...data);
+        Module.sendInternal(this.getResponseEventName(`${event}_${fetchId}`), fetchId, ...data);
     }
 
     /**
