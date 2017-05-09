@@ -504,11 +504,10 @@ class App {
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event, url) => {
-            this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
-            // We need to block it.
-            event.preventDefault();
-
             if (this.meteorAppVersionChange) {
+                this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
+                // We need to block it.
+                event.preventDefault();
                 this.meteorAppVersionChange = false;
                 this.updateToNewVersion();
             }
