@@ -77,7 +77,7 @@ describe('Desktop', () => {
                     try {
                         expect(ipcMock.send).to.be.calledWith(`${module}__${event}`, 1, arg1, arg2);
                         expect(desktop.onceEventListeners)
-                            .to.have.a.property(`${module}__${event}___response`);
+                            .to.have.a.property(`${module}__${event}_1___response`);
                         revertIpc();
                         done();
                     } catch (e) {
@@ -107,7 +107,7 @@ describe('Desktop', () => {
 
         expect(desktop[listeners]).to.have.a.property(`${module}__${event}`);
         callbacks.forEach((callback) => {
-            expect(desktop[listeners][`${module}__${event}`]).to.include(callback);
+            expect(desktop[listeners][`${module}__${event}`].has(callback)).to.be.true();
         });
 
         return {
@@ -171,7 +171,7 @@ describe('Desktop', () => {
             expect(callback).to.be.calledOnce();
             expect(callback).to.be.calledWith('desktop__event', arg1, arg2);
 
-            expect(test.desktop.onceEventListeners.desktop__event).to.be.empty();
+            expect(test.desktop.onceEventListeners.desktop__event.size).to.equal(0);
 
             // Additionally we check if the ipc.on was triggered only once.
             expect(onSpy).to.be.calledOnce();

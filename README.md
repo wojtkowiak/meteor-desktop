@@ -423,7 +423,7 @@ Use it to call and listen for events from the desktop side.
 
 The only difference is that you always need to precede arguments with module name.
 There are two extra methods:  
-- **fetch** - like send but returns a `Promise` that resolves to a response
+- **fetch```(module, event, timeout = 2000, ...args)```** - like send but returns a `Promise` that resolves to a response, timeouts after 2000ms by default
 - **sendGlobal** - alias for `ipcRenderer.send` - if you need to send an IPC that is not namespaced
 
 Example of `send` and `fetch` usage - [here](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/plugins/localstorage/localstorage.js#L9).  

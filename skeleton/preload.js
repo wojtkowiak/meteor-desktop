@@ -1,8 +1,6 @@
 // This was inspiried by
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
 
-
-const _ = require('lodash');
 const ipc = require('electron').ipcRenderer;
 
 /**
@@ -88,20 +86,22 @@ const Desktop = new (class {
         const eventName = response ? this.getResponseEventName(module, event) :
             this.getEventName(module, event);
         if (eventName in this[listeners]) {
-            this[listeners][eventName].push(callback);
+            this[listeners][eventName].add(callback);
         } else {
-            this[listeners][eventName] = [callback];
+            this[listeners][eventName] = new Set([callback]);
         }
         if (!(eventName in this.registeredInIpc)) {
             this.registeredInIpc[eventName] = true;
             ipc.on(eventName, (...args) => {
                 if (eventName in this.eventListeners) {
-                    _.invokeMap(this.eventListeners[eventName], 'apply', undefined, args);
+                    this.eventListeners[eventName].forEach(eventHandler => eventHandler(...args));
                 }
                 if (eventName in this.onceEventListeners) {
-                    _.invokeMap(this.onceEventListeners[eventName], 'apply', undefined, args);
+                    this.onceEventListeners[eventName].forEach((eventHandler) => {
+                        eventHandler(...args);
+                        this.onceEventListeners[eventName].delete(eventHandler);
+                    });
                 }
-                this.onceEventListeners[eventName] = [];
             });
         }
     }
@@ -160,8 +160,8 @@ const Desktop = new (class {
      */
     removeAllListeners(module, event) {
         const eventName = this.getEventName(module, event);
-        this.onceEventListeners[eventName] = [];
-        this.eventListeners[eventName] = [];
+        this.onceEventListeners[eventName] = new Set();
+        this.eventListeners[eventName] = new Set();
     }
 
     /**
@@ -197,8 +197,8 @@ const Desktop = new (class {
         const fetchId = this.fetchCallCounter;
 
         return new Promise((resolve, reject) => {
-            this.once(module, event,
-                (responsEvent, id, ...responseArgs) => {
+            this.once(module, `${event}_${fetchId}`,
+                (responseEvent, id, ...responseArgs) => {
                     if (id === fetchId) {
                         clearTimeout(this.fetchTimeoutTimers[fetchId]);
                         delete this.fetchTimeoutTimers[fetchId];

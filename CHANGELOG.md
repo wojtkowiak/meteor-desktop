@@ -1,3 +1,7 @@
+#### v0.7.1 <sup>08.05.2017</sup>
+
+* fixed bug in `Desktop.fetch` which when called multiple times with the same event, was serving the response only for the first call [#79](https://github.com/wojtkowiak/meteor-desktop/issues/79)   
+
 ## v0.7.0 <sup>04.05.2017</sup>
 
 - added `--meteor-settings <path>` cmd option to pass `--settings <path>` to meteor when building with `-b`

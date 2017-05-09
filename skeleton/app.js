@@ -504,11 +504,10 @@ class App {
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event, url) => {
-            this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
-            // We need to block it.
-            event.preventDefault();
-
             if (this.meteorAppVersionChange) {
+                this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
+                // We need to block it.
+                event.preventDefault();
                 this.meteorAppVersionChange = false;
                 this.updateToNewVersion();
             }
@@ -568,7 +567,7 @@ class App {
             this.l.info('relaunching to use different version of desktop.asar');
             // Give winston a chance to write the logs.
             setImmediate(() => {
-                app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+                app.relaunch({ args: process.argv.slice(1).concat('--hcp') });
                 app.exit(0);
             });
         } else {
