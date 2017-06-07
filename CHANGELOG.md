@@ -1,3 +1,7 @@
+#### --next
+
+* fixed [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103) 
+
 #### v0.7.1 <sup>08.05.2017</sup>
 
 * fixed bug in `Desktop.fetch` which when called multiple times with the same event, was serving the response only for the first call [#79](https://github.com/wojtkowiak/meteor-desktop/issues/79)   
