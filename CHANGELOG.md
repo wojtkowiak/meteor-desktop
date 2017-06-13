@@ -1,6 +1,9 @@
-#### --next
+#### v0.7.2 <sup>10.06.2017</sup>
 
-* fixed [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103) 
+* fix for the case when `eTag`s are stripped from the http response when proxying meteor 
+server through proxy [#107](https://github.com/wojtkowiak/meteor-desktop/issues/107) 
+* fix for supporting Meteor 1.5 which actually was failing because of `1.5` being a non semver 
+strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103) 
 
 #### v0.7.1 <sup>08.05.2017</sup>
 

@@ -254,7 +254,7 @@ export default class AssetBundleDownloader {
         if (expectedHash !== null) {
             const eTag = response.headers.etag;
 
-            if (eTag !== null) {
+            if (typeof eTag === 'string') {
                 const matches = eTag.match(this.eTagWithSha1HashPattern);
 
                 if (this.eTagWithSha1HashPattern.test(eTag)) {
