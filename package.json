@@ -58,6 +58,7 @@
     "rewire": "2.5.2",
     "rimraf": "2.5.4",
     "run-sequence": "1.2.2",
+    "send": "0.15.3",
     "serve-static": "1.11.1",
     "server-destroy": "1.0.1",
     "sha1-file": "1.0.0",
