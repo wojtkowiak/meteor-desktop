@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, global-require */
+/* eslint-disable import/extensions, import/no-extraneous-dependencies, global-require */
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
@@ -34,7 +34,7 @@ describe('dependenciesManager', () => {
     function prepareFsStubs() {
         const readFileSyncStub = sinon.stub();
         readFileSyncStub
-            .withArgs(sinon.match(METEOR_APP_CONTEXT.env.paths.meteorApp.packages))
+            .withArgs(sinon.match(METEOR_APP_CONTEXT.env.paths.meteorApp.packages, 'UTF-8'))
             .returns([
                 '# Comment in file',
                 'meteor-base@1.1.0',
@@ -43,7 +43,7 @@ describe('dependenciesManager', () => {
                 'omega:meteor-desktop-localstorage@=0.0.11'
             ].join('\n'));
         readFileSyncStub
-            .withArgs(sinon.match(METEOR_APP_CONTEXT.env.paths.meteorApp.versions))
+            .withArgs(sinon.match(METEOR_APP_CONTEXT.env.paths.meteorApp.versions, 'UTF-8'))
             .returns([
                 'meteor-base@1.1.0',
                 'mongo@1.1.18',
