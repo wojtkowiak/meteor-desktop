@@ -1,24 +1,19 @@
 #### v0.7.1 <sup>08.05.2017</sup>
-
 * fixed bug in `Desktop.fetch` which when called multiple times with the same event, was serving the response only for the first call [#79](https://github.com/wojtkowiak/meteor-desktop/issues/79)   
 
 ## v0.7.0 <sup>04.05.2017</sup>
-
 - added `--meteor-settings <path>` cmd option to pass `--settings <path>` to meteor when building with `-b`
 * fix to make `-b` not fail because of [meteor#8592](https://github.com/meteor/meteor/issues/8592) 
 * documented `beforeReload` event
 
 #### v0.6.2 <sup>12.04.2017</sup>
-
 * fixed [#82](https://github.com/wojtkowiak/meteor-desktop/issues/82)   
 * `electron` was updated to `1.4.16`
 
 #### v0.6.1 <sup>02.03.2017</sup>
-
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.3.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
 
 ## v0.6.0 <sup>27.02.2017</sup>
-
 - added experimental fix for `localStorage` getting lost - you can enable it by adding `"experimentalLocalStorage": true` to `settings.json`
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.2.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
 * `electron-builder` was updated to `13.11.1`
@@ -37,7 +32,6 @@ host
 - fixed dependency loading for desktopHCP `bundler` plugin 
 
 ## v0.5.0 <sup>08.02.2017</sup>
-
 * `Desktop.fetch` rejects with `timeout` string in case of timeout
 * you can now see internal backlog of this project in Taiga
 [here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap 
@@ -48,7 +42,6 @@ will be published in form of epics
 * `electron-packager` was updated to `8.5.1`
 
 ## v0.4.0 <sup>11.01.2017</sup>
-
 * added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/42)   
 * various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/51)
 * `electron` was updated to `1.4.14`
@@ -57,7 +50,6 @@ will be published in form of epics
 * `electron-packager` was updated to `8.5.0`
 
 ## v0.3.0 <sup>10.01.2017</sup>
-
 * `localServer` was rewritten to use `send` instead of `serve-static` 
 [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
 * url aliases for local filesystem and `.desktop/assets` added 
