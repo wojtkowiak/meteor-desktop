@@ -249,6 +249,7 @@ field|description
 `linkPackages`|array of packages names you want to link (runs `npm link <packageName>` for every package listed)
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
+`builderCliOptions`|specify additional electron-builder CLI options e.g for [publishing artifacts](https://github.com/electron-userland/electron-builder/wiki/Publishing-Artifacts)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
 
 ##### Applying different window options for different OS
