@@ -46,6 +46,7 @@
     "eslint-plugin-import": "2.2.0",
     "find-port": "2.0.1",
     "fs-plus": "2.9.3",
+    "import-fresh": "^2.0.0",
     "jsdoc-to-markdown": "2.0.1",
     "mocha": "2.5.3",
     "mockery": "2.0.0",

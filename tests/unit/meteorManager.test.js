@@ -4,6 +4,7 @@ import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
 import mockery from 'mockery';
+import importFresh from 'import-fresh';
 
 chai.use(sinonChai);
 chai.use(dirty);
@@ -23,7 +24,7 @@ describe('dependenciesManager', () => {
             warnOnUnregistered: false
         });
 
-        MeteorManager = require('../../lib/meteorManager.js').default;
+        MeteorManager = importFresh('../../lib/meteorManager.js').default;
     });
 
     after(() => {
