@@ -16,7 +16,7 @@ const METEOR_APP_CONTEXT = { env: { paths: { meteorApp: { root: 'root.path', pac
 
 let MeteorManager;
 
-describe('dependenciesManager', () => {
+describe('meteorManager', () => {
     before(() => {
         mockery.registerMock('fs', fs);
         mockery.enable({
@@ -61,19 +61,19 @@ describe('dependenciesManager', () => {
             prepareFsStubs();
         });
 
-        it('should found package in project', () => {
+        it('should find package in project', () => {
             expect(
                 instance.checkPackages(['omega:meteor-desktop-localstorage@=0.0.11'])
             ).to.be.true();
         });
 
-        it('should found package in project without specific versions', () => {
+        it('should find package in project without specific versions', () => {
             expect(
                 instance.checkPackages(['omega:meteor-desktop-localstorage'])
             ).to.be.true();
         });
 
-        it('should not found commented package in project', () => {
+        it('should not find commented package in project', () => {
             expect(
                 instance.checkPackages(['es5-shim'])
             ).to.be.false();
@@ -88,19 +88,19 @@ describe('dependenciesManager', () => {
             prepareFsStubs();
         });
 
-        it('should found package in project with specific versions', () => {
+        it('should find package in project with specific versions', () => {
             expect(
                 instance.checkPackagesVersion(['omega:meteor-desktop-localstorage@0.0.11'])
             ).to.be.true();
         });
 
-        it('should not found package in project without specific versions', () => {
+        it('should not find package in project without specific versions', () => {
             expect(
                 instance.checkPackagesVersion(['omega:meteor-desktop-localstorage'])
             ).to.be.false();
         });
 
-        it('should not found one package from list in project', () => {
+        it('should not find one package from list in project', () => {
             expect(
                 instance.checkPackagesVersion([
                     'omega:meteor-desktop-localstorage@0.0.11',
