@@ -1,3 +1,9 @@
+## v0.8.0 <sup>05.07.2017</sup>
+
+- added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g
+ for publishing artifacts (thanks to [ramijarrar](https://github.com/ramijarrar), related 
+ [PR](https://github.com/wojtkowiak/meteor-desktop/pull/112))
+
 #### v0.7.2 <sup>10.06.2017</sup>
 
 * fix for the case when `eTag`s are stripped from the http response when proxying meteor 
