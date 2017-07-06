@@ -71,7 +71,7 @@ async function waitForApp(app) {
     await waitFor(window.isVisible, 30000);
     expect(await app.client.getWindowCount()).to.equal(1);
     await app.client.waitUntil(
-        async () => await app.client.execute(
+        async () => app.client.execute(
             () => document.readyState === 'complete'
         )
     );
