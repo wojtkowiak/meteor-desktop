@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
     name: 'omega:meteor-desktop-bundler',
-    version: '0.8.0',
+    version: '0.8.1',
     summary: 'Bundles .desktop dir into desktop.asar.',
     git: 'https://github.com/wojtkowiak/meteor-desktop',
     documentation: 'README.md'
