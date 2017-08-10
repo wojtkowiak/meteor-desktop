@@ -1,3 +1,7 @@
+#### v0.8.1 <sup>10.08.2017</sup>
+
+* fix for respecting `--ia32` in `run`/`build`/`package` 
+
 ## v0.8.0 <sup>05.07.2017</sup>
 
 - added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g
