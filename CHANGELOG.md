@@ -1,4 +1,5 @@
-## v0.9.0 <sup>12.09.2017</sup>
+## v0.10.0 <sup>12.09.2017</sup>
+> v0.9.0 failed to publish
 
 * added `windowSettings` event
 
