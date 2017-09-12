@@ -1,3 +1,7 @@
+## v0.9.0 <sup>12.09.2017</sup>
+
+* added `windowSettings` event
+
 #### v0.8.1 <sup>10.08.2017</sup>
 
 * fix for respecting `--ia32` in `run`/`build`/`package` 

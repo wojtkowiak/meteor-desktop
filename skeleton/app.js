@@ -471,6 +471,11 @@ class App {
 
         assignIn(windowSettings, this.settings.window);
 
+        // Emit windowSettings so that it can be modified if that is needed in any of the modules.
+        // I do not really like, that it can modified indirectly but until 1.0 it needs to stay
+        // this way.
+        this.emit('windowSettings', windowSettings);
+
         windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
         windowSettings.webPreferences.preload = join(__dirname, 'preload.js');
 
