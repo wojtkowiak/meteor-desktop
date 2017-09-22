@@ -249,6 +249,7 @@ field|description
 `linkPackages`|array of packages names you want to link (runs `npm link <packageName>` for every package listed)
 `packageJsonFields`|fields to add to the generated `package.json` in your desktop app
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
+`builderCliOptions`|specify additional electron-builder CLI options e.g for [publishing artifacts](https://github.com/electron-userland/electron-builder/wiki/Publishing-Artifacts)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
 
 ##### Applying different window options for different OS
@@ -307,6 +308,7 @@ event name|payload|description
 `startupFailed`| |emitted when the `Skeleton App` could not start you `Meteor` app  
 `beforeLoadFinish`| |emitted when the `Meteor` app finished loading, but just before the window is shown  
 `loadingFinished`| |emitted when the `Meteor` app finished loading (also after HCP reload)  
+`windowSettings`|`(windowSettings)`|emitted with the settings that will be passed to [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) constructor - if needed the object can be modified in the event handler to override window settings from `settings.json`  
 `windowCreated`|`(window)`|emitted when the [`BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) (`Chrome` window with `Meteor` app) is  created, passes a reference to this window 
 `newVersionReady`|`(version, desktopVersion)`|emitted when a new `Meteor` bundle was downloaded and is ready to be applied  
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  

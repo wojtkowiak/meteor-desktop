@@ -1,3 +1,25 @@
+## v0.10.0 <sup>12.09.2017</sup>
+> v0.9.0 failed to publish
+
+* added `windowSettings` event
+
+#### v0.8.1 <sup>10.08.2017</sup>
+
+* fix for respecting `--ia32` in `run`/`build`/`package` 
+
+## v0.8.0 <sup>05.07.2017</sup>
+
+- added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g
+ for publishing artifacts (thanks to [ramijarrar](https://github.com/ramijarrar), related 
+ [PR](https://github.com/wojtkowiak/meteor-desktop/pull/112))
+
+#### v0.7.2 <sup>10.06.2017</sup>
+
+* fix for the case when `eTag`s are stripped from the http response when proxying meteor 
+server through proxy [#107](https://github.com/wojtkowiak/meteor-desktop/issues/107) 
+* fix for supporting Meteor 1.5 which actually was failing because of `1.5` being a non semver 
+strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103) 
+
 #### v0.7.1 <sup>08.05.2017</sup>
 * fixed bug in `Desktop.fetch` which when called multiple times with the same event, was serving the response only for the first call [#79](https://github.com/wojtkowiak/meteor-desktop/issues/79)   
 
