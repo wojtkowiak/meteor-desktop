@@ -1,3 +1,6 @@
+#### v0.11.1 <sup>06.11.2017</sup>
+- republished `0.11.0` with Meteor 1.5 because of [meteor#9308](https://github.com/meteor/meteor/issues/9308) 
+
 ## v0.11.0 <sup>03.11.2017</sup>
 * `electron` was updated to `1.7.9` ([PR](https://github.com/wojtkowiak/meteor-desktop/pull/126))
 
