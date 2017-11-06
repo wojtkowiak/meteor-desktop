@@ -1,3 +1,6 @@
+## v0.11.0 <sup>03.11.2017</sup>
+* `electron` was updated to `1.7.9` ([PR](https://github.com/wojtkowiak/meteor-desktop/pull/126))
+
 ## v0.10.0 <sup>12.09.2017</sup>
 > v0.9.0 failed to publish
 
