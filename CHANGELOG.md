@@ -1,3 +1,6 @@
+#### v0.11.2 <sup>28.11.2017</sup>
+- start startup timer on _cold_ start if a new version is used for the first time [meteor#9386](https://github.com/meteor/meteor/issues/9386)
+
 #### v0.11.1 <sup>06.11.2017</sup>
 - republished `0.11.0` with Meteor 1.5 because of [meteor#9308](https://github.com/meteor/meteor/issues/9308) 
 
