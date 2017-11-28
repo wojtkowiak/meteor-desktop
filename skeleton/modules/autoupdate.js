@@ -191,6 +191,8 @@ export default class HCPClient {
                 if (!this.currentAssetBundle) {
                     this.log.warn('seems that last downloaded version does not exists... ');
                     this.useLastKnownGoodVersion();
+                } else if (lastDownloadedVersion !== this.config.lastKnownGoodVersion) {
+                    this.startStartupTimer();
                 }
             } else {
                 this.currentAssetBundle = initialAssetBundle;
@@ -219,7 +221,8 @@ export default class HCPClient {
             this.log.info(`will use last known good version: ${assetBundle.getVersion()}`);
             this.currentAssetBundle = assetBundle;
         } else {
-            this.log.verbose('using initial asset bundle');
+            this.log.verbose('using initial asset bundle because last know good version' +
+                'does not exist');
             this.currentAssetBundle = this.assetBundleManager.initialAssetBundle;
         }
     }
