@@ -117,7 +117,7 @@ describe('localServer', () => {
         describe('when setting the Content-Type header', () => {
             it('should set application/javascript for a manifest entry of type: js', async () => {
                 const response = await fetchFromLocalServer('/packages/meteor.js');
-                expect(response.headers.get('Content-Type')).to.equal('application/javascript');
+                expect(response.headers.get('Content-Type')).to.contain('application/javascript');
             });
         });
 
@@ -134,7 +134,7 @@ describe('localServer', () => {
 
             it('should set text/javascript for a .js file', async () => {
                 const response = await fetchFromLocalServer('/some-javascript.js');
-                expect(response.headers.get('Content-Type')).to.equal('application/javascript');
+                expect(response.headers.get('Content-Type')).to.contain('application/javascript');
             });
 
             it('should set text/css for a .css file', async () => {
