@@ -1,4 +1,5 @@
-#### v0.11.2 <sup>28.11.2017</sup>
+#### v0.11.2 <sup>29.11.2017</sup>
+- fixed local filesystem URL whitespace support [#133](https://github.com/wojtkowiak/meteor-desktop/issues/133) (thanks [met5678](https://github.com/met5678), PR: [#134](https://github.com/wojtkowiak/meteor-desktop/pull/134) )
 - start startup timer on _cold_ start if a new version is used for the first time [meteor#9386](https://github.com/meteor/meteor/issues/9386)
 
 #### v0.11.1 <sup>06.11.2017</sup>
