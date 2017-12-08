@@ -203,12 +203,12 @@ export default class LocalServer {
 
             let filePath;
             if (localPath) {
-                filePath = path.join(localPath, bareUrl);
+                filePath = path.join(localPath, decodeURIComponent(bareUrl));
                 if (filePath.toLowerCase().lastIndexOf(localPath.toLowerCase(), 0) !== 0) {
                     return respondWithCode(res, 400, 'Wrong path.');
                 }
             } else {
-                filePath = bareUrl;
+                filePath = decodeURIComponent(bareUrl);
             }
             return fs.existsSync(filePath) ?
                 send(req, encodeURIComponent(filePath)).pipe(res) :

@@ -290,7 +290,6 @@ describe('autoupdate', () => {
                     '/__cordova/']);
                 expect(meteorServer.receivedRequests).to.have.a.lengthOf(6);
             }, 'version2');
-
         });
 
         it('should still serve assets that haven\'t changed', async (done) => {

@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "0.6.1",
+  "version": "0.11.2",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -21,7 +21,7 @@
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
     "postinstall": "node dist/scripts/addToScripts || echo",
-    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish || echo) && cd ../watcher && (meteor publish || echo)",
+    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.5.2.2 || echo) && cd ../watcher && (meteor publish --release=METEOR@1.5.2.2 || echo)",
     "prepublish": "npm run build || echo",
     "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
@@ -46,6 +46,7 @@
     "eslint-plugin-import": "2.2.0",
     "find-port": "2.0.1",
     "fs-plus": "2.9.3",
+    "import-fresh": "^2.0.0",
     "jsdoc-to-markdown": "2.0.1",
     "mocha": "2.5.3",
     "mockery": "2.0.0",
@@ -58,6 +59,7 @@
     "rewire": "2.5.2",
     "rimraf": "2.5.4",
     "run-sequence": "1.2.2",
+    "send": "0.15.3",
     "serve-static": "1.11.1",
     "server-destroy": "1.0.1",
     "sha1-file": "1.0.0",
@@ -77,7 +79,7 @@
     "commander": "2.9.0",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
-    "electron": "1.4.16",
+    "electron": "1.7.9",
     "electron-builder": "13.11.1",
     "electron-builder-squirrel-windows": "13.10.1",
     "electron-packager": "8.5.2",

@@ -471,6 +471,11 @@ class App {
 
         assignIn(windowSettings, this.settings.window);
 
+        // Emit windowSettings so that it can be modified if that is needed in any of the modules.
+        // I do not really like, that it can modified indirectly but until 1.0 it needs to stay
+        // this way.
+        this.emit('windowSettings', windowSettings);
+
         windowSettings.webPreferences.nodeIntegration = false; // node integration must to be off
         windowSettings.webPreferences.preload = join(__dirname, 'preload.js');
 
@@ -504,11 +509,10 @@ class App {
 
         // Here we are catching reloads triggered by hot code push.
         this.webContents.on('will-navigate', (event, url) => {
-            this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
-            // We need to block it.
-            event.preventDefault();
-
             if (this.meteorAppVersionChange) {
+                this.l.debug(`will-navigate event to ${url}, assuming that this is HCP refresh`);
+                // We need to block it.
+                event.preventDefault();
                 this.meteorAppVersionChange = false;
                 this.updateToNewVersion();
             }
@@ -558,16 +562,17 @@ class App {
      */
     updateToNewVersion() {
         this.l.verbose('entering update to new HCP version procedure');
-        this.emit(
-            'beforeReload', this.modules.autoupdate.getPendingVersion());
+        const desktopUpdate = this.settings.desktopHCP &&
+            this.settings.desktopVersion !== this.pendingDesktopVersion;
 
-        if (this.settings.desktopHCP &&
-            this.settings.desktopVersion !== this.pendingDesktopVersion
-        ) {
+        this.emit(
+            'beforeReload', this.modules.autoupdate.getPendingVersion(), desktopUpdate);
+
+        if (desktopUpdate) {
             this.l.info('relaunching to use different version of desktop.asar');
             // Give winston a chance to write the logs.
             setImmediate(() => {
-                app.relaunch({ args: process.argv.slice(1) + ['--hcp'] });
+                app.relaunch({ args: process.argv.slice(1).concat('--hcp') });
                 app.exit(0);
             });
         } else {
