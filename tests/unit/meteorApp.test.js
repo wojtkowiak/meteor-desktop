@@ -20,7 +20,8 @@ const METEOR_RELEASES = [
     { release: 'METEOR@1.3.4', version: '1.3.4', semver: '1.3.4' },
     { release: 'METEOR@1.4.2.7', version: '1.4.2.7', semver: '1.4.2' },
     { release: 'METEOR@1.5-alpha', version: '1.5', semver: '1.5.0' },
-    { release: 'METEOR@2-rc.0', version: '2', semver: '2.0.0' }
+    { release: 'METEOR@2-rc.0', version: '2', semver: '2.0.0' },
+    { release: 'METEOR@1.6.0.1\r\n\r\n', version: '1.6.0.1', semver: '1.6.0' }
 ];
 
 let MeteorApp;
