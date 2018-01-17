@@ -232,6 +232,13 @@ class MeteorDesktopBundler {
      * Calculates a md5 from all dependencies.
      */
     calculateCompatibilityVersion(dependencies, desktopPath, file) {
+        const settings = this.getSettings(desktopPath, file);
+
+        if (('desktopHCPCompatibilityVersion' in settings)) {
+            console.log(`[meteor-desktop] compatibility version overridden to ${settings.desktopHCPCompatibilityVersion}`);
+            return `${settings.desktopHCPCompatibilityVersion}`;
+        }
+
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
             `${dependency}:${dependencies[dependency]}`
@@ -239,9 +246,7 @@ class MeteorDesktopBundler {
         const mainCompatibilityVersion = this.requireLocal('meteor-desktop/package.json')
             .version
             .split('.');
-        const desktopCompatibilityVersion = this.getSettings(desktopPath, file)
-            .version
-            .split('.')[0];
+        const desktopCompatibilityVersion = settings.version.split('.')[0];
         deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
         if (process.env.METEOR_DESKTOP_DEBUG_DESKTOP_COMPATIBILITY_VERSION ||
