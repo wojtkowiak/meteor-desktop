@@ -1,3 +1,6 @@
+#### v0.11.3 <sup>17.01.2018</sup>
+- added `desktopHCPCompatibilityVersion` to restore ability to override desktopHCP compatibility version
+
 #### v0.11.2 <sup>29.11.2017</sup>
 - fixed local filesystem URL whitespace support [#133](https://github.com/wojtkowiak/meteor-desktop/issues/133) (thanks [met5678](https://github.com/met5678), PR: [#134](https://github.com/wojtkowiak/meteor-desktop/pull/134) )
 - start startup timer on _cold_ start if a new version is used for the first time [meteor#9386](https://github.com/meteor/meteor/issues/9386)
@@ -81,7 +84,7 @@ will be published in form of epics
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
 * `electron-packager` was updated to `8.5.0`
 
-## v0.3.0 <sup>10.01.2017</sup>
+## v0.3.0 <sup>10.01.2016</sup>
 * `localServer` was rewritten to use `send` instead of `serve-static` 
 [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
 * url aliases for local filesystem and `.desktop/assets` added 
@@ -118,7 +121,7 @@ state [meteor#8113](https://github.com/meteor/meteor/issues/8113)
 - fixed `rebuildNativeNodeModules` which stopped working after update of 
 `electron-builder`
 
-## v0.2.0 <sup>17.10.2017</sup>
+## v0.2.0 <sup>17.10.2016</sup>
 * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
 file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
 * development environment setup script was added
@@ -141,5 +144,5 @@ option (missing ` -- ` delimiter)
 #### v0.1.1 <sup>10.11.2016</sup>
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
 
-## v0.1.0 <sup>07.10.2017</sup>
+## v0.1.0 <sup>07.10.2016</sup>
 - first public release
