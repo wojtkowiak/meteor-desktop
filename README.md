@@ -234,6 +234,7 @@ field|description
 `devtron`|check whether to install [`devtron`](http://electron.atom.io/devtron/), set automatically to false when building with `--production`, [more](#devtron)
 `desktopHCP`|whether to use `.desktop` hot code push module - [more](#desktophcp---desktop-hot-code-push)
 <sup>`desktopHCPIgnoreCompatibilityVersion`</sup>|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
+`desktopHCPCompatibilityVersion`|allows to override `.desktop` compatibility version
 `autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), [more](#squirrel-autoupdate-support)
 `autoUpdateFeedHeaders`|http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
 `autoUpdateCheckOnStart`|whether to check for updates on app start
