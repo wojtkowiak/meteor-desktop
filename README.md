@@ -232,6 +232,7 @@ field|description
 `projectName`|this will be used as a `name` in the generated app's package.json
 `devTools`|whether to install and open `devTools`, set automatically to false when building with `--production`
 `devtron`|check whether to install [`devtron`](http://electron.atom.io/devtron/), set automatically to false when building with `--production`, [more](#devtron)
+`singleInstance`|sets the single instance mode - [more](https://github.com/electron/electron/blob/master/docs/api/app.md#appmakesingleinstancecallback)
 `desktopHCP`|whether to use `.desktop` hot code push module - [more](#desktophcp---desktop-hot-code-push)
 <sup>`desktopHCPIgnoreCompatibilityVersion`</sup>|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
 `desktopHCPCompatibilityVersion`|allows to override `.desktop` compatibility version
