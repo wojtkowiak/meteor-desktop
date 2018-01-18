@@ -47,6 +47,10 @@ class App {
             this.l.debug(`skeleton version ${this.settings.meteorDesktopVersion}`);
         }
 
+        this.window = null;
+
+        this.applySingleInstance();
+
         // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
         // node_modules.
         const nodeModulesPath = [__dirname, 'node_modules'];
@@ -70,7 +74,6 @@ class App {
 
         this.desktop = null;
         this.app = app;
-        this.window = null;
         this.windowAlreadyLoaded = false;
         this.webContents = null;
         this.modules = {};
@@ -101,6 +104,29 @@ class App {
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
+    }
+
+    /**
+     * Applies single instance mode if enabled.
+     */
+    applySingleInstance() {
+        if ('singleInstance' in this.settings && this.settings.singleInstance) {
+            this.l.verbose('setting single instance mode');
+            const isSecondInstance = app.makeSingleInstance(() => {
+                // Someone tried to run a second instance, we should focus our window.
+                if (this.window) {
+                    if (this.window.isMinimized()) {
+                        this.window.restore();
+                    }
+                    this.window.focus();
+                }
+            });
+
+            if (isSecondInstance) {
+                this.l.warn('current instance was terminated because another instance is running');
+                app.quit();
+            }
+        }
     }
 
     /**
