@@ -1,5 +1,6 @@
 #### v0.11.3 <sup>17.01.2018</sup>
-- added `desktopHCPCompatibilityVersion` to restore ability to override desktopHCP compatibility version
+- added `desktopHCPCompatibilityVersion` setting to restore ability to override desktopHCP compatibility version
+- added `singleInstance` setting
 
 #### v0.11.2 <sup>29.11.2017</sup>
 - fixed local filesystem URL whitespace support [#133](https://github.com/wojtkowiak/meteor-desktop/issues/133) (thanks [met5678](https://github.com/met5678), PR: [#134](https://github.com/wojtkowiak/meteor-desktop/pull/134) )
