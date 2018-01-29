@@ -72,13 +72,13 @@
         "_osx": {
             "icon": ".desktop/assets/meteor.icns"
         },
-        "version-string": {
+        "appVersion": "@version",
+        "buildVersion": "@version",
+        "appCopyright": "Copyright 2018 My Company - All rights reserved.",
+        "win32metadata": {
             "CompanyName": "My Company",
-            "LegalCopyright": "Copyright 2016 My Company - All rights reserved.",
             "FileDescription": "MyMeteorApp",
             "OriginalFilename": "MyMeteorApp.exe",
-            "FileVersion": "@version",
-            "ProductVersion": "@version",
             "ProductName": "MyMeteorApp",
             "InternalName": "MyMeteorApp.exe"
         }
