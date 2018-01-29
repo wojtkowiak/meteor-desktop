@@ -6,17 +6,16 @@ skip_tags: true
 
 environment:
   matrix:
-    - nodejs_version: "4.8.2"
+    - nodejs_version: "6"
       test: "normal"
-    - nodejs_version: "4.8.2"
+    - nodejs_version: "6"
       test: "integration"
-    - nodejs_version: "6.10.2"
+    - nodejs_version: "8"
       test: "integration"
-    - nodejs_version: "6.10.2"
+    - nodejs_version: "8"
       test: "normal"
 
 platform:
-  - x86
   - x64
 
 cache:
@@ -30,29 +29,17 @@ cache:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm@4
+  - npm install -g npm@5
   - npm prune
   - npm install
-  - ps: $env:Path += ";$env:LOCALAPPDATA\.meteor"
-  - ps: echo "$env:Path"
   - ps: >-
       if ($env:test -eq "integration") {
         if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -eq $null) {
-          Start-FileDownload 'https://s3.amazonaws.com/meteor-windows/InstallMeteor.exe'
-          $env:meteordownloaded="yes"
+          choco install meteor --params "'/RELEASE:1.4.2.7'"
         }
       }
-  - dir
-  - if exist InstallMeteor.exe InstallMeteor.exe /passive
-  - ps: If (Test-Path $env:LOCALAPPDATA\.meteor\packages\meteor-tool) { Get-ChildItem $env:LOCALAPPDATA\.meteor\packages\meteor-tool }
-  - ps: if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -ne $null) { Get-Command "meteor" }
-  - ps: $env:meteordownloaded
-  - ps: >-
-      if ($env:meteordownloaded -eq "yes") {
-        echo "i am here"
-        Start-Sleep -s 5
-        Restart-Computer -Force
-      }
+  - ps: refreshenv
+  - refreshenv
 
 # Post-install test scripts.
 test_script:
