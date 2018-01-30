@@ -28,7 +28,7 @@ before_install:
             then
                 meteor --version;
             else
-                curl https://install.meteor.com/?release=1.4.2.7 | /bin/sh;
+                curl https://install.meteor.com/?release=1.5.4.1 | /bin/sh;
             fi;
       fi
 
