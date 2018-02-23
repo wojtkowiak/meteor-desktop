@@ -16,7 +16,6 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
