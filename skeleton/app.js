@@ -5,7 +5,6 @@ import electron from 'electron';
 import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
-
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
 import Module from './modules/module';
@@ -16,6 +15,7 @@ import Squirrel from './squirrel';
 
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
+
 
 /**
  * This is the main app which is a skeleton for the whole integration.
