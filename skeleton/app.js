@@ -5,7 +5,6 @@ import electron from 'electron';
 import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
-
 import shell from 'shelljs';
 import assignIn from 'lodash/assignIn';
 import Module from './modules/module';

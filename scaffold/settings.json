@@ -38,19 +38,23 @@
         "private": true
     },
     "builderOptions": {
+        "icon": ".desktop/assets/meteor.ico",
+        "appId": "meteor.app",
+        "productName": "My Meteor App",
+        "compression": "maximum",
         "win": {
-            "title": "My Meteor App",
-            "authors": "Me, Myself And I",
             "target": "squirrel"
         },
         "squirrelWindows": {
             "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
             "loadingGif": ".desktop/assets/loading.gif"
         },
-        "icon": ".desktop/assets/meteor.ico",
-        "appId": "meteor.app",
-        "productName": "My Meteor App",
-        "compression": "maximum",
+        "publish": [
+            {
+                "provider": "generic",
+                "url": "http://127.0.0.1:8080/"
+            }
+        ],
         "mac": {
             "icon": ".desktop/assets/meteor.icns"
         },
@@ -66,19 +70,20 @@
                 "width": 480,
                 "height": 300
             }
-        }    },
+        }
+    },
     "packagerOptions": {
         "icon": ".desktop/assets/meteor.ico",
         "_osx": {
             "icon": ".desktop/assets/meteor.icns"
         },
-        "version-string": {
+        "appVersion": "@version",
+        "buildVersion": "@version",
+        "appCopyright": "Copyright 2018 My Company - All rights reserved.",
+        "win32metadata": {
             "CompanyName": "My Company",
-            "LegalCopyright": "Copyright 2016 My Company - All rights reserved.",
             "FileDescription": "MyMeteorApp",
             "OriginalFilename": "MyMeteorApp.exe",
-            "FileVersion": "@version",
-            "ProductVersion": "@version",
             "ProductName": "MyMeteorApp",
             "InternalName": "MyMeteorApp.exe"
         }

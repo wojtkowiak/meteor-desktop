@@ -8,6 +8,20 @@
 ## Functions
 
 <dl>
+<dt><a href="#getFileUrl">getFileUrl(absolutePath)</a> ⇒ <code>string</code></dt>
+<dd><p>Just a convenience method for getting an url for a file from the local file system.</p>
+</dd>
+<dt><a href="#getAssetUrl">getAssetUrl(assetPath)</a> ⇒ <code>string</code></dt>
+<dd><p>Just a convenience method for getting an url for a file from the assets directory.</p>
+</dd>
+<dt><a href="#fetchFile">fetchFile(absolutePath)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Just a convenience method for getting a file from the local file system.
+Returns a promise from <code>fetch</code>.</p>
+</dd>
+<dt><a href="#fetchAsset">fetchAsset(assetPath)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Just a convenience method for getting a file from the assets directory.
+Returns a promise from <code>fetch</code>.</p>
+</dd>
 <dt><a href="#on">on(module, event, callback)</a></dt>
 <dd><p>Invokes callback when the specified IPC event is fired.</p>
 </dd>
@@ -49,6 +63,52 @@ Returns a promise that resolves when the response is received.</p>
 ### new Desktop()
 Simple abstraction over electron's IPC. Securely wraps ipcRenderer.
 Available as `Desktop` global.
+
+<a name="getFileUrl"></a>
+
+## getFileUrl(absolutePath) ⇒ <code>string</code>
+Just a convenience method for getting an url for a file from the local file system.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| absolutePath | <code>string</code> | absolute path to the file |
+
+<a name="getAssetUrl"></a>
+
+## getAssetUrl(assetPath) ⇒ <code>string</code>
+Just a convenience method for getting an url for a file from the assets directory.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| assetPath | <code>string</code> | file path relative to assets directory |
+
+<a name="fetchFile"></a>
+
+## fetchFile(absolutePath) ⇒ <code>Promise</code>
+Just a convenience method for getting a file from the local file system.
+Returns a promise from `fetch`.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| absolutePath | <code>string</code> | absolute path to the file |
+
+<a name="fetchAsset"></a>
+
+## fetchAsset(assetPath) ⇒ <code>Promise</code>
+Just a convenience method for getting a file from the assets directory.
+Returns a promise from `fetch`.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| assetPath | <code>string</code> | file path relative to assets directory |
 
 <a name="on"></a>
 
