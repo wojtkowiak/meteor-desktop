@@ -1,3 +1,12 @@
+#### v0.12.0 <sup>17.01.2018</sup>
+* `electron-builder` was updated to `20.0.8`   
+* `electron-builder-squirrel-windows` was updated to `20.0.5`
+* `electron-packager` was updated to `11.0.1`
+* **DEPRECATIONS**:
+    - building for `squirrel.windows` is not encouraged and from `1.0.0` the default Windows target will be `nsis`  
+
+it's more than sure that you will have to update your `electron-builder`/`electron-packaged` configuration since it's a big shift from the old versions, create a new meteor project with blank scaffold (`npm run desktop -- init`) and take a look a the new `settings.json` as that might give you some hints
+
 #### v0.11.3 <sup>17.01.2018</sup>
 - added `desktopHCPCompatibilityVersion` setting to restore ability to override desktopHCP compatibility version
 - added `singleInstance` setting
