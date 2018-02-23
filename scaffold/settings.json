@@ -70,7 +70,8 @@
                 "width": 480,
                 "height": 300
             }
-        }    },
+        }
+    },
     "packagerOptions": {
         "icon": ".desktop/assets/meteor.ico",
         "_osx": {
