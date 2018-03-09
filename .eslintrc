@@ -51,6 +51,7 @@
                 ]
             }
         ],
+        "no-sequences": "off",
         "import/no-extraneous-dependencies": [
             2,
             {
