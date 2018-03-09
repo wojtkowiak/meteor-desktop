@@ -85,6 +85,46 @@ describe('dependenciesManager', () => {
         });
     });
 
+     const testDependencies = {
+         module1: '../foo/bar',
+         module2: '~/foo/bar',
+         module3: './foo/bar',
+         module4: '/foo/bar',
+         module5: 'foo/bar',
+         module6: 'git://github.com',
+         module7: 'http://asdf.com/asdf.tar.gz',
+         module8: 'file:../dyl',
+         module9: '2.0.1'
+     };
+
+    describe('#getLocalDependencies', () => {
+        it('should return only local dependencies', () => {
+            const instance = new DependenciesManager({});
+
+            instance.dependencies = Object.assign({}, testDependencies);
+            const localDeps = instance.getLocalDependencies();
+
+            const depsKeys = Object
+                .keys(localDeps)
+                .map(dep => parseInt(dep.substr(dep.length - 1), 10));
+            expect(depsKeys).to.be.eql([1, 2, 3, 4, 8]);
+        });
+    });
+
+    describe('#getRemoteDependencies', () => {
+        it('should return only remote dependencies', () => {
+            const instance = new DependenciesManager({});
+
+            instance.dependencies = Object.assign({}, testDependencies);
+            const localDeps = instance.getRemoteDependencies();
+
+            const depsKeys = Object
+                .keys(localDeps)
+                .map(dep => parseInt(dep.substr(dep.length - 1), 10));
+            expect(depsKeys).to.be.eql([5, 6, 7, 9]);
+        });
+    });
+
     describe('#detectDependencyType', () => {
         it('should detect local path', () => {
             const instance = new DependenciesManager({});
