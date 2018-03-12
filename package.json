@@ -81,7 +81,7 @@
     "electron": "1.7.12",
     "electron-builder": "20.0.8",
     "electron-builder-lib": "20.0.8",
-    "electron-builder-squirrel-windows": "20.0.8",
+    "electron-builder-squirrel-windows": "20.0.5",
     "electron-packager": "11.0.1",
     "glob": "7.1.1",
     "hash-files": "1.1.1",
