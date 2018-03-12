@@ -51,7 +51,9 @@
                 ]
             }
         ],
+        "function-paren-newline": ["error", "consistent"],
         "no-sequences": "off",
+        "prefer-promise-reject-errors": "off",
         "import/no-extraneous-dependencies": [
             2,
             {

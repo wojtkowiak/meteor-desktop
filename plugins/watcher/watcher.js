@@ -48,7 +48,7 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
 
     const version =
         typeof Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION === 'object' ?
-        Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version : null;
+            Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version : null;
 
     if (version) {
         try {

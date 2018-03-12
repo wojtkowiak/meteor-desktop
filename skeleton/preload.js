@@ -21,7 +21,6 @@ const ipc = require('electron').ipcRenderer;
  * @class
  */
 const Desktop = new (class {
-
     constructor() {
         this.onceEventListeners = {};
         this.eventListeners = {};
@@ -145,7 +144,8 @@ const Desktop = new (class {
             if (eventName in this[listeners]) {
                 if (~this[listeners][eventName].indexOf(callback)) {
                     this[listeners][eventName].splice(
-                        this[listeners][eventName].indexOf(callback), 1);
+                        this[listeners][eventName].indexOf(callback), 1
+                    );
                 }
             }
         });
@@ -204,8 +204,7 @@ const Desktop = new (class {
                         delete this.fetchTimeoutTimers[fetchId];
                         resolve(...responseArgs);
                     }
-                }, true
-            );
+                }, true);
             this.fetchTimeoutTimers[fetchId] = setTimeout(() => {
                 reject('timeout');
             }, timeout);
@@ -246,7 +245,6 @@ const Desktop = new (class {
     getResponseEventName(module, event) {
         return `${this.getEventName(module, event)}___response`;
     }
-
 })();
 
 

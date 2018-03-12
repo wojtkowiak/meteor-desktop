@@ -11,7 +11,9 @@ import asar from 'asar'; // eslint-disable-line no-unused-vars
 chai.use(sinonChai);
 chai.use(dirty);
 
-const { describe, it, before, after } = global;
+const {
+    describe, it, before, after
+} = global;
 const { expect } = chai;
 
 const fs = {};

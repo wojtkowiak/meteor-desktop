@@ -85,17 +85,17 @@ describe('dependenciesManager', () => {
         });
     });
 
-     const testDependencies = {
-         module1: '../foo/bar',
-         module2: '~/foo/bar',
-         module3: './foo/bar',
-         module4: '/foo/bar',
-         module5: 'foo/bar',
-         module6: 'git://github.com',
-         module7: 'http://asdf.com/asdf.tar.gz',
-         module8: 'file:../dyl',
-         module9: '2.0.1'
-     };
+    const testDependencies = {
+        module1: '../foo/bar',
+        module2: '~/foo/bar',
+        module3: './foo/bar',
+        module4: '/foo/bar',
+        module5: 'foo/bar',
+        module6: 'git://github.com',
+        module7: 'http://asdf.com/asdf.tar.gz',
+        module8: 'file:../dyl',
+        module9: '2.0.1'
+    };
 
     describe('#getLocalDependencies', () => {
         it('should return only local dependencies', () => {

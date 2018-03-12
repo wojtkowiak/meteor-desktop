@@ -22,7 +22,6 @@ const { join } = path;
  * @class
  */
 class App {
-
     constructor() {
         // Until user defined handling will be loaded it is good to register something
         // temporarily.
@@ -99,7 +98,7 @@ class App {
             this.pendingDesktopVersion = desktopVersion;
         });
         this.eventsBus.on('startupDidComplete', this.handleAppStartup.bind(this, true));
-        this.eventsBus.on('revertVersionReady', () => (this.meteorAppVersionChange = true));
+        this.eventsBus.on('revertVersionReady', () => { this.meteorAppVersionChange = true; });
 
         this.app.on('ready', this.onReady.bind(this));
         this.app.on('window-all-closed', () => this.app.quit());
@@ -156,7 +155,8 @@ class App {
     loadSettings() {
         try {
             this.settings = JSON.parse(
-                fs.readFileSync(join(this.desktopPath, 'settings.json')), 'UTF-8');
+                fs.readFileSync(join(this.desktopPath, 'settings.json')), 'UTF-8'
+            );
         } catch (e) {
             this.l.error(e);
             dialog.showErrorBox('Application', 'Could not read settings.json. Please reinstall' +
@@ -300,7 +300,7 @@ class App {
             fs.readFileSync(path.join(modulePath, 'module.json'), 'UTF-8')
         );
         if ('settings' in moduleJson) {
-            settings = moduleJson.settings;
+            ({ settings } = moduleJson);
         }
         if ('name' in moduleJson) {
             moduleName = moduleJson.name;
@@ -330,7 +330,7 @@ class App {
                 const result = App.readModuleConfiguration(modulePath);
                 assignIn(settings, result.settings);
                 if (result.moduleName) {
-                    moduleName = result.moduleName;
+                    ({ moduleName } = result);
                 }
             } catch (e) {
                 this.l.warn(`could not load ${path.join(modulePath, 'module.json')}`);
@@ -526,8 +526,7 @@ class App {
                 `desktop compatibility version: ${this.settings.compatibilityVersion}\\n` +
                 'meteor bundle version:' +
                 ` ${this.modules.autoupdate.currentAssetBundle.getVersion()}\\n\`` +
-                ', \'font-size: 9px;color:#222\');'
-            );
+                ', \'font-size: 9px;color:#222\');');
         }
 
         this.emit('windowCreated', this.window);
@@ -591,7 +590,8 @@ class App {
             this.settings.desktopVersion !== this.pendingDesktopVersion;
 
         this.emit(
-            'beforeReload', this.modules.autoupdate.getPendingVersion(), desktopUpdate);
+            'beforeReload', this.modules.autoupdate.getPendingVersion(), desktopUpdate
+        );
 
         if (desktopUpdate) {
             this.l.info('relaunching to use different version of desktop.asar');

@@ -118,7 +118,8 @@ export async function restartLocalServerAndExpectVersion(autoupdate, version) {
     autoupdate.onReset();
     try {
         await setUpLocalServer(
-            autoupdate.getDirectory(), autoupdate.getParentDirectory());
+            autoupdate.getDirectory(), autoupdate.getParentDirectory()
+        );
         await expectVersionServedToEqual(version);
     } catch (e) {
         throw new Error(e);

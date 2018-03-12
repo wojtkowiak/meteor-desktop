@@ -19,7 +19,6 @@ const oneYearInSeconds = 60 * 60 * 24 * 365;
  * @constructor
  */
 export default class LocalServer {
-
     constructor({ log, settings = { localFilesystem: false } }) {
         this.log = log;
         this.httpServerInstance = null;
@@ -148,9 +147,8 @@ export default class LocalServer {
                 send(req, encodeURIComponent(asset.getFile()), { etag: false, cacheControl: false })
                     .on('file', () =>
                         addSourceMapHeader(asset, res),
-                        addETagHeader(asset, res),
-                        addCacheHeader(asset, res, req.url)
-                    )
+                    addETagHeader(asset, res),
+                    addCacheHeader(asset, res, req.url))
                     .pipe(res)
                 :
                 next();
@@ -297,7 +295,7 @@ export default class LocalServer {
                     if (randomPort) {
                         this.port = ports[Math.floor(Math.random() * (ports.length - 1))];
                     } else {
-                        this.port = ports[0];
+                        ([this.port] = ports);
                     }
 
                     this.log.info(`assigned port ${this.port}`);

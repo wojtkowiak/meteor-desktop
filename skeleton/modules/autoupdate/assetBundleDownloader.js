@@ -189,7 +189,8 @@ export default class AssetBundleDownloader {
                                 onFailure(asset, error);
                             }
                             callback();
-                        });
+                        }
+                    );
                 });
             }
         });
@@ -212,7 +213,7 @@ export default class AssetBundleDownloader {
      * @private
      */
     downloadUrlForAsset(asset) {
-        let urlPath = asset.urlPath;
+        let { urlPath } = asset;
 
         // Remove leading / from URL path because the path should be
         // interpreted relative to the base URL.
@@ -312,7 +313,8 @@ export default class AssetBundleDownloader {
             if (actualVersion !== expectedVersion) {
                 throw new Error(
                     `version mismatch for index page, expected: ${expectedVersion}` +
-                    `, actual: ${actualVersion}`);
+                    `, actual: ${actualVersion}`
+                );
             }
         }
 
@@ -336,7 +338,7 @@ export default class AssetBundleDownloader {
             throw new Error('could not find appId in downloaded asset bundle.');
         }
 
-        const appId = runtimeConfig.appId;
+        const { appId } = runtimeConfig;
 
         if (appId !== this.configuration.appId) {
             throw new Error(

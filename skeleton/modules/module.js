@@ -14,7 +14,6 @@ let renderer = null;
  * @class
  */
 export default class Module {
-
     /**
      * @constructor
      * @param {string} name - module name

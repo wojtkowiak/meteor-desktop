@@ -84,14 +84,14 @@ function waitFor(functionReturningPromise, ms = 10000) {
  * @returns {{app: (Application|*), window: *}}
  */
 async function waitForApp(t) {
-    const app = t.context.app;
+    const { app } = t.context;
     await app.client.waitUntilWindowLoaded();
     const window = app.browserWindow;
     // Wait for the main window for max 30seconds. Adjust to your app.
     await waitFor(window.isVisible, 30000);
     t.is(await app.client.getWindowCount(), 1);
     await app.client.waitUntil(
-        async () => await app.client.execute(
+        () => app.client.execute(
             () => document.readyState === 'complete'
         )
     );

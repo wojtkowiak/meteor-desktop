@@ -12,7 +12,6 @@ const { app, autoUpdater } = electron;
  * @class
  */
 export default class Squirrel {
-
     /**
      * Runs Update.exe from Squirrel with provided arguments.
      * @param {Array} args - Update.exe arguments
