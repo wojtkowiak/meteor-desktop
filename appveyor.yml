@@ -50,4 +50,6 @@ test_script:
   - if %test%==integration npm run prepare-integration-tests
   - if %test%==integration npm run test-integration
 
+#
 # cache clear
+#
