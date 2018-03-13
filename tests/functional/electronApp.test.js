@@ -38,7 +38,8 @@ describe('electronApp', () => {
                 const files = asar.listPackage(MeteorDesktop.env.paths.electronApp.desktopAsar);
                 const expected = ['desktop.js', 'settings.json', 'modules', 'assets'];
                 expect(files).to.include.members(
-                    expected.map(expectedPath => path.sep + expectedPath));
+                    expected.map(expectedPath => path.sep + expectedPath)
+                );
                 done();
             }).catch((e) => { done(e); });
         });
@@ -67,7 +68,8 @@ describe('electronApp', () => {
             );
             expect(packageJson.dependencies).to.have.a.property('some-package', '1.2.3');
             expect(packageJson.dependencies).to.have.a.property(
-                'meteor-desktop-splash-screen', '0.3.0');
+                'meteor-desktop-splash-screen', '0.3.0'
+            );
             expect(packageJson.dependencies).to.have.a.property('dependency', '1.0.1');
             expect(packageJson.dependencies).to.have.a.property('dependency2', '0.0.5');
         });

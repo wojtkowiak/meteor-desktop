@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Until we would have a `web.desktop` arch in Meteor we need to provide a way to distinguish
@@ -44,13 +44,15 @@ class IsDesktopInjector {
         if (this.startupDidCompleteRegEx.test(fileContents)) {
             fileContents = fileContents.replace(
                 this.startupDidCompleteRegExReplace,
-                '$1isDesktop$2');
+                '$1isDesktop$2'
+            );
             injectedStartupDidComplete = true;
         }
         if (this.startupDidCompleteProductionRegEx.test(fileContents)) {
             fileContents = fileContents.replace(
                 this.startupDidCompleteProductionRegExReplace,
-                '$1isDesktop$2');
+                '$1isDesktop$2'
+            );
             injectedStartupDidComplete = true;
         }
 

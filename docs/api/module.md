@@ -48,7 +48,7 @@ between your app and node environment.
 Sends an IPC event with data.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -61,7 +61,7 @@ Sends an IPC event with data.
 Sends and IPC event response for a provided fetch id.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -75,7 +75,7 @@ Sends and IPC event response for a provided fetch id.
 Registers a callback to a IPC event.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -88,7 +88,7 @@ Registers a callback to a IPC event.
 Unregisters a callback.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -102,7 +102,7 @@ Unregisters a callback.
 Unregisters all callbacks.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -115,7 +115,7 @@ Unregisters all callbacks.
 Registers a once fired callback to a IPC event.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -128,7 +128,7 @@ Registers a once fired callback to a IPC event.
 Sends a plain IPC event without namespacing it.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |

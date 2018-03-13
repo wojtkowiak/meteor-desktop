@@ -8,7 +8,9 @@ import rewire from 'rewire';
 
 chai.use(sinonChai);
 chai.use(dirty);
-const { describe, it, before, after } = global;
+const {
+    describe, it, before, after
+} = global;
 const { expect } = chai;
 
 const Electron = {

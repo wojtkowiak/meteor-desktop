@@ -18,7 +18,9 @@ export default class Desktop {
      * @param {Object} Module      - reference to the Module class
      * @constructor
      */
-    constructor({ log, skeletonApp, appSettings, eventsBus, modules, Module }) {
+    constructor({
+        log, skeletonApp, appSettings, eventsBus, modules, Module
+    }) {
         /**
          * You can delete unused var from the param destructuring.
          * Left them here just to emphasize what is passed. Delete the eslint rule at the top
@@ -80,7 +82,7 @@ export default class Desktop {
         Desktop.displayRestartDialog(
             'Application encountered an error',
             'Do you want to restart it?',
-             error.message
+            error.message
         );
     }
 
@@ -92,7 +94,9 @@ export default class Desktop {
      */
     static displayRestartDialog(title, message, details = '') {
         dialog.showMessageBox(
-            { type: 'error', buttons: ['Restart', 'Shutdown'], title, message, detail: details },
+            {
+                type: 'error', buttons: ['Restart', 'Shutdown'], title, message, detail: details
+            },
             (response) => {
                 if (response === 0) {
                     app.relaunch();

@@ -1,6 +1,5 @@
 /* eslint-disable no-console, no-param-reassign */
-const fs = Plugin.fs;
-const path = Plugin.path;
+const { fs, path } = Plugin;
 const versionFilePath = './version.desktop';
 const Future = Npm.require('fibers/future');
 const md5 = Npm.require('md5');
@@ -218,8 +217,7 @@ class MeteorDesktopBundler {
                 depsManager.mergeDependencies(
                     `module[${module}]`,
                     dependencies.modules[module]
-                )
-            );
+                ));
 
             return depsManager.getDependencies();
         } catch (e) {
@@ -241,8 +239,7 @@ class MeteorDesktopBundler {
 
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
-            `${dependency}:${dependencies[dependency]}`
-        );
+            `${dependency}:${dependencies[dependency]}`);
         const mainCompatibilityVersion = this.requireLocal('meteor-desktop/package.json')
             .version
             .split('.');
@@ -493,7 +490,8 @@ class MeteorDesktopBundler {
 
             const scaffold = new ElectronAppScaffold(context);
             const depsManager = new DependenciesManager(
-                context, scaffold.getDefaultPackageJson().dependencies);
+                context, scaffold.getDefaultPackageJson().dependencies
+            );
             const desktopTmpPath = './.desktopTmp';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
@@ -529,7 +527,8 @@ class MeteorDesktopBundler {
                     }
                     moduleConfig.extract.forEach((file) => {
                         const filePath = path.join(
-                            modulesPath, moduleConfig.dirName, file);
+                            modulesPath, moduleConfig.dirName, file
+                        );
 
                         shelljs.rm(filePath);
                     });
@@ -552,7 +551,7 @@ class MeteorDesktopBundler {
                     presets: [preset]
                 });
                 if (settings.env === 'prod' && uglifyingEnabled) {
-                    code = uglifyJs.minify(code, options).code;
+                    ({ code } = uglifyJs.minify(code, options));
                 }
                 fs.writeFileSync(file, code);
             });

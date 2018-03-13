@@ -9,7 +9,9 @@ import rewire from 'rewire';
 chai.use(sinonChai);
 chai.use(dirty);
 
-const { describe, it, before, after } = global;
+const {
+    describe, it, before, after
+} = global;
 const { expect } = chai;
 
 const Electron = {};
@@ -59,8 +61,10 @@ describe('Desktop', () => {
     });
     describe('#fetch', () => {
         it('should send namespaced fetch ipc', (done) => {
-            const ipcMock = { on: sinon.stub(),
-                send: sinon.stub() };
+            const ipcMock = {
+                on: sinon.stub(),
+                send: sinon.stub()
+            };
             const revertIpc = Desktop.__set__('ipc', ipcMock);
             const desktop = Desktop.__get__('Desktop');
             const arg1 = { some: 'data' };
@@ -139,7 +143,8 @@ describe('Desktop', () => {
             };
 
             const test = prepareOnOrOnceTest(
-                ipcMock, [callback, callback2], true, 'desktop', 'event');
+                ipcMock, [callback, callback2], true, 'desktop', 'event'
+            );
             test.clear();
         });
         it('should call callback (with preserved this) once on events received', () => {
@@ -160,7 +165,8 @@ describe('Desktop', () => {
             };
             callback2 = callback2.bind(someObject);
             const test = prepareOnOrOnceTest(
-                ipcMock, [callback, callback2], true, 'desktop', 'event');
+                ipcMock, [callback, callback2], true, 'desktop', 'event'
+            );
 
             const arg1 = { some: 'data' };
             const arg2 = 'test';
@@ -199,7 +205,8 @@ describe('Desktop', () => {
             };
 
             const test = prepareOnOrOnceTest(
-                ipcMock, [callback, callback2], false, 'desktop', 'event');
+                ipcMock, [callback, callback2], false, 'desktop', 'event'
+            );
             test.clear();
         });
         it('should call callback (with preserved this) on event received', () => {
@@ -220,7 +227,8 @@ describe('Desktop', () => {
             };
             callback2 = callback2.bind(someObject);
             const test = prepareOnOrOnceTest(
-                ipcMock, [callback, callback2], false, 'desktop', 'event');
+                ipcMock, [callback, callback2], false, 'desktop', 'event'
+            );
 
             const arg1 = { some: 'data' };
             const arg2 = 'test';

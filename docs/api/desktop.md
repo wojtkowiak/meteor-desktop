@@ -116,13 +116,13 @@ Returns a promise from `fetch`.
 Invokes callback when the specified IPC event is fired.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | module | <code>string</code> | module name |
 | event | <code>string</code> | name of an event |
-| callback | <code>[ipcListener](#ipcListener)</code> | function to invoke when `event` is triggered |
+| callback | [<code>ipcListener</code>](#ipcListener) | function to invoke when `event` is triggered |
 
 <a name="once"></a>
 
@@ -130,13 +130,13 @@ Invokes callback when the specified IPC event is fired.
 Invokes a callback once when the specified IPC event is fired.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | module | <code>string</code> |  | module name |
 | event | <code>string</code> |  | name of an event |
-| callback | <code>[ipcListener](#ipcListener)</code> |  | function to invoke when `event` is triggered |
+| callback | [<code>ipcListener</code>](#ipcListener) |  | function to invoke when `event` is triggered |
 | response | <code>boolean</code> | <code>false</code> | whether we are listening for fetch response |
 
 <a name="removeListener"></a>
@@ -145,7 +145,7 @@ Invokes a callback once when the specified IPC event is fired.
 Unregisters a callback.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -159,7 +159,7 @@ Unregisters a callback.
 Unregisters all callbacks.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -172,7 +172,7 @@ Unregisters all callbacks.
 Send an event to the main Electron process.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -187,7 +187,7 @@ Fetches some data from main process by sending an IPC event and waiting for a re
 Returns a promise that resolves when the response is received.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -202,7 +202,7 @@ Returns a promise that resolves when the response is received.
 Send an global event to the main Electron process.
 
 **Kind**: global function  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |

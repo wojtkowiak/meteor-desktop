@@ -8,7 +8,9 @@ import importFresh from 'import-fresh';
 
 chai.use(sinonChai);
 chai.use(dirty);
-const { describe, it, after, before } = global;
+const {
+    describe, it, after, before
+} = global;
 const { expect } = chai;
 
 const fs = {};

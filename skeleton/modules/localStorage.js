@@ -14,7 +14,6 @@ import path from 'path';
  * @constructor
  */
 export default class LocalStorage {
-
     constructor({ log, eventsBus, appSettings }) {
         const appPath = app.getPath('userData');
 

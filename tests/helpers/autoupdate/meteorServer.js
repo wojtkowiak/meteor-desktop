@@ -32,7 +32,6 @@ function exists(checkPath) {
  * @constructor
  */
 export default class MeteorServer {
-
     constructor() {
         this.httpServerInstance = null;
         this.server = null;
@@ -90,10 +89,10 @@ export default class MeteorServer {
             const parsedUrl = url.parse(req.url);
             const ext = path.extname(parsedUrl.pathname);
             if ((ext === '.js' || ext === '.css') && (
-                    exists(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
+                exists(path.join(serverPath, `${parsedUrl.pathname}.map`)) ||
                     (parentServerPath &&
                     exists(path.join(parentServerPath, `${parsedUrl.pathname}.map`)))
-                )
+            )
             ) {
                 res.setHeader('X-SourceMap', `${parsedUrl.pathname}.map?${parsedUrl.query}`);
             }
@@ -104,7 +103,7 @@ export default class MeteorServer {
 
         function setETag(req, res, next) {
             const parsedUrl = url.parse(req.url);
-            let pathname = parsedUrl.pathname;
+            let { pathname } = parsedUrl;
             if (pathname === '/') {
                 pathname = '/index.html';
             }

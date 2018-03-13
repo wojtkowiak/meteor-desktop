@@ -1,4 +1,11 @@
-#### v0.12.0 <sup>17.01.2018</sup>
+#### v0.13.0 <sup>09.03.2018</sup>
+* `electron` was updated to `1.7.12`
+* `npm` has been removed from being a direct dependency, dependencies installation is now performed entirely by `electron-builder` which calls your `meteor npm` or system's `npm`
+* local npm dependencies (`file:`) are now installed by [`install-local`](https://github.com/nicojs/node-install-local)
+* native modules rebuild mechanism is enabled by default now and there is no way of turning it off (`rebuildNativeNodeModules` is obsolete and no longer taken into account)
+* several small improvements to `electron-builder` integration
+
+#### v0.12.0 <sup>23.02.2018</sup>
 * `electron-builder` was updated to `20.0.8`   
 * `electron-builder-squirrel-windows` was updated to `20.0.5`
 * `electron-packager` was updated to `11.0.1`

@@ -45,7 +45,6 @@ import utils from './utils';
 const { rimrafWithRetries } = utils;
 
 class AssetBundleManager {
-
     /**
      * @param {object}      log                - Winston reference.
      * @param {object}      configuration      - Configuration object.
@@ -166,7 +165,7 @@ class AssetBundleManager {
                 return;
             }
 
-            const version = manifest.version;
+            const { version } = manifest;
 
             this.log.debug(`downloaded asset manifest for version: ${version}`);
 
@@ -263,7 +262,7 @@ class AssetBundleManager {
                 const assetBundle = this.downloadedAssetBundlesByVersion[assetVersion];
                 const version = assetBundle.getVersion();
                 if (version !== assetBundleToKeep.getVersion()) {
-                    const desktopVersion = assetBundle.desktopVersion;
+                    const { desktopVersion } = assetBundle;
                     if (desktopVersion.version && desktopVersionToKeep.version &&
                         desktopVersion.version !== desktopVersionToKeep.version) {
                         this.log.info(`pruned old ${desktopVersion.version}_desktop.asar`);
@@ -271,7 +270,7 @@ class AssetBundleManager {
                         try {
                             originalFs.unlinkSync(
                                 path.join(this.desktopBundlePath,
-                                `${desktopVersion.version}_desktop.asar`)
+                                    `${desktopVersion.version}_desktop.asar`)
                             );
                         } catch (e) {
                             // Theoretically no harm if we could not delete it...
@@ -291,14 +290,16 @@ class AssetBundleManager {
                                     resolve({ pathToDelete, state: true });
                                 }).catch((e) => {
                                     this.log.error(
-                                        `error while pruning old version dir ${version}`);
+                                        `error while pruning old version dir ${version}`
+                                    );
                                     resolve({ pathToDelete, state: false, reason: e });
                                 });
                         })
                     );
                     delete this.downloadedAssetBundlesByVersion[version];
                 }
-            });
+            }
+        );
         return Promise.all(promises);
     }
 
@@ -410,14 +411,16 @@ class AssetBundleManager {
                 if (isInitialAssetBundle) {
                     const initialDesktopPath = path.resolve(path.join(__dirname, '..', '..', '..', 'desktop.asar'));
                     originalFs.writeFileSync(
-                        desktopPath, originalFs.readFileSync(initialDesktopPath));
+                        desktopPath, originalFs.readFileSync(initialDesktopPath)
+                    );
                     this.log.debug('copied initial desktop.asar to', desktopPath);
                 } else {
                     assetBundle.getOwnAssets().some((asset) => {
                         if (~asset.filePath.indexOf('desktop.asar')) {
                             // TODO: need more efficient way of copying asar archive
                             originalFs.writeFileSync(
-                                desktopPath, originalFs.readFileSync(asset.getFile()));
+                                desktopPath, originalFs.readFileSync(asset.getFile())
+                            );
                             this.log.debug('copied desktop.asar to', desktopPath);
                             return true;
                         }

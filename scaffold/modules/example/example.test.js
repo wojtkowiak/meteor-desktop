@@ -35,7 +35,7 @@ let appDir;
 
 async function getApp(t) {
     // Waits for the test app to start.
-    const app = t.context.app;
+    const { app } = t.context;
     await app.client.waitUntilWindowLoaded();
     t.is(await app.client.getWindowCount(), 1);
     return app;
@@ -45,7 +45,8 @@ test.before(
     async () => {
         // Create a new test app with this module included.
         appDir = await createTestAppWithModule(
-            null, __dirname);
+            null, __dirname
+        );
     }
 );
 
@@ -87,7 +88,7 @@ test.afterEach.always(async (t) => {
     }
 });
 
-test('the test app', async t => await getApp(t));
+test('the test app', async t => getApp(t));
 
 test.serial('if testEvent returns true for 1', async (t) => {
     const app = await getApp(t);

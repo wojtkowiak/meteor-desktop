@@ -47,8 +47,9 @@ const { join } = path;
  * @constructor
  */
 export default class HCPClient {
-
-    constructor({ log, appSettings, eventsBus, settings, Module }) {
+    constructor({
+        log, appSettings, eventsBus, settings, Module
+    }) {
         // Get the automatically predefined logger instance.
         this.log = log;
 
@@ -141,7 +142,8 @@ export default class HCPClient {
         // and blacklistedVersions.
         if (initialAssetBundle.getVersion() !== this.config.lastSeenInitialVersion) {
             this.log.info(
-                'detected new bundled version, removing versions directory if it exists');
+                'detected new bundled version, removing versions directory if it exists'
+            );
             if (fs.existsSync(this.versionsDir)) {
                 // Using rimraf specifically instead of shelljs.rm because despite using
                 // process.noAsar shelljs tried to remove files inside asar instead of just
@@ -178,7 +180,7 @@ export default class HCPClient {
 
         this.currentAssetBundle = null;
 
-        const lastDownloadedVersion = this.config.lastDownloadedVersion;
+        const { lastDownloadedVersion } = this.config;
         if (lastDownloadedVersion) {
             if (~this.config.blacklistedVersions.indexOf(lastDownloadedVersion)) {
                 this.useLastKnownGoodVersion();
@@ -186,7 +188,8 @@ export default class HCPClient {
                 this.currentAssetBundle = this.assetBundleManager
                     .downloadedAssetBundleWithVersion(lastDownloadedVersion);
                 this.log.verbose(
-                    `will use last downloaded version (${lastDownloadedVersion})`);
+                    `will use last downloaded version (${lastDownloadedVersion})`
+                );
 
                 if (!this.currentAssetBundle) {
                     this.log.warn('seems that last downloaded version does not exists... ');
@@ -197,7 +200,8 @@ export default class HCPClient {
             } else {
                 this.currentAssetBundle = initialAssetBundle;
                 this.log.verbose(
-                    `will use last downloaded version which is apparently also the initial asset bundle (${lastDownloadedVersion})`);
+                    `will use last downloaded version which is apparently also the initial asset bundle (${lastDownloadedVersion})`
+                );
             }
         } else {
             this.log.verbose('using initial asset bundle');
@@ -212,7 +216,7 @@ export default class HCPClient {
      * @private
      */
     useLastKnownGoodVersion() {
-        const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
+        const { lastKnownGoodVersion } = this.config;
         this.log.debug(`last known good version is ${this.config.lastKnownGoodVersion}`);
         if (lastKnownGoodVersion
             && lastKnownGoodVersion !== this.assetBundleManager.initialAssetBundle.getVersion()) {
@@ -323,7 +327,7 @@ export default class HCPClient {
         }
 
         // If there is a last known good version and we can load the bundle, revert to it.
-        const lastKnownGoodVersion = this.config.lastKnownGoodVersion;
+        const { lastKnownGoodVersion } = this.config;
         this.log.debug(`last known good version is ${this.config.lastKnownGoodVersion}`);
         if (lastKnownGoodVersion
             && lastKnownGoodVersion !== this.assetBundleManager.initialAssetBundle.getVersion()) {
@@ -492,7 +496,8 @@ export default class HCPClient {
      */
     onFinishedDownloadingAssetBundle(assetBundle) {
         this.log.verbose(
-            `setting last downloaded and pending version as ${assetBundle.getVersion()}`);
+            `setting last downloaded and pending version as ${assetBundle.getVersion()}`
+        );
         this.config.lastDownloadedVersion = assetBundle.getVersion();
         this.saveConfig();
         this.pendingAssetBundle = assetBundle;
@@ -522,7 +527,7 @@ export default class HCPClient {
      * @returns {boolean}
      */
     shouldDownloadBundleForManifest(manifest, desktopVersion = {}) {
-        const version = manifest.version;
+        const { version } = manifest;
 
         // No need to redownload the current version.
         if (this.currentAssetBundle.getVersion() === version) {

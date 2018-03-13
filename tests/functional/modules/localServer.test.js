@@ -103,7 +103,8 @@ describe('localServer', () => {
         it('should set the X-SourceMap header for an asset with a source map', async () => {
             const response = await fetchFromLocalServer('/app/template.mobileapp.js');
             expect(response.headers.get('X-SourceMap')).to.contain(
-                '/app/979b20f66caf126704c250fbd29ce253c6cb490e.map');
+                '/app/979b20f66caf126704c250fbd29ce253c6cb490e.map'
+            );
         });
 
         it('should serve the source map for an asset', async () => {
@@ -231,7 +232,8 @@ describe('localServer', () => {
             // Lets try to fetch exactly this file :)
             const response =
                 await fetchFromLocalServer(
-                    `/local-filesystem/${path.join(__dirname, 'localServer.test.js')}`);
+                    `/local-filesystem/${path.join(__dirname, 'localServer.test.js')}`
+                );
             expect(response.status).to.equal(404);
         });
     });
