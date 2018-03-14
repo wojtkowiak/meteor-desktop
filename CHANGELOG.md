@@ -1,3 +1,11 @@
+#### v0.14.0 <sup>14.03.2018</sup>
+* upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
+* upgraded to `uglify-es`   
+* `electron-builder` was updated to `20.5.1`   
+* `electron-builder-squirrel-windows` was updated to `20.5.0`
+ 
+
+
 #### v0.13.0 <sup>09.03.2018</sup>
 * `electron` was updated to `1.7.12`
 * `npm` has been removed from being a direct dependency, dependencies installation is now performed entirely by `electron-builder` which calls your `meteor npm` or system's `npm`

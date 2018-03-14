@@ -36,8 +36,8 @@ if (!fs.existsSync(versionFilePath)) {
 
 function toCamelCase(name) {
     return name
-        .replace(/-(.)/g, $1 => $1.toUpperCase())
-        .replace(/-/g, '');
+        .replace(/[-/](.)/g, $1 => $1.toUpperCase())
+        .replace(/[-@/]/g, '');
 }
 
 /*
@@ -57,11 +57,10 @@ class MeteorDesktopBundler {
             'shelljs',
             'glob',
             'del',
-            'babel-core',
+            '@babel/core',
             'hash-files',
-            'babel-preset-node6',
-            'babel-preset-es2015',
-            'uglify-js'
+            '@babel/preset-env',
+            'uglify-es'
         ];
         this.version = null;
         this.requireLocal = null;
@@ -318,6 +317,7 @@ class MeteorDesktopBundler {
 
         this.deps.forEach((dependency) => {
             const dependencyCamelCased = toCamelCase(dependency);
+            console.log(dependencyCamelCased);
 
             // Lets try to find that dependency.
             dependencies[dependencyCamelCased] =
@@ -395,9 +395,8 @@ class MeteorDesktopBundler {
             let glob;
             let babelCore;
             let hashFiles;
-            let babelPresetNode6;
-            let babelPresetEs2015;
-            let uglifyJs;
+            let babelPresetEnv;
+            let uglifyEs;
             let del;
 
             /**
@@ -459,9 +458,8 @@ class MeteorDesktopBundler {
                     del,
                     babelCore,
                     hashFiles,
-                    babelPresetNode6,
-                    babelPresetEs2015,
-                    uglifyJs
+                    babelPresetEnv,
+                    uglifyEs
                 } = deps);
 
                 DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
@@ -536,22 +534,23 @@ class MeteorDesktopBundler {
             });
 
             const options = 'uglifyOptions' in settings ? settings.uglifyOptions : {};
-            options.fromString = true;
             const uglifyingEnabled = 'uglify' in settings && !!settings.uglify;
 
-            // Unfortunately `reify` will not work when we require a .js file from an asar archive.
-            // So here we will transpile .desktop to have the ES6 modules working.
-
-            // Uglify does not handle ES6 yet, so we will have to transpile to ES5 for now.
-            const preset = (uglifyingEnabled && settings.env === 'prod') ?
-                babelPresetEs2015 : babelPresetNode6;
+            if (babelPresetEnv.default) {
+                babelPresetEnv = babelPresetEnv.default;
+            }
+            const preset = babelPresetEnv(undefined, { targets: { node: '7' } });
 
             glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
                 let { code } = babelCore.transformFileSync(file, {
                     presets: [preset]
                 });
+                let error;
                 if (settings.env === 'prod' && uglifyingEnabled) {
-                    ({ code } = uglifyJs.minify(code, options));
+                    ({ code, error } = uglifyEs.minify(code, options));
+                }
+                if (error) {
+                    throw new Error(error);
                 }
                 fs.writeFileSync(file, code);
             });
