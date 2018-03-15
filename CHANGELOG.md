@@ -1,22 +1,22 @@
 #### v0.13.1 <sup>15.03.2018</sup>
-* additional fix to `electron-builder` integration, fixes [#149](https://github.com/wojtkowiak/meteor-desktop/issues/149)
+* additional fix to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration, fixes [#149](https://github.com/wojtkowiak/meteor-desktop/issues/149)
 * desktop HCP meteor plugins are no longer unnecessarily constantly added when on Windows even if they are already there
 
 ## v0.13.0 <sup>09.03.2018</sup>
 * `electron` was updated to `1.7.12`
-* `npm` has been removed from being a direct dependency, dependencies installation is now performed entirely by `electron-builder` which calls your `meteor npm` or system's `npm`
+* `npm` has been removed from being a direct dependency, dependencies installation is now performed entirely by [`electron-builder`](https://github.com/electron-userland/electron-builder) which calls your `meteor npm` or system's `npm`
 * local npm dependencies (`file:`) are now installed by [`install-local`](https://github.com/nicojs/node-install-local)
 * native modules rebuild mechanism is enabled by default now and there is no way of turning it off (`rebuildNativeNodeModules` is obsolete and no longer taken into account)
-* several small improvements to `electron-builder` integration
+* several small improvements to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration
 
 ## v0.12.0 <sup>23.02.2018</sup>
-* `electron-builder` was updated to `20.0.8`   
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.0.8`   
 * `electron-builder-squirrel-windows` was updated to `20.0.5`
-* `electron-packager` was updated to `11.0.1`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `11.0.1`
 * **DEPRECATIONS**:
     - building for `squirrel.windows` is not encouraged and from `1.0.0` the default Windows target will be `nsis`  
 
-it's more than sure that you will have to update your `electron-builder`/`electron-packaged` configuration since it's a big shift from the old versions, create a new meteor project with blank scaffold (`npm run desktop -- init`) and take a look a the new `settings.json` as that might give you some hints
+it's more than sure that you will have to update your [`electron-builder`](https://github.com/electron-userland/electron-builder)/[`electron-packager`](https://github.com/electron-userland/electron-packager) configuration since it's a big shift from the old versions, create a new meteor project with blank scaffold (`npm run desktop -- init`) and take a look a the new `settings.json` as that might give you some hints
 
 #### v0.11.3 <sup>17.01.2018</sup>
 - added `desktopHCPCompatibilityVersion` setting to restore ability to override desktopHCP compatibility version
@@ -72,9 +72,9 @@ strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103)
 ## v0.6.0 <sup>27.02.2017</sup>
 - added experimental fix for `localStorage` getting lost - you can enable it by adding `"experimentalLocalStorage": true` to `settings.json`
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.2.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
-* `electron-builder` was updated to `13.11.1`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `13.11.1`
 * `electron-builder-squirrel-windows` was updated to `13.10.1`
-* `electron-packager` was updated to `8.5.2`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.2`
 
 #### v0.5.3 <sup>17.02.2017</sup>
 - `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
@@ -93,17 +93,17 @@ host
 [here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap 
 will be published in form of epics 
 * `electron` was updated to `1.4.15`
-* `electron-builder` was updated to `13.0.0`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `13.0.0`
 * `electron-builder-squirrel-windows` was updated to `13.2.0`
-* `electron-packager` was updated to `8.5.1`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.1`
 
 ## v0.4.0 <sup>11.01.2017</sup>
 * added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/42)   
 * various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/51)
 * `electron` was updated to `1.4.14`
-* `electron-builder` was updated to `11.2.4`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `11.2.4`
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
-* `electron-packager` was updated to `8.5.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.0`
 
 ## v0.3.0 <sup>10.01.2016</sup>
 * `localServer` was rewritten to use `send` instead of `serve-static` 
@@ -118,9 +118,9 @@ will be published in form of epics
 (this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
 updates)
 * `electron` was updated to `1.4.13`
-* `electron-builder` was updated to `11.2.0`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `11.2.0`
 * `electron-builder-squirrel-windows` was updated to `11.2.0`
-* `electron-packager` was updated to `8.4.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.4.0`
 
 #### v0.2.6 <sup>17.12.2016</sup>
  - added some additional log messages
@@ -140,7 +140,7 @@ state [meteor#8113](https://github.com/meteor/meteor/issues/8113)
 
 #### v0.2.1 <sup>23.11.2016</sup>
 - fixed `rebuildNativeNodeModules` which stopped working after update of 
-`electron-builder`
+[`electron-builder`](https://github.com/electron-userland/electron-builder)
 
 ## v0.2.0 <sup>17.10.2016</sup>
 * several types of npm dependencies versions declarations are now supported i.e.: local paths, 
@@ -149,7 +149,7 @@ file protocol, github links and http(s) links -> [npm documentation](https://doc
 * specifying target platforms for `build-installer` is now not restricted - 
 check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
 * `electron` was updated to `1.4.6`
-* `electron-builder` was updated to `8.6.0`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `8.6.0`
 
 #### v0.1.4 <sup>16.11.2016</sup>
 * fixed [#22](https://github.com/wojtkowiak/meteor-desktop/issues/22)  
