@@ -1,3 +1,8 @@
+## v0.14.0 <sup>16.03.2018</sup>
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.5.1`   
+* `electron-builder-squirrel-windows` was updated to `20.5.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `11.1.0`
+
 #### v0.13.1 <sup>15.03.2018</sup>
 * additional fix to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration, fixes [#149](https://github.com/wojtkowiak/meteor-desktop/issues/149)
 * desktop HCP meteor plugins are no longer unnecessarily constantly added when on Windows even if they are already there
