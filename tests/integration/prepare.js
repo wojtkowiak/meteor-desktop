@@ -29,8 +29,8 @@ if (!fs.existsSync(testsTmpPath) || !fs.existsSync(path.join(appDir, 'package.js
     console.log('meteor npm prune');
     shell.exec('meteor npm prune', { cwd: appDir });
 }
-console.log('npm install');
-shell.exec('npm install', { cwd: appDir });
+console.log('meteor npm install');
+shell.exec('meteor npm install', { cwd: appDir });
 
 
 if (process.env.TRAVIS) {

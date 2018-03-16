@@ -25,7 +25,7 @@ cache:
   - '%USERPROFILE%\.electron -> appveyor.yml'
   - '%LOCALAPPDATA%\Yarn -> appveyor.yml'
   - '%LOCALAPPDATA%\.meteor -> appveyor.yml'
-  - tests/.__tmp_int -> appveyor.yml
+#   - tests/.__tmp_int -> appveyor.yml
 
 install:
   - ps: Install-Product node $env:nodejs_version
@@ -52,4 +52,4 @@ test_script:
 
 #
 # cache clear
-#
+
