@@ -1,3 +1,6 @@
+#### v0.14.1 <sup>16.03.2018</sup>
+- republished `0.14.0` because of failed plugins release
+
 ## v0.14.0 <sup>16.03.2018</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.5.1`   
 * `electron-builder-squirrel-windows` was updated to `20.5.0`
