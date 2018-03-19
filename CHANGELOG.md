@@ -1,10 +1,9 @@
 #### v0.14.2 <sup>19.03.2018</sup>
+<sup>republished as `v0.14.3`</sup>
 * `.desktop` version hash will include a `dev`/`prod` suffix as a quick fix to `meteor` development or production build producing the same version hash 
 
-#### v0.14.1 <sup>16.03.2018</sup>
-- republished `0.14.0` because of failed plugins release
-
-## v0.14.0 <sup>16.03.2018</sup>
+## v0.14.0 <sup>16.03.2018</sup> 
+<sup>republished as `v0.14.1`</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.5.1`   
 * `electron-builder-squirrel-windows` was updated to `20.5.0`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `11.1.0`
@@ -41,6 +40,7 @@ it's more than sure that you will have to update your [`electron-builder`](https
 - republished `0.11.0` with Meteor 1.5 because of [meteor#9308](https://github.com/meteor/meteor/issues/9308) 
 
 ## v0.11.0 <sup>03.11.2017</sup>
+<sup>republished as 0.11.1</sup>
 * `electron` was updated to `1.7.9` ([PR](https://github.com/wojtkowiak/meteor-desktop/pull/126))
 
 ## v0.10.0 <sup>12.09.2017</sup>
