@@ -1,3 +1,6 @@
+#### v0.14.2 <sup>19.03.2018</sup>
+* `.desktop` version hash will include a `dev`/`prod` suffix as a quick fix to `meteor` development or production build producing the same version hash 
+
 #### v0.14.1 <sup>16.03.2018</sup>
 - republished `0.14.0` because of failed plugins release
 
