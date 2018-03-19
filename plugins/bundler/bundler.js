@@ -476,6 +476,7 @@ class MeteorDesktopBundler {
                 });
                 return;
             }
+
             const context = {
                 env: {
                     isProductionBuild: () => process.env.NODE_ENV === 'production',
@@ -484,6 +485,9 @@ class MeteorDesktopBundler {
                     }
                 }
             };
+            if (context.env.isProductionBuild()) {
+                console.log('[meteor-desktop] creating a production build');
+            }
             const shelljsConfig = Object.assign({}, shelljs.config);
             shelljs.config.fatal = true;
             shelljs.config.silent = false;
@@ -503,14 +507,14 @@ class MeteorDesktopBundler {
 
             const configs = this.gatherModuleConfigs(shelljs, modulesPath, inputFile);
             const dependencies = this.getDependencies(desktopPath, inputFile, configs, depsManager);
-            const version = hashFiles.sync({
-                files: [`${desktopPath}${path.sep}**`]
-            });
-            console.log(`[meteor-desktop] calculated .desktop hash version is ${version}`);
 
             // Pass information about build type to the settings.json.
-
             settings.env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
+
+            const version = `${hashFiles.sync({ files: [`${desktopPath}${path.sep}**`] })}_${settings.env}`;
+
+            console.log(`[meteor-desktop] calculated .desktop hash version is ${version}`);
+
             settings.desktopVersion = version;
             settings.compatibilityVersion =
                 this.calculateCompatibilityVersion(dependencies, desktopPath, inputFile);
