@@ -1,3 +1,6 @@
+#### v0.14.4 <sup>20.03.2018</sup>
+* additional fixes to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration 
+
 #### v0.14.2 <sup>19.03.2018</sup>
 <sup>republished as `v0.14.3`</sup>
 * `.desktop` version hash will include a `dev`/`prod` suffix as a quick fix to `meteor` development or production build producing the same version hash 
