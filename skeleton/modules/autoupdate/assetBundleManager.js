@@ -401,7 +401,7 @@ class AssetBundleManager {
                 this.log.debug('skipping writing desktop version into' +
                     ' initial version');
             }
-            // If there is a new version of desktop.asar copy it desktop bundle path.
+            // If there is a new version of desktop.asar copy it to desktop bundle path.
             const desktopPath = path.join(
                 this.desktopBundlePath,
                 `${assetBundle.desktopVersion.version}_desktop.asar`

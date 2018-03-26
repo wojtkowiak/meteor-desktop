@@ -9,8 +9,7 @@ Package.describe({
 });
 
 Npm.depends({
-    chokidar: '1.6.0',
-    'hash-files': '1.1.1'
+    chokidar: '2.0.2'
 });
 
 Package.onUse(function onUse(api) {
