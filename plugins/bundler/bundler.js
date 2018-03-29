@@ -68,7 +68,6 @@ class MeteorDesktopBundler {
             'shelljs',
             'del',
             'babel-core',
-            'hash-files',
             'babel-preset-node6',
             'babel-preset-es2015',
             'uglify-js',
@@ -391,8 +390,7 @@ class MeteorDesktopBundler {
                 stat1[key].size === stat2[key].size &&
                 stat1[key].dates[0] === stat2[key].dates[0] &&
                 stat1[key].dates[1] === stat2[key].dates[1] &&
-                stat1[key].dates[2] === stat2[key].dates[2] &&
-                stat1[key].dates[3] === stat2[key].dates[3]
+                stat1[key].dates[2] === stat2[key].dates[2];
         );
     }
 
@@ -803,15 +801,13 @@ class MeteorDesktopBundler {
                             'lastSettings',
                             JSON.stringify({ settings: desktopSettings, asarIntegrity })
                         ))
-                        .then(saveCacheResolve.bind(null, asarIntegrity))
+                        .then((finalIntegrity) => saveCacheResolve(finalIntegrity))
                         .catch(saveCacheReject);
                 });
             }
 
             saveCache(contents, readDirResult.stats, settings)
-                .then((integrity) => {
-                    logDebug('[meteor-desktop] cache saved:', integrity);
-                })
+                .then(integrity => logDebug('[meteor-desktop] cache saved:', integrity))
                 .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
 
             addFiles(contents, settings);
