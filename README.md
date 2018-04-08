@@ -253,6 +253,7 @@ field|description
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
 `builderCliOptions`|specify additional electron-builder CLI options e.g for [publishing artifacts](https://github.com/electron-userland/electron-builder/wiki/Publishing-Artifacts)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
+`extract`|array containing dependencies that should not be packed into asar (should not be needed as there is an automatic algorithm that will exclude all dependencies containing binary files)
 
 ##### Applying different window options for different OS
 
