@@ -1,3 +1,9 @@
+## v0.15.0 <sup>08.04.2018</sup>
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.8.2`   
+* `electron-builder-squirrel-windows` was updated to `20.8.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `12.0.0`
+* added automatic detection of modules that should not be packed into asar, additionally you can manually specify those via `extract` settings
+
 #### v0.14.4 <sup>20.03.2018</sup>
 * additional fixes to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration 
 
