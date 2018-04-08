@@ -58,9 +58,11 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
                 'have omega:meteor-desktop-bundler package added to your project?');
         }
 
-        const currentVersion = hash.sync({
+        let currentVersion = hash.sync({
             files: [`${desktopPath}${path.sep}**`]
         });
+
+        currentVersion += '_dev';
 
         if (currentVersion !== version) {
             // TODO: something meteor'ish to print to stdout?
