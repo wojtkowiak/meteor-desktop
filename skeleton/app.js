@@ -207,7 +207,7 @@ class App {
      */
     uncaughtExceptionHandler() {
         try {
-            // this.window.close();
+            this.window.close();
         } catch (e) {
             // Empty catch block... nasty...
         }
