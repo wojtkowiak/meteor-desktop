@@ -1,3 +1,7 @@
+#### v0.15.1 <sup>10.04.2018</sup>
+* fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
+* fixed `extract` functionality for Mac (the `node_modules/.bin` entries are now also automatically extracted when their package is extracted) 
+
 ## v0.15.0 <sup>08.04.2018</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.8.2`   
 * `electron-builder-squirrel-windows` was updated to `20.8.0`
