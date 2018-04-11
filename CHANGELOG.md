@@ -1,5 +1,7 @@
-#### v0.15.1 <sup>10.04.2018</sup>
+#### v0.15.2 <sup>11.04.2018</sup>
 * fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
+
+#### v0.15.1 <sup>10.04.2018</sup>
 * fixed `extract` functionality for Mac (the `node_modules/.bin` entries are now also automatically extracted when their package is extracted) 
 
 ## v0.15.0 <sup>08.04.2018</sup>
