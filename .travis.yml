@@ -5,10 +5,8 @@ os:
  - osx
 
 env:
- - TEST=normal NODE_VERSION=6
  - TEST=normal NODE_VERSION=8
  - TEST=normal NODE_VERSION=9
- - TEST=integration NODE_VERSION=6
  - TEST=integration NODE_VERSION=8
  - TEST=integration NODE_VERSION=9
 
