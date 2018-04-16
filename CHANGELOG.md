@@ -1,3 +1,6 @@
+#### v0.15.3 <sup>16.04.2018</sup>
+* fixed `extract` functionality for Mac/Linux - `electron-builder` prepackaged app is now correctly found on every platform   
+
 #### v0.15.2 <sup>11.04.2018</sup>
 * fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
 
