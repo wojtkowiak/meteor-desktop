@@ -180,6 +180,16 @@ const Desktop = new (class {
         ipc.send(eventName, ...args);
     }
 
+    /**
+     * Sends and IPC event response for a provided fetch id.
+     *
+     * @param {string} module - module name
+     * @param {string} event   - event name
+     * @param {number} fetchId - fetch id that came with then event you are
+     *                           responding to
+     * @param {...*=}  data    - data to send with the event
+     * @public
+     */
     respond(module, event, fetchId, ...data) {
         ipc.send(this.getResponseEventName(module, `${event}_${fetchId}`), fetchId, ...data);
     }
