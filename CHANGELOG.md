@@ -1,4 +1,5 @@
 ## v0.16.0 <sup>20.04.2018</sup>
+* `electron` was updated to `1.8.4`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.10.0`   
 * `electron-builder-squirrel-windows` was updated to `20.10.0`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `12.0.1`
