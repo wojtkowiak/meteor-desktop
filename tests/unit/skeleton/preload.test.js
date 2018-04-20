@@ -154,7 +154,8 @@ describe('Desktop', () => {
             const ipcMock = {
                 on(event, ipcDirectCallback) {
                     ipcCallback = ipcDirectCallback;
-                }
+                },
+                removeListener: () => {}
             };
             const onSpy = sinon.spy(ipcMock, 'on');
 
@@ -181,7 +182,6 @@ describe('Desktop', () => {
 
             // Additionally we check if the ipc.on was triggered only once.
             expect(onSpy).to.be.calledOnce();
-
 
             test.clear();
         });

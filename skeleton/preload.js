@@ -1,6 +1,5 @@
 // This was inspiried by
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
-
 const ipc = require('electron').ipcRenderer;
 
 /**
@@ -91,17 +90,21 @@ const Desktop = new (class {
         }
         if (!(eventName in this.registeredInIpc)) {
             this.registeredInIpc[eventName] = true;
-            ipc.on(eventName, (...args) => {
-                if (eventName in this.eventListeners) {
-                    this.eventListeners[eventName].forEach(eventHandler => eventHandler(...args));
+            const self = this;
+
+            function handler(...args) {
+                if (eventName in self.eventListeners) {
+                    self.eventListeners[eventName].forEach(eventHandler => eventHandler(...args));
                 }
-                if (eventName in this.onceEventListeners) {
-                    this.onceEventListeners[eventName].forEach((eventHandler) => {
+                if (eventName in self.onceEventListeners) {
+                    self.onceEventListeners[eventName].forEach((eventHandler) => {
                         eventHandler(...args);
-                        this.onceEventListeners[eventName].delete(eventHandler);
+                        ipc.removeListener(eventHandler, handler);
+                        self.onceEventListeners[eventName].delete(eventHandler);
                     });
                 }
-            });
+            }
+            ipc.on(eventName, handler);
         }
     }
 
@@ -175,6 +178,10 @@ const Desktop = new (class {
     send(module, event, ...args) {
         const eventName = this.getEventName(module, event);
         ipc.send(eventName, ...args);
+    }
+
+    respond(module, event, fetchId, ...data) {
+        ipc.send(this.getResponseEventName(module, `${event}_${fetchId}`), fetchId, ...data);
     }
 
     /**
