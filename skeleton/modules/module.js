@@ -127,13 +127,14 @@ export default class Module {
      *
      * @param {string}   event    - event name
      * @param {function} callback - callback to fire
+     * @param {boolean}  response - whether we are listening for fetch response
      * @public
      */
     once(event, callback, response) {
         const eventName = response ? this.getResponseEventName(event) : this.getEventName(event);
-        ipcMain.once(eventName, (receivedEvent, args) => {
+        ipcMain.once(eventName, (receivedEvent, ...args) => {
             renderer = receivedEvent.sender;
-            callback(receivedEvent, args);
+            callback(receivedEvent, ...args);
         });
     }
 
