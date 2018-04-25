@@ -414,10 +414,10 @@ Use it to declare your API on the desktop side.
 ```
 [Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`](https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
 
-The only addition is the `respond` method which is a convenient method of sending response to 
-`Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
+The only two additions are the `fetch` and `respond` methods:
+ - **fetch```(event, timeout = 2000, ...args)```** - like send but returns a `Promise` that resolves to a response, timeouts after 2000ms by default
+ - **respond```(event, fetchId, ...data)```** is a convenient method of sending response to `Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
 Here is an [usage example](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/src/index.js#L31).
- 
 
 ### `Desktop` - Meteor side
 [Documentation of the Desktop API](docs/api/desktop.md) - reflects partially [`ipcRenderer`](https://github.com/electron/electron/blob/master/docs/api/ipc-renderer.md)<sup>*</sup>.    
@@ -429,6 +429,7 @@ Use it to call and listen for events from the desktop side.
 The only difference is that you always need to precede arguments with module name.
 There are two extra methods:  
 - **fetch```(module, event, timeout = 2000, ...args)```** - like send but returns a `Promise` that resolves to a response, timeouts after 2000ms by default
+- **respond```(module, event, fetchId, ...data)```** is a convenient method of sending response to `Module.fetch`. The `fetchId` is always the second argument received in `on`.  
 - **sendGlobal** - alias for `ipcRenderer.send` - if you need to send an IPC that is not namespaced
 
 Example of `send` and `fetch` usage - [here](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/plugins/localstorage/localstorage.js#L9).  

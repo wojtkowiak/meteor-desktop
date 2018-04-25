@@ -1,6 +1,5 @@
 // This was inspiried by
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
-
 const ipc = require('electron').ipcRenderer;
 
 /**
@@ -78,12 +77,27 @@ const Desktop = new (class {
      * @private
      */
     addToListeners(module, event, callback, once, response = false) {
+        const self = this;
+        const eventName = response ? this.getResponseEventName(module, event) :
+            this.getEventName(module, event);
+
+        function handler(...args) {
+            if (eventName in self.eventListeners) {
+                self.eventListeners[eventName].forEach(eventHandler => eventHandler(...args));
+            }
+            if (eventName in self.onceEventListeners) {
+                self.onceEventListeners[eventName].forEach((eventHandler) => {
+                    eventHandler(...args);
+                    ipc.removeListener(eventHandler, handler);
+                    self.onceEventListeners[eventName].delete(eventHandler);
+                });
+            }
+        }
+
         let listeners = 'eventListeners';
         if (once) {
             listeners = 'onceEventListeners';
         }
-        const eventName = response ? this.getResponseEventName(module, event) :
-            this.getEventName(module, event);
         if (eventName in this[listeners]) {
             this[listeners][eventName].add(callback);
         } else {
@@ -91,17 +105,7 @@ const Desktop = new (class {
         }
         if (!(eventName in this.registeredInIpc)) {
             this.registeredInIpc[eventName] = true;
-            ipc.on(eventName, (...args) => {
-                if (eventName in this.eventListeners) {
-                    this.eventListeners[eventName].forEach(eventHandler => eventHandler(...args));
-                }
-                if (eventName in this.onceEventListeners) {
-                    this.onceEventListeners[eventName].forEach((eventHandler) => {
-                        eventHandler(...args);
-                        this.onceEventListeners[eventName].delete(eventHandler);
-                    });
-                }
-            });
+            ipc.on(eventName, handler);
         }
     }
 
@@ -175,6 +179,20 @@ const Desktop = new (class {
     send(module, event, ...args) {
         const eventName = this.getEventName(module, event);
         ipc.send(eventName, ...args);
+    }
+
+    /**
+     * Sends and IPC event response for a provided fetch id.
+     *
+     * @param {string} module - module name
+     * @param {string} event   - event name
+     * @param {number} fetchId - fetch id that came with then event you are
+     *                           responding to
+     * @param {...*=}  data    - data to send with the event
+     * @public
+     */
+    respond(module, event, fetchId, ...data) {
+        ipc.send(this.getResponseEventName(module, `${event}_${fetchId}`), fetchId, ...data);
     }
 
     /**

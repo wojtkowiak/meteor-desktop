@@ -1,3 +1,12 @@
+## v0.16.0 <sup>23.04.2018</sup>
+* `electron` was updated to `1.8.4`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.10.0`   
+* `electron-builder-squirrel-windows` was updated to `20.10.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `12.0.1`
+* added `Module.fetch` and `Desktop.respond` to be able to fetch from the main process side (as for now fetch was only implemented for renderer)
+* fixed `Module.once` which was only passing single argument
+* fixed `linkPackages` not working anymore
+
 #### v0.15.3 <sup>16.04.2018</sup>
 * fixed `extract` functionality for Mac/Linux - `electron-builder` prepackaged app is now correctly found on every platform   
 
