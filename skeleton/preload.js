@@ -273,7 +273,7 @@ process.once('loaded', () => {
         devtron = require('devtron'); // eslint-disable-line global-require
         global.__devtron = { require, process }; // eslint-disable-line no-underscore-dangle
     } catch (e) {
-        // If that fails, then probably this is production build and devtron is not available.
+        // If that fails, then this is a production build and devtron is not available.
     }
     if (process.env.NODE_ENV === 'test') {
         global.electronRequire = require;
