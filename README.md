@@ -22,13 +22,11 @@ push implementation - which means you can release updates the same way you are u
 
 ## Prerequisites
 
- - Meteor >= `1.3.4`<sup>__*1__</sup>
+ - Meteor >= `1.4`
  - at least basic [Electron](http://electron.atom.io/) framework knowledge
- - mobile platform added to project<sup>__*2__</sup>  
+ - mobile platform added to project<sup>__*1__</sup>  
 
-<sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
-
-<sup>__*2__ you can always build with `--server-only` if you do not want to have mobile clients,  you do not actually have to have android sdk or xcode to go on with your project</sup>
+<sup>__*1__ you can always build with `--server-only` if you do not want to have mobile clients,  you do not actually have to have android sdk or xcode to go on with your project</sup>
 
 ### Quick start
 ```bash
