@@ -1,6 +1,8 @@
-## v0.14.0 <sup>14.03.2018</sup>
+## v0.17.0 <sup>26.04.2018</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
-* upgraded to `uglify-es`   
+* upgraded to `uglify-es`
+* dropped support for `Meteor` < `1.4`
+* code in your `.desktop` is now transpiled for `node@8`
 
 ## v0.16.0 <sup>25.04.2018</sup>
 * `electron` was updated to `1.8.4`
