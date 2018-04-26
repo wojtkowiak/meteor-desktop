@@ -1,4 +1,5 @@
 ## v0.17.0 <sup>26.04.2018</sup>
+<sup>republished as `v0.17.1`</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
 * upgraded to `uglify-es`
 * dropped support for `Meteor` < `1.4`
