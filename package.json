@@ -5,7 +5,7 @@
     "meteor-desktop": "dist/bin/cli.js"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=4.0.0"
   },
   "description": "Build a Meteor's desktop client with hot code push.",
   "main": "dist/index.js",
