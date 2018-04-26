@@ -337,5 +337,3 @@ export default class LocalServer {
         }
     }
 }
-
-module.exports = LocalServer;
