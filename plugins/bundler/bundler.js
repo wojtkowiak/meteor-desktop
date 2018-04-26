@@ -543,7 +543,7 @@ class MeteorDesktopBundler {
             if (babelPresetEnv.default) {
                 babelPresetEnv = babelPresetEnv.default;
             }
-            const preset = babelPresetEnv(undefined, { targets: { node: '7' } });
+            const preset = babelPresetEnv(undefined, { targets: { node: '8' } });
 
             glob.sync(`${desktopTmpPath}/**/*.js`).forEach((file) => {
                 let { code } = babelCore.transformFileSync(file, {
