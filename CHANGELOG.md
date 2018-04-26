@@ -1,3 +1,7 @@
+## v0.14.0 <sup>14.03.2018</sup>
+* upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
+* upgraded to `uglify-es`   
+
 ## v0.16.0 <sup>25.04.2018</sup>
 * `electron` was updated to `1.8.4`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.10.0`   
@@ -11,6 +15,9 @@
 * fixed `extract` functionality for Mac/Linux - `electron-builder` prepackaged app is now correctly found on every platform   
 
 #### v0.15.2 <sup>11.04.2018</sup>
+* fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
+
+#### v0.15.1 <sup>10.04.2018</sup>
 * fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
 
 #### v0.15.1 <sup>10.04.2018</sup>
