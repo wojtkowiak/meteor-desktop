@@ -285,6 +285,7 @@ class App {
             } catch (e) {
                 this.l.error(`error while trying to load module in dir ${dirName}: ${e}`);
                 this.l.debug(e.stack);
+                this.emit('moduleLoadFailed', dirName);
             }
         });
     }
