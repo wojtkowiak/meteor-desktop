@@ -1,3 +1,7 @@
+## v0.18.0 <sup>27.04.2018</sup>
+* `moduleLoadFailed` event added 
+* fixed desktop HCP app restart, this is now triggered with `app.quit` instead of `app.exit` which now fires properly all callbacks
+   
 ## v0.17.0 <sup>26.04.2018</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
 * upgraded to `uglify-es`
