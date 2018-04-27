@@ -284,6 +284,7 @@ class App {
                 }
             } catch (e) {
                 this.l.error(`error while trying to load module in dir ${dirName}: ${e}`);
+                this.l.debug(e.stack);
             }
         });
     }
@@ -598,7 +599,7 @@ class App {
             // Give winston a chance to write the logs.
             setImmediate(() => {
                 app.relaunch({ args: process.argv.slice(1).concat('--hcp') });
-                app.exit(0);
+                app.quit();
             });
         } else {
             // Firing reset routine.
