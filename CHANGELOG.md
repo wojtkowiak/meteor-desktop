@@ -1,3 +1,6 @@
+#### v0.17.2 <sup>30.04.2018</sup>
+* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/165) `build-installer` failing on windows
+
 ## v0.17.0 <sup>26.04.2018</sup>
 <sup>republished as `v0.17.1`</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
