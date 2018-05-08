@@ -110,7 +110,7 @@ Documentation
   * [Meteor.isDesktop](#meteorisdesktop)
   * [Accessing local filesystem in Meteor](#accessing-local-filesystem-in-meteor)
   * [Accessing .desktop/assets in Meteor](#accessing-desktopassets-in-meteor)
-  * [<code>Desktop</code> and <code>Module</code>](#desktop-and-module)
+  * [<code>Desktop</code> and <code>Module</code> - communication between Meteor and Electron](#desktop-and-module)
      * [Module - desktop side](#module---desktop-side)
      * [Desktop - Meteor side](#desktop---meteor-side)
   * [desktopHCP - .desktop hot code push](#desktophcp---desktop-hot-code-push)
@@ -403,10 +403,10 @@ You can use some convenience methods:
 - **`Desktop.fetchAsset(assetPath)`** - invokes `fetch` on an asset's url and returns it's 
 `Promise` 
 
-## `Desktop` and `Module`
+## `Desktop` and `Module` - communication between Meteor and Electron
 
 ### `Module` - desktop side
-Use it to declare your API on the desktop side.
+Use it to declare your API on the desktop side which you can later call from Meteor project.
 ```javascript
     this.module = new Module('myModuleName');
 ```
