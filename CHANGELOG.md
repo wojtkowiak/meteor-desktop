@@ -1,6 +1,14 @@
+## v0.18.0 <sup>08.05.2018</sup>
+* `moduleLoadFailed` event added 
+* fixed desktop HCP app restart, this is now triggered with `app.quit` instead of `app.exit` which now fires properly all callbacks
+* [`electron`](https://github.com/electron/electron) was updated to `1.8.6`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.11.1`   
+* `electron-builder-squirrel-windows` was updated to `20.11.0`
+* [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `12.0.2`
+
 #### v0.17.2 <sup>30.04.2018</sup>
 * fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/165) `build-installer` failing on windows
-
+   
 ## v0.17.0 <sup>26.04.2018</sup>
 <sup>republished as `v0.17.1`</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
@@ -9,7 +17,7 @@
 * code in your `.desktop` is now transpiled for `node@8`
 
 ## v0.16.0 <sup>25.04.2018</sup>
-* `electron` was updated to `1.8.4`
+* [`electron`](https://github.com/electron/electron) was updated to `1.8.4`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.10.0`   
 * `electron-builder-squirrel-windows` was updated to `20.10.0`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `12.0.1`
@@ -53,7 +61,7 @@
 * desktop HCP meteor plugins are no longer unnecessarily constantly added when on Windows even if they are already there
 
 ## v0.13.0 <sup>09.03.2018</sup>
-* `electron` was updated to `1.7.12`
+* [`electron`](https://github.com/electron/electron) was updated to `1.7.12`
 * `npm` has been removed from being a direct dependency, dependencies installation is now performed entirely by [`electron-builder`](https://github.com/electron-userland/electron-builder) which calls your `meteor npm` or system's `npm`
 * local npm dependencies (`file:`) are now installed by [`install-local`](https://github.com/nicojs/node-install-local)
 * native modules rebuild mechanism is enabled by default now and there is no way of turning it off (`rebuildNativeNodeModules` is obsolete and no longer taken into account)
@@ -81,7 +89,7 @@ it's more than sure that you will have to update your [`electron-builder`](https
 
 ## v0.11.0 <sup>03.11.2017</sup>
 <sup>republished as 0.11.1</sup>
-* `electron` was updated to `1.7.9` ([PR](https://github.com/wojtkowiak/meteor-desktop/pull/126))
+* [`electron`](https://github.com/electron/electron) was updated to `1.7.9` ([PR](https://github.com/wojtkowiak/meteor-desktop/pull/126))
 
 ## v0.10.0 <sup>12.09.2017</sup>
 > v0.9.0 failed to publish
@@ -115,7 +123,7 @@ strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103)
 
 #### v0.6.2 <sup>12.04.2017</sup>
 * fixed [#82](https://github.com/wojtkowiak/meteor-desktop/issues/82)   
-* `electron` was updated to `1.4.16`
+* [`electron`](https://github.com/electron/electron) was updated to `1.4.16`
 
 #### v0.6.1 <sup>02.03.2017</sup>
 - `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.3.0`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
@@ -143,7 +151,7 @@ host
 * you can now see internal backlog of this project in Taiga
 [here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap 
 will be published in form of epics 
-* `electron` was updated to `1.4.15`
+* [`electron`](https://github.com/electron/electron) was updated to `1.4.15`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `13.0.0`
 * `electron-builder-squirrel-windows` was updated to `13.2.0`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.1`
@@ -151,7 +159,7 @@ will be published in form of epics
 ## v0.4.0 <sup>11.01.2017</sup>
 * added `showWindowOnStartupDidComplete` option to help fixing [#42](https://github.com/wojtkowiak/meteor-desktop/issues/42)   
 * various fixes for `0.3.0` issues reported [#51](https://github.com/wojtkowiak/meteor-desktop/issues/51)
-* `electron` was updated to `1.4.14`
+* [`electron`](https://github.com/electron/electron) was updated to `1.4.14`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `11.2.4`
 * `electron-builder-squirrel-windows` was updated to `11.2.3`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.0`
@@ -168,7 +176,7 @@ will be published in form of epics
 [1d1075a](https://github.com/wojtkowiak/meteor-desktop/commit/1d1075a1eec288c1372ccd001c197fab29f71980)]
 (this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
 updates)
-* `electron` was updated to `1.4.13`
+* [`electron`](https://github.com/electron/electron) was updated to `1.4.13`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `11.2.0`
 * `electron-builder-squirrel-windows` was updated to `11.2.0`
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.4.0`
@@ -199,7 +207,7 @@ file protocol, github links and http(s) links -> [npm documentation](https://doc
 * development environment setup script was added
 * specifying target platforms for `build-installer` is now not restricted - 
 check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
-* `electron` was updated to `1.4.6`
+* [`electron`](https://github.com/electron/electron) was updated to `1.4.6`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `8.6.0`
 
 #### v0.1.4 <sup>16.11.2016</sup>
