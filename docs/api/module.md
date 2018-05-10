@@ -11,6 +11,10 @@
 <dt><a href="#send">send(event, [...data])</a></dt>
 <dd><p>Sends an IPC event with data.</p>
 </dd>
+<dt><a href="#fetch">fetch(event, timeout, ...args)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Fetches some data from renderer process by sending an IPC event and waiting for a response.
+Returns a promise that resolves when the response is received.</p>
+</dd>
 <dt><a href="#respond">respond(event, fetchId, [...data])</a></dt>
 <dd><p>Sends and IPC event response for a provided fetch id.</p>
 </dd>
@@ -54,6 +58,21 @@ Sends an IPC event with data.
 | --- | --- | --- |
 | event | <code>string</code> | event name |
 | [...data] | <code>\*</code> | data to send with the event |
+
+<a name="fetch"></a>
+
+## fetch(event, timeout, ...args) ⇒ <code>Promise</code>
+Fetches some data from renderer process by sending an IPC event and waiting for a response.
+Returns a promise that resolves when the response is received.
+
+**Kind**: global function  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| event | <code>string</code> |  | name of an event |
+| timeout | <code>number</code> | <code>2000</code> | how long to wait for the response in milliseconds |
+| ...args | <code>\*</code> |  | arguments to send with the event |
 
 <a name="respond"></a>
 

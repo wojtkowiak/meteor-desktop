@@ -37,6 +37,9 @@ Returns a promise from <code>fetch</code>.</p>
 <dt><a href="#send">send(module, event, ...args)</a></dt>
 <dd><p>Send an event to the main Electron process.</p>
 </dd>
+<dt><a href="#respond">respond(module, event, fetchId, [...data])</a></dt>
+<dd><p>Sends and IPC event response for a provided fetch id.</p>
+</dd>
 <dt><a href="#fetch">fetch(module, event, timeout, ...args)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Fetches some data from main process by sending an IPC event and waiting for a response.
 Returns a promise that resolves when the response is received.</p>
@@ -179,6 +182,21 @@ Send an event to the main Electron process.
 | module | <code>string</code> | module name |
 | event | <code>string</code> | name of an event |
 | ...args | <code>\*</code> | arguments to send with the event |
+
+<a name="respond"></a>
+
+## respond(module, event, fetchId, [...data])
+Sends and IPC event response for a provided fetch id.
+
+**Kind**: global function  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| module | <code>string</code> | module name |
+| event | <code>string</code> | event name |
+| fetchId | <code>number</code> | fetch id that came with then event you are                           responding to |
+| [...data] | <code>\*</code> | data to send with the event |
 
 <a name="fetch"></a>
 

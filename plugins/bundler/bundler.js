@@ -2,6 +2,7 @@
 const { fs, path } = Plugin;
 const versionFilePath = './version.desktop';
 const Future = Npm.require('fibers/future');
+const md5 = Npm.require('md5');
 
 function arraysIdentical(a, b) {
     let i = a.length;
@@ -47,8 +48,8 @@ if (!fs.existsSync(versionFilePath)) {
 
 function toCamelCase(name) {
     return name
-        .replace(/-(.)/g, $1 => $1.toUpperCase())
-        .replace(/-/g, '');
+        .replace(/[-/](.)/g, $1 => $1.toUpperCase())
+        .replace(/[-@/]/g, '');
 }
 
 /*
@@ -67,10 +68,10 @@ class MeteorDesktopBundler {
             'asar',
             'shelljs',
             'del',
-            'babel-core',
-            'babel-preset-node6',
-            'babel-preset-es2015',
-            'uglify-js',
+            '@babel/core',
+            'hash-files',
+            '@babel/preset-env',
+            'uglify-es',
             'md5',
             'cacache'
         ];
@@ -455,9 +456,9 @@ class MeteorDesktopBundler {
             let asar;
             let shelljs;
             let babelCore;
-            let babelPresetNode6;
-            let babelPresetEs2015;
-            let uglifyJs;
+            let hashFiles;
+            let babelPresetEnv;
+            let uglifyEs;
             let del;
             let md5;
             let cacache;
@@ -521,9 +522,9 @@ class MeteorDesktopBundler {
                     shelljs,
                     del,
                     babelCore,
-                    babelPresetNode6,
-                    babelPresetEs2015,
-                    uglifyJs,
+                    hashFiles,
+                    babelPresetEnv,
+                    uglifyEs,
                     md5,
                     cacache
                 } = deps);
@@ -726,29 +727,29 @@ class MeteorDesktopBundler {
             this.stampPerformance('extract');
 
             const options = 'uglifyOptions' in settings ? settings.uglifyOptions : {};
-            options.fromString = true;
             const uglifyingEnabled = 'uglify' in settings && !!settings.uglify;
 
-            // Unfortunately `reify` will not work when we require a .js file from an asar archive.
-            // So here we will transpile .desktop to have the ES6 modules working.
-
-            // Uglify does not handle ES6 yet, so we will have to transpile to ES5 for now.
-            const preset = (uglifyingEnabled && settings.env === 'prod') ?
-                babelPresetEs2015 : babelPresetNode6;
+            if (babelPresetEnv.default) {
+                babelPresetEnv = babelPresetEnv.default;
+            }
+            const preset = babelPresetEnv(undefined, { targets: { node: '8' } });
 
             this.stampPerformance('babel/uglify');
             const promises = [];
             Object.keys(fileContents).forEach((file) => {
-                const filePath = path.join(desktopTmpPath, file);
-                const cacheKey = `${file}-${hashes[file]}`;
+                const filePath = path.join(desktopTmpPath,file);
+                    const cacheKey = `${file}-${hashes[file]}`;
 
                 promises.push(new Promise((resolve) => {
                     cacache.get(this.cachePath, cacheKey)
                         .then((cacheEntry) => {
                             logDebug(`[meteor-desktop] loaded from cache: ${file}`);
                             let code = cacheEntry.data;
+                            let error;
                             if (settings.env === 'prod' && uglifyingEnabled) {
-                                ({ code } = uglifyJs.minify(code, options));
+                                ({ code , error } = uglifyEs.minify(code, options));}
+                            if (error) {
+                                throw new Error(error);
                             }
                             fs.writeFileSync(filePath, code);
                             resolve();
@@ -759,8 +760,7 @@ class MeteorDesktopBundler {
                             const { code } = babelCore.transform(fileContent, {
                                 presets: [preset]
                             });
-                            cacache.put(this.cachePath, `${file}-${hashes[file]}`, code)
-                                .then(() => {
+                            cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
                                     logDebug(`[meteor-desktop] cached ${file}`);
                                 });
                             fs.writeFileSync(filePath, code);

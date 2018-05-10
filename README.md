@@ -22,13 +22,11 @@ push implementation - which means you can release updates the same way you are u
 
 ## Prerequisites
 
- - Meteor >= `1.3.4`<sup>__*1__</sup>
+ - Meteor >= `1.4`
  - at least basic [Electron](http://electron.atom.io/) framework knowledge
- - mobile platform added to project<sup>__*2__</sup>  
+ - mobile platform added to project<sup>__*1__</sup>  
 
-<sup>__*1__ `1.3.3` is supported if you will install `meteor-desktop` with `npm >= 3`</sup>
-
-<sup>__*2__ you can always build with `--server-only` if you do not want to have mobile clients,  you do not actually have to have android sdk or xcode to go on with your project</sup>
+<sup>__*1__ you can always build with `--server-only` if you do not want to have mobile clients,  you do not actually have to have android sdk or xcode to go on with your project</sup>
 
 ### Quick start
 ```bash
@@ -112,7 +110,7 @@ Documentation
   * [Meteor.isDesktop](#meteorisdesktop)
   * [Accessing local filesystem in Meteor](#accessing-local-filesystem-in-meteor)
   * [Accessing .desktop/assets in Meteor](#accessing-desktopassets-in-meteor)
-  * [<code>Desktop</code> and <code>Module</code>](#desktop-and-module)
+  * [<code>Desktop</code> and <code>Module</code> - communication between Meteor and Electron](#desktop-and-module)
      * [Module - desktop side](#module---desktop-side)
      * [Desktop - Meteor side](#desktop---meteor-side)
   * [desktopHCP - .desktop hot code push](#desktophcp---desktop-hot-code-push)
@@ -253,6 +251,7 @@ field|description
 `builderOptions`|[`electron-builder`](https://github.com/electron-userland/electron-builder) [options](https://github.com/electron-userland/electron-builder/wiki/Options)
 `builderCliOptions`|specify additional electron-builder CLI options e.g for [publishing artifacts](https://github.com/electron-userland/electron-builder/wiki/Publishing-Artifacts)
 `packagerOptions`|[`electron-packager`](https://github.com/electron-userland/electron-packager) [options](https://github.com/electron-userland/electron-packager/blob/master/docs/api.md)
+`extract`|array containing dependencies that should not be packed into asar (should not be needed as there is an automatic algorithm that will exclude all dependencies containing binary files)
 
 ##### Applying different window options for different OS
 
@@ -316,6 +315,7 @@ event name|payload|description
 `revertVersionReady`|`(version)`|emitted just before the `Meteor` app version will be reverted (due to faulty version fallback mechanism) be applied  
 `beforfeLoadUrl`|`(port, lastPort)`|emitted before `webContents.loadURL` is invoked, in other words just before loading the Meteor app; `port` - the port on which the app is served, `lastPort` - the port on which the app was served previously (when HCP is applied) 
 `beforeReload`|`(pendingVersion, containsDesktopUpdate)`|emitted just before HCP reload
+`moduleLoadFailed`|`(dirName, error)`|emitted if a module failed to load
 
 Your can also emit events on this bus as well. A good practice is to namespace them using dots,
 like for instance `myModule.initalized`.
@@ -404,19 +404,19 @@ You can use some convenience methods:
 - **`Desktop.fetchAsset(assetPath)`** - invokes `fetch` on an asset's url and returns it's 
 `Promise` 
 
-## `Desktop` and `Module`
+## `Desktop` and `Module` - communication between Meteor and Electron
 
 ### `Module` - desktop side
-Use it to declare your API on the desktop side.
+Use it to declare your API on the desktop side which you can later call from Meteor project.
 ```javascript
     this.module = new Module('myModuleName');
 ```
 [Documentation of the Module API](docs/api/module.md) - basically, it reflects [`ipcMain`](https://github.com/electron/electron/blob/master/docs/api/ipc-main.md).  
 
-The only addition is the `respond` method which is a convenient method of sending response to 
-`Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
+The only two additions are the `fetch` and `respond` methods:
+ - **fetch```(event, timeout = 2000, ...args)```** - like send but returns a `Promise` that resolves to a response, timeouts after 2000ms by default
+ - **respond```(event, fetchId, ...data)```** is a convenient method of sending response to `Desktop.fetch`. The `fetchId` is always the second argument received in `on`.  
 Here is an [usage example](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/src/index.js#L31).
- 
 
 ### `Desktop` - Meteor side
 [Documentation of the Desktop API](docs/api/desktop.md) - reflects partially [`ipcRenderer`](https://github.com/electron/electron/blob/master/docs/api/ipc-renderer.md)<sup>*</sup>.    
@@ -428,6 +428,7 @@ Use it to call and listen for events from the desktop side.
 The only difference is that you always need to precede arguments with module name.
 There are two extra methods:  
 - **fetch```(module, event, timeout = 2000, ...args)```** - like send but returns a `Promise` that resolves to a response, timeouts after 2000ms by default
+- **respond```(module, event, fetchId, ...data)```** is a convenient method of sending response to `Module.fetch`. The `fetchId` is always the second argument received in `on`.  
 - **sendGlobal** - alias for `ipcRenderer.send` - if you need to send an IPC that is not namespaced
 
 Example of `send` and `fetch` usage - [here](https://github.com/wojtkowiak/meteor-desktop-localstorage/blob/master/plugins/localstorage/localstorage.js#L9).  

@@ -23,6 +23,8 @@ export default class Module {
             throw new Error('module name can not be empty');
         }
         this.name = name;
+        this.fetchCallCounter = 0;
+        this.fetchTimeoutTimers = {};
     }
 
     /**
@@ -34,6 +36,40 @@ export default class Module {
      */
     send(event, ...data) {
         Module.sendInternal(this.getEventName(event), ...data);
+    }
+
+    /**
+     * Fetches some data from renderer process by sending an IPC event and waiting for a response.
+     * Returns a promise that resolves when the response is received.
+     *
+     * @param {string} event   - name of an event
+     * @param {number} timeout - how long to wait for the response in milliseconds
+     * @param {...*} args      - arguments to send with the event
+     * @returns {Promise}
+     * @public
+     */
+    fetch(event, timeout = 2000, ...args) {
+        const eventName = this.getEventName(event);
+        if (this.fetchCallCounter === Number.MAX_SAFE_INTEGER) {
+            this.fetchCallCounter = 0;
+        }
+        this.fetchCallCounter += 1;
+        const fetchId = this.fetchCallCounter;
+
+        return new Promise((resolve, reject) => {
+            this.once(`${event}_${fetchId}`,
+                (responseEvent, id, ...responseArgs) => {
+                    if (id === fetchId) {
+                        clearTimeout(this.fetchTimeoutTimers[fetchId]);
+                        delete this.fetchTimeoutTimers[fetchId];
+                        resolve(...responseArgs);
+                    }
+                }, true);
+            this.fetchTimeoutTimers[fetchId] = setTimeout(() => {
+                reject('timeout');
+            }, timeout);
+            Module.sendInternal(eventName, fetchId, ...args);
+        });
     }
 
     /**
@@ -91,12 +127,14 @@ export default class Module {
      *
      * @param {string}   event    - event name
      * @param {function} callback - callback to fire
+     * @param {boolean}  response - whether we are listening for fetch response
      * @public
      */
-    once(event, callback) {
-        ipcMain.once(this.getEventName(event), (receivedEvent, args) => {
+    once(event, callback, response) {
+        const eventName = response ? this.getResponseEventName(event) : this.getEventName(event);
+        ipcMain.once(eventName, (receivedEvent, ...args) => {
             renderer = receivedEvent.sender;
-            callback(receivedEvent, args);
+            callback(receivedEvent, ...args);
         });
     }
 
