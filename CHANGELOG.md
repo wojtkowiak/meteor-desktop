@@ -1,3 +1,6 @@
+#### v0.18.1 <sup>10.05.2018</sup>
+* fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
+
 ## v0.18.0 <sup>08.05.2018</sup>
 * `moduleLoadFailed` event added 
 * fixed desktop HCP app restart, this is now triggered with `app.quit` instead of `app.exit` which now fires properly all callbacks
