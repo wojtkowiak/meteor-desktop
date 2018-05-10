@@ -2,7 +2,6 @@
 const { fs, path } = Plugin;
 const versionFilePath = './version.desktop';
 const Future = Npm.require('fibers/future');
-const md5 = Npm.require('md5');
 
 function arraysIdentical(a, b) {
     let i = a.length;
@@ -65,6 +64,9 @@ class MeteorDesktopBundler {
     constructor(fileSystem) {
         this.fs = fileSystem;
         this.deps = [
+            'cacache'
+        ];
+        this.buildDeps = [
             'asar',
             'shelljs',
             'del',
@@ -75,6 +77,7 @@ class MeteorDesktopBundler {
             'md5',
             'cacache'
         ];
+
         this.version = null;
         this.requireLocal = null;
         this.cachePath = './.meteor/local/desktop-cache';
@@ -316,7 +319,7 @@ class MeteorDesktopBundler {
      * Tries to find and require all node_modules dependencies.
      * @returns {{}}
      */
-    lookForAndRequireDependencies() {
+    lookForAndRequireDependencies(deps) {
         const dependencies = {};
         let versions;
 
@@ -329,7 +332,7 @@ class MeteorDesktopBundler {
                 ' installed?');
         }
 
-        this.deps.forEach((dependency) => {
+        deps.forEach((dependency) => {
             const dependencyCamelCased = toCamelCase(dependency);
 
             this.stampPerformance(`deps get ${dependency}`);
@@ -391,7 +394,7 @@ class MeteorDesktopBundler {
                 stat1[key].size === stat2[key].size &&
                 stat1[key].dates[0] === stat2[key].dates[0] &&
                 stat1[key].dates[1] === stat2[key].dates[1] &&
-                stat1[key].dates[2] === stat2[key].dates[2];
+                stat1[key].dates[2] === stat2[key].dates[2]
         );
     }
 
@@ -451,17 +454,16 @@ class MeteorDesktopBundler {
                 return;
             }
 
-            console.time('[meteor-desktop]: Preparing desktop.asar took');
+            console.time('[meteor-desktop] preparing desktop.asar took');
 
             let asar;
             let shelljs;
             let babelCore;
-            let hashFiles;
             let babelPresetEnv;
             let uglifyEs;
             let del;
-            let md5;
             let cacache;
+            let md5;
 
             /**
              * https://github.com/wojtkowiak/meteor-desktop/issues/33
@@ -511,21 +513,13 @@ class MeteorDesktopBundler {
              */
             const StringPrototypeToOriginal = String.prototype.to;
 
-            this.stampPerformance('deps lookout');
+            this.stampPerformance('basic deps lookout');
             let DependenciesManager;
             let ElectronAppScaffold;
             let utils;
             try {
-                const deps = this.lookForAndRequireDependencies();
+                const deps = this.lookForAndRequireDependencies(this.deps);
                 ({
-                    asar,
-                    shelljs,
-                    del,
-                    babelCore,
-                    hashFiles,
-                    babelPresetEnv,
-                    uglifyEs,
-                    md5,
                     cacache
                 } = deps);
 
@@ -542,7 +536,7 @@ class MeteorDesktopBundler {
                 });
                 return;
             }
-            this.stampPerformance('deps lookout');
+            this.stampPerformance('basic deps lookout');
 
             const context = {
                 env: {
@@ -555,10 +549,8 @@ class MeteorDesktopBundler {
             if (context.env.isProductionBuild()) {
                 console.log('[meteor-desktop] creating a production build');
             }
-            const shelljsConfig = Object.assign({}, shelljs.config);
-            shelljs.config.fatal = true;
-            shelljs.config.silent = false;
 
+            let shelljsConfig;
             const self = this;
 
             function logDebug(...args) {
@@ -595,12 +587,14 @@ class MeteorDesktopBundler {
             }
 
             function endProcess() {
-                console.timeEnd('[meteor-desktop]: Preparing desktop.asar took');
+                console.timeEnd('[meteor-desktop] preparing desktop.asar took');
 
                 // Look at the declaration of StringPrototypeToOriginal for explanation.
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
 
-                shelljs.config = shelljsConfig;
+                if (shelljs) {
+                    shelljs.config = shelljsConfig;
+                }
                 self.stampPerformance('whole build');
                 if (process.env.METEOR_DESKTOP_DEBUG) {
                     self.getPerformanceReport();
@@ -654,6 +648,32 @@ class MeteorDesktopBundler {
                     .catch(e => logDebug('[meteor-desktop] failed to invalidate cache', e));
             }
 
+            this.stampPerformance('build deps lookout');
+            try {
+                const deps = this.lookForAndRequireDependencies(this.buildDeps);
+                ({
+                    asar,
+                    shelljs,
+                    del,
+                    babelCore,
+                    babelPresetEnv,
+                    uglifyEs,
+                    md5
+                } = deps);
+            } catch (e) {
+                // Look at the declaration of StringPrototypeToOriginal for explanation.
+                String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
+                inputFile.error({
+                    message: e
+                });
+                return;
+            }
+            this.stampPerformance('build deps lookout');
+
+            shelljsConfig = Object.assign({}, shelljs.config);
+            shelljs.config.fatal = true;
+            shelljs.config.silent = false;
+
             this.stampPerformance('cache check');
 
             const desktopTmpPath = './.desktopTmp';
@@ -700,7 +720,9 @@ class MeteorDesktopBundler {
             settings.desktopVersion = version;
             settings.compatibilityVersion =
                 this.calculateCompatibilityVersion(
-                    dependencies.getRemoteDependencies(), desktopPath, inputFile, md5);
+                    dependencies.getRemoteDependencies(), desktopPath, inputFile, md5
+                );
+
             fs.writeFileSync(
                 path.join(desktopTmpPath, 'settings.json'), JSON.stringify(settings, null, 4)
             );
@@ -737,19 +759,20 @@ class MeteorDesktopBundler {
             this.stampPerformance('babel/uglify');
             const promises = [];
             Object.keys(fileContents).forEach((file) => {
-                const filePath = path.join(desktopTmpPath,file);
-                    const cacheKey = `${file}-${hashes[file]}`;
+                const filePath = path.join(desktopTmpPath, file);
+                const cacheKey = `${file}-${hashes[file]}`;
 
-                promises.push(new Promise((resolve) => {
+                promises.push(new Promise((resolve, reject) => {
                     cacache.get(this.cachePath, cacheKey)
                         .then((cacheEntry) => {
                             logDebug(`[meteor-desktop] loaded from cache: ${file}`);
                             let code = cacheEntry.data;
                             let error;
                             if (settings.env === 'prod' && uglifyingEnabled) {
-                                ({ code , error } = uglifyEs.minify(code, options));}
+                                ({ code, error } = uglifyEs.minify(code, options));
+                            }
                             if (error) {
-                                throw new Error(error);
+                                reject(error);
                             }
                             fs.writeFileSync(filePath, code);
                             resolve();
@@ -757,14 +780,25 @@ class MeteorDesktopBundler {
                         .catch(() => {
                             logDebug(`[meteor-desktop] from disk ${file}`);
                             const fileContent = fileContents[file];
-                            const { code } = babelCore.transform(fileContent, {
-                                presets: [preset]
-                            });
-                            cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
-                                    logDebug(`[meteor-desktop] cached ${file}`);
-                                });
-                            fs.writeFileSync(filePath, code);
-                            resolve();
+                            let code;
+                            babelCore.transform(
+                                fileContent,
+                                {
+                                    presets: [preset]
+                                },
+                                (err, result) => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        ({ code } = result);
+                                        cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
+                                            logDebug(`[meteor-desktop] cached ${file}`);
+                                        });
+                                        fs.writeFileSync(filePath, code);
+                                        resolve();
+                                    }
+                                }
+                            );
                         });
                 }));
             });
@@ -801,7 +835,7 @@ class MeteorDesktopBundler {
                             'lastSettings',
                             JSON.stringify({ settings: desktopSettings, asarIntegrity })
                         ))
-                        .then((finalIntegrity) => saveCacheResolve(finalIntegrity))
+                        .then(finalIntegrity => saveCacheResolve(finalIntegrity))
                         .catch(saveCacheReject);
                 });
             }
