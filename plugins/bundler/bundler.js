@@ -676,7 +676,8 @@ class MeteorDesktopBundler {
 
             this.stampPerformance('cache check');
 
-            const desktopTmpPath = './.desktopTmp';
+            const desktopTmpPath = './._desktop';
+            const desktopTmpAsarPath = './.meteor/local';
             const modulesPath = path.join(desktopTmpPath, 'modules');
 
             this.stampPerformance('copy .desktop');
@@ -808,11 +809,13 @@ class MeteorDesktopBundler {
             this.stampPerformance('babel/uglify');
 
             this.stampPerformance('asar');
+
             const future = new Future();
             const resolve = future.resolver();
+            const asarPath = path.join(desktopTmpAsarPath, 'desktop.asar');
             asar.createPackage(
                 desktopTmpPath,
-                './desktop.asar',
+                asarPath,
                 () => {
                     resolve();
                 }
@@ -820,7 +823,7 @@ class MeteorDesktopBundler {
             future.wait();
             this.stampPerformance('asar');
 
-            const contents = fs.readFileSync('./desktop.asar');
+            const contents = fs.readFileSync(asarPath);
 
             function saveCache(desktopAsar, stats, desktopSettings) {
                 let asarIntegrity;
@@ -845,7 +848,7 @@ class MeteorDesktopBundler {
                 .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
 
             addFiles(contents, settings);
-            shelljs.rm('./desktop.asar');
+            shelljs.rm(asarPath);
 
             if (!process.env.METEOR_DESKTOP_DEBUG) {
                 this.stampPerformance('remove tmp');
