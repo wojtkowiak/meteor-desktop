@@ -71,7 +71,6 @@ class MeteorDesktopBundler {
             'shelljs',
             'del',
             '@babel/core',
-            'hash-files',
             '@babel/preset-env',
             'uglify-es',
             'md5',
