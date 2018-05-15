@@ -104,15 +104,33 @@ function getSettings(desktopPath) {
  * @param {string} dir - dir path
  * @returns {Promise<Array>}
  */
-function getFileList(dir) {
+function getFileList(dir, sort = true) {
     return new Promise((resolve, reject) => {
         readdir(dir, (error, files) => {
             if (error) {
                 reject(error);
                 return;
             }
-            files = files.sort();
-            resolve(files);
+            let resultantFilesList;
+
+            if (sort) {
+                const stripLength = (dir.substr(0, 2) === './') ? dir.length - 1 : dir.length + 1;
+                let pathsUnified = files.map((pth => pth.substr(stripLength).replace(/[\\/]/gm, '-')));
+                const temporaryIndex = {};
+                files.forEach((file, i) => {
+                    temporaryIndex[pathsUnified[i]] = file;
+                });
+                pathsUnified = pathsUnified.sort();
+                const filesSorted = [];
+                pathsUnified.forEach((key) => {
+                    filesSorted.push(temporaryIndex[key]);
+                });
+
+                resultantFilesList = filesSorted;
+            } else {
+                resultantFilesList = files;
+            }
+            resolve(resultantFilesList);
         });
     });
 }
@@ -220,7 +238,7 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
                     // TODO: something meteor'ish to print to stdout?
                     console.info('[meteor-desktop] Initial .desktop version inconsistency found. Files ' +
                         'have changed during the build, triggering desktop rebuild.');
-                    setTimeout(() => saveNewVersion(currentVersion, versionFile), 2000);
+                    setTimeout(() => saveNewVersion(currentVersion, versionFile), 3000);
                 } else {
                     const watcher = chokidar.watch(desktopPath, {
                         persistent: true,
