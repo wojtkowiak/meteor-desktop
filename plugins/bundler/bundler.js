@@ -2,6 +2,7 @@
 const { fs, path } = Plugin;
 const versionFilePath = './version.desktop';
 const Future = Npm.require('fibers/future');
+const chokidar = Npm.require('chokidar');
 
 function arraysIdentical(a, b) {
     let i = a.length;
@@ -80,6 +81,40 @@ class MeteorDesktopBundler {
         this.version = null;
         this.requireLocal = null;
         this.cachePath = './.meteor/local/desktop-cache';
+        this.desktopPath = './.desktop';
+        this.watcher = chokidar.watch(this.desktopPath, {
+            persistent: true,
+            ignored: /tmp___/,
+            ignoreInitial: true
+        });
+        this.utils = null;
+
+        this.watcherEnabled = false;
+
+        this.timeout = null;
+
+        this.watcher
+            .on('all', (event, filePath) => {
+                if (this.timeout) {
+                    clearTimeout(this.timeout);
+                }
+                // Simple 2s debounce.
+                this.timeout = setTimeout(() => {
+                    if (this.watcherEnabled && this.utils) {
+                        console.log(`[meteor-desktop] ${filePath} have been changed, triggering` +
+                            ' desktop rebuild.');
+
+                        this.utils.readFilesAndComputeHash(this.desktopPath, file => file.replace('.desktop', ''))
+                            .then((result) => {
+                                const { hash } = result;
+                                fs.writeFileSync(versionFilePath, JSON.stringify({
+                                    version: `${hash}_dev`,
+                                }, null, 2), 'UTF-8');
+                            })
+                            .catch((e) => { throw new Error(`[meteor-desktop] failed to compute .desktop hash: ${e}`); });
+                    }
+                }, 2000);
+            });
     }
 
     /**
@@ -444,6 +479,7 @@ class MeteorDesktopBundler {
         this.requireLocal = requireLocal;
 
         Profile.time('meteor-desktop: preparing desktop.asar', () => {
+            this.watcherEnabled = false;
             this.stampPerformance('whole build');
             const desktopPath = './.desktop';
             const settings = this.getSettings(desktopPath, inputFile);
@@ -515,7 +551,6 @@ class MeteorDesktopBundler {
             this.stampPerformance('basic deps lookout');
             let DependenciesManager;
             let ElectronAppScaffold;
-            let utils;
             try {
                 const deps = this.lookForAndRequireDependencies(this.deps);
                 ({
@@ -523,7 +558,7 @@ class MeteorDesktopBundler {
                 } = deps);
 
                 DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
-                utils = requireLocal('meteor-desktop/dist/utils');
+                this.utils = requireLocal('meteor-desktop/dist/utils');
                 ElectronAppScaffold =
                     requireLocal('meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
@@ -600,14 +635,13 @@ class MeteorDesktopBundler {
                 }
             }
 
-
             const scaffold = new ElectronAppScaffold(context);
             const depsManager = new DependenciesManager(
                 context, scaffold.getDefaultPackageJson().dependencies
             );
 
             this.stampPerformance('readdir');
-            const readDirFuture = Future.fromPromise(utils.readDir(desktopPath));
+            const readDirFuture = Future.fromPromise(this.utils.readDir(desktopPath));
             const readDirResult = readDirFuture.wait();
             this.stampPerformance('readdir');
 
@@ -703,7 +737,7 @@ class MeteorDesktopBundler {
             let hashes;
             let fileContents;
 
-            utils.readFilesAndComputeHash(`${desktopPath}`, file => file.replace('.desktop', ''))
+            this.utils.readFilesAndComputeHash(desktopPath, file => file.replace('.desktop', ''))
                 .then((result) => {
                     ({ fileContents, fileHashes: hashes, hash: desktopHash } = result);
                     hashFutureResolve();
@@ -788,6 +822,7 @@ class MeteorDesktopBundler {
                                 },
                                 (err, result) => {
                                     if (err) {
+                                        this.watcherEnabled = true;
                                         reject(err);
                                     } else {
                                         ({ code } = result);

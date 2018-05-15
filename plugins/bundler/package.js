@@ -13,6 +13,10 @@ Package.registerBuildPlugin({
     sources: ['bundler.js']
 });
 
+Npm.depends({
+    chokidar: '2.0.2'
+});
+
 Package.onUse(function onUse(api) {
     api.versionsFrom('1.3.3');
     api.use('isobuild:compiler-plugin@1.0.0');
