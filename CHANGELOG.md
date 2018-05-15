@@ -1,3 +1,7 @@
+## v0.19.0 <sup>15.05.2018</sup>
+* `desktopHCP` bundler plugin was enhanced with cache - that should speed up your rebuilds
+* issue with app not being rebuilt after an error in `.desktop` code should be resolved now (watcher should still work even after a syntax error while compiling `.desktop`)
+
 #### v0.18.1 <sup>10.05.2018</sup>
 * fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
 
