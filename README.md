@@ -471,12 +471,11 @@ also be
 distributed to your mobile clients and cause unnecessary updates in case you only made changes in
  `.desktop`
 - files that are excluded from `desktop.asar` (via `extract` settings in a desktop module) are 
-not updated, nor checked for changes! 
-- if errors in your app prevented startup during development, change in `.desktop` will not 
-trigger project rebuild
-- if errors in `.desktop` prevented startup, watcher will not work and you need to make any 
+not updated, nor checked for changes!
+- if you had errors (i.e. syntax) in `.desktop` which prevented startup, watcher might not work correctly and further changes
+ in `.desktop` will not trigger rebuilds, in that case you need to make any 
 change in `version` field in the `desktop.version` to trigger rebuild (this file is in the root of 
-your project)
+your project) - this can be any change like just adding random char to the hash
 - if your run a production build of your desktop app it will not receive updates from project run
  from `meteor` command unless you run it with `--production` - that is because development build 
  has `devtron` added and therefore the `compatibilityVersion` is different  
