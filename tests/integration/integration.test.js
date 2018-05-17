@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import regeneratorRuntime from 'regenerator-runtime/runtime';
 import chai from 'chai';
 import dirty from 'dirty-chai';
 import sinonChai from 'sinon-chai';
