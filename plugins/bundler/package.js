@@ -10,10 +10,8 @@ Package.describe({
 Package.registerBuildPlugin({
     name: 'meteor-desktop-bundler',
     use: ['ecmascript@0.4.4'],
-    npmDependencies: {
-        md5: '2.1.0'
-    },
-    sources: ['bundler.js']
+    sources: ['bundler.js'],
+    npmDependencies: { chokidar: '2.0.3' }
 });
 
 Package.onUse(function onUse(api) {

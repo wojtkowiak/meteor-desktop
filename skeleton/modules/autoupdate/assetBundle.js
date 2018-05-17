@@ -105,6 +105,8 @@ export default class AssetBundle {
             this.log.verbose(`trying to read desktop version for ${this.version}`);
             this.desktopVersion = this.loadDesktopVersion();
             this.log.verbose(`the desktop version is ${this.desktopVersion.version}`);
+        } else {
+            this.log.debug(`the desktop version was provided by constructor and is ${this.desktopVersion.version}`);
         }
 
         this.ownAssetsByURLPath = {};
