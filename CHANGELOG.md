@@ -1,3 +1,5 @@
+* `-d`/`--debug` option added to run electron with `--debug=5858` switch
+
 ## v0.19.0 <sup>17.05.2018</sup>
 * `desktopHCP` bundler plugin was enhanced with cache - that should speed up your rebuilds
 * issue with app not being rebuilt after an error in `.desktop` code should be resolved now (watcher should still work even after a syntax error while compiling `.desktop`)
