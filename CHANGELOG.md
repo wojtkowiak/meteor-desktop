@@ -1,5 +1,17 @@
+## v1.0.0
+Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve 
+the app on constant `meteor://desktop` url instead of setting a http server which serves over `http://127.0.0.1:<random_port_on_every_start>`.
+
+This finally solves the longstanding problems with `IndexedDB` and `localstorage` not being persistent.
+
+The localstorage contents will be migrated if you are updating your app from pre `1.0.0`.
+
+However if you are using the `meteor-desktop-localstorage` plugin you have to make a migration yourself. The easiest way is to copy the plugin desktop code as your module in `.desktop` and on your app start get the contents with `getAll` and save them to the browser's localstorage.     
+
+* `MD_LOG_LEVEL` is now respected
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
-* `beforeLocalServerInit` event added to the `eventsBus` 
+* `beforeLocalServerInit` event added to the `eventsBus`
+* `METEOR_DESKTOP_DEBUG` now produces a lot more info from bundler plugin while building meteor project 
 
 ## v0.19.0 <sup>17.05.2018</sup>
 * `desktopHCP` bundler plugin was enhanced with cache - that should speed up your rebuilds
