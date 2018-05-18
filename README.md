@@ -304,6 +304,7 @@ event name|payload|description
 `beforePluginsLoad`| |emitted before plugins are loaded
 `beforeModulesLoad`| |emitted before internal modules and modules from `.desktop` are loaded
 `beforeDesktopJsLoad`| |emitted before `desktop.js` is loaded
+`beforeLocalServerInit`| |emitted before local http server starts
 `desktopLoaded`|`(desktop)`|emitted after loading `desktop.js`, carries the reference to class instance exported from it 
 `afterInitialization`| |emitted after initialization of internal modules like HCP and local HTTP server
 `startupFailed`| |emitted when the `Skeleton App` could not start you `Meteor` app  

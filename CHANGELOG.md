@@ -1,4 +1,5 @@
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
+* `beforeLocalServerInit` event added to the `eventsBus` 
 
 ## v0.19.0 <sup>17.05.2018</sup>
 * `desktopHCP` bundler plugin was enhanced with cache - that should speed up your rebuilds
