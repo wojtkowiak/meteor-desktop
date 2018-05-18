@@ -6,6 +6,8 @@ import sinon from 'sinon';
 import mockery from 'mockery';
 import rewire from 'rewire';
 
+import mockerySettings from '../../helpers/mockerySettings';
+
 chai.use(sinonChai);
 chai.use(dirty);
 
@@ -21,10 +23,7 @@ let Desktop;
 describe('Desktop', () => {
     before(() => {
         mockery.registerMock('electron', Electron);
-        mockery.enable({
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+        mockery.enable(mockerySettings);
         Desktop = rewire('../../../skeleton/preload.js');
     });
 
