@@ -665,6 +665,9 @@ export default class App {
      */
     updateToNewVersion() {
         this.l.verbose('entering update to new HCP version procedure');
+
+        this.l.verbose(`${this.settings.desktopVersion} !== ${this.pendingDesktopVersion}`);
+
         const desktopUpdate = this.settings.desktopHCP &&
             this.settings.desktopVersion !== this.pendingDesktopVersion;
 

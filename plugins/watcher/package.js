@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
     name: 'omega:meteor-desktop-watcher',
-    version: '0.18.1',
+    version: '0.19.0',
     summary: 'Watches .desktop dir and triggers rebuilds on file change.',
     git: 'https://github.com/wojtkowiak/meteor-desktop',
     documentation: 'README.md',
@@ -9,15 +9,14 @@ Package.describe({
 });
 
 Npm.depends({
-    chokidar: '1.6.0',
-    'hash-files': '1.1.1'
+    chokidar: '2.0.2'
 });
 
 Package.onUse(function onUse(api) {
     api.versionsFrom('METEOR@1.3.3');
     api.use('ecmascript');
     api.use([
-        'omega:meteor-desktop-bundler@0.18.1',
+        'omega:meteor-desktop-bundler@0.19.0',
     ], ['server'], {
         weak: true
     });

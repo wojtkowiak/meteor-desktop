@@ -59,10 +59,11 @@ describe('desktop', () => {
     });
 
     describe('#getHashSettings', () => {
-        it('should read settings.json', () => {
+        it('should read settings.json', async () => {
             const logStub = new StubLog(MeteorDesktop.desktop, ['info']);
-            const version = MeteorDesktop.desktop.getHashVersion();
-            expect(version).to.be.equal('da39a3ee5e6b4b0d3255bfef95601890afd80709');
+            MeteorDesktop.env.paths.desktop.root = paths.fixtures.desktop;
+            const version = await MeteorDesktop.desktop.getHashVersion();
+            expect(version).to.be.equal('23385109a8790cfc9a3bb8e69a52c34461325a6e');
             logStub.restore();
         });
     });
