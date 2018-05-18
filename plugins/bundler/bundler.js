@@ -680,6 +680,7 @@ class MeteorDesktopBundler {
                     .then(() => logDebug('[meteor-desktop] cache invalidate'))
                     .catch(e => logDebug('[meteor-desktop] failed to invalidate cache', e));
             }
+            this.stampPerformance('cache check');
 
             this.stampPerformance('build deps lookout');
             try {
@@ -706,8 +707,6 @@ class MeteorDesktopBundler {
             shelljsConfig = Object.assign({}, shelljs.config);
             shelljs.config.fatal = true;
             shelljs.config.silent = false;
-
-            this.stampPerformance('cache check');
 
             const desktopTmpPath = './._desktop';
             const desktopTmpAsarPath = './.meteor/local';
