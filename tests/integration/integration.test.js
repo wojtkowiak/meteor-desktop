@@ -10,6 +10,7 @@ import electron from 'electron';
 import { Application } from 'spectron';
 import mockery from 'mockery';
 
+import mockerySettings from '../helpers/mockerySettings';
 import paths from '../helpers/paths';
 import meteorDesktop from '../../lib/index';
 
@@ -101,10 +102,7 @@ describe('desktop', () => {
                 resolve: dir => dir,
                 join: () => `${appDir}${path.sep}package.json`
             });
-            mockery.enable({
-                warnOnReplace: false,
-                warnOnUnregistered: false
-            });
+            mockery.enable(mockerySettings);
         });
         after(() => {
             mockery.deregisterMock('path');

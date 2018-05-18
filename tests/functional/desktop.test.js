@@ -8,6 +8,7 @@ import shell from 'shelljs';
 import mockery from 'mockery';
 
 import paths from '../helpers/paths';
+import mockerySettings from '../helpers/mockerySettings';
 
 chai.use(sinonChai);
 chai.use(dirty);
@@ -27,10 +28,7 @@ describe('desktop', () => {
 
     before(() => {
         mockery.registerMock('electron', Electron);
-        mockery.enable({
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+        mockery.enable(mockerySettings);
     });
 
     after(() => {

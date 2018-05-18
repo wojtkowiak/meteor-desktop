@@ -35,6 +35,7 @@ import shell from 'shelljs';
 import fs from 'fs';
 import mockery from 'mockery';
 
+import mockerySettings from '../../helpers/mockerySettings';
 import paths from '../../helpers/paths';
 import { serveVersion } from '../../helpers/autoupdate/meteorServer';
 import {
@@ -251,10 +252,7 @@ describe('autoupdate', () => {
         shell.rm('-rf', paths.autoUpdateVersionsPath);
         shell.mkdir('-p', paths.autoUpdateVersionsPath);
         mockery.registerMock('original-fs', fs);
-        mockery.enable({
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+        mockery.enable(mockerySettings);
         HCPClient = require('../../../skeleton/modules/autoupdate.js').default;
     });
 
