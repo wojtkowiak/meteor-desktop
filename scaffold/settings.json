@@ -40,8 +40,7 @@
                     "background-size": "auto"
                 }
             }
-        },
-        "meteor-desktop-localstorage": "0.0.11"
+        }
     },
     "dependencies": {},
     "packageJsonFields": {
