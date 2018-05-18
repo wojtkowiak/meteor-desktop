@@ -1,4 +1,5 @@
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
+* `beforeLocalServerInit` event added to the `eventsBus` 
 
 #### v0.18.1 <sup>10.05.2018</sup>
 * fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
