@@ -48,7 +48,6 @@ export default class App {
             this.l.debug(`skeleton version ${this.settings.meteorDesktopVersion}`);
         }
 
-        // To make desktop.asar's downloaded through HCP work, we need to provide it a path to
         this.window = null;
 
         this.applySingleInstance();
