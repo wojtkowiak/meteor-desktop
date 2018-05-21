@@ -1,6 +1,6 @@
 ![Logo](docs/meteor-desktop.png)
 
-# Meteor Desktop <sup>beta version<sup>
+# Meteor Desktop
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
@@ -258,14 +258,14 @@ field|description
 ##### Applying different window options for different OS
 
 You can use `_windows`, `_osx`, `_linux` properties to set additional settings for different OS. 
-The default `settings.json` is already using that for setting a different icon for OSX.
+The default `settings.json` is already using that for setting a different window icon for OSX.
 
 ##### Supported dependency version types
 
 Only explicit versions are supported to avoid potential problems with different versions being 
 installed. It is no different from `Meteor` because the same applies to adding `Cordova` plugins.
 
-You can however use a local path to a npm package - and that will not be forbidden. But you need 
+You can however use a local path to a npm package - and that will not be forbidden. **You need** 
 to keep track what has been distributed to your clients and what your current code is expecting 
 when releasing a HCP update. 
 
@@ -366,6 +366,7 @@ export default class Desktop {
     }
 }
 ```
+**WARNING:** currently the path of the file is not reconstructed meaning `extract: [ "dir1/something.exe", "dir2/something.exe' ]` will try to put both `something.exe` files to the same dir and that may fail or produce inconsistent result. So the bare file names without the path must be unique.
 
 ## Hot code push support
 
@@ -389,7 +390,7 @@ In your `Meteor` app to run a part of the code only in the desktop context you c
 Local filesystem is exposed under and url alias (similarly to [Cordova integration](https://guide.meteor.com/mobile.html#accessing-local-files)). 
 This feature is disabled by default so you need to enable it first by setting 
 `exposeLocalFilesystem` in your `settings.json` to `true`. Files are exposed under 
-`\local-filesystem\<absolute-path>` url.
+`/local-filesystem/<absolute-path>` url.
 
 You can use some convenience methods:
 - **`Desktop.getFileUrl(absolutePath)`** - returns an url to a file
@@ -506,7 +507,7 @@ If you made a plugin, please let us know so that it can be listed here.
 [`meteor-desktop-splashscreen`](https://github.com/wojtkowiak/meteor-desktop-splash-screen)  
 [`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage) (deprecated, do not use from `1.0.0`)  
 
-## Squirrel autoupdate support
+## Squirrel autoupdate support (DEPRECATED)
 
 Squirrel Window and OSX autoupdates are supported. So far the only tested server is 
 [`electron-release-server`](https://github.com/ArekSredzki/electron-release-server) and the 
@@ -607,7 +608,6 @@ discuss the need and implementation approach.
 If you want, you can always contribute by donating:
 
 <a href='https://pledgie.com/campaigns/33341'><img alt='Click here to lend your support to: meteor-desktop and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33341.png?skin_name=chrome' border='0' ></a>
-
 
 ##### ! devEnvSetup.js !
 To help you contribute, there is a development environment setup script. If you have this repo 
