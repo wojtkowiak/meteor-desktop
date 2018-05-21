@@ -10,6 +10,7 @@ The localstorage contents will be migrated if you are updating your app from pre
 
 However if you are using the `meteor-desktop-localstorage` plugin you have to make a migration yourself. The easiest way is to copy the plugin desktop code as your module in `.desktop` and on your app start get the contents with `getAll` and save them to the browser's localstorage.     
 
+* [`electron`](https://github.com/electron/electron) was updated to `2.0.1`
 * `MD_LOG_LEVEL` is now respected
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
 * `beforeLocalServerInit` event added to the `eventsBus`
@@ -29,7 +30,6 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.0`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.13.5`   
 * `electron-builder-squirrel-windows` was updated to `20.13.1`
-
 
 #### v0.18.1 <sup>10.05.2018</sup>
 * fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
