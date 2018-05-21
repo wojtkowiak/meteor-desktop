@@ -366,7 +366,7 @@ export default class LocalServer {
                     }) :
                     send(req, encodeURIComponent(filePath)).pipe(res);
             }
-            return respondWithCode(res, 404, 'File does not exist.');
+            return local ? res.setStatusCode(404) : respondWithCode(res, 404, 'File does not exist.');
         }
 
 
