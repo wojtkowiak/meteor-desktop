@@ -29,6 +29,10 @@ describe('App', () => {
         process.env.METEOR_DESKTOP_UNIT_TEST = true;
         App = require('../../../skeleton/app.js');
         App = App.default;
+        // We will get a transpiled version here with a babel function upfront.
+        // The code below injects empty constructor and restores the prototype which effectively
+        // will allow us to invoke it with `new` and do what we want without calling the internal
+        // babel functions.
         const oldProto = App.prototype;
         App = function App() {}; // eslint-disable-line
         App.prototype = oldProto;
