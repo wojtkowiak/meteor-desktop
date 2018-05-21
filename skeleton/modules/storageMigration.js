@@ -119,10 +119,12 @@ export default class StorageMigration {
 
             const newestPaths =
                 storage.pathGenerators.map(
-                    pathGenerator => path.join(storage.path, pathGenerator(newestPort)));
+                    pathGenerator => path.join(storage.path, pathGenerator(newestPort))
+                );
 
             const pathPairs = newestPaths.map(
-                (sourcePath, index) => [sourcePath, targetPaths[index]]);
+                (sourcePath, index) => [sourcePath, targetPaths[index]]
+            );
 
             batchIoOperationWithRetries('move', undefined, undefined, ioOperationWithRetries, pathPairs)
                 .then(() => {

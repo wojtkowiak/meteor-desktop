@@ -9,7 +9,12 @@ import mockerySettings from '../../helpers/mockerySettings';
 
 chai.use(sinonChai);
 chai.use(dirty);
-const { describe, it, before, after } = global;
+const {
+    describe,
+    it,
+    before,
+    after
+} = global;
 const { expect } = chai;
 
 const Electron = { protocol: { registerStandardSchemes: Function.prototype } };

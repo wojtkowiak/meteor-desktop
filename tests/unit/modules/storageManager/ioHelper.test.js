@@ -12,7 +12,12 @@ import mockerySettings from '../../../helpers/mockerySettings';
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 chai.use(dirty);
-const { describe, it, before, after } = global;
+const {
+    describe,
+    it,
+    before,
+    after
+} = global;
 const { expect } = chai;
 
 const fs = { };
@@ -140,7 +145,4 @@ describe('ioHelper', () => {
             return expect(operation).to.be.calledWith('copy', 3, 1, 'file1', 'file2');
         });
     });
-
 });
-
-
