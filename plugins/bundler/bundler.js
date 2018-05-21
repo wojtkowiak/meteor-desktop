@@ -752,7 +752,7 @@ class MeteorDesktopBundler {
             settings.desktopVersion = version;
             settings.compatibilityVersion =
                 this.calculateCompatibilityVersion(
-                    dependencies.getRemoteDependencies(), desktopPath, inputFile, md5
+                    dependencies.getDependencies(), desktopPath, inputFile, md5
                 );
 
             fs.writeFileSync(
