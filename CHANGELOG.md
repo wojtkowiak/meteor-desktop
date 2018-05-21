@@ -4,6 +4,8 @@ the app on constant `meteor://desktop` url instead of setting a http server whic
 
 This finally solves the longstanding problems with `IndexedDB` and `localstorage` not being persistent.
 
+Please verify thoroughly if your app is working fine after this change and reports any problems you encounter.
+
 The localstorage contents will be migrated if you are updating your app from pre `1.0.0`.
 
 However if you are using the `meteor-desktop-localstorage` plugin you have to make a migration yourself. The easiest way is to copy the plugin desktop code as your module in `.desktop` and on your app start get the contents with `getAll` and save them to the browser's localstorage.     
@@ -12,13 +14,22 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
 * `beforeLocalServerInit` event added to the `eventsBus`
 * `METEOR_DESKTOP_DEBUG` now produces a lot more info from bundler plugin while building meteor project 
+* default installer in the scaffold for Windows is now set to `nsis`
+
+**DEPRECATIONS:**
+* builtin support for squirrel auto update
+
+**BREAKING:**
+* support for the `meteor-desktop-localstorage` plugin is removed, you will not be able to use this plugin anymore
 
 ## v0.19.0 <sup>17.05.2018</sup>
+**WARNING:** in this version the localStorage/indexedDB is not working properly (it's not persistent) - please upgrade to `1.0.0`
 * `desktopHCP` bundler plugin was enhanced with cache - that should speed up your rebuilds
 * issue with app not being rebuilt after an error in `.desktop` code should be resolved now (watcher should still work even after a syntax error while compiling `.desktop`)
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.0`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.13.5`   
 * `electron-builder-squirrel-windows` was updated to `20.13.1`
+
 
 #### v0.18.1 <sup>10.05.2018</sup>
 * fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
