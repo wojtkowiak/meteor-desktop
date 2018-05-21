@@ -294,7 +294,7 @@ class MeteorDesktopBundler {
             .version
             .split('.');
         const desktopCompatibilityVersion = settings.version.split('.')[0];
-        deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}.${mainCompatibilityVersion[1]}`);
+        deps.push(`meteor-desktop:${mainCompatibilityVersion[0]}`);
         deps.push(`desktop-app:${desktopCompatibilityVersion}`);
         if (process.env.METEOR_DESKTOP_DEBUG_DESKTOP_COMPATIBILITY_VERSION ||
             process.env.METEOR_DESKTOP_DEBUG
@@ -668,9 +668,8 @@ class MeteorDesktopBundler {
                         addFiles(contents.data, lastSettings.settings);
                         endProcess();
                         return;
-                    } else {
-                        logDebug('[meteor-desktop] integrity check of settings failed');
                     }
+                    logDebug('[meteor-desktop] integrity check of settings failed');
                 } else {
                     logDebug('[meteor-desktop] integrity check of asar failed');
                 }
@@ -680,6 +679,7 @@ class MeteorDesktopBundler {
                     .then(() => logDebug('[meteor-desktop] cache invalidate'))
                     .catch(e => logDebug('[meteor-desktop] failed to invalidate cache', e));
             }
+            this.stampPerformance('cache check');
 
             this.stampPerformance('build deps lookout');
             try {
@@ -706,8 +706,6 @@ class MeteorDesktopBundler {
             shelljsConfig = Object.assign({}, shelljs.config);
             shelljs.config.fatal = true;
             shelljs.config.silent = false;
-
-            this.stampPerformance('cache check');
 
             const desktopTmpPath = './._desktop';
             const desktopTmpAsarPath = './.meteor/local';
@@ -754,7 +752,7 @@ class MeteorDesktopBundler {
             settings.desktopVersion = version;
             settings.compatibilityVersion =
                 this.calculateCompatibilityVersion(
-                    dependencies.getRemoteDependencies(), desktopPath, inputFile, md5
+                    dependencies.getDependencies(), desktopPath, inputFile, md5
                 );
 
             fs.writeFileSync(

@@ -9,7 +9,6 @@
     "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
     "autoUpdateFeedHeaders": {},
     "autoUpdateCheckOnStart": true,
-    "rebuildNativeNodeModules": false,
     "webAppStartupTimeout": 60000,
     "exposeLocalFilesystem": false,
     "window": {
@@ -23,13 +22,24 @@
     "uglify": true,
     "plugins": {
         "meteor-desktop-splash-screen": {
-            "version": "0.3.0",
+            "version": "0.4.0",
             "windowSettings": {
                 "width": 800,
                 "height": 600
+            },
+            "updateScreen": true,
+            "updateScreenSettings": {
+                "imagePath": "updating.gif",
+                "windowSettings": {
+                    "width": 400,
+                    "height": 300
+                },
+                "clickThrough": false,
+                "style": {
+                    "background-size": "auto"
+                }
             }
-        },
-        "meteor-desktop-localstorage": "0.0.11"
+        }
     },
     "dependencies": {},
     "packageJsonFields": {
@@ -43,7 +53,7 @@
         "productName": "My Meteor App",
         "compression": "maximum",
         "win": {
-            "target": "squirrel"
+            "target": "nsis"
         },
         "squirrelWindows": {
             "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",

@@ -1,6 +1,6 @@
 ![Logo](docs/meteor-desktop.png)
 
-# Meteor Desktop <sup>beta version<sup>
+# Meteor Desktop
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
@@ -74,7 +74,9 @@ Usage: npm run desktop -- [command] [options]
     --win                                 generate Windows installer
     --linux                               generate Linux installer
     --mac                                 generate Mac installer
+    -d, --debug                           run electron with debug switch    
     -V, --version                         output the version number
+
 
   [ddp_url] - pass a ddp url if you want to use different one than used in meteor's --mobile-server
               this will also work with -b
@@ -256,14 +258,14 @@ field|description
 ##### Applying different window options for different OS
 
 You can use `_windows`, `_osx`, `_linux` properties to set additional settings for different OS. 
-The default `settings.json` is already using that for setting a different icon for OSX.
+The default `settings.json` is already using that for setting a different window icon for OSX.
 
 ##### Supported dependency version types
 
 Only explicit versions are supported to avoid potential problems with different versions being 
 installed. It is no different from `Meteor` because the same applies to adding `Cordova` plugins.
 
-You can however use a local path to a npm package - and that will not be forbidden. But you need 
+You can however use a local path to a npm package - and that will not be forbidden. **You need** 
 to keep track what has been distributed to your clients and what your current code is expecting 
 when releasing a HCP update. 
 
@@ -304,6 +306,7 @@ event name|payload|description
 `beforePluginsLoad`| |emitted before plugins are loaded
 `beforeModulesLoad`| |emitted before internal modules and modules from `.desktop` are loaded
 `beforeDesktopJsLoad`| |emitted before `desktop.js` is loaded
+`beforeLocalServerInit`| |emitted before local http server starts
 `desktopLoaded`|`(desktop)`|emitted after loading `desktop.js`, carries the reference to class instance exported from it 
 `afterInitialization`| |emitted after initialization of internal modules like HCP and local HTTP server
 `startupFailed`| |emitted when the `Skeleton App` could not start you `Meteor` app  
@@ -363,6 +366,7 @@ export default class Desktop {
     }
 }
 ```
+**WARNING:** currently the path of the file is not reconstructed meaning `extract: [ "dir1/something.exe", "dir2/something.exe' ]` will try to put both `something.exe` files to the same dir and that may fail or produce inconsistent result. So the bare file names without the path must be unique.
 
 ## Hot code push support
 
@@ -386,7 +390,7 @@ In your `Meteor` app to run a part of the code only in the desktop context you c
 Local filesystem is exposed under and url alias (similarly to [Cordova integration](https://guide.meteor.com/mobile.html#accessing-local-files)). 
 This feature is disabled by default so you need to enable it first by setting 
 `exposeLocalFilesystem` in your `settings.json` to `true`. Files are exposed under 
-`\local-filesystem\<absolute-path>` url.
+`/local-filesystem/<absolute-path>` url.
 
 You can use some convenience methods:
 - **`Desktop.getFileUrl(absolutePath)`** - returns an url to a file
@@ -448,17 +452,14 @@ The `compatibilityVersion` is calculated from combined list of:
  - dependencies from `settings.json`
  - plugins from `settings.json`
  - dependencies from all modules in `.desktop/modules`
- - major and minor version of `meteor-desktop` (X.X.Y - only X.X is taken)
- - major version from `settings.json` (X.Y.Y - only X is taken).
+ - major version of `meteor-desktop` (X.Y.Z - only X is taken)
+ - major version from `settings.json` (X.Y.Z - only X is taken).
  
 Be aware that when it comes to linked packages (via `linkPackages` in `settings.json`) the 
 explicitly declared version (the one in `settings.json` or modules) is taken into account, not the 
 actual one from package's package.json. The same applies to packages added from local paths.  
-Generally, it is a bad idea to build production app with linked/local packages. This is now allowed 
-but will be disabled before `1.0`.
+Generally, it is a bad idea to build production app with linked/local packages. Changes in those will not trigger a compatibility version change so you migh accidentally push a new version with `desktopHCP` that will not work.
  
-Until 1.0 major and minor version of `meteor-desktop` will be used. From 1.0, semver will be 
-followed and only major version change will mean that a version is backwards incompatible. 
 
 #### How this works
 Two Meteor plugins are added to your project - bundler and watcher. Bundler prepares the `desktop.asar` which is then added to you project as an asset.   
@@ -504,9 +505,9 @@ If you made a plugin, please let us know so that it can be listed here.
 ##### List of known plugins:
 [`meteor-desktop-system-notifications`](https://github.com/tzapu/meteor-desktop-system-notifications)  
 [`meteor-desktop-splashscreen`](https://github.com/wojtkowiak/meteor-desktop-splash-screen)  
-[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage)  
+[`meteor-desktop-localstorage`](https://github.com/wojtkowiak/meteor-desktop-localstorage) (deprecated, do not use from `1.0.0`)  
 
-## Squirrel autoupdate support
+## Squirrel autoupdate support (DEPRECATED)
 
 Squirrel Window and OSX autoupdates are supported. So far the only tested server is 
 [`electron-release-server`](https://github.com/ArekSredzki/electron-release-server) and the 
@@ -522,10 +523,7 @@ https://github.com/ArekSredzki/electron-release-server
 ## Native modules support
 
 This integration fully supports rebuilding native modules (npm packages with native node modules)
- against `Electron's` `node` version. However, to speed up build time, it is **switched off by 
- default**. 
-
-If you have any of those in your dependencies, or you know that one of the packages or plugins is using it, you should turn it on by setting `rebuildNativeNodeModules` to true in your `settings.json`. Currently there is no mechanism present that detects whether the rebuild should be run so it is fired on every build. A cleverer approach is planned before `1.0`. 
+ against `Electron's` `node` version. The mechanism is enabled by default. 
 
 ## Devtron
 
@@ -554,8 +552,8 @@ It is used extensively in the plugins (splash screen & localstorage) tests so yo
 for more examples. 
 
 ## `MD_LOG_LEVEL`
-`MD_LOG_LEVEL` env var is used to set the logger verbosity. Currently before `1.0` it is set to 
-`ALL` but you can change it to any of `INFO, WARN, ERROR, DEBUG, VERBOSE, TRACE`. You can also 
+`MD_LOG_LEVEL` env var is used to set the logger verbosity. It is set to 
+`ALL` by default but you can change it to any of `INFO, WARN, ERROR, DEBUG, VERBOSE, TRACE`. You can also 
 select multiple levels joining them with a comma, for example: `INFO,WARN`.
 
 ## Packaging
@@ -592,12 +590,8 @@ Change `target: ["appx"]` in `win` section of `builderOptions`. In case of probl
 [electron-builder](https://github.com/electron-userland/electron-builder) documentation.
 
 ## Roadmap 
-> <sup>aka road to 1.0</sup>
-
-This version should be considered as beta version.  
+This project recently hit `1.0.0` however you should still expect many breaking changes in the upcoming versions.
 Any feedback/feature requests/PR is highly welcomed and highly anticipated.  
-There is rough plan to publish a release candidate around June 2017. Until that expect things to 
-change rapidly and many frequent 0.X.X releases.
 
 If you want to check what is planned and what I am working on, first you can check accepted 
 issues on github [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).
@@ -614,7 +608,6 @@ discuss the need and implementation approach.
 If you want, you can always contribute by donating:
 
 <a href='https://pledgie.com/campaigns/33341'><img alt='Click here to lend your support to: meteor-desktop and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33341.png?skin_name=chrome' border='0' ></a>
-
 
 ##### ! devEnvSetup.js !
 To help you contribute, there is a development environment setup script. If you have this repo 

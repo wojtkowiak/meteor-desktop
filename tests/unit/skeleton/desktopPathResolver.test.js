@@ -6,6 +6,8 @@ import sinon from 'sinon';
 import mockery from 'mockery';
 import path from 'path';
 
+import mockerySettings from '../../helpers/mockerySettings';
+
 chai.use(sinonChai);
 chai.use(dirty);
 
@@ -21,10 +23,7 @@ let DesktopPathResolver;
 describe('DesktopPathResolver', () => {
     before(() => {
         mockery.registerMock('fs', fs);
-        mockery.enable({
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+        mockery.enable(mockerySettings);
 
         DesktopPathResolver = require('../../../skeleton/desktopPathResolver.js').default;
     });
@@ -63,8 +62,8 @@ describe('DesktopPathResolver', () => {
                 .resolveDesktopPath(__dirname, {
                     info: infoStub
                 });
-            expect(infoStub).to.be.calledWithMatch(sinon.match('will use desktop.asar from' +
-                ' initial version because the initial version of meteor app has changed'));
+            expect(infoStub).to.be.calledWithMatch('will use desktop.asar from' +
+                ' initial version because the initial version of meteor app has changed');
             expect(desktopPath.endsWith(`${path.sep}desktop.asar`)).to.be.true();
         });
 

@@ -16,13 +16,17 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
+electron.protocol.registerStandardSchemes(['meteor']);
+
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
  * @class
  */
-class App {
+export default class App {
     constructor() {
+        this.startup = true;
+        console.time('startup took');
         // Until user defined handling will be loaded it is good to register something
         // temporarily.
         this.catchUncaughtExceptions();
@@ -52,6 +56,8 @@ class App {
         // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
         // node_modules.
         const nodeModulesPath = [__dirname, 'node_modules'];
+
+        // TODO: explain this
         if (!this.isProduction()) {
             nodeModulesPath.splice(1, 0, '..');
         }
@@ -62,7 +68,7 @@ class App {
             return;
         }
 
-        // This is need for OSX - check Electron docs for more info.
+        // This is needed for OSX - check Electron docs for more info.
         if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
             app.setAppUserModelId(this.settings.builderOptions.appId);
         }
@@ -402,6 +408,41 @@ class App {
     }
 
     /**
+     * Checks wheteher object seems to be a promise.
+     * @param {Object} obj
+     * @returns {boolean}
+     */
+    static isPromise(obj) {
+        return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+    }
+
+    /**
+     * Util function for emitting events synchronously and waiting asynchronously for
+     * handlers to finish.
+     * @param {string} event - event name
+     * @param {[*]}    args  - event's arguments
+     */
+    emitAsync(event, ...args) {
+        const promises = [];
+
+        try {
+            this.eventsBus.listeners(event).forEach((handler) => {
+                const result = handler(...args);
+                if (App.isPromise(result)) {
+                    promises.push(result);
+                } else {
+                    promises.push(Promise.resolve());
+                }
+            });
+        } catch (e) {
+            this.l.error(`error while emitting '${event}' event: ${e}`);
+            return Promise.reject(e);
+        }
+        return Promise.all(promises);
+    }
+
+
+    /**
      * Initializes this app.
      * Loads plugins.
      * Loads modules.
@@ -434,6 +475,8 @@ class App {
             this.onServerRestarted.bind(this)
         );
 
+        this.emit('beforeLocalServerInit');
+
         this.localServer.init(
             this.modules.autoupdate.getCurrentAssetBundle(),
             this.desktopPath
@@ -447,9 +490,14 @@ class App {
      * @param {number} port - port on which the app is served
      */
     onServerRestarted(port) {
-        this.emit('beforeLoadUrl', port, this.currentPort);
-        this.currentPort = port;
-        this.webContents.loadURL(`http://127.0.0.1:${port}/`);
+        this.emitAsync('beforeLoadUrl', port, this.currentPort)
+            .catch(() => {
+                this.l.warning('some of beforeLoadUrl event listeners have failed');
+            })
+            .then(() => {
+                this.currentPort = port;
+                this.webContents.loadURL('meteor://desktop');
+            });
     }
 
     /**
@@ -516,8 +564,9 @@ class App {
         this.webContents = this.window.webContents;
 
         if (this.settings.devtron && !this.isProduction()) {
-            // Print some fancy status to the console if in development.
-            this.webContents.executeJavaScript(`
+            this.webContents.on('did-finish-load', () => {
+                // Print some fancy status to the console if in development.
+                this.webContents.executeJavaScript(`
                 console.log('%c   meteor-desktop   ',
                 \`background:linear-gradient(#47848F,#DE4B4B);border:1px solid #3E0E02;
                 color:#fff;display:block;text-shadow:0 3px 0 rgba(0,0,0,0.5);
@@ -525,10 +574,11 @@ class App {
                 0 -13px 5px -10px rgba(255,255,255,0.4) inset;
                 line-height:20px;text-align:center;font-weight:700;font-size:20px\`);
                 console.log(\`%cdesktop version: ${this.settings.desktopVersion}\\n` +
-                `desktop compatibility version: ${this.settings.compatibilityVersion}\\n` +
-                'meteor bundle version:' +
-                ` ${this.modules.autoupdate.currentAssetBundle.getVersion()}\\n\`` +
-                ', \'font-size: 9px;color:#222\');');
+                    `desktop compatibility version: ${this.settings.compatibilityVersion}\\n` +
+                    'meteor bundle version:' +
+                    ` ${this.modules.autoupdate.currentAssetBundle.getVersion()}\\n\`` +
+                    ', \'font-size: 9px;color:#222\');');
+            });
         }
 
         this.emit('windowCreated', this.window);
@@ -550,8 +600,34 @@ class App {
             this.handleAppStartup(false);
         });
 
-        this.emit('beforeLoadUrl', port, this.currentPort);
-        this.webContents.loadURL(`http://127.0.0.1:${port}/`);
+        const urlStripLength = 'meteor://desktop'.length;
+
+        this.webContents.session.protocol
+            .registerStreamProtocol(
+                'meteor',
+                (request, callback) => {
+                    const url = request.url.substr(urlStripLength);
+                    this.modules.localServer.getStreamProtocolResponse(url)
+                        .then(res => callback(res))
+                        .catch((e) => {
+                            callback(this.modules.localServer.getServerErrorResponse());
+                            this.log.error(`error while trying to fetch ${url}: ${e.toString()}`);
+                        });
+                },
+                (e) => {
+                    if (e) {
+                        this.l.error(`error while registering meteor:// protocol: ${e.toString()}`);
+                        this.uncaughtExceptionHandler();
+                        return;
+                    }
+                    this.l.debug('protocol meteor:// registered');
+
+                    this.l.debug('opening meteor://desktop');
+                    setTimeout(() => {
+                        this.webContents.loadURL('meteor://desktop');
+                    }, 100);
+                }
+            );
     }
 
     handleAppStartup(startupDidCompleteEvent) {
@@ -562,6 +638,10 @@ class App {
             this.l.debug('received startupDidComplete');
         }
         this.l.info('assuming meteor webapp has loaded');
+        if (this.startup) {
+            console.timeEnd('startup took');
+            this.startup = false;
+        }
         if (!this.windowAlreadyLoaded) {
             if (this.meteorAppVersionChange) {
                 this.l.verbose('there is a new version downloaded already, performing HCP' +
@@ -621,4 +701,6 @@ class App {
     }
 }
 
-const appInstance = new App(); // eslint-disable-line no-unused-vars
+if (!process.env.METEOR_DESKTOP_UNIT_TEST) {
+    const appInstance = new App(); // eslint-disable-line no-unused-vars
+}
