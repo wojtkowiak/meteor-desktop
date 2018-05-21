@@ -25,6 +25,7 @@ electron.protocol.registerStandardSchemes(['meteor']);
  */
 export default class App {
     constructor() {
+        this.startup = true;
         console.time('startup took');
         // Until user defined handling will be loaded it is good to register something
         // temporarily.
@@ -637,7 +638,10 @@ export default class App {
             this.l.debug('received startupDidComplete');
         }
         this.l.info('assuming meteor webapp has loaded');
-        console.timeEnd('startup took');
+        if (this.startup) {
+            console.timeEnd('startup took');
+            this.startup = false;
+        }
         if (!this.windowAlreadyLoaded) {
             if (this.meteorAppVersionChange) {
                 this.l.verbose('there is a new version downloaded already, performing HCP' +
