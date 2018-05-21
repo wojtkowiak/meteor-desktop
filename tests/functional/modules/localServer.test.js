@@ -131,7 +131,8 @@ function localServerTests(useStreams = false) {
     it('should set the X-SourceMap header for an asset with a source map', async () => {
         const response = await fetchFromLocalServer('/app/template.mobileapp.js');
         expect(response.headers.get('X-SourceMap')).to.contain(
-            '/app/979b20f66caf126704c250fbd29ce253c6cb490e.map');
+            '/app/979b20f66caf126704c250fbd29ce253c6cb490e.map'
+        );
     });
 
     it('should serve the source map for an asset', async () => {

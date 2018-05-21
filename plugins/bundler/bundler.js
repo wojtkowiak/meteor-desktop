@@ -668,9 +668,8 @@ class MeteorDesktopBundler {
                         addFiles(contents.data, lastSettings.settings);
                         endProcess();
                         return;
-                    } else {
-                        logDebug('[meteor-desktop] integrity check of settings failed');
                     }
+                    logDebug('[meteor-desktop] integrity check of settings failed');
                 } else {
                     logDebug('[meteor-desktop] integrity check of asar failed');
                 }
