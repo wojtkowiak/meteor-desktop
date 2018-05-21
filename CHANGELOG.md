@@ -1,4 +1,4 @@
-## v1.0.0
+## v1.0.0 <sup>21.05.2018</sup>
 Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve 
 the app on constant `meteor://desktop` url instead of setting a http server which serves over `http://127.0.0.1:<random_port_on_every_start>`.
 
