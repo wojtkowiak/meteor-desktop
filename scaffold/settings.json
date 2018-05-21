@@ -9,7 +9,6 @@
     "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
     "autoUpdateFeedHeaders": {},
     "autoUpdateCheckOnStart": true,
-    "rebuildNativeNodeModules": false,
     "webAppStartupTimeout": 60000,
     "exposeLocalFilesystem": false,
     "window": {
@@ -54,7 +53,7 @@
         "productName": "My Meteor App",
         "compression": "maximum",
         "win": {
-            "target": "squirrel"
+            "target": "nsis"
         },
         "squirrelWindows": {
             "iconUrl": "https://github.com/wojtkowiak/meteor-desktop/blob/beta/scaffold/assets/meteor.ico?raw=true",
