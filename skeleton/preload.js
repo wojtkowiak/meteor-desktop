@@ -26,6 +26,7 @@ const Desktop = new (class {
         this.registeredInIpc = {};
         this.fetchCallCounter = 0;
         this.fetchTimeoutTimers = {};
+        this.fetchTimeout = 2000;
     }
 
     /**
@@ -206,7 +207,7 @@ const Desktop = new (class {
      * @returns {Promise}
      * @public
      */
-    fetch(module, event, timeout = 2000, ...args) {
+    fetch(module, event, timeout = this.fetchTimeout, ...args) {
         const eventName = this.getEventName(module, event);
         if (this.fetchCallCounter === Number.MAX_SAFE_INTEGER) {
             this.fetchCallCounter = 0;
@@ -228,6 +229,30 @@ const Desktop = new (class {
             }, timeout);
             ipc.send(eventName, fetchId, ...args);
         });
+    }
+
+    /**
+     * Desktop.fetch without the need to provide a timeout value.
+     *
+     * @param {string} module  - module name
+     * @param {string} event   - name of an event
+     * @param {...*} args      - arguments to send with the event
+     * @returns {Promise}
+     * @public
+     */
+    call(module, event, ...args) {
+        return this.fetch(module, event, this.fetchTimeout, ...args);
+    }
+
+    /**
+     * Sets the default fetch timeout.
+     * @param {number} timeout
+     */
+    setDefaultFetchTimeout(timeout = this.fetchTimeout) {
+        if (typeof timeout !== 'number') {
+            throw new Error('timeout must a number');
+        }
+        this.fetchTimeout = timeout;
     }
 
     /**
