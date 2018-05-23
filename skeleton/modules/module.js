@@ -25,6 +25,7 @@ export default class Module {
         this.name = name;
         this.fetchCallCounter = 0;
         this.fetchTimeoutTimers = {};
+        this.fetchTimeout = 2000;
     }
 
     /**
@@ -48,7 +49,7 @@ export default class Module {
      * @returns {Promise}
      * @public
      */
-    fetch(event, timeout = 2000, ...args) {
+    fetch(event, timeout = this.fetchTimeout, ...args) {
         const eventName = this.getEventName(event);
         if (this.fetchCallCounter === Number.MAX_SAFE_INTEGER) {
             this.fetchCallCounter = 0;
@@ -71,6 +72,30 @@ export default class Module {
             Module.sendInternal(eventName, fetchId, ...args);
         });
     }
+
+    /**
+     * Module.fetch without the need to provide a timeout value.
+     *
+     * @param {string} event   - name of an event
+     * @param {...*} args      - arguments to send with the event
+     * @returns {Promise}
+     * @public
+     */
+    call(event, ...args) {
+        return this.fetch(event, this.fetchTimeout, ...args);
+    }
+
+    /**
+     * Sets the default fetch timeout.
+     * @param {number} timeout
+     */
+    setDefaultFetchTimeout(timeout = this.fetchTimeout) {
+        if (typeof timeout !== 'number') {
+            throw new Error('timeout must a number');
+        }
+        this.fetchTimeout = timeout;
+    }
+
 
     /**
      * Sends and IPC event response for a provided fetch id.

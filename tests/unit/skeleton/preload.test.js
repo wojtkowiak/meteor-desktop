@@ -90,6 +90,20 @@ describe('Desktop', () => {
         });
     });
 
+    describe('#setDefaultFetchTimeout', () => {
+        it('should call fetch with correct timeout', () => {
+            const desktop = Desktop.__get__('Desktop');
+            const arg1 = { some: 'data' };
+            const arg2 = 'test';
+            const event = 'yyy';
+            const module = 'desktop';
+            desktop.setDefaultFetchTimeout(999);
+            desktop.fetch = sinon.stub();
+
+            desktop.call(module, event, arg1, arg2);
+            expect(desktop.fetch).to.be.calledWith(module, event, 999, arg1, arg2);
+        });
+    });
 
     function prepareOnOrOnceTest(ipcMock, callbacks, once, module, event) {
         const revertIpc = Desktop.__set__('ipc', ipcMock);

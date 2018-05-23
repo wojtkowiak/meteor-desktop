@@ -67,5 +67,17 @@ describe('Module', () => {
             expect(module.getResponseEventName('event')).to.equal('test__event___response');
         });
     });
-});
 
+    describe('#setDefaultFetchTimeout', () => {
+        it('should call fetch with correct timeout', () => {
+            const module = new Module('test');
+            const arg1 = { some: 'data' };
+            const arg2 = 'test';
+            const event = 'yyy';
+            module.setDefaultFetchTimeout(999);
+            module.fetch = sinon.stub();
+            module.call(event, arg1, arg2);
+            expect(module.fetch).to.be.calledWith(event, 999, arg1, arg2);
+        });
+    });
+});
