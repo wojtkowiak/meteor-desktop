@@ -1,3 +1,11 @@
+#### v1.1.0 <sup>23.05.2018</sup>
+* `setDefaultFetchTimeout` and `call` methods added to both `Module` and `Desktop`
+
+**FIXES**
+* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure 
+* `meteor-desktop-splash-screen` received a fix for window size issues in Electron 2.0 (you should update to `4.0.2`) 
+* `bundler` caching was disabled for production builds as you might have accidentally get a development `desktop.asar` build into your production build
+
 ## v1.0.0 <sup>21.05.2018</sup>
 Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve 
 the app on constant `meteor://desktop` url instead of setting a http server which serves over `http://127.0.0.1:<random_port_on_every_start>`.
