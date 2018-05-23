@@ -15,6 +15,12 @@
 <dd><p>Fetches some data from renderer process by sending an IPC event and waiting for a response.
 Returns a promise that resolves when the response is received.</p>
 </dd>
+<dt><a href="#call">call(event, ...args)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Module.fetch without the need to provide a timeout value.</p>
+</dd>
+<dt><a href="#setDefaultFetchTimeout">setDefaultFetchTimeout(timeout)</a></dt>
+<dd><p>Sets the default fetch timeout.</p>
+</dd>
 <dt><a href="#respond">respond(event, fetchId, [...data])</a></dt>
 <dd><p>Sends and IPC event response for a provided fetch id.</p>
 </dd>
@@ -27,7 +33,7 @@ Returns a promise that resolves when the response is received.</p>
 <dt><a href="#removeAllListeners">removeAllListeners(module, event)</a></dt>
 <dd><p>Unregisters all callbacks.</p>
 </dd>
-<dt><a href="#once">once(event, callback)</a></dt>
+<dt><a href="#once">once(event, callback, response)</a></dt>
 <dd><p>Registers a once fired callback to a IPC event.</p>
 </dd>
 <dt><a href="#sendGlobal">sendGlobal(event, [...data])</a></dt>
@@ -68,11 +74,35 @@ Returns a promise that resolves when the response is received.
 **Kind**: global function  
 **Access**: public  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| event | <code>string</code> |  | name of an event |
-| timeout | <code>number</code> | <code>2000</code> | how long to wait for the response in milliseconds |
-| ...args | <code>\*</code> |  | arguments to send with the event |
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | name of an event |
+| timeout | <code>number</code> | how long to wait for the response in milliseconds |
+| ...args | <code>\*</code> | arguments to send with the event |
+
+<a name="call"></a>
+
+## call(event, ...args) ⇒ <code>Promise</code>
+Module.fetch without the need to provide a timeout value.
+
+**Kind**: global function  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>string</code> | name of an event |
+| ...args | <code>\*</code> | arguments to send with the event |
+
+<a name="setDefaultFetchTimeout"></a>
+
+## setDefaultFetchTimeout(timeout)
+Sets the default fetch timeout.
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| timeout | <code>number</code> | 
 
 <a name="respond"></a>
 
@@ -130,7 +160,7 @@ Unregisters all callbacks.
 
 <a name="once"></a>
 
-## once(event, callback)
+## once(event, callback, response)
 Registers a once fired callback to a IPC event.
 
 **Kind**: global function  
@@ -140,6 +170,7 @@ Registers a once fired callback to a IPC event.
 | --- | --- | --- |
 | event | <code>string</code> | event name |
 | callback | <code>function</code> | callback to fire |
+| response | <code>boolean</code> | whether we are listening for fetch response |
 
 <a name="sendGlobal"></a>
 
