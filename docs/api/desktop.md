@@ -44,6 +44,12 @@ Returns a promise from <code>fetch</code>.</p>
 <dd><p>Fetches some data from main process by sending an IPC event and waiting for a response.
 Returns a promise that resolves when the response is received.</p>
 </dd>
+<dt><a href="#call">call(module, event, ...args)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Desktop.fetch without the need to provide a timeout value.</p>
+</dd>
+<dt><a href="#setDefaultFetchTimeout">setDefaultFetchTimeout(timeout)</a></dt>
+<dd><p>Sets the default fetch timeout.</p>
+</dd>
 <dt><a href="#sendGlobal">sendGlobal(...args)</a></dt>
 <dd><p>Send an global event to the main Electron process.</p>
 </dd>
@@ -207,12 +213,37 @@ Returns a promise that resolves when the response is received.
 **Kind**: global function  
 **Access**: public  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| module | <code>string</code> |  | module name |
-| event | <code>string</code> |  | name of an event |
-| timeout | <code>number</code> | <code>2000</code> | how long to wait for the response in milliseconds |
-| ...args | <code>\*</code> |  | arguments to send with the event |
+| Param | Type | Description |
+| --- | --- | --- |
+| module | <code>string</code> | module name |
+| event | <code>string</code> | name of an event |
+| timeout | <code>number</code> | how long to wait for the response in milliseconds |
+| ...args | <code>\*</code> | arguments to send with the event |
+
+<a name="call"></a>
+
+## call(module, event, ...args) ⇒ <code>Promise</code>
+Desktop.fetch without the need to provide a timeout value.
+
+**Kind**: global function  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| module | <code>string</code> | module name |
+| event | <code>string</code> | name of an event |
+| ...args | <code>\*</code> | arguments to send with the event |
+
+<a name="setDefaultFetchTimeout"></a>
+
+## setDefaultFetchTimeout(timeout)
+Sets the default fetch timeout.
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| timeout | <code>number</code> | 
 
 <a name="sendGlobal"></a>
 
