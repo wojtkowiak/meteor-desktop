@@ -655,7 +655,8 @@ class MeteorDesktopBundler {
                 logDebug('[meteor-desktop] no cache found');
             }
 
-            if (lastStats &&
+            if (settings.env !== 'prod' &&
+                lastStats &&
                 MeteorDesktopBundler.areStatsEqual(lastStats.stats, readDirResult.stats)
             ) {
                 logDebug('[meteor-desktop] cache match');
@@ -674,7 +675,9 @@ class MeteorDesktopBundler {
                     logDebug('[meteor-desktop] integrity check of asar failed');
                 }
             } else {
-                logDebug('[meteor-desktop] cache is older');
+                if (settings.env !== 'prod') {
+                    logDebug('[meteor-desktop] cache miss');
+                }
                 cacache.rm(this.cachePath, 'last')
                     .then(() => logDebug('[meteor-desktop] cache invalidate'))
                     .catch(e => logDebug('[meteor-desktop] failed to invalidate cache', e));
@@ -801,13 +804,14 @@ class MeteorDesktopBundler {
                             let code = cacheEntry.data;
                             let error;
                             if (settings.env === 'prod' && uglifyingEnabled) {
-                                ({ code, error } = uglifyEs.minify(code, options));
+                                ({ code, error } = uglifyEs.minify(code.toString('utf8'), options));
                             }
                             if (error) {
                                 reject(error);
+                            } else {
+                                fs.writeFileSync(filePath, code);
+                                resolve();
                             }
-                            fs.writeFileSync(filePath, code);
-                            resolve();
                         })
                         .catch(() => {
                             logDebug(`[meteor-desktop] from disk ${file}`);
@@ -827,8 +831,20 @@ class MeteorDesktopBundler {
                                         cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
                                             logDebug(`[meteor-desktop] cached ${file}`);
                                         });
-                                        fs.writeFileSync(filePath, code);
-                                        resolve();
+
+                                        let uglifiedCode;
+                                        let error;
+                                        if (settings.env === 'prod' && uglifyingEnabled) {
+                                            ({ code: uglifiedCode, error } =
+                                                uglifyEs.minify(code, options));
+                                        }
+
+                                        if (error) {
+                                            reject(error);
+                                        } else {
+                                            fs.writeFileSync(filePath, uglifiedCode);
+                                            resolve();
+                                        }
                                     }
                                 }
                             );
@@ -875,9 +891,11 @@ class MeteorDesktopBundler {
                 });
             }
 
-            saveCache(contents, readDirResult.stats, settings)
-                .then(integrity => logDebug('[meteor-desktop] cache saved:', integrity))
-                .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
+            if (settings.env !== 'prod') {
+                saveCache(contents, readDirResult.stats, settings)
+                    .then(integrity => logDebug('[meteor-desktop] cache saved:', integrity))
+                    .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
+            }
 
             addFiles(contents, settings);
             shelljs.rm(asarPath);
