@@ -16,7 +16,7 @@ import Squirrel from './squirrel';
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-electron.protocol.registerStandardSchemes(['meteor']);
+electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
 
 /**
  * This is the main app which is a skeleton for the whole integration.
