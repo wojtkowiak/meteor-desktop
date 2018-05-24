@@ -1,5 +1,8 @@
 #### v1.1.0 <sup>23.05.2018</sup>
 * `setDefaultFetchTimeout` and `call` methods added to both `Module` and `Desktop`
+* [`electron`](https://github.com/electron/electron) was updated to `2.0.2`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.14.7`   
+* `electron-builder-squirrel-windows` was updated to `20.14.6`
 
 **FIXES**
 * fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure 
