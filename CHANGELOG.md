@@ -5,8 +5,7 @@
 * `electron-builder-squirrel-windows` was updated to `20.14.6`
 
 **FIXES**
-* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure 
-* `meteor-desktop-splash-screen` received a fix for window size issues in Electron 2.0 (you should update to `4.0.2`) 
+* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure origin 
 * `bundler` caching was disabled for production builds as you might have accidentally get a development `desktop.asar` build into your production build
 
 ## v1.0.0 <sup>21.05.2018</sup>
