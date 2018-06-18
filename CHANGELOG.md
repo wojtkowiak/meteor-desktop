@@ -4,7 +4,9 @@
 Example - `npm run desktop -- build-installer -b` gets terminated because `meteor run` outputs a `Node#moveTo was deprecated. Use Container#append.` warning to stderr. This will kill your build and prevent from going further. Because clearly that is something we can live with you can go forward with:
 ```  
 npm run desktop -- build-installer -b -i "Node#moveTo"
-```     
+```
+
+You do not have to put the whole line, just any part that should only be found in that message. 
 
 ## v1.1.0 <sup>23.05.2018</sup>
 * `setDefaultFetchTimeout` and `call` methods added to both `Module` and `Desktop`
