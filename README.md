@@ -68,6 +68,7 @@ Usage: npm run desktop -- [command] [options]
     --production                          builds meteor app with the production switch, uglifies contents of .desktop, packs app to app.asar
     -a, --android                         force adding android as a mobile platform instead of ios
     -s, --scaffold                        will scaffold .desktop if not present
+    -i, --ignore-stderr [string]          only with -b, strings that when found will not terminate meteor build
     --meteor-settings <path>              only with -b, adds --settings options to meteor
     --ia32                                generate 32bit installer/package
     --all-archs                           generate 32bit and 64bit installers
