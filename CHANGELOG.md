@@ -1,4 +1,12 @@
-#### v1.1.0 <sup>23.05.2018</sup>
+## v1.2.0 <sup>18.06.2018</sup>
+* `-i, --ignore-stderr [string]` cli cmd added, normally using `-b` when meteor outputs anything to stderr the build gets terminated, but in some cases you might want to avoid that when for example npm package throws a deprecation warning into stedrr, now you can make the build continue
+
+Example - `npm run desktop -- build-installer -b` gets terminated because `meteor run` outputs a `Node#moveTo was deprecated. Use Container#append.` warning to stderr. This will kill your build and prevent from going further. Because clearly that is something we can live with you can go forward with:
+```  
+npm run desktop -- build-installer -b -i "Node#moveTo"
+```     
+
+## v1.1.0 <sup>23.05.2018</sup>
 * `setDefaultFetchTimeout` and `call` methods added to both `Module` and `Desktop`
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.2`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.14.7`   
