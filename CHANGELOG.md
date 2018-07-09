@@ -1,3 +1,10 @@
+## v1.5.0 <sup>09.07.2018</sup>
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.19.2`
+* `electron-builder-squirrel-windows` was updated to `20.19.0`
+
+## v1.4.0 <sup>09.07.2018</sup>
+* [`electron`](https://github.com/electron/electron) was updated to `2.0.4`
+
 ## v1.3.0 <sup>26.06.2018</sup>
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.3`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.16.2` (once again thanks to [devlar](https://github.com/develar) for accepting meteor-desktop specific pull requests PR [electron-builder#2975](https://github.com/electron-userland/electron-builder/pull/2975))
