@@ -27,7 +27,8 @@
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
     "develop": "npm-run-all --parallel build-watch test-watch",
-    "generate-docs": "jsdoc2md skeleton/preload.js > docs/api/desktop.md && jsdoc2md skeleton/modules/module.js > docs/api/module.md"
+    "generate-docs": "jsdoc2md skeleton/preload.js > docs/api/desktop.md && jsdoc2md skeleton/modules/module.js > docs/api/module.md",
+    "update-locks": "(rmdir /S /Q node_modules || rm -rf node_modules) && yarn && (rmdir /S /Q node_modules || rm -rf node_modules) && npm i"
   },
   "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
   "license": "MIT",
@@ -80,7 +81,7 @@
     "commander": "2.9.0",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
-    "electron": "2.0.3",
+    "electron": "2.0.4",
     "electron-builder": "20.16.2",
     "electron-builder-lib": "20.16.2",
     "electron-builder-squirrel-windows": "20.16.0",
