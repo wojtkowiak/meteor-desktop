@@ -1,5 +1,5 @@
-## v1.5.0 <sup>09.07.2018</sup>
-* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.19.2`
+## v1.5.0 <sup>11.07.2018</sup>
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.20.0`
 * `electron-builder-squirrel-windows` was updated to `20.19.0`
 
 ## v1.4.0 <sup>09.07.2018</sup>
