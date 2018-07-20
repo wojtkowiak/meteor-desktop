@@ -105,6 +105,8 @@ export default class LocalServer {
         this.portRange = [57200, 57400];
         this.portSearchStep = 20;
 
+        this.assetBundle = null;
+
         this.errors = [];
         this.errors[0] = 'Could not find free port.';
         this.errors[1] = 'Could not start http server.';
@@ -195,16 +197,7 @@ export default class LocalServer {
      * @param {boolean} restart         - are we restarting the server?
      */
     init(assetBundle, desktopPath, restart) {
-        // `connect` will do the job!
         const self = this;
-        const server = connect();
-
-        if (restart) {
-            if (this.httpServerInstance) {
-                this.httpServerInstance.destroy();
-            }
-        }
-        this.log.info('will serve from: ', assetBundle.getDirectoryUri());
 
         /**
          * Responds with HTTP status code and a message.
@@ -276,14 +269,14 @@ export default class LocalServer {
             const parsedUrl = url.parse(req.url);
             // Check if we have an asset for that url defined.
             /** @type {Asset} */
-            const asset = assetBundle.assetForUrlPath(parsedUrl.pathname);
+            const asset = self.assetBundle.assetForUrlPath(parsedUrl.pathname);
 
             if (!asset) return next();
 
             const processors = () => (
                 addSourceMapHeader(asset, res),
-                addETagHeader(asset, res),
-                addCacheHeader(asset, res, req.url)
+                    addETagHeader(asset, res),
+                    addCacheHeader(asset, res, req.url)
             );
 
             if (local) {
@@ -313,13 +306,13 @@ export default class LocalServer {
             if (parsedUrl.pathname !== '/cordova.js') {
                 return next();
             }
-            const parentAssetBundle = assetBundle.getParentAssetBundle();
+            const parentAssetBundle = self.assetBundle.getParentAssetBundle();
             // We need to obtain a path for the initial asset bundle which usually is the parent
             // asset bundle, but if there were not HCPs yet, the main asset bundle is the
             // initial one.
             const initialAssetBundlePath =
                 parentAssetBundle ?
-                    parentAssetBundle.getDirectoryUri() : assetBundle.getDirectoryUri();
+                    parentAssetBundle.getDirectoryUri() : self.assetBundle.getDirectoryUri();
 
             const filePath = path.join(initialAssetBundlePath, parsedUrl.pathname);
 
@@ -411,7 +404,7 @@ export default class LocalServer {
                 parsedUrl.pathname !== '/favicon.ico'
             ) {
                 /** @type {Asset} */
-                const indexFile = assetBundle.getIndexFile();
+                const indexFile = self.assetBundle.getIndexFile();
                 if (local) {
                     createStreamProtocolResponse(indexFile.getFile(), res, () => {
                     });
@@ -423,21 +416,33 @@ export default class LocalServer {
             }
         }
 
-        server.use(AssetHandler);
-        server.use(WwwHandler);
-        server.use(LocalFilesystemHandler);
-        server.use(DesktopAssetsHandler);
-        server.use(IndexHandler);
 
-        this.use(AssetHandler);
-        this.use(WwwHandler);
-        this.use(LocalFilesystemHandler);
-        this.use(DesktopAssetsHandler);
-        this.use(IndexHandler);
+        if (this.assetBundle === null) {
+            // `connect` will do the job!
+            const server = connect();
 
+            if (restart) {
+                if (this.httpServerInstance) {
+                    this.httpServerInstance.destroy();
+                }
+            }
+            this.log.info('will serve from: ', assetBundle.getDirectoryUri());
 
-        this.server = server;
+            server.use(AssetHandler);
+            server.use(WwwHandler);
+            server.use(LocalFilesystemHandler);
+            server.use(DesktopAssetsHandler);
+            server.use(IndexHandler);
 
+            this.use(AssetHandler);
+            this.use(WwwHandler);
+            this.use(LocalFilesystemHandler);
+            this.use(DesktopAssetsHandler);
+            this.use(IndexHandler);
+
+            this.server = server;
+        }
+        this.assetBundle = assetBundle;
 
         this.findPort()
             .then(() => {
@@ -554,7 +559,7 @@ export default class LocalServer {
 
     /**
      * Tries to start the http server.
-     * @param {bool} restart - is this restart
+     * @param {boolean} restart - is this restart
      */
     startHttpServer(restart) {
         try {
