@@ -282,7 +282,18 @@ export default class App {
         });
 
         // Now go through each directory in .desktop/modules.
-        fs.readdirSync(join(this.desktopPath, 'modules')).forEach((dirName) => {
+        let moduleDirectories = [];
+        try {
+            moduleDirectories = fs.readdirSync(join(this.desktopPath, 'modules'));
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                this.l.debug(`not loading custom app modules because .desktop/modules isn't a directory`);
+            } else {
+                throw err;
+            }
+        }
+
+        moduleDirectories.forEach((dirName) => {
             try {
                 const modulePath = join(this.desktopPath, 'modules', dirName);
                 if (fs.lstatSync(modulePath).isDirectory()) {
