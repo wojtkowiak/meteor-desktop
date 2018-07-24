@@ -1,3 +1,10 @@
+## v1.6.0 <sup>25.07.2018</sup>
+* [`electron`](https://github.com/electron/electron) was updated to `2.0.5`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.23.1`
+* `electron-builder-squirrel-windows` was updated to `20.23.0`
+* new functionality and new setting `exposeModules` which allows to expose any Electron renderer module i.e. `webFrame` which when defined in the settings will be available as `Desktop.electron.webFrame`
+* fixed HCP switching to new version only after app restart 
+
 ## v1.5.0 <sup>11.07.2018</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.20.0`
 * `electron-builder-squirrel-windows` was updated to `20.19.0`
