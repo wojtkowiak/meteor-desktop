@@ -1,0 +1,82 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:8.11.3-jessie-browsers
+    steps:
+      - checkout
+      - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+            - ~/.electron
+            - ~/.yarn-cache
+      - run:
+          name: Test
+          command: npm run test
+  test-integration:
+    docker:
+      - image: circleci/node:8.11.3-jessie-browsers
+    steps:
+      - checkout
+      - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+      - run:
+          name: Install npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - node_modules
+            - ~/.electron
+            - ~/.yarn-cache
+            - ~/.npm/
+      - restore_cache:
+          key: meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}
+      - run:
+          name: restore cached meteor bin
+          command: |
+            if [ -e ~/.meteor/meteor-bin ]
+            then
+                echo "Cached Meteor bin found, restoring it"
+                sudo cp ~/.meteor/meteor-bin /usr/local/bin/meteor
+            else
+                echo "No cached Meteor bin found."
+            fi
+      - run:
+          name: install Meteor
+          command: |
+            # only install meteor if bin isn't found
+            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=1.5.4.1 | /bin/sh
+      - run:
+          name: copy meteor bin to build cache
+          command: |
+            cp /usr/local/bin/meteor ~/.meteor/meteor-bin
+      - run:
+          name: Prepare test
+          command: npm run prepare-integration-tests
+      - run:
+          name: Test
+          command: npm run test-integration
+      - save_cache:
+          key: meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.meteor
+            - tests/.__tmp_int
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - test-integration
