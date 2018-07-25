@@ -121,7 +121,7 @@ describe('desktop', () => {
         });
     });
 
-    describe('build with params --scaffold -b', () => {
+    describe('build involved tests', () => {
         let exitStub;
         let app;
 
@@ -178,29 +178,6 @@ describe('desktop', () => {
             });
         });
 
-        it('should build with -b', async () => {
-            if (!process.env.CI) {
-                MeteorDesktop = meteorDesktop(
-                    appDir,
-                    appDir,
-                    {
-                        ddpUrl: 'http://127.0.0.1:3080',
-                        build: true,
-                        output: appDir,
-                        scaffold: true,
-                        skipMobileBuild: !!process.env.TRAVIS,
-                        forceCordovaBuild: !!process.env.TRAVIS,
-                        skipRemoveMobilePlatform: true
-                    }
-                );
-
-                // Build the app.
-                await MeteorDesktop.build();
-
-                await runIt();
-            }
-        }).timeout(10 * 60000);
-
         it('expose electron modules', async () => {
             const platformsPath = path.join(appDir, '.meteor', 'platforms');
             let platforms = fs.readFileSync(platformsPath);
@@ -245,5 +222,28 @@ describe('desktop', () => {
             );
             expect(result.value).to.equal(1);
         }).timeout(10 * 60000);
+
+        if (process.env.TRAVIS || process.env.APPVEYOR) {
+            it('should build with -b', async () => {
+                MeteorDesktop = meteorDesktop(
+                    appDir,
+                    appDir,
+                    {
+                        ddpUrl: 'http://127.0.0.1:3080',
+                        build: true,
+                        output: appDir,
+                        scaffold: true,
+                        skipMobileBuild: !!process.env.TRAVIS,
+                        forceCordovaBuild: !!process.env.TRAVIS,
+                        skipRemoveMobilePlatform: true
+                    }
+                );
+
+                // Build the app.
+                await MeteorDesktop.build();
+
+                await runIt();
+            }).timeout(10 * 60000);
+        }
     });
 });
