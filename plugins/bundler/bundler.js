@@ -73,7 +73,7 @@ class MeteorDesktopBundler {
             'del',
             '@babel/core',
             '@babel/preset-env',
-            'uglify-es',
+            'terser',
             'md5',
             'cacache'
         ];
@@ -495,7 +495,7 @@ class MeteorDesktopBundler {
             let shelljs;
             let babelCore;
             let babelPresetEnv;
-            let uglifyEs;
+            let terser;
             let del;
             let cacache;
             let md5;
@@ -693,7 +693,7 @@ class MeteorDesktopBundler {
                     del,
                     babelCore,
                     babelPresetEnv,
-                    uglifyEs,
+                    terser,
                     md5
                 } = deps);
             } catch (e) {
@@ -804,7 +804,7 @@ class MeteorDesktopBundler {
                             let code = cacheEntry.data;
                             let error;
                             if (settings.env === 'prod' && uglifyingEnabled) {
-                                ({ code, error } = uglifyEs.minify(code.toString('utf8'), options));
+                                ({ code, error } = terser.minify(code.toString('utf8'), options));
                             }
                             if (error) {
                                 reject(error);
@@ -836,7 +836,7 @@ class MeteorDesktopBundler {
                                         let error;
                                         if (settings.env === 'prod' && uglifyingEnabled) {
                                             ({ code: uglifiedCode, error } =
-                                                uglifyEs.minify(code, options));
+                                                terser.minify(code, options));
                                         }
 
                                         if (error) {

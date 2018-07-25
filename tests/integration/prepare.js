@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 require('reify');
+// CI cache version: 1
+
 const shell = require('shelljs');
 const path = require('path');
 const fs = require('fs');
