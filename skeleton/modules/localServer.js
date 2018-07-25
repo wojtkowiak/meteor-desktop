@@ -134,7 +134,7 @@ export default class LocalServer {
      * Returns a HTTP 500 response.
      * @returns {StreamProtocolResponse}
      */
-    getServerErrorResponse() {
+    static getServerErrorResponse() {
         const res = new StreamProtocolResponse();
         res.setStatusCode(500);
         return res;
@@ -275,8 +275,8 @@ export default class LocalServer {
 
             const processors = () => (
                 addSourceMapHeader(asset, res),
-                    addETagHeader(asset, res),
-                    addCacheHeader(asset, res, req.url)
+                addETagHeader(asset, res),
+                addCacheHeader(asset, res, req.url)
             );
 
             if (local) {
@@ -491,7 +491,7 @@ export default class LocalServer {
             startPort = this.lastUsedPort;
             endPort = this.lastUsedPort;
         } else {
-            startPort = this.portRange[0];
+            ([startPort] = this.portRange);
             endPort = this.portRange[0] + this.portSearchStep;
         }
 
@@ -504,7 +504,7 @@ export default class LocalServer {
 
             function fail() {
                 if (startPort === self.lastUsedPort && endPort === startPort) {
-                    startPort = self.portRange[0];
+                    ([startPort] = self.portRange);
                     endPort = self.portRange[0] + self.portSearchStep;
                 } else {
                     startPort += self.portSearchStep;

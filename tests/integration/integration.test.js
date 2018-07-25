@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// eslint-disable-next-line no-unused-vars
 import regeneratorRuntime from 'regenerator-runtime/runtime';
 import chai from 'chai';
 import dirty from 'dirty-chai';
@@ -214,7 +215,6 @@ describe('desktop', () => {
                 } catch (e) {
                     //
                 }
-
             }
 
             MeteorDesktop = meteorDesktop(
@@ -240,9 +240,9 @@ describe('desktop', () => {
             await runIt();
 
             // Test the exposedModules functionality.
-            const result = await app.client.execute(function test() {
-                return Desktop.electron.webFrame.getZoomFactor();
-            });
+            const result = await app.client.execute(
+                () => Desktop.electron.webFrame.getZoomFactor()
+            );
             expect(result.value).to.equal(1);
         }).timeout(10 * 60000);
     });

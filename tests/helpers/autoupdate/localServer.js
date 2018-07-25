@@ -51,10 +51,8 @@ export function setUpLocalServer(mainPath, parentPath) {
             reject = promiseReject;
             localServer = new LocalServer({
                 log: {
-                    warn(...args) {
-                    },
-                    info(...args) {
-                    }
+                    warn: Function.prototype,
+                    info: Function.prototype
                 },
                 skeletonApp: {
                     userDataDir: __dirname

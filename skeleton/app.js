@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved */
+/* eslint-disable import/no-unresolved,no-console */
 /* eslint-disable global-require, import/no-dynamic-require */
 
 import electron from 'electron';

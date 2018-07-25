@@ -1,6 +1,8 @@
+/* eslint-disable global-require */
 // This was inspiried by
 // https://github.com/electron-webapps/meteor-electron/blob/master/app/preload.js
 const ipc = require('electron').ipcRenderer;
+
 const exposedModules = [];
 /**
  * See https://github.com/atom/electron/issues/1753#issuecomment-104719851.
