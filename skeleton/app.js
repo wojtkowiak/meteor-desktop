@@ -87,7 +87,9 @@ export default class App {
         if (this.isProduction()) {
             // In case anything depends on this...
             process.env.NODE_ENV = 'production';
-        } else {
+        } 
+        
+        if (!this.isProduction() || process.env.ELETRON_DEV_TOOLS_PRODUCTION == 'true'){
             require('electron-debug')({
                 showDevTools: process.env.ELECTRON_ENV !== 'test',
                 enabled: (this.settings.devTools !== undefined) ? this.settings.devTools : true
