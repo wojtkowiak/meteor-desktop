@@ -28,7 +28,7 @@
     "build-watch": "babel lib --watch --out-dir dist --source-maps inline --copy-files",
     "develop": "npm-run-all --parallel build-watch test-watch",
     "generate-docs": "jsdoc2md skeleton/preload.js > docs/api/desktop.md && jsdoc2md skeleton/modules/module.js > docs/api/module.md",
-    "update-locks": "(rmdir /S /Q node_modules || rm -rf node_modules) && yarn && (rmdir /S /Q node_modules || rm -rf node_modules) && npm i"
+    "update-locks": "(rmdir /S /Q node_modules || rm -rf node_modules || echo) && yarn && (rmdir /S /Q node_modules || rm -rf node_modules) && npm i"
   },
   "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
   "license": "MIT",
@@ -69,7 +69,7 @@
     "sha1-file": "1.0.0",
     "sinon": "2.3.1",
     "sinon-chai": "2.10.0",
-    "spectron": "3.7.2",
+    "spectron": "4.0.0",
     "watch": "1.0.1"
   },
   "dependencies": {
@@ -78,25 +78,25 @@
     "@babel/runtime": "7.0.0-beta.40",
     "asar": "0.14.3",
     "cacache": "10.0.4",
-    "commander": "2.9.0",
+    "commander": "2.17.1",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
-    "electron": "2.0.9",
+    "electron": "2.0.10",
     "electron-builder": "20.28.4",
     "app-builder-lib": "20.28.4",
     "electron-builder-squirrel-windows": "20.28.3",
-    "electron-packager": "12.1.0",
+    "electron-packager": "12.1.2",
     "install-local": "0.6.0",
-    "isbinaryfile": "3.0.2",
+    "isbinaryfile": "3.0.3",
     "lodash": "4.17.10",
     "md5": "2.2.1",
-    "node-fetch": "1.6.3",
-    "regenerator-runtime": "0.11.1",
+    "node-fetch": "2.2.0",
+    "regenerator-runtime": "0.12.1",
     "rimraf": "2.6.2",
-    "semver": "5.5.0",
-    "shelljs": "0.8.1",
+    "semver": "5.5.1",
+    "shelljs": "0.8.2",
     "single-line-log": "1.1.2",
-    "terser": "3.8.0"
+    "terser": "3.8.2"
   },
   "repository": {
     "type": "git",

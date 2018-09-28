@@ -70,6 +70,7 @@ Usage: npm run desktop -- [command] [options]
     -s, --scaffold                        will scaffold .desktop if not present
     -i, --ignore-stderr [string]          only with -b, strings that when found will not terminate meteor build
     --meteor-settings <path>              only with -b, adds --settings options to meteor
+    --prod-debug                          forces adding dev tools to a production build
     --ia32                                generate 32bit installer/package
     --all-archs                           generate 32bit and 64bit installers
     --win                                 generate Windows installer

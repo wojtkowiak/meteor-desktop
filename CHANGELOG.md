@@ -1,3 +1,9 @@
+## v1.7.0 <sup>28.09.2018</sup>
+* [`electron`](https://github.com/electron/electron) was updated to `2.0.10`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.28.4`
+* `electron-builder-squirrel-windows` was updated to `20.28.3`
+* new functionality/cli setting `--prod-debug` which forces devTools to be included in a production build, if you want this to be preserved after desktopHCP you need to run Meteor server with `METEOR_DESKTOP_PROD_DEBUG=1` 
+
 ## v1.6.0 <sup>25.07.2018</sup>
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.5`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.23.1`

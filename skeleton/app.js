@@ -84,7 +84,7 @@ export default class App {
         this.localServer = null;
         this.currentPort = null;
 
-        if (this.isProduction()) {
+        if (this.isProduction() && !this.settings.prodDebug) {
             // In case anything depends on this...
             process.env.NODE_ENV = 'production';
         } else {

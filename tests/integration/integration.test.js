@@ -223,6 +223,39 @@ describe('desktop', () => {
             expect(result.value).to.equal(1);
         }).timeout(10 * 60000);
 
+        it('should build installer', async () => {
+            MeteorDesktop = meteorDesktop(
+                appDir,
+                appDir,
+                {
+                    ddpUrl: 'http://127.0.0.1:3080',
+                    build: true,
+                    output: appDir,
+                    scaffold: true,
+                    skipMobileBuild: true,
+                    forceCordovaBuild: true,
+                    skipRemoveMobilePlatform: true
+                }
+            );
+
+            if (fs.existsSync(path.join(appDir, MeteorDesktop.env.paths.installerDir))) {
+                shell.rm('-rf', MeteorDesktop.env.paths.installerDir);
+            }
+
+            // Build the installer.
+            try {
+                await MeteorDesktop.buildInstaller(true);
+            } catch (e) {
+                throw new Error(e);
+            }
+            // For now we are just making an assumption that it went ok
+            // if it did not throw an error.
+
+            expect(fs.existsSync(
+                path.join(appDir, MeteorDesktop.env.paths.installerDir)
+            )).to.be.true();
+        }).timeout(10 * 60000);
+
         if (process.env.TRAVIS || process.env.APPVEYOR) {
             it('should build with -b', async () => {
                 MeteorDesktop = meteorDesktop(
