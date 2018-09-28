@@ -79,6 +79,7 @@ class MeteorDesktopBundler {
         ];
 
         this.version = null;
+        this.packageJson = null;
         this.requireLocal = null;
         this.cachePath = './.meteor/local/desktop-cache';
         this.desktopPath = './.desktop';
@@ -350,21 +351,38 @@ class MeteorDesktopBundler {
     }
 
     /**
+     * Returns package.json field from meteor-desktop package.
+     * @param {string} field - field name
+     */
+    getPackageJsonField(field) {
+        if (!this.packageJson) {
+            try {
+                this.packageJson = this.requireLocal('meteor-desktop/package.json');
+            } catch (e) {
+                throw new Error('could not load package.json from meteor-desktop, is meteor-desktop' +
+                    ' installed?');
+            }
+        }
+        return this.packageJson[field];
+    }
+
+    /**
+     * Returns meteor-desktop version.
+     */
+    getVersion() {
+        return this.getPackageJsonField('version');
+    }
+
+    /**
      * Tries to find and require all node_modules dependencies.
      * @returns {{}}
      */
     lookForAndRequireDependencies(deps) {
         const dependencies = {};
-        let versions;
 
-        try {
-            // Try to load the dependencies section from meteor-desktop so we will know what are
-            // the correct versions.
-            versions = this.requireLocal('meteor-desktop/package.json').dependencies;
-        } catch (e) {
-            throw new Error('could not load package.json from meteor-desktop, is meteor-desktop' +
-                ' installed?');
-        }
+        // Try to load the dependencies section from meteor-desktop so we will know what are
+        // the correct versions.
+        const versions = this.getPackageJsonField('dependencies');
 
         deps.forEach((dependency) => {
             const dependencyCamelCased = toCamelCase(dependency);
@@ -757,6 +775,12 @@ class MeteorDesktopBundler {
                 this.calculateCompatibilityVersion(
                     dependencies.getDependencies(), desktopPath, inputFile, md5
                 );
+
+            settings.meteorDesktopVersion = this.getVersion();
+
+            if (process.env.METEOR_DESKTOP_PROD_DEBUG) {
+                settings.prodDebug = true;
+            }
 
             fs.writeFileSync(
                 path.join(desktopTmpPath, 'settings.json'), JSON.stringify(settings, null, 4)
