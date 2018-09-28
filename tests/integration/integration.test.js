@@ -248,9 +248,11 @@ describe('desktop', () => {
             } catch (e) {
                 throw new Error(e);
             }
-            // For now we are just making an assumption that it went ok if it did not throw an error.
+            // For now we are just making an assumption that it went ok
+            // if it did not throw an error.
 
-            expect(fs.existsSync(path.join(appDir, MeteorDesktop.env.paths.installerDir))).to.be.true();
+            expect(fs.existsSync(
+                path.join(appDir, MeteorDesktop.env.paths.installerDir))).to.be.true();
         }).timeout(10 * 60000);
 
         if (process.env.TRAVIS || process.env.APPVEYOR) {
