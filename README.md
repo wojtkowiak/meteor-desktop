@@ -238,9 +238,9 @@ field|description
 `desktopHCP`|whether to use `.desktop` hot code push module - [more](#desktophcp---desktop-hot-code-push)
 <sup>`desktopHCPIgnoreCompatibilityVersion`</sup>|ignore the `.desktop` compatibility version and install new versions even if they can be incompatible
 `desktopHCPCompatibilityVersion`|allows to override `.desktop` compatibility version
-`autoUpdateFeedUrl`|url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), [more](#squirrel-autoupdate-support)
-`autoUpdateFeedHeaders`|http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
-`autoUpdateCheckOnStart`|whether to check for updates on app start
+`squirell.autoUpdateFeedUrl`| <sup>DEPRECATED</sup> url passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders), [more](#squirrel-autoupdate-support)
+`squirell.autoUpdateFeedHeaders`| <sup>DEPRECATED</sup> http headers passed to [`autoUpdater.setFeedUrl`](https://github.com/electron/electron/blob/master/docs/api/auto-updater.md#autoupdatersetfeedurlurl-requestheaders)
+`squirell.autoUpdateCheckOnStart`| <sup>DEPRECATED</sup> whether to check for updates on app start
 `rebuildNativeNodeModules`|turn on or off recompiling native modules, [more](#native-modules-support)
 `webAppStartupTimeout`|amount of time after which the downloaded version is considered faulty if Meteor app did not start - [more](#hot-code-push-support)
 `exposeLocalFilesystem`|turns on or off local filesystem exposure over url alias, [more](#accessing-local-filesystem-in-meteor)
