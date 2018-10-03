@@ -11,7 +11,7 @@ import Module from './modules/module';
 import LoggerManager from './loggerManager';
 import DesktopPathResolver from './desktopPathResolver';
 import WindowSettings from './windowSettings';
-import Squirrel from './squirrel';
+import Squirrel from './squirrel'; // DEPRECATED
 
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
@@ -63,6 +63,9 @@ export default class App {
         }
         require('module').globalPaths.push(path.resolve(join(...nodeModulesPath)));
 
+        /**
+         * DEPRECATED
+         */
         if (Squirrel.handleSquirrelEvents(this.desktopPath)) {
             app.quit();
             return;

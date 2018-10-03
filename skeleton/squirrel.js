@@ -120,7 +120,7 @@ export default class Squirrel {
      * @param {App} context - reference to the App
      */
     static setUpAutoUpdater(context) {
-        if (context.settings.autoUpdateFeedUrl && context.settings.autoUpdateFeedUrl.trim() !== '') {
+        if (context.settings.squirell && context.settings.squirell.autoUpdateFeedUrl && context.settings.squirell.autoUpdateFeedUrl.trim() !== '') {
             const version = app.getVersion();
             let platform = '';
             if (context.os.isWindows) {
@@ -129,7 +129,7 @@ export default class Squirrel {
             if (context.os.isOsx) {
                 platform = `${os.platform()}_${os.arch()}`;
             }
-            let feed = context.settings.autoUpdateFeedUrl;
+            let feed = context.settings.squirell.autoUpdateFeedUrl;
             feed = feed.replace(':version', version);
             feed = feed.replace(':platform', platform);
             context.l.info(`seting autoupdate feed to url: ${feed}`);
@@ -162,11 +162,11 @@ export default class Squirrel {
 
             autoUpdater.setFeedURL(
                 feed,
-                context.settings.autoUpdateFeedHeaders ?
-                    context.settings.autoUpdateFeedHeaders : undefined
+                context.settings.squirell.autoUpdateFeedHeaders ?
+                    context.settings.squirell.autoUpdateFeedHeaders : undefined
             );
             // Check for updates unless the developer wants to do it himself.
-            if (!context.settings.autoUpdateCheckOnStart) {
+            if (!context.settings.squirell.autoUpdateCheckOnStart) {
                 autoUpdater.checkForUpdates();
             }
         }
