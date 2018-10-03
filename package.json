@@ -82,10 +82,6 @@
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
     "electron": "2.0.10",
-    "electron-builder": "20.28.4",
-    "app-builder-lib": "20.28.4",
-    "electron-builder-squirrel-windows": "20.28.3",
-    "electron-packager": "12.1.2",
     "install-local": "0.6.0",
     "isbinaryfile": "3.0.3",
     "lodash": "4.17.10",
@@ -97,6 +93,11 @@
     "shelljs": "0.8.2",
     "single-line-log": "1.1.2",
     "terser": "3.8.2"
+  },
+  "peerDependencies": {
+    "electron-packager": "*",
+    "electron-builder": "*",
+    "app-builder-lib": "*"
   },
   "repository": {
     "type": "git",
