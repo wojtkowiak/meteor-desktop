@@ -8,15 +8,16 @@ environment:
   matrix:
     - nodejs_version: "8"
       test: "normal"
+      platform: x64
     - nodejs_version: "8"
       test: "integration"
+      platform: x64
     - nodejs_version: "9"
       test: "integration"
+      platform: x64
     - nodejs_version: "9"
       test: "normal"
-
-platform:
-  - x64
+      platform: x64
 
 cache:
   - node_modules -> appveyor.yml
