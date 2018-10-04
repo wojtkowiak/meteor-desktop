@@ -53,7 +53,9 @@
         ],
         "function-paren-newline": ["error", "consistent"],
         "no-sequences": "off",
+        "global-require": "off",
         "prefer-promise-reject-errors": "off",
+        "import/no-dynamic-require": "off",
         "import/no-extraneous-dependencies": [
             2,
             {
