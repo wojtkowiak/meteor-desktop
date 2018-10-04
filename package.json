@@ -11,7 +11,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
-    "test-integration": "mocha -t 10000 --compilers js:@babel/register \"tests/+(integration)/**/*.test.js\"",
+    "test-integration": "mocha -t 10000 -r reify \"tests/+(integration)/**/*.test.js\"",
     "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:@babel/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
     "lint": "eslint lib plugins scaffold skeleton tests",
     "prepare-integration-tests": "node tests/integration/prepare.js",
@@ -59,7 +59,7 @@
     "nyc": "11.4.1",
     "proxyquire": "1.7.11",
     "queue": "4.0.1",
-    "reify": "0.15.1",
+    "reify": "0.17.3",
     "request": "2.79.0",
     "rewire": "3.0.2",
     "run-sequence": "1.2.2",

@@ -83,17 +83,18 @@ describe('electronApp', () => {
             saveModuleJson(module, moduleJson);
             MeteorDesktop.electronApp.packageJson = {};
             MeteorDesktop.electronApp.updatePackageJsonFields();
+            let err = null;
             try {
                 MeteorDesktop.electronApp.updateDependenciesList();
             } catch (e) {
-                expect(e.message).to.match(match);
+                err = e;
             }
+            expect(err.message).to.match(match);
         }
 
         it('should report error on dependency version range', () => {
-            testUpdateDependenciesError('someModule', 'someDep', '^1.2.0', /version range/);
+            testUpdateDependenciesError('someModule', 'someDep', '^1.2.0', /semver ranges/);
         });
-
         it('should report error on dependency conflict', () => {
             testUpdateDependenciesError(
                 'someModule2', 'dependency', '0.2.0', /found to be conflicting/
