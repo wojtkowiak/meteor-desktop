@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "1.7.0",
+  "version": "2.0.0-rc4",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -81,7 +81,6 @@
     "commander": "2.17.1",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
-    "electron": "2.0.10",
     "install-local": "0.6.0",
     "isbinaryfile": "3.0.3",
     "lodash": "4.17.10",
