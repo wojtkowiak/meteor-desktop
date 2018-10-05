@@ -1,3 +1,28 @@
+## v2.0.0 <sup>02.10.2018</sup>
+
+The main aim of this version is to decouple `electron`, `electron-builder` and `electron-packager` from this package. 
+Until now every `meteor-desktop` release came with specific versions of those pinned to it.
+Now you are free to use any version with your meteor project. Just add them to your `devDependencies`.
+If you will not, `meteor-desktop` adds the recommended versions automatically when needed. 
+
+From now every `meteor-desktop` release will provide a recommended versions numbers of these dependencies.
+By default I will try to make `meteor-desktop` compatible within the compatibility version of the recommended version i.e. if the recommended electron version is `2.0.10` you should still be able to use any `2.x.x` version without problems.
+    
+**Recommended versions:**
+* [`electron`](https://github.com/electron/electron) -> `2.0.10`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) -> `20.28.4`
+     
+
+**BREAKING:**
+* support for Squirrel autoupdate mechanism ended, if you wish to continue with add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move it's settings to `squirrel` section in settings i.e.:
+```
+    "squirrel": {
+        "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
+        "autoUpdateFeedHeaders": {},
+        "autoUpdateCheckOnStart": true
+    },
+``` 
+
 ## v1.7.0 <sup>28.09.2018</sup>
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.10`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.28.4`

@@ -8,7 +8,6 @@ import sinon from 'sinon';
 import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
-import electron from 'electron';
 import { Application } from 'spectron';
 import mockery from 'mockery';
 
@@ -81,6 +80,8 @@ async function waitForApp(app) {
     return { app, window };
 }
 
+process.env.PLUGIN_VERSION = '1.7.0';
+
 describe('desktop', () => {
     let MeteorDesktop;
 
@@ -134,7 +135,7 @@ describe('desktop', () => {
         async function runIt() {
             // Run it.
             app = new Application({
-                path: electron,
+                path: require(path.join(appDir, 'node_modules', 'electron')),
                 args: [path.join(appDir, '.meteor', 'desktop-build')],
                 requireName: 'electronRequire',
                 startTimeout: 60000,

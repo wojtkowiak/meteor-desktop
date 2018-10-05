@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -11,7 +11,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test nyc mocha -t 10000 -r ./tests/helpers/clear.js \"tests/+(unit|functional)/**/*.test.js\"",
-    "test-integration": "mocha -t 10000 --compilers js:@babel/register \"tests/+(integration)/**/*.test.js\"",
+    "test-integration": "mocha -t 10000 -r reify \"tests/+(integration)/**/*.test.js\"",
     "test-watch": "mocha -r ./tests/helpers/clear.js --compilers js:@babel/register \"tests/+(unit|functional)/**/*.test.js\" --watch",
     "lint": "eslint lib plugins scaffold skeleton tests",
     "prepare-integration-tests": "node tests/integration/prepare.js",
@@ -39,7 +39,7 @@
     "chai": "3.5.0",
     "chai-as-promised": "6.0.0",
     "codecov": "1.0.1",
-    "connect": "3.6.5",
+    "connect": "3.6.6",
     "connect-modrewrite": "0.9.0",
     "coveralls": "2.11.16",
     "cross-env": "3.1.4",
@@ -59,18 +59,18 @@
     "nyc": "11.4.1",
     "proxyquire": "1.7.11",
     "queue": "4.0.1",
-    "reify": "0.15.1",
+    "reify": "0.17.3",
     "request": "2.79.0",
     "rewire": "3.0.2",
     "run-sequence": "1.2.2",
-    "send": "0.16.1",
-    "serve-static": "1.11.1",
+    "send": "0.16.2",
+    "serve-static": "1.13.2",
     "server-destroy": "1.0.1",
-    "sha1-file": "1.0.0",
+    "sha1-file": "1.0.1",
     "sinon": "2.3.1",
     "sinon-chai": "2.10.0",
     "spectron": "4.0.0",
-    "watch": "1.0.1"
+    "watch": "1.0.2"
   },
   "dependencies": {
     "@babel/core": "7.0.0-beta.40",
@@ -81,11 +81,6 @@
     "commander": "2.17.1",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
-    "electron": "2.0.10",
-    "electron-builder": "20.28.4",
-    "app-builder-lib": "20.28.4",
-    "electron-builder-squirrel-windows": "20.28.3",
-    "electron-packager": "12.1.2",
     "install-local": "0.6.0",
     "isbinaryfile": "3.0.3",
     "lodash": "4.17.10",
@@ -97,6 +92,11 @@
     "shelljs": "0.8.2",
     "single-line-log": "1.1.2",
     "terser": "3.8.2"
+  },
+  "peerDependencies": {
+    "electron-packager": "*",
+    "electron-builder": "*",
+    "app-builder-lib": "*"
   },
   "repository": {
     "type": "git",

@@ -6,9 +6,11 @@
     "devtron": true,
     "desktopHCP": true,
     "desktopHCPIgnoreCompatibilityVersion": false,
-    "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
-    "autoUpdateFeedHeaders": {},
-    "autoUpdateCheckOnStart": true,
+    "squirrel": {
+        "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
+        "autoUpdateFeedHeaders": {},
+        "autoUpdateCheckOnStart": false
+    },
     "webAppStartupTimeout": 60000,
     "exposeLocalFilesystem": false,
     "window": {

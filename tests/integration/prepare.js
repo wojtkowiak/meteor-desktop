@@ -21,6 +21,11 @@ if (!fs.existsSync(testsTmpPath) || !fs.existsSync(path.join(appDir, 'package.js
     shell.exec(`meteor create test-desktop --release=METEOR@${meteorVersion}`, { cwd: testsTmpPath });
     const packageJson = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
     packageJson.dependencies['meteor-desktop'] = '../../..';
+    if (process.env.APPVEYOR) {
+        const versions = require('../../lib/defaultDependencies');
+        packageJson.dependencies.electron = versions.electron;
+        packageJson.dependencies['electron-builder'] = versions['electron-builder'];
+    }
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 } else {
     const currentVersion = fs.readFileSync(path.join(appDir, '.meteor', 'release'), 'utf-8').split('@')[1].replace(/[\r\n]/gm, '');

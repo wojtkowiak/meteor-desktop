@@ -8,15 +8,16 @@ environment:
   matrix:
     - nodejs_version: "8"
       test: "normal"
+      platform: x64
     - nodejs_version: "8"
       test: "integration"
+      platform: x64
     - nodejs_version: "9"
       test: "integration"
+      platform: x64
     - nodejs_version: "9"
       test: "normal"
-
-platform:
-  - x64
+      platform: x64
 
 cache:
   - node_modules -> appveyor.yml
@@ -29,7 +30,7 @@ cache:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install -g npm@5
+  - npm install -g npm@6
   - npm prune
   - npm install
   - ps: >-
