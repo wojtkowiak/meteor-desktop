@@ -14,14 +14,16 @@ By default I will try to make `meteor-desktop` compatible within the compatibili
      
 
 **BREAKING:**
-* support for Squirrel autoupdate mechanism ended, if you wish to continue with add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move it's settings to `squirrel` section in settings i.e.:
-```
-    "squirrel": {
-        "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
-        "autoUpdateFeedHeaders": {},
-        "autoUpdateCheckOnStart": true
-    },
-``` 
+* support for Squirrel autoupdate mechanism ended, if you wish to continue with it, add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move it's settings to `squirrel` section in settings i.e.:
+    ```
+        "squirrel": {
+            "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
+            "autoUpdateFeedHeaders": {},
+            "autoUpdateCheckOnStart": true
+        },
+    ``` 
+
+    All builtin support will be definitely removed in January 2019.
 
 ## v1.7.0 <sup>28.09.2018</sup>
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.10`
