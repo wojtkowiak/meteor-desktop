@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "2.0.0-rc4",
+  "version": "1.7.0",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -39,7 +39,7 @@
     "chai": "3.5.0",
     "chai-as-promised": "6.0.0",
     "codecov": "1.0.1",
-    "connect": "3.6.5",
+    "connect": "3.6.6",
     "connect-modrewrite": "0.9.0",
     "coveralls": "2.11.16",
     "cross-env": "3.1.4",
@@ -63,14 +63,14 @@
     "request": "2.79.0",
     "rewire": "3.0.2",
     "run-sequence": "1.2.2",
-    "send": "0.16.1",
-    "serve-static": "1.11.1",
+    "send": "0.16.2",
+    "serve-static": "1.13.2",
     "server-destroy": "1.0.1",
-    "sha1-file": "1.0.0",
+    "sha1-file": "1.0.1",
     "sinon": "2.3.1",
     "sinon-chai": "2.10.0",
     "spectron": "4.0.0",
-    "watch": "1.0.1"
+    "watch": "1.0.2"
   },
   "dependencies": {
     "@babel/core": "7.0.0-beta.40",
