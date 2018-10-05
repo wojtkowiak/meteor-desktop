@@ -6,7 +6,7 @@
     "devtron": true,
     "desktopHCP": true,
     "desktopHCPIgnoreCompatibilityVersion": false,
-    "squirell": {
+    "squirrel": {
         "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
         "autoUpdateFeedHeaders": {},
         "autoUpdateCheckOnStart": false

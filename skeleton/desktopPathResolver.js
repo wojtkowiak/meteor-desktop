@@ -41,7 +41,7 @@ export default class DesktopPathResolver {
 
     /**
      * Decides where the current desktop.asar lies. Takes into account desktopHCP.
-     * Also supports falling back to last known good version Meteor mechanism.
+     * Also supports falling back to last known good version from Meteor mechanism.
      *
      * @param {string} userDataDir - user data path
      * @param {Log}    log         - App's logger instance
