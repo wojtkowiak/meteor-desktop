@@ -6,9 +6,9 @@ os:
 
 env:
  - TEST=normal NODE_VERSION=8
- - TEST=normal NODE_VERSION=9
+ - TEST=normal NODE_VERSION=10
  - TEST=integration NODE_VERSION=8
- - TEST=integration NODE_VERSION=9
+ - TEST=integration NODE_VERSION=10
 
 before_install:
     - nvm install $NODE_VERSION
