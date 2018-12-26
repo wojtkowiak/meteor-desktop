@@ -342,7 +342,7 @@ export default class LocalServer {
             }
 
             if (self.settings.allowOriginLocalServer) {
-                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader('Access-Control-Allow-Origin', '*');
             }
 
             const bareUrl = parsedUrl.pathname.substr(urlAlias.length);
