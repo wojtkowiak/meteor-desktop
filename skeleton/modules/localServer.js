@@ -341,7 +341,7 @@ export default class LocalServer {
                 return next();
             }
 
-            if (self.settings.allowOrigin) {
+            if (self.settings.allowOriginLocalServer) {
                 res.setHeader("Access-Control-Allow-Origin", "*");
             }
 

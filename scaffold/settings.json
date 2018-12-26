@@ -13,7 +13,7 @@
     },
     "webAppStartupTimeout": 60000,
     "exposeLocalFilesystem": false,
-    "allowOrigin": false,
+    "allowOriginLocalServer": false,
     "window": {
         "icon": "@assets/meteor.png",
         "_windows": {

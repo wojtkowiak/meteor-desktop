@@ -370,7 +370,7 @@ export default class App {
             settings = this.prepareAutoupdateSettings();
         }
         if (internal && moduleName === 'localServer') {
-            settings = { localFilesystem: this.settings.exposeLocalFilesystem, allowOrigin: this.settings.allowOrigin || false };
+            settings = { localFilesystem: this.settings.exposeLocalFilesystem, allowOriginLocalServer: this.settings.allowOriginLocalServer || false };
         }
 
         this.modules[moduleName] = new AppModule({
