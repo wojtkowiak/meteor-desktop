@@ -6,6 +6,7 @@ import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
 import shell from 'shelljs';
+import semver from 'semver';
 import assignIn from 'lodash/assignIn';
 import Module from './modules/module';
 import LoggerManager from './loggerManager';
@@ -16,7 +17,14 @@ import Squirrel from './squirrel'; // DEPRECATED
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
+// Fallback for Electron version lower than 5 which don't support registerSchemesAsPrivileged
+if (semver.lt(process.versions.electron, '5.0.0-beta.0')) {
+    electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
+} else {
+    electron.protocol.registerSchemesAsPrivileged([
+        { scheme: 'meteor', privileges: { standard: true, secure: true } }
+    ]);
+}
 
 /**
  * This is the main app which is a skeleton for the whole integration.
