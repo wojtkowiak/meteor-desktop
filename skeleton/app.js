@@ -17,15 +17,6 @@ import Squirrel from './squirrel'; // DEPRECATED
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-// Fallback for Electron version lower than 5 which don't support registerSchemesAsPrivileged
-if (semver.lt(process.versions.electron, '5.0.0-beta.0')) {
-    electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
-} else {
-    electron.protocol.registerSchemesAsPrivileged([
-        { scheme: 'meteor', privileges: { standard: true, secure: true } }
-    ]);
-}
-
 /**
  * This is the main app which is a skeleton for the whole integration.
  * Here all the plugins/modules are loaded, local server is spawned and autoupdate is initialized.
@@ -35,6 +26,16 @@ export default class App {
     constructor() {
         this.startup = true;
         console.time('startup took');
+
+        // Fallback for Electron version lower than 5 which don't support registerSchemesAsPrivileged
+        if (semver.lt(process.versions.electron, '5.0.0-beta.0')) {
+            electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
+        } else {
+            electron.protocol.registerSchemesAsPrivileged([
+                { scheme: 'meteor', privileges: { standard: true, secure: true } }
+            ]);
+        }
+
         // Until user defined handling will be loaded it is good to register something
         // temporarily.
         this.catchUncaughtExceptions();
