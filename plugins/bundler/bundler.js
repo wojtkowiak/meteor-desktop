@@ -813,7 +813,7 @@ class MeteorDesktopBundler {
             if (babelPresetEnv.default) {
                 babelPresetEnv = babelPresetEnv.default;
             }
-            const preset = babelPresetEnv(undefined, { targets: { node: '8' } });
+            const preset = babelPresetEnv({ assertVersion: () => {} }, { targets: { node: '8' } });
 
             this.stampPerformance('babel/uglify');
             const promises = [];

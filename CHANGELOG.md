@@ -1,7 +1,10 @@
 ## v2.1.0 <sup>xx.xx.2019</sup>
+
 * Update some dependencies and fixes some vulnerabilities
 * Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))
 * Allow config header Access-Control-Allow-Origin on LocalServer module (by [`cbh6`](https://github.com/cbh6) in [`#216`](https://github.com/wojtkowiak/meteor-desktop/pull/216))
+* Fix mas build (by [`wojtkowiak`](https://github.com/wojtkowiak)) in [`#214`](https://github.com/wojtkowiak/meteor-desktop/pull/214))
+* Update default electron version to latest (5.0.7)
 
 ## v2.0.0 <sup>02.10.2018</sup>
 
