@@ -16,7 +16,9 @@ import Squirrel from './squirrel'; // DEPRECATED
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
 
-electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
+electron.protocol.registerSchemesAsPrivileged([
+    { scheme: 'meteor', privileges: { standard: true, secure: true } }
+]);
 
 /**
  * This is the main app which is a skeleton for the whole integration.
