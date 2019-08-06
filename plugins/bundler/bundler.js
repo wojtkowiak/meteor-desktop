@@ -291,7 +291,7 @@ class MeteorDesktopBundler {
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
             `${dependency}:${dependencies[dependency]}`);
-        const mainCompatibilityVersion = this.requireLocal('meteor-desktop/package.json')
+        const mainCompatibilityVersion = this.requireLocal('@sharekey/meteor-desktop/package.json')
             .version
             .split('.');
         const desktopCompatibilityVersion = settings.version.split('.')[0];
@@ -306,7 +306,7 @@ class MeteorDesktopBundler {
     }
 
     /**
-     * Tries to require a dependency from either apps node_module or meteor-desktop/node_modules.
+     * Tries to require a dependency from either apps node_module or @sharekey/meteor-desktop/node_modules.
      * Also verifies if the version is correct.
      *
      * @param {string} dependency
@@ -330,9 +330,9 @@ class MeteorDesktopBundler {
         }
 
         try {
-            // Look for the dependency in meteor-desktop/node_modules.
+            // Look for the dependency in @sharekey/meteor-desktop/node_modules.
             // No need to check the version, npm ensures that.
-            meteorDesktopScope = this.requireLocal(`meteor-desktop/node_modules/${dependency}`);
+            meteorDesktopScope = this.requireLocal(`@sharekey/meteor-desktop/node_modules/${dependency}`);
             if (process.env.METEOR_DESKTOP_DEBUG) {
                 console.log(`found ${dependency} in meteor-desktop scope`);
             }
@@ -357,7 +357,7 @@ class MeteorDesktopBundler {
     getPackageJsonField(field) {
         if (!this.packageJson) {
             try {
-                this.packageJson = this.requireLocal('meteor-desktop/package.json');
+                this.packageJson = this.requireLocal('@sharekey/meteor-desktop/package.json');
             } catch (e) {
                 throw new Error('could not load package.json from meteor-desktop, is meteor-desktop' +
                     ' installed?');
@@ -575,10 +575,10 @@ class MeteorDesktopBundler {
                     cacache
                 } = deps);
 
-                DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
-                this.utils = requireLocal('meteor-desktop/dist/utils');
+                DependenciesManager = requireLocal('@sharekey/meteor-desktop/dist/dependenciesManager').default;
+                this.utils = requireLocal('@sharekey/meteor-desktop/dist/utils');
                 ElectronAppScaffold =
-                    requireLocal('meteor-desktop/dist/electronAppScaffold').default;
+                    requireLocal('@sharekey/meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
                 // Look at the declaration of StringPrototypeToOriginal for explanation.
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line

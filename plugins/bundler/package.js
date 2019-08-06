@@ -1,9 +1,9 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
-    name: 'omega:meteor-desktop-bundler',
-    version: '2.0.0',
+    name: 'skadmin:meteor-desktop-bundler',
+    version: '2.0.3',
     summary: 'Bundles .desktop dir into desktop.asar.',
-    git: 'https://github.com/wojtkowiak/meteor-desktop',
+    git: 'https://github.com/sharekey/meteor-desktop',
     documentation: 'README.md'
 });
 
@@ -15,7 +15,7 @@ Package.registerBuildPlugin({
 });
 
 Package.onUse(function onUse(api) {
-    api.versionsFrom('1.3.3');
+    api.versionsFrom('1.8.1');
     api.use('isobuild:compiler-plugin@1.0.0');
     api.addFiles([
         'version._desktop_.js'
