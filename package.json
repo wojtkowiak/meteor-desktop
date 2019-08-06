@@ -1,6 +1,6 @@
 {
   "name": "@sharekey/meteor-desktop",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -21,7 +21,7 @@
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
     "postinstall": "node dist/scripts/addToScripts || echo",
-    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.5.4.2) && cd ../watcher && (meteor publish --release=METEOR@1.5.4.2)",
+    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.8.1) && cd ../watcher && (meteor publish --release=METEOR@1.8.1)",
     "prepublish": "npm run build || echo",
     "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
@@ -94,9 +94,9 @@
     "terser": "3.8.2"
   },
   "peerDependencies": {
-    "electron-packager": "*",
+    "app-builder-lib": "*",
     "electron-builder": "*",
-    "app-builder-lib": "*"
+    "electron-packager": "*"
   },
   "repository": {
     "type": "git",
