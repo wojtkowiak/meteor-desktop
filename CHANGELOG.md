@@ -244,7 +244,7 @@ strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103)
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.2`
 
 #### v0.5.3 <sup>17.02.2017</sup>
-- `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
+- `skadmin:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
 true`)   
 - `METEOR_DESKTOP_DEBUG` env var introduced (currently only prints additional info for `bundler` 
 plugin) 

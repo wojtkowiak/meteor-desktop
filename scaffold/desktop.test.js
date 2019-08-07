@@ -11,7 +11,7 @@ import { Application } from 'spectron';
  * This is an example of functional test for your desktop app.
  * Remember that you need to rebuild your desktop app if you made changes in .desktop. You can
  * do that with `npm run desktop -- build`.
- * There is a plan for using desktop.asar built from omega:meteor-desktop-bundler so that you could
+ * There is a plan for using desktop.asar built from skadmin:meteor-desktop-bundler so that you could
  * avoid manual rebuild.
  */
 
