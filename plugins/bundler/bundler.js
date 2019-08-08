@@ -814,121 +814,121 @@ class MeteorDesktopBundler {
                 babelPresetEnv = babelPresetEnv.default;
             }
             const preset = babelPresetEnv({ assertVersion: () => { } }, { targets: { node: '12' } });
-            
-            .stampPerformance('babel/uglify');
+
+            this.stampPerformance('babel/uglify');
             const promises = [];
-            ct.keys(fileContents).forEach((file) => {
-                t filePath = path.join(desktopTmpPath, file);
-                    cheKey = `${file}-${hashes[file]}`;
-                        
-                        h(new Promise((resolve, reject) => {
-                        get(this.cachePath, cacheKey)
-                        n((cacheEntry) => {
-                            ebug(`[meteor-desktop] loaded from cache: ${file}`);
-                        let code = cacheEntry.data;
-                        let error;
-                            settings.env === 'prod' && uglifyingEnabled) {
-                            ({ code, error } = terser.minify(code.toString('utf8'), options));
-                            
-                            error) {
-                            reject(error);
-                        } else {
-                            fs.writeFileSync(filePath, code);
-                            resolve();
-                        }
-                        
-                        ch(() => {
-                            ebug(`[meteor-desktop] from disk ${file}`);
-                            t fileContent = fileContents[file];
-                                ;
-                            lCore.transform(
-                            fileContent,
-                                
-                                    ets: [preset]
-                                    
-                                , result) => {
-                                    err) {
-                                    this.watcherEnabled = true;
-                                        ct(err);
-                                    se {
-                                        ({ code } = result);
-                                    cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
-                                        logDebug(`[meteor-desktop] cached ${file}`);
-                                    });
-                                        
-                                            fiedCode;
-                                    let error;
-                                        if (settings.env === 'prod' && uglifyingEnabled) {
-                                        ({ code: uglifiedCode, error } =
-                                            terser.minify(code, options));
-                                    }
-                                        
-                                        error) {
-                                        reject(error);
+            Object.keys(fileContents).forEach((file) => {
+                const filePath = path.join(desktopTmpPath, file);
+                const cacheKey = `${file}-${hashes[file]}`;
+
+                promises.push(new Promise((resolve, reject) => {
+                    cacache.get(this.cachePath, cacheKey)
+                        .then((cacheEntry) => {
+                            logDebug(`[meteor-desktop] loaded from cache: ${file}`);
+                            let code = cacheEntry.data;
+                            let error;
+                            if (settings.env === 'prod' && uglifyingEnabled) {
+                                ({ code, error } = terser.minify(code.toString('utf8'), options));
+                            }
+                            if (error) {
+                                reject(error);
+                            } else {
+                                fs.writeFileSync(filePath, code);
+                                resolve();
+                            }
+                        })
+                        .catch(() => {
+                            logDebug(`[meteor-desktop] from disk ${file}`);
+                            const fileContent = fileContents[file];
+                            let code;
+                            babelCore.transform(
+                                fileContent,
+                                {
+                                    presets: [preset]
+                                },
+                                (err, result) => {
+                                    if (err) {
+                                        this.watcherEnabled = true;
+                                        reject(err);
                                     } else {
-                                        fs.writeFileSync(filePath, uglifiedCode);
-                                        resolve();
+                                        ({ code } = result);
+                                        cacache.put(this.cachePath, `${file}-${hashes[file]}`, code).then(() => {
+                                            logDebug(`[meteor-desktop] cached ${file}`);
+                                        });
+
+                                        let uglifiedCode;
+                                        let error;
+                                        if (settings.env === 'prod' && uglifyingEnabled) {
+                                            ({ code: uglifiedCode, error } =
+                                                terser.minify(code, options));
+                                        }
+
+                                        if (error) {
+                                            reject(error);
+                                        } else {
+                                            fs.writeFileSync(filePath, uglifiedCode);
+                                            resolve();
+                                        }
                                     }
                                 }
-                            }
                             );
-                    });
-            }));
-        });
-
-        const all = Future.fromPromise(Promise.all(promises));
-            all.wait();
-        this.stampPerformance('babel/uglify');
-        
-        this.stampPerformance('asar');
-        
-            t future = new Future();
-            t resolve = future.resolver();
-            t asarPath = path.join(desktopTmpAsarPath, 'desktop.asar');
-                atePackage(
-            desktopTmpPath,
-            asarPath,
-            () => {
-                resolve();
-                }
-        );
-            future.wait();
-        this.stampPerformance('asar');
-            
-            t contents = fs.readFileSync(asarPath);
-                
-                    eCache(desktopAsar, stats, desktopSettings) {
-                        grity;
-                        romise((saveCacheResolve, saveCacheReject) => {
-                    che.put(self.cachePath, 'lastAsar', desktopAsar)
-                    .then((integrity) => {
-                        asarIntegrity = integrity;
-                        return cacache.put(self.cachePath, 'last', JSON.stringify({ stats, asarIntegrity }));
-                        
-                    .then(() => cacache.put(
-                        self.cachePath,
-                        'lastSettings',
-                        JSON.stringify({ settings: desktopSettings, asarIntegrity })
-                    ))
-                        .then(finalIntegrity => saveCacheResolve(finalIntegrity))
-                    .catch(saveCacheReject);
+                        });
+                }));
             });
-                
-                
-        if (settings.env !== 'prod') {
-                saveCache(contents, readDirResult.stats, settings)
-                .then(integrity => logDebug('[meteor-desktop] cache saved:', integrity))
-                .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
+
+            const all = Future.fromPromise(Promise.all(promises));
+            all.wait();
+            this.stampPerformance('babel/uglify');
+
+            this.stampPerformance('asar');
+
+            const future = new Future();
+            const resolve = future.resolver();
+            const asarPath = path.join(desktopTmpAsarPath, 'desktop.asar');
+            asar.createPackage(
+                desktopTmpPath,
+                asarPath,
+                () => {
+                    resolve();
+                }
+            );
+            future.wait();
+            this.stampPerformance('asar');
+
+            const contents = fs.readFileSync(asarPath);
+
+            function saveCache(desktopAsar, stats, desktopSettings) {
+                let asarIntegrity;
+                return new Promise((saveCacheResolve, saveCacheReject) => {
+                    cacache.put(self.cachePath, 'lastAsar', desktopAsar)
+                        .then((integrity) => {
+                            asarIntegrity = integrity;
+                            return cacache.put(self.cachePath, 'last', JSON.stringify({ stats, asarIntegrity }));
+                        })
+                        .then(() => cacache.put(
+                            self.cachePath,
+                            'lastSettings',
+                            JSON.stringify({ settings: desktopSettings, asarIntegrity })
+                        ))
+                        .then(finalIntegrity => saveCacheResolve(finalIntegrity))
+                        .catch(saveCacheReject);
+                });
             }
-        
-            iles(contents, settings);
-            ljs.rm(asarPath);
-            
-        if (!process.env.METEOR_DESKTOP_DEBUG) {
+
+            if (settings.env !== 'prod') {
+                saveCache(contents, readDirResult.stats, settings)
+                    .then(integrity => logDebug('[meteor-desktop] cache saved:', integrity))
+                    .catch(e => console.error('[meteor-desktop]: saving cache failed:', e));
+            }
+
+            addFiles(contents, settings);
+            shelljs.rm(asarPath);
+
+            if (!process.env.METEOR_DESKTOP_DEBUG) {
                 this.stampPerformance('remove tmp');
-            shelljs.rm('-rf', desktopTmpPath);
-            this.stampPerformance('remove tmp');
-        }
+                shelljs.rm('-rf', desktopTmpPath);
+                this.stampPerformance('remove tmp');
+            }
 
             endProcess();
         });
