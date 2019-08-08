@@ -36,7 +36,7 @@ install:
   - ps: >-
       if ($env:test -eq "integration") {
         if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -eq $null) {
-          choco install meteor --params "'/RELEASE:1.5.4.1'"
+          choco install meteor --params "'/RELEASE:1.8.1'"
         }
       }
   - ps: refreshenv
