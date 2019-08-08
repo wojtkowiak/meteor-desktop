@@ -6,16 +6,16 @@ skip_tags: true
 
 environment:
   matrix:
-    - nodejs_version: "8"
+    - nodejs_version: "10"
       test: "normal"
       platform: x64
-    - nodejs_version: "8"
+    - nodejs_version: "10"
       test: "integration"
       platform: x64
-    - nodejs_version: "9"
+    - nodejs_version: "12"
       test: "integration"
       platform: x64
-    - nodejs_version: "9"
+    - nodejs_version: "12"
       test: "normal"
       platform: x64
 
