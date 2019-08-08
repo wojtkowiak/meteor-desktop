@@ -11,3 +11,8 @@ coverage
 *.lcov
 version
 port.cfg
+
+.reify-cache
+tests/.__tmp/autoupdate/Downloading
+tests/.__tmp/autoupdate/autoupdate.json
+tests/.__tmp/meteorProject

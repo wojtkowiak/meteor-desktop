@@ -1,17 +1,25 @@
+## v2.1.0 <sup>xx.xx.2019</sup>
+
+* Update some dependencies and fixes some vulnerabilities
+* Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))
+* Allow config header Access-Control-Allow-Origin on LocalServer module (by [`cbh6`](https://github.com/cbh6) in [`#216`](https://github.com/wojtkowiak/meteor-desktop/pull/216))
+* Fix mas build (by [`wojtkowiak`](https://github.com/wojtkowiak)) in [`#214`](https://github.com/wojtkowiak/meteor-desktop/pull/214))
+* Update default electron version to latest (5.0.7)
+
 ## v2.0.0 <sup>02.10.2018</sup>
 
-The main aim of this version is to decouple `electron`, `electron-builder` and `electron-packager` from this package. 
+The main aim of this version is to decouple `electron`, `electron-builder` and `electron-packager` from this package.
 Until now every `meteor-desktop` release came with specific versions of those pinned to it.
 Now you are free to use any version with your meteor project. Just add them to your `devDependencies`.
-If you will not, `meteor-desktop` adds the recommended versions automatically when needed. 
+If you will not, `meteor-desktop` adds the recommended versions automatically when needed.
 
 From now every `meteor-desktop` release will provide a recommended versions numbers of these dependencies.
 By default I will try to make `meteor-desktop` compatible within the compatibility version of the recommended version i.e. if the recommended electron version is `2.0.10` you should still be able to use any `2.x.x` version without problems.
-    
+
 **Recommended versions:**
 * [`electron`](https://github.com/electron/electron) -> `2.0.10`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) -> `20.28.4`
-     
+
 
 **BREAKING:**
 * support for Squirrel autoupdate mechanism ended, if you wish to continue with it, add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move it's settings to `squirrel` section in settings i.e.:
@@ -21,7 +29,7 @@ By default I will try to make `meteor-desktop` compatible within the compatibili
             "autoUpdateFeedHeaders": {},
             "autoUpdateCheckOnStart": true
         },
-    ``` 
+    ```
 
     All builtin support will be definitely removed in January 2019.
 
@@ -29,14 +37,14 @@ By default I will try to make `meteor-desktop` compatible within the compatibili
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.10`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.28.4`
 * `electron-builder-squirrel-windows` was updated to `20.28.3`
-* new functionality/cli setting `--prod-debug` which forces devTools to be included in a production build, if you want this to be preserved after desktopHCP you need to run Meteor server with `METEOR_DESKTOP_PROD_DEBUG=1` 
+* new functionality/cli setting `--prod-debug` which forces devTools to be included in a production build, if you want this to be preserved after desktopHCP you need to run Meteor server with `METEOR_DESKTOP_PROD_DEBUG=1`
 
 ## v1.6.0 <sup>25.07.2018</sup>
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.5`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.23.1`
 * `electron-builder-squirrel-windows` was updated to `20.23.0`
 * new functionality and new setting `exposedModules` which allows to expose any Electron renderer module i.e. `webFrame` which when defined in the settings will be available as `Desktop.electron.webFrame`
-* fixed HCP switching to new version only after app restart 
+* fixed HCP switching to new version only after app restart
 
 ## v1.5.0 <sup>11.07.2018</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.20.0`
@@ -58,7 +66,7 @@ Example - `npm run desktop -- build-installer -b` gets terminated because `meteo
 npm run desktop -- build-installer -b -i "Node#moveTo"
 ```
 
-You do not have to put the whole line, just any part of it that should only be found in that message. 
+You do not have to put the whole line, just any part of it that should only be found in that message.
 
 ## v1.1.0 <sup>23.05.2018</sup>
 * `setDefaultFetchTimeout` and `call` methods added to both `Module` and `Desktop`
@@ -67,11 +75,11 @@ You do not have to put the whole line, just any part of it that should only be f
 * `electron-builder-squirrel-windows` was updated to `20.14.6`
 
 **FIXES**
-* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure origin 
+* fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure origin
 * `bundler` caching was disabled for production builds as you might have accidentally get a development `desktop.asar` build into your production build
 
 ## v1.0.0 <sup>21.05.2018</sup>
-Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve 
+Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve
 the app on constant `meteor://desktop` url instead of setting a http server which serves over `http://127.0.0.1:<random_port_on_every_start>`.
 
 This finally solves the longstanding problems with `IndexedDB` and `localstorage` not being persistent.
@@ -86,7 +94,7 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * `MD_LOG_LEVEL` is now respected
 * `-d`/`--debug` option added to run electron with `--debug=5858` switch
 * `beforeLocalServerInit` event added to the `eventsBus`
-* `METEOR_DESKTOP_DEBUG` now produces a lot more info from bundler plugin while building meteor project 
+* `METEOR_DESKTOP_DEBUG` now produces a lot more info from bundler plugin while building meteor project
 * default installer in the scaffold for Windows is now set to `nsis`
 
 **DEPRECATIONS:**
@@ -107,7 +115,7 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * fix `ReferenceError: context is not defined` in `build-installer` on `OSX`
 
 ## v0.18.0 <sup>08.05.2018</sup>
-* `moduleLoadFailed` event added 
+* `moduleLoadFailed` event added
 * fixed desktop HCP app restart, this is now triggered with `app.quit` instead of `app.exit` which now fires properly all callbacks
 * [`electron`](https://github.com/electron/electron) was updated to `1.8.6`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.11.1`   
@@ -116,7 +124,7 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 
 #### v0.17.2 <sup>30.04.2018</sup>
 * fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/165) `build-installer` failing on windows
-   
+
 ## v0.17.0 <sup>26.04.2018</sup>
 <sup>republished as `v0.17.1`</sup>
 * upgraded to `babel@7`, which is now used to compile both the meteor-desktop itself and the produced app
@@ -143,7 +151,7 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * fixed compatibility version being calculated differently in bundler plugin and `package`/`build-installer` flow
 
 #### v0.15.1 <sup>10.04.2018</sup>
-* fixed `extract` functionality for Mac (the `node_modules/.bin` entries are now also automatically extracted when their package is extracted) 
+* fixed `extract` functionality for Mac (the `node_modules/.bin` entries are now also automatically extracted when their package is extracted)
 
 ## v0.15.0 <sup>08.04.2018</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.8.2`   
@@ -152,13 +160,13 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * added automatic detection of modules that should not be packed into asar, additionally you can manually specify those via `extract` settings
 
 #### v0.14.4 <sup>20.03.2018</sup>
-* additional fixes to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration 
+* additional fixes to [`electron-builder`](https://github.com/electron-userland/electron-builder) integration
 
 #### v0.14.2 <sup>19.03.2018</sup>
 <sup>republished as `v0.14.3`</sup>
-* `.desktop` version hash will include a `dev`/`prod` suffix as a quick fix to `meteor` development or production build producing the same version hash 
+* `.desktop` version hash will include a `dev`/`prod` suffix as a quick fix to `meteor` development or production build producing the same version hash
 
-## v0.14.0 <sup>16.03.2018</sup> 
+## v0.14.0 <sup>16.03.2018</sup>
 <sup>republished as `v0.14.1`</sup>
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `20.5.1`   
 * `electron-builder-squirrel-windows` was updated to `20.5.0`
@@ -193,7 +201,7 @@ it's more than sure that you will have to update your [`electron-builder`](https
 - start startup timer on _cold_ start if a new version is used for the first time [meteor#9386](https://github.com/meteor/meteor/issues/9386)
 
 #### v0.11.1 <sup>06.11.2017</sup>
-- republished `0.11.0` with Meteor 1.5 because of [meteor#9308](https://github.com/meteor/meteor/issues/9308) 
+- republished `0.11.0` with Meteor 1.5 because of [meteor#9308](https://github.com/meteor/meteor/issues/9308)
 
 ## v0.11.0 <sup>03.11.2017</sup>
 <sup>republished as 0.11.1</sup>
@@ -206,27 +214,27 @@ it's more than sure that you will have to update your [`electron-builder`](https
 
 #### v0.8.1 <sup>10.08.2017</sup>
 
-* fix for respecting `--ia32` in `run`/`build`/`package` 
+* fix for respecting `--ia32` in `run`/`build`/`package`
 
 ## v0.8.0 <sup>05.07.2017</sup>
 
 - added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g
- for publishing artifacts (thanks to [ramijarrar](https://github.com/ramijarrar), related 
+ for publishing artifacts (thanks to [ramijarrar](https://github.com/ramijarrar), related
  [PR](https://github.com/wojtkowiak/meteor-desktop/pull/112))
 
 #### v0.7.2 <sup>10.06.2017</sup>
 
-* fix for the case when `eTag`s are stripped from the http response when proxying meteor 
-server through proxy [#107](https://github.com/wojtkowiak/meteor-desktop/issues/107) 
-* fix for supporting Meteor 1.5 which actually was failing because of `1.5` being a non semver 
-strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103) 
+* fix for the case when `eTag`s are stripped from the http response when proxying meteor
+server through proxy [#107](https://github.com/wojtkowiak/meteor-desktop/issues/107)
+* fix for supporting Meteor 1.5 which actually was failing because of `1.5` being a non semver
+strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103)
 
 #### v0.7.1 <sup>08.05.2017</sup>
 * fixed bug in `Desktop.fetch` which when called multiple times with the same event, was serving the response only for the first call [#79](https://github.com/wojtkowiak/meteor-desktop/issues/79)   
 
 ## v0.7.0 <sup>04.05.2017</sup>
 - added `--meteor-settings <path>` cmd option to pass `--settings <path>` to meteor when building with `-b`
-* fix to make `-b` not fail because of [meteor#8592](https://github.com/meteor/meteor/issues/8592) 
+* fix to make `-b` not fail because of [meteor#8592](https://github.com/meteor/meteor/issues/8592)
 * documented `beforeReload` event
 
 #### v0.6.2 <sup>12.04.2017</sup>
@@ -244,21 +252,21 @@ strict version [#103](https://github.com/wojtkowiak/meteor-desktop/issues/103)
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.2`
 
 #### v0.5.3 <sup>17.02.2017</sup>
-- `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal = 
+- `omega:meteor-desktop-bundler` now fails when disk operation fails (`shelljs.config.fatal =
 true`)   
-- `METEOR_DESKTOP_DEBUG` env var introduced (currently only prints additional info for `bundler` 
-plugin) 
+- `METEOR_DESKTOP_DEBUG` env var introduced (currently only prints additional info for `bundler`
+plugin)
 
 #### v0.5.1 <sup>15.02.2017</sup>
-- fixed `extracted` directory getting lost when building for platform/arch different from the 
+- fixed `extracted` directory getting lost when building for platform/arch different from the
 host
-- fixed dependency loading for desktopHCP `bundler` plugin 
+- fixed dependency loading for desktopHCP `bundler` plugin
 
 ## v0.5.0 <sup>08.02.2017</sup>
 * `Desktop.fetch` rejects with `timeout` string in case of timeout
 * you can now see internal backlog of this project in Taiga
-[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap 
-will be published in form of epics 
+[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban) - roadmap
+will be published in form of epics
 * [`electron`](https://github.com/electron/electron) was updated to `1.4.15`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `13.0.0`
 * `electron-builder-squirrel-windows` was updated to `13.2.0`
@@ -273,16 +281,16 @@ will be published in form of epics
 * [`electron-packager`](https://github.com/electron-userland/electron-packager) was updated to `8.5.0`
 
 ## v0.3.0 <sup>10.01.2016</sup>
-* `localServer` was rewritten to use `send` instead of `serve-static` 
+* `localServer` was rewritten to use `send` instead of `serve-static`
 [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
-* url aliases for local filesystem and `.desktop/assets` added 
+* url aliases for local filesystem and `.desktop/assets` added
 ([more](#accessing-local-filesystem-in-meteor))
-* building for Windows Store is now possible (thanks to hard work of 
+* building for Windows Store is now possible (thanks to hard work of
 [@develar](https://github.com/develar))
-* default dependencies for `Skeleton App` were updated 
-[[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468), 
+* default dependencies for `Skeleton App` were updated
+[[7d6e00d](https://github.com/wojtkowiak/meteor-desktop/commit/7d6e00d803f472f47d4e1ee38de2cd8240fbc468),
 [1d1075a](https://github.com/wojtkowiak/meteor-desktop/commit/1d1075a1eec288c1372ccd001c197fab29f71980)]
-(this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP 
+(this changes compatibility version, so apps built with <0.3.0 will not receive desktopHCP
 updates)
 * [`electron`](https://github.com/electron/electron) was updated to `1.4.13`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `11.2.0`
@@ -302,18 +310,18 @@ updates)
 - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
 
 #### v0.2.2 <sup>29.11.2016</sup>
-- republished `0.2.1` because of published plugins being in a unknown, erroneous 
+- republished `0.2.1` because of published plugins being in a unknown, erroneous
 state [meteor#8113](https://github.com/meteor/meteor/issues/8113)   
 
 #### v0.2.1 <sup>23.11.2016</sup>
-- fixed `rebuildNativeNodeModules` which stopped working after update of 
+- fixed `rebuildNativeNodeModules` which stopped working after update of
 [`electron-builder`](https://github.com/electron-userland/electron-builder)
 
 ## v0.2.0 <sup>17.10.2016</sup>
-* several types of npm dependencies versions declarations are now supported i.e.: local paths, 
+* several types of npm dependencies versions declarations are now supported i.e.: local paths,
 file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
 * development environment setup script was added
-* specifying target platforms for `build-installer` is now not restricted - 
+* specifying target platforms for `build-installer` is now not restricted -
 check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
 * [`electron`](https://github.com/electron/electron) was updated to `1.4.6`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `8.6.0`
@@ -323,14 +331,14 @@ check [Building installer](#building-installer), fixes [#14](https://github.com/
 * fixed bug in uncaught exception handler in the scaffold - check [here](https://github.com/wojtkowiak/meteor-desktop/commit/1dc8347f18d2ebc1dfb3f875a66e1d5206441af8)
 
 #### v0.1.3 <sup>15.11.2016</sup>
-- added warning for possible console syntax mistake when invoking with command or 
+- added warning for possible console syntax mistake when invoking with command or
 option (missing ` -- ` delimiter)
 
 #### v0.1.2 <sup>13.11.2016</sup>
 - fixed [#10](https://github.com/wojtkowiak/meteor-desktop/issues/10)
 
 #### v0.1.1 <sup>10.11.2016</sup>
-- `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog) 
+- `meteor-desktop-splash-screen` version in the default scaffold updated to [`0.0.31`](https://github.com/wojtkowiak/meteor-desktop-splash-screen#changelog)
 
 ## v0.1.0 <sup>07.10.2016</sup>
 - first public release

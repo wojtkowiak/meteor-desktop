@@ -341,6 +341,10 @@ export default class LocalServer {
                 return next();
             }
 
+            if (self.settings.allowOriginLocalServer) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+            }
+
             const bareUrl = parsedUrl.pathname.substr(urlAlias.length);
 
             let filePath;
