@@ -88,13 +88,14 @@ function createStreamProtocolResponse(filePath, res, beforeFinalize) {
  * for a given path.
  *
  * @param {Object} log - Logger instance
- * @param app
+ * @param {Object} settings
+ * @param {Object} skeletonApp
  *
  * @property {Array} errors
  * @constructor
  */
 export default class LocalServer {
-    constructor({ log, settings = { localFilesystem: false }, skeletonApp }) {
+    constructor({ log, settings = { localFilesystem: false, allowOriginLocalServer: false }, skeletonApp }) {
         this.log = log;
         this.httpServerInstance = null;
         this.server = null;
@@ -318,8 +319,7 @@ export default class LocalServer {
 
             if (fs.existsSync(filePath)) {
                 return local ?
-                    createStreamProtocolResponse(filePath, res, () => {
-                    }) :
+                    createStreamProtocolResponse(filePath, res, () => {}) :
                     send(req, encodeURIComponent(filePath)).pipe(res);
             }
             return next();
@@ -359,8 +359,7 @@ export default class LocalServer {
 
             if (fs.existsSync(filePath)) {
                 return local ?
-                    createStreamProtocolResponse(filePath, res, () => {
-                    }) :
+                    createStreamProtocolResponse(filePath, res, () => {}) :
                     send(req, encodeURIComponent(filePath)).pipe(res);
             }
             return local ? res.setStatusCode(404) : respondWithCode(res, 404, 'File does not exist.');
