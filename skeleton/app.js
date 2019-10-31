@@ -11,7 +11,6 @@ import Module from './modules/module';
 import LoggerManager from './loggerManager';
 import DesktopPathResolver from './desktopPathResolver';
 import WindowSettings from './windowSettings';
-import Squirrel from './squirrel'; // DEPRECATED
 
 const { app, BrowserWindow, dialog } = electron;
 const { join } = path;
@@ -64,14 +63,6 @@ export default class App {
             nodeModulesPath.splice(1, 0, '..');
         }
         require('module').globalPaths.push(path.resolve(join(...nodeModulesPath)));
-
-        /**
-         * DEPRECATED
-         */
-        if (Squirrel.handleSquirrelEvents(this.desktopPath)) {
-            app.quit();
-            return;
-        }
 
         // This is needed for OSX - check Electron docs for more info.
         if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
@@ -467,8 +458,6 @@ export default class App {
      */
     onReady() {
         this.l.info('ready fired');
-
-        Squirrel.setUpAutoUpdater(this);
 
         this.emit('beforePluginsLoad');
 
