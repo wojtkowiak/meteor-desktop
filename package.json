@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -21,7 +21,7 @@
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
     "postinstall": "node dist/scripts/addToScripts || echo",
-    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.5.4.2) && cd ../watcher && (meteor publish --release=METEOR@1.5.4.2)",
+    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.8.1) && cd ../watcher && (meteor publish --release=METEOR@1.8.1)",
     "prepublish": "npm run build || echo",
     "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
@@ -33,15 +33,15 @@
   "author": "Bartosz Wojtkowiak <bartosz@wojtkowiak.it>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.40",
-    "@babel/register": "7.0.0-beta.40",
-    "babel-plugin-istanbul": "4.1.5",
+    "@babel/cli": "7.5.5",
+    "@babel/register": "7.5.5",
+    "babel-plugin-istanbul": "^5.2.0",
     "chai": "3.5.0",
     "chai-as-promised": "6.0.0",
     "codecov": "1.0.1",
     "connect": "3.6.6",
     "connect-modrewrite": "0.9.0",
-    "coveralls": "2.11.16",
+    "coveralls": "3.0.5",
     "cross-env": "3.1.4",
     "dirty-chai": "1.2.2",
     "eslint": "4.19.1",
@@ -51,16 +51,16 @@
     "fs-extra": "4.0.1",
     "fs-plus": "2.9.3",
     "import-fresh": "2.0.0",
-    "jsdoc-to-markdown": "4.0.1",
+    "jsdoc-to-markdown": "5.0.0",
     "mime": "2.0.3",
     "mocha": "2.5.3",
     "mockery": "2.1.0",
     "npm-run-all": "4.0.1",
-    "nyc": "11.4.1",
+    "nyc": "14.1.1",
     "proxyquire": "1.7.11",
     "queue": "4.0.1",
     "reify": "0.17.3",
-    "request": "2.79.0",
+    "request": "2.88.0",
     "rewire": "3.0.2",
     "run-sequence": "1.2.2",
     "send": "0.16.2",
@@ -73,9 +73,9 @@
     "watch": "1.0.2"
   },
   "dependencies": {
-    "@babel/core": "7.0.0-beta.40",
-    "@babel/preset-env": "7.0.0-beta.40",
-    "@babel/runtime": "7.0.0-beta.40",
+    "@babel/core": "7.5.5",
+    "@babel/preset-env": "7.5.5",
+    "@babel/runtime": "7.5.5",
     "asar": "0.14.3",
     "cacache": "10.0.4",
     "commander": "2.17.1",
@@ -83,8 +83,9 @@
     "del": "2.2.2",
     "install-local": "0.6.0",
     "isbinaryfile": "3.0.3",
-    "lodash": "4.17.10",
+    "lodash": "4.17.15",
     "md5": "2.2.1",
+    "mksnapshot": "0.3.5",
     "node-fetch": "2.2.0",
     "regenerator-runtime": "0.12.1",
     "rimraf": "2.6.2",
@@ -94,9 +95,9 @@
     "terser": "3.8.2"
   },
   "peerDependencies": {
-    "electron-packager": "*",
+    "app-builder-lib": "*",
     "electron-builder": "*",
-    "app-builder-lib": "*"
+    "electron-packager": "*"
   },
   "repository": {
     "type": "git",
@@ -110,6 +111,7 @@
   ],
   "nyc": {
     "exclude": [
+      ".reify-cache",
       "dist",
       "node_modules",
       "plugins",

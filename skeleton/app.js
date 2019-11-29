@@ -6,6 +6,7 @@ import { EventEmitter as Events } from 'events';
 import path from 'path';
 import fs from 'fs-plus';
 import shell from 'shelljs';
+import semver from 'semver';
 import assignIn from 'lodash/assignIn';
 import Module from './modules/module';
 import LoggerManager from './loggerManager';
@@ -33,6 +34,16 @@ export default class App {
     constructor() {
         this.startup = true;
         console.time('startup took');
+
+        // Fallback for Electron version lower than 5 which don't support registerSchemesAsPrivileged
+        if (semver.lt(process.versions.electron, '5.0.0-beta.0')) {
+            electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
+        } else {
+            electron.protocol.registerSchemesAsPrivileged([
+                { scheme: 'meteor', privileges: { standard: true, secure: true } }
+            ]);
+        }
+
         // Until user defined handling will be loaded it is good to register something
         // temporarily.
         this.catchUncaughtExceptions();
@@ -376,7 +387,10 @@ export default class App {
             settings = this.prepareAutoupdateSettings();
         }
         if (internal && moduleName === 'localServer') {
-            settings = { localFilesystem: this.settings.exposeLocalFilesystem };
+            settings = {
+                localFilesystem: this.settings.exposeLocalFilesystem,
+                allowOriginLocalServer: this.settings.allowOriginLocalServer || false
+            };
         }
 
         this.modules[moduleName] = new AppModule({
