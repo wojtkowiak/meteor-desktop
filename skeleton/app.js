@@ -633,10 +633,7 @@ export default class App {
             const url = request.url.substr(urlStripLength);
             this.modules.localServer
                 .getStreamProtocolResponse(url)
-                .then(res => {
-                    console.log(url);
-                    return callback(res);
-                })
+                .then(res => callback(res))
                 .catch(e => {
                     callback(this.modules.localServer.getServerErrorResponse());
                     this.log.error(`error while trying to fetch ${url}: ${e.toString()}`);
