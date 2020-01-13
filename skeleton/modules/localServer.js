@@ -52,12 +52,16 @@ function* iterate(array) {
  * @param {string} filePath            - path to the file being sent
  */
 function createReadStream(filePath) {
-    const rv = new PassThrough();
-    if (fs.existsSync(filePath)) {
-        rv.push(fs.readFileSync(filePath, 'utf-8'));
+    if (parseInt(process.versions.electron) >= 7) {
+        const rv = new PassThrough();
+        if (fs.existsSync(filePath)) {
+            rv.push(fs.readFileSync(filePath));
+        }
+        rv.push(null);
+        return rv;
     }
-    rv.push(null);
-    return rv;
+
+    return fs.createReadStream(filePath);
 }
 
 /**
