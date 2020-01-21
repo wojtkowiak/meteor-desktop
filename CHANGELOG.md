@@ -1,4 +1,4 @@
-## v2.1.0 <sup>xx.xx.2019</sup>
+## v2.1.0 <sup>21.01.2020</sup>
 
 * Update some dependencies and fixes some vulnerabilities
 * Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))

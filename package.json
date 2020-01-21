@@ -1,6 +1,6 @@
 {
   "name": "meteor-desktop",
-  "version": "2.1.0",
+  "version": "2.0.0",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -69,7 +69,8 @@
     "sha1-file": "1.0.1",
     "sinon": "2.3.1",
     "sinon-chai": "2.10.0",
-    "spectron": "4.0.0",
+    "spectron": "8.0.0",
+    "temp-dir": "2.0.0",
     "watch": "1.0.2"
   },
   "dependencies": {

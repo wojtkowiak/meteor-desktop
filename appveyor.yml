@@ -12,12 +12,6 @@ environment:
     - nodejs_version: "10"
       test: "integration"
       platform: x64
-    - nodejs_version: "10"
-      test: "integration"
-      platform: x64
-    - nodejs_version: "10"
-      test: "normal"
-      platform: x64
 
 cache:
   - node_modules -> appveyor.yml

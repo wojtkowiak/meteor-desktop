@@ -62,7 +62,7 @@ function finish() {
 var cloneMeteorDesktop = false;
 var forks = false;
 var username = '';
-var projects = [ 'meteor-desktop-test-suite', 'meteor-desktop-splash-screen', 'meteor-desktop-localstorage' ];
+var projects = [ 'meteor-desktop-test-suite', 'meteor-desktop-splash-screen' ];
 
 question('Do you want to use another path (yes/no)? ')
     .then(function(answer) {
@@ -116,7 +116,7 @@ question('Do you want to use another path (yes/no)? ')
             });
         }
         console.log('\nCreating meteor-desktop-test-app');
-        exec('meteor create meteor-desktop-test-app --release=METEOR@1.6');
+        exec('meteor create meteor-desktop-test-app --release=METEOR@1.8');
 
         console.log('Installing deps in meteor-desktop...\n');
         return spawn(npm, ['install'], path.join(resolvedPath, 'meteor-desktop'));
@@ -139,15 +139,6 @@ question('Do you want to use another path (yes/no)? ')
         return spawn(npm, ['install'], path.join(resolvedPath, 'meteor-desktop-splash-screen'));
     })
     .then(function() {
-        console.log('Installing deps in meteor-desktop-localstorage...\n');
-        cd(path.join(resolvedPath, 'meteor-desktop-localstorage'));
-        console.log('Linking...');
-        exec(npm + ' link meteor-desktop-test-suite');
-        exec(npm + ' link');
-        cd(resolvedPath);
-        return spawn(npm, ['install'], path.join(resolvedPath, 'meteor-desktop-localstorage'));
-    })
-    .then(function() {
         console.log('Adding meteor-desktop to test project...\n\n');
         return spawn(npm, ['install', '--save-dev', '../meteor-desktop'], path.join(resolvedPath, 'meteor-desktop-test-app'));
     })
@@ -157,7 +148,7 @@ question('Do you want to use another path (yes/no)? ')
         exec(npm + ' link meteor-desktop-test-suite');
         console.log('Installing cross-env, babel-runtime');
         exec(npm + ' install --save-dev cross-env');
-        exec(npm + ' install --save babel-runtime');
+        exec(npm + ' install --save @babel/runtime');
         cd(resolvedPath);
         var packageJsonPath = path.join(resolvedPath, 'meteor-desktop-test-app', 'package.json');
         var packageJson = JSON.parse(fs.readFileSync(packageJsonPath), 'utf8');
@@ -170,7 +161,7 @@ question('Do you want to use another path (yes/no)? ')
 
         var settingsJsonPath = path.join(resolvedPath, 'meteor-desktop-test-app', '.desktop', 'settings.json');
         var settingsJson = JSON.parse(fs.readFileSync(settingsJsonPath), 'utf8');
-        settingsJson.linkPackages = ['meteor-desktop-splash-screen', 'meteor-desktop-localstorage'];
+        settingsJson.linkPackages = ['meteor-desktop-splash-screen'];
         fs.writeFileSync(settingsJsonPath, JSON.stringify(settingsJson, null, 2));
 
         return spawn(npm, ['run', 'desktop', '--', 'init-tests-support'], path.join(resolvedPath, 'meteor-desktop-test-app'));
@@ -201,4 +192,4 @@ question('Do you want to use another path (yes/no)? ')
     .then(function() {
       finish();
     })
-    .catch(function(e) { console.log(e); e.trace(); });
+    .catch(function(e) { console.log(e); });
