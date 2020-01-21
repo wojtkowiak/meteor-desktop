@@ -640,6 +640,8 @@ it is best to create a clean `Meteor` project, add `meteor-desktop` to dependenc
 
 Built an app using meteor-desktop? File an issue or PR to list it here.
 
+* [Coygo](https://www.coygo.app) - Multi-exchange cryptocurrency and digital asset trading tool
+
 ## FAQ
 
 > How to disable `zip` building when using `build-installer` on OSX.
