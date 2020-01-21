@@ -1,4 +1,4 @@
-## v2.2.2 <sup>21.01.2020</sup>
+## v2.2.3 <sup>21.01.2020</sup>
 
 This a community maintained release:
 
