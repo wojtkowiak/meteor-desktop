@@ -1,4 +1,6 @@
-## v2.1.0 <sup>21.01.2020</sup>
+## v2.2.2 <sup>21.01.2020</sup>
+
+This a community maintained release:
 
 * Update some dependencies and fixes some vulnerabilities
 * Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))
@@ -6,6 +8,10 @@
 * Fix mas build (by [`wojtkowiak`](https://github.com/wojtkowiak)) in [`#214`](https://github.com/wojtkowiak/meteor-desktop/pull/214))
 * Update default electron version to latest (6.0.1)
 * Added support for private npm repository
+
+**Recommended versions:**
+* [`electron`](https://github.com/electron/electron) -> `6.1.7`
+* [`electron-builder`](https://github.com/electron-userland/electron-builder) -> `21.2.0`
 
 ## v2.0.0 <sup>02.10.2018</sup>
 
