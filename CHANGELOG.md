@@ -1,6 +1,6 @@
 ## v2.2.4 <sup>21.01.2020</sup>
 
-This a community maintained release:
+This is a community maintained release:
 
 * Update some dependencies and fixes some vulnerabilities
 * Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))
