@@ -1,4 +1,4 @@
-## v2.2.3 <sup>21.01.2020</sup>
+## v2.2.4 <sup>21.01.2020</sup>
 
 This a community maintained release:
 
@@ -6,6 +6,7 @@ This a community maintained release:
 * Added support for Electron 5 (by [`KoenLav`](https://github.com/KoenLav) in [`#227`](https://github.com/wojtkowiak/meteor-desktop/pull/227))
 * Allow config header Access-Control-Allow-Origin on LocalServer module (by [`cbh6`](https://github.com/cbh6) in [`#216`](https://github.com/wojtkowiak/meteor-desktop/pull/216))
 * Fix mas build (by [`wojtkowiak`](https://github.com/wojtkowiak)) in [`#214`](https://github.com/wojtkowiak/meteor-desktop/pull/214))
+* Fix mac builds (by [`Strangerxxx`](https://github.com/Strangerxxx) in [`#237`](https://github.com/wojtkowiak/meteor-desktop/pull/237))
 * Update default electron version to latest (6.0.1)
 * Added support for private npm repository
 
