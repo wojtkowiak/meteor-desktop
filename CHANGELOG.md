@@ -1,3 +1,7 @@
+## v2.2.5 <sup>24.01.2020</sup>
+
+* Fixed issue with packaging [`#248`](https://github.com/wojtkowiak/meteor-desktop/issues/248)
+
 ## v2.2.4 <sup>21.01.2020</sup>
 
 This is a community maintained release:
