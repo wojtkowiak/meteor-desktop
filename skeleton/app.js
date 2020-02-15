@@ -227,7 +227,6 @@ export default class App {
         }, 500);
     }
 
-
     /**
      * Applies dev, os specific and variables to window settings.
      */
@@ -260,8 +259,9 @@ export default class App {
                         appSettings: this.settings,
                         eventsBus: this.eventsBus,
                         modules: this.modules,
-                        settings: typeof this.settings.plugins[plugin] === 'object' ?
-                            this.settings.plugins[plugin] : {},
+                        settings: typeof this.settings.plugins[plugin] === 'object'
+                            ? this.settings.plugins[plugin]
+                            : {},
                         Module
                     });
                 } catch (e) {
@@ -458,7 +458,6 @@ export default class App {
         return Promise.all(promises);
     }
 
-
     /**
      * Initializes this app.
      * Loads plugins.
@@ -527,8 +526,9 @@ export default class App {
             bundleStorePath: this.userDataDir,
             customHCPUrl: this.settings.customHCPUrl || null,
             initialBundlePath: path.join(__dirname, '..', 'meteor.asar'),
-            webAppStartupTimeout: this.settings.webAppStartupTimeout ?
-                this.settings.webAppStartupTimeout : 20000
+            webAppStartupTimeout: this.settings.webAppStartupTimeout
+                ? this.settings.webAppStartupTimeout
+                : 20000
         };
     }
 
@@ -617,32 +617,49 @@ export default class App {
 
         const urlStripLength = 'meteor://desktop'.length;
 
-        this.webContents.session.protocol
-            .registerStreamProtocol(
-                'meteor',
-                (request, callback) => {
-                    const url = request.url.substr(urlStripLength);
-                    this.modules.localServer.getStreamProtocolResponse(url)
-                        .then(res => callback(res))
-                        .catch((e) => {
-                            callback(this.modules.localServer.getServerErrorResponse());
-                            this.log.error(`error while trying to fetch ${url}: ${e.toString()}`);
-                        });
-                },
-                (e) => {
-                    if (e) {
-                        this.l.error(`error while registering meteor:// protocol: ${e.toString()}`);
-                        this.uncaughtExceptionHandler();
-                        return;
-                    }
-                    this.l.debug('protocol meteor:// registered');
+        const scheme = 'meteor';
+        const handler = (request, callback) => {
+            const url = request.url.substr(urlStripLength);
+            this.modules.localServer
+                .getStreamProtocolResponse(url)
+                .then(res => callback(res))
+                .catch(e => {
+                    callback(this.modules.localServer.getServerErrorResponse());
+                    this.log.error(`error while trying to fetch ${url}: ${e.toString()}`);
+                });
+        };
+        const successCallback = () => {
+            this.l.debug('protocol meteor:// registered');
 
-                    this.l.debug('opening meteor://desktop');
-                    setTimeout(() => {
-                        this.webContents.loadURL('meteor://desktop');
-                    }, 100);
-                }
-            );
+            this.l.debug('opening meteor://desktop');
+            setTimeout(() => {
+                this.webContents.loadURL('meteor://desktop');
+            }, 100);
+        };
+        const failureCallback = error => {
+            this.l.error(`error while registering meteor:// protocol: ${error.toString()}`);
+            this.uncaughtExceptionHandler();
+        };
+        const callback = error => {
+            if (error) {
+                failureCallback(error);
+                return;
+            }
+
+            successCallback();
+        };
+
+        // Fix "(node:12168) ProtocolDeprecateCallback: The callback argument of protocol module APIs is no longer needed."
+        if (parseInt(process.versions.electron) >= 7) {
+            try {
+                this.webContents.session.protocol.registerStreamProtocol(scheme, handler);
+                successCallback();
+            } catch (error) {
+                failureCallback(error);
+            }
+        } else {
+            this.webContents.session.protocol.registerStreamProtocol(scheme, handler, callback);
+        }
     }
 
     handleAppStartup(startupDidCompleteEvent) {

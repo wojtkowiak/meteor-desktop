@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs-plus';
 import send from 'send';
 import mime from 'mime';
+import { PassThrough } from 'stream';
 
 const oneYearInSeconds = 60 * 60 * 24 * 365;
 
@@ -45,6 +46,25 @@ function* iterate(array) {
 }
 
 /**
+ * Read file content and wrap it to stream, based on examples from Electron docs:
+ * https://electronjs.org/docs/api/protocol#protocolregisterstreamprotocolscheme-handler-completion
+ *
+ * @param {string} filePath            - path to the file being sent
+ */
+function createReadStream(filePath) {
+    if (parseInt(process.versions.electron) >= 7) {
+        const rv = new PassThrough();
+        if (fs.existsSync(filePath)) {
+            rv.push(fs.readFileSync(filePath));
+        }
+        rv.push(null);
+        return rv;
+    }
+
+    return fs.createReadStream(filePath);
+}
+
+/**
  * Creates stream protocol response for a given file acting like it would come
  * from a real HTTP server.
  *
@@ -75,7 +95,7 @@ function createStreamProtocolResponse(filePath, res, beforeFinalize) {
     }
 
     res.setHeader('Connection', 'close');
-    res.setStream(fs.createReadStream(filePath));
+    res.setStream(createReadStream(filePath));
     res.setStatusCode(200);
 
     beforeFinalize();
@@ -189,7 +209,6 @@ export default class LocalServer {
         this.onServerRestarted = onServerRestarted;
     }
 
-
     /**
      * Initializes the module. Configures `connect` and searches for free port.
      *
@@ -257,7 +276,6 @@ export default class LocalServer {
             res.setHeader('Cache-Control', shouldCache ? `max-age=${oneYearInSeconds}` : 'no-cache');
         }
 
-
         /**
          * Provides assets defined in the manifest.
          *
@@ -311,16 +329,16 @@ export default class LocalServer {
             // We need to obtain a path for the initial asset bundle which usually is the parent
             // asset bundle, but if there were not HCPs yet, the main asset bundle is the
             // initial one.
-            const initialAssetBundlePath =
-                parentAssetBundle ?
-                    parentAssetBundle.getDirectoryUri() : self.assetBundle.getDirectoryUri();
+            const initialAssetBundlePath = parentAssetBundle
+                ? parentAssetBundle.getDirectoryUri()
+                : self.assetBundle.getDirectoryUri();
 
             const filePath = path.join(initialAssetBundlePath, parsedUrl.pathname);
 
             if (fs.existsSync(filePath)) {
-                return local ?
-                    createStreamProtocolResponse(filePath, res, () => {}) :
-                    send(req, encodeURIComponent(filePath)).pipe(res);
+                return local
+                    ? createStreamProtocolResponse(filePath, res, () => {})
+                    : send(req, encodeURIComponent(filePath)).pipe(res);
             }
             return next();
         }
@@ -358,13 +376,12 @@ export default class LocalServer {
             }
 
             if (fs.existsSync(filePath)) {
-                return local ?
-                    createStreamProtocolResponse(filePath, res, () => {}) :
-                    send(req, encodeURIComponent(filePath)).pipe(res);
+                return local
+                    ? createStreamProtocolResponse(filePath, res, () => {})
+                    : send(req, encodeURIComponent(filePath)).pipe(res);
             }
             return local ? res.setStatusCode(404) : respondWithCode(res, 404, 'File does not exist.');
         }
-
 
         /**
          * Serves files from the entire filesystem if enabled in settings.
@@ -409,8 +426,7 @@ export default class LocalServer {
                 /** @type {Asset} */
                 const indexFile = self.assetBundle.getIndexFile();
                 if (local) {
-                    createStreamProtocolResponse(indexFile.getFile(), res, () => {
-                    });
+                    createStreamProtocolResponse(indexFile.getFile(), res, () => {});
                 } else {
                     send(req, encodeURIComponent(indexFile.getFile())).pipe(res);
                 }
@@ -418,7 +434,6 @@ export default class LocalServer {
                 next();
             }
         }
-
 
         if (this.assetBundle === null) {
             // `connect` will do the job!
