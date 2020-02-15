@@ -235,6 +235,12 @@ function localServerTests(useStreams = false) {
             const body = await response.text();
             expect(body).to.contain('should send a file using local-filesystem alias');
         });
+
+        it('should not send not existing file', async () => {
+            const response =
+                await fetchFromLocalServer(`/local-filesystem/${path.join(__dirname, 'not.existing.js')}`);
+            expect(response.status).to.equal(404);
+        });
     });
 
     describe('desktop assets', () => {
@@ -269,4 +275,32 @@ function localServerTests(useStreams = false) {
 describe('localServer', () => {
     describe('the local server through http', localServerTests);
     describe('the local server through readable streams', localServerTests.bind(undefined, true));
+    describe('the local server through http with Allow-Origin', () => {
+        before(async () => {
+            useReadableStreams = false;
+            localServer =
+                await getLocalServer(paths.fixtures.bundledWww, {
+                    localFilesystem: true,
+                    allowOriginLocalServer: true
+                });
+        });
+
+        after(() => {
+            localServer.httpServerInstance.destroy();
+        });
+
+        it('should set "Access-Control-Allow-Origin" for local file', async () => {
+            const response =
+                await fetchFromLocalServer(`/local-filesystem/${path.join(__dirname, 'localServer.test.js')}`);
+            expect(response.headers.get('Access-Control-Allow-Origin')).to.equal('*');
+        });
+
+        it('should server cordova.js file', async () => {
+            const response =
+                await fetchFromLocalServer('/cordova.js');
+                const body = await response.text();
+                expect(body).to.contain('window.cordova');
+                expect(body).to.contain('module.exports = cordova;');
+        });
+    });
 });

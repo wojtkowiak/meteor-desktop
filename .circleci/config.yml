@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:8.11.3-jessie-browsers
+      - image: circleci/node:10.16.0-jessie-browsers
     steps:
       - checkout
       - run:
@@ -24,7 +24,7 @@ jobs:
           command: npm run test
   test-integration:
     docker:
-      - image: circleci/node:8.11.3-jessie-browsers
+      - image: circleci/node:10.16.0-jessie-browsers
     steps:
       - checkout
       - run:
@@ -58,7 +58,7 @@ jobs:
           name: install Meteor
           command: |
             # only install meteor if bin isn't found
-            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=1.5.4.1 | /bin/sh
+            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=1.8.1 | /bin/sh
       - run:
           name: copy meteor bin to build cache
           command: |
