@@ -2,17 +2,19 @@
 require('reify');
 // CI cache version: 1
 
+const tempDir = require('temp-dir');
 const shell = require('shelljs');
 const path = require('path');
 const fs = require('fs');
 
-const testsPath = path.resolve(path.join(__dirname, '..', '..', 'tests'));
-const testsTmpPath = path.resolve(path.join(testsPath, '.__tmp_int'));
+const testsTmpPath = path.resolve(path.join(tempDir, '.__tmp_int'));
 
-const meteorVersion = '1.5.4.1';
+const meteorVersion = '1.8.1';
 
 shell.config.fatal = true;
 const appDir = path.join(testsTmpPath, 'test-desktop');
+
+shell.rm('-rf', testsTmpPath);
 
 if (!fs.existsSync(testsTmpPath) || !fs.existsSync(path.join(appDir, 'package.json'))) {
     console.log('creating test dir');
@@ -20,7 +22,7 @@ if (!fs.existsSync(testsTmpPath) || !fs.existsSync(path.join(appDir, 'package.js
     console.log('creating test meteor app');
     shell.exec(`meteor create test-desktop --release=METEOR@${meteorVersion}`, { cwd: testsTmpPath });
     const packageJson = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
-    packageJson.dependencies['meteor-desktop'] = '../../..';
+    packageJson.dependencies['meteor-desktop'] = path.resolve(path.join(__dirname, '..', '..' ));
     if (process.env.APPVEYOR) {
         const versions = require('../../lib/defaultDependencies');
         packageJson.dependencies.electron = versions.electron;

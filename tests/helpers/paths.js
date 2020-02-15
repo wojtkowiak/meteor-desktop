@@ -1,10 +1,12 @@
 import path from 'path';
+import tempDir from 'temp-dir';
 
 const { join, resolve } = path;
 
 const testsPath = resolve(path.join(__dirname, '..', '..', 'tests'));
-const testsTmpPath = resolve(path.join(testsPath, '.__tmp'));
-const testsIntegrationTmpPath = resolve(path.join(testsPath, '.__tmp_int'));
+
+const testsTmpPath = resolve(path.join(tempDir, '.__tmp'));
+const testsIntegrationTmpPath = resolve(path.join(tempDir, '.__tmp_int'));
 
 const fixturesPath = 'fixtures';
 const projectDir = 'meteorProject';
