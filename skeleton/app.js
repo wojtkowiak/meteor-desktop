@@ -61,15 +61,17 @@ export default class App {
 
         this.applySingleInstance();
 
+        // TODO: refactor
         // To make desktop.asar's downloaded through HCP work, we need to provide them a path to
         // node_modules.
-        const nodeModulesPath = [__dirname, 'node_modules'];
+        const packedNodeModulesPath = [__dirname, 'node_modules'];
+        const unpackedNodeModulesPath = [__dirname, '..', 'node_modules'];
 
-        // TODO: explain this
-        if (!this.isProduction()) {
-            nodeModulesPath.splice(1, 0, '..');
+        require('module').globalPaths.push(path.resolve(join(...unpackedNodeModulesPath)));
+
+        if (this.isProduction()) {
+            require('module').globalPaths.push(path.resolve(join(...packedNodeModulesPath)));
         }
-        require('module').globalPaths.push(path.resolve(join(...nodeModulesPath)));
 
         // This is needed for OSX - check Electron docs for more info.
         if ('builderOptions' in this.settings && this.settings.builderOptions.appId) {
