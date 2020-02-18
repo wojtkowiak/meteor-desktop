@@ -1,6 +1,6 @@
 {
   "name": "@sharekey/meteor-desktop",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },

@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
     name: 'skadmin:meteor-desktop-bundler',
-    version: '2.2.6',
+    version: '2.2.7',
     summary: 'Bundles .desktop dir into desktop.asar.',
     git: 'https://github.com/sharekey/meteor-desktop',
     documentation: 'README.md'
