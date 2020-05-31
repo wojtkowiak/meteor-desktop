@@ -128,16 +128,28 @@ export default class App {
     applySingleInstance() {
         if ('singleInstance' in this.settings && this.settings.singleInstance) {
             this.l.verbose('setting single instance mode');
-            const isSecondInstance = app.makeSingleInstance(() => {
-                // Someone tried to run a second instance, we should focus our window.
-                if (this.window) {
-                    if (this.window.isMinimized()) {
-                        this.window.restore();
+            if (semver.lt(process.versions.electron, '4.0')) { //https://www.electronjs.org/docs/all#appmakesingleinstance
+                const isSecondInstance = app.makeSingleInstance(() => {
+                    // Someone tried to run a second instance, we should focus our window.
+                    if (this.window) {
+                        if (this.window.isMinimized()) {
+                            this.window.restore();
+                        }
+                        this.window.focus();
                     }
-                    this.window.focus();
-                }
-            });
-
+                });
+            } else {
+                app.requestSingleInstanceLock()
+                const isSecondInstance = app.on(() => {
+                    // Someone tried to run a second instance, we should focus our window.
+                    if (this.window) {
+                        if (this.window.isMinimized()) {
+                            this.window.restore();
+                        }
+                        this.window.focus();
+                    }
+                });
+            }
             if (isSecondInstance) {
                 this.l.warn('current instance was terminated because another instance is running');
                 app.quit();
