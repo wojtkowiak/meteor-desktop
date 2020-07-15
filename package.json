@@ -84,7 +84,7 @@
     "del": "2.2.2",
     "install-local": "0.6.0",
     "isbinaryfile": "3.0.3",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "md5": "2.2.1",
     "mksnapshot": "0.3.5",
     "node-fetch": "2.2.0",
