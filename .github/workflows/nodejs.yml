@@ -13,12 +13,16 @@ jobs:
     strategy:
       matrix:
         meteor: [ '1.8.2', '1.9.3', '1.10.2' ]
+        node: [10, 12, 14]
     name: Meteor ${{ matrix.meteor }} sample
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
       - name: Setup meteor
-        uses: CanyLink/setup-meteor@v1
+        uses: meteorengineer/setup-meteor@v1
         with:
           meteor-release: ${{ matrix.meteor }}
       - run: meteor npm install
