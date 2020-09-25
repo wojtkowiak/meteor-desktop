@@ -91,7 +91,7 @@
     "regenerator-runtime": "0.12.1",
     "rimraf": "2.6.2",
     "semver": "5.5.1",
-    "shelljs": "0.8.2",
+    "shelljs": "0.8.4",
     "single-line-log": "1.1.2",
     "terser": "3.8.2"
   },
