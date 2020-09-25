@@ -6,10 +6,10 @@ skip_tags: true
 
 environment:
   matrix:
-    - nodejs_version: "10"
+    - nodejs_version: "8"
       test: "normal"
       platform: x64
-    - nodejs_version: "10"
+    - nodejs_version: "8"
       test: "integration"
       platform: x64
 
@@ -30,7 +30,7 @@ install:
   - ps: >-
       if ($env:test -eq "integration") {
         if ((Get-Command "meteor" -ErrorAction SilentlyContinue) -eq $null) {
-          choco install meteor --params "'/RELEASE:1.8.1'"
+          choco install meteor --params "'/RELEASE:1.8.2'"
         }
       }
   - ps: refreshenv
