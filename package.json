@@ -1,6 +1,6 @@
 {
-  "name": "meteor-desktop",
-  "version": "2.2.5",
+  "name": "@mjcctech/meteor-desktop",
+  "version": "2.2.5-MX002-5709.3",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
@@ -53,7 +53,7 @@
     "import-fresh": "2.0.0",
     "jsdoc-to-markdown": "5.0.0",
     "mime": "2.0.3",
-    "mocha": "2.5.3",
+    "mocha": "9.1.2",
     "mockery": "2.1.0",
     "npm-run-all": "4.0.1",
     "nyc": "14.1.1",
@@ -78,7 +78,7 @@
     "@babel/preset-env": "7.5.5",
     "@babel/runtime": "7.5.5",
     "asar": "0.14.3",
-    "cacache": "10.0.4",
+    "cacache": "11.3.3",
     "commander": "2.17.1",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
@@ -87,7 +87,7 @@
     "lodash": "^4.17.21",
     "md5": "2.2.1",
     "mksnapshot": "0.3.5",
-    "node-fetch": "2.2.0",
+    "node-fetch": "2.6.5",
     "regenerator-runtime": "0.12.1",
     "rimraf": "2.6.2",
     "semver": "5.5.1",
