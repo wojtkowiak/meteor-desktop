@@ -1,6 +1,6 @@
 {
   "name": "@mjcctech/meteor-desktop",
-  "version": "2.2.5-MX002-5709.3",
+  "version": "2.2.6",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
