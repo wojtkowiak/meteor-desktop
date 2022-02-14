@@ -1,5 +1,5 @@
 ## v2.2.6 14.02.2020
-Fixed to work with Meteor 2.3+ Node 14+.
+Fixed to work with Meteor 2.6+ Node 14+.
 * Updated `shelljs` to `0.8.5`.
 * Fix bundler plugin to pass non-uglified `code` instead of `undefined` to `fs.writeFileSync` in dev mode.
 
