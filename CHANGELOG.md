@@ -1,3 +1,8 @@
+## v2.2.6 14.02.2020
+Fixed to work with Meteor 2.3+ Node 14+.
+* Updated `shelljs` to `0.8.5`.
+* Fix bundler plugin to pass non-uglified `code` instead of `undefined` to `fs.writeFileSync` in dev mode.
+
 ## v2.2.5 <sup>24.01.2020</sup>
 
 * Fixed issue with packaging [`#248`](https://github.com/wojtkowiak/meteor-desktop/issues/248)

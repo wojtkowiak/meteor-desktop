@@ -1,11 +1,11 @@
 {
   "name": "meteor-desktop",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=4.0.0 <=12"
   },
   "description": "Build a Meteor's desktop client with hot code push.",
   "main": "dist/index.js",
@@ -91,7 +91,7 @@
     "regenerator-runtime": "0.12.1",
     "rimraf": "2.6.2",
     "semver": "5.5.1",
-    "shelljs": "0.8.2",
+    "shelljs": "0.8.5",
     "single-line-log": "1.1.2",
     "terser": "3.8.2"
   },

@@ -606,7 +606,8 @@ class MeteorDesktopBundler {
             const self = this;
 
             function logDebug(...args) {
-                if (process.env.METEOR_DESKTOP_DEBUG) console.log(...args);
+                console.log(...args);
+                // if (process.env.METEOR_DESKTOP_DEBUG) console.log(...args);
             }
 
             function addFiles(contents, desktopSettings) {
@@ -614,7 +615,6 @@ class MeteorDesktopBundler {
                     version: desktopSettings.desktopVersion,
                     compatibilityVersion: desktopSettings.compatibilityVersion
                 };
-
                 self.stampPerformance('file add');
                 inputFile.addAsset({
                     path: 'version.desktop.json',
@@ -838,7 +838,7 @@ class MeteorDesktopBundler {
                             }
                         })
                         .catch(() => {
-                            logDebug(`[meteor-desktop] from disk ${file}`);
+                            logDebug(`[meteor-desktop] FOOBAR from disk ${file}`);
                             const fileContent = fileContents[file];
                             let code;
                             babelCore.transform(
@@ -866,7 +866,9 @@ class MeteorDesktopBundler {
                                         if (error) {
                                             reject(error);
                                         } else {
-                                            fs.writeFileSync(filePath, uglifiedCode);
+                                            // in development mode, uglifiedCode will be undefined, which causes an error since fs.writeFileSync introduced type checking of the data parameter in Node 14.
+                                            // https://github.com/wojtkowiak/meteor-desktop/issues/303#issuecomment-1025337912
+                                            fs.writeFileSync(filePath, uglifiedCode || code);
                                             resolve();
                                         }
                                     }
