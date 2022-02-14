@@ -606,8 +606,7 @@ class MeteorDesktopBundler {
             const self = this;
 
             function logDebug(...args) {
-                console.log(...args);
-                // if (process.env.METEOR_DESKTOP_DEBUG) console.log(...args);
+                if (process.env.METEOR_DESKTOP_DEBUG) console.log(...args);
             }
 
             function addFiles(contents, desktopSettings) {
