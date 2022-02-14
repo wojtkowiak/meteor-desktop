@@ -837,7 +837,7 @@ class MeteorDesktopBundler {
                             }
                         })
                         .catch(() => {
-                            logDebug(`[meteor-desktop] FOOBAR from disk ${file}`);
+                            logDebug(`[meteor-desktop] from disk ${file}`);
                             const fileContent = fileContents[file];
                             let code;
                             babelCore.transform(
