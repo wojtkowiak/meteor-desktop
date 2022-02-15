@@ -1,5 +1,5 @@
 {
-  "name": "meteor-desktop",
+  "name": "@meteor-community/meteor-desktop",
   "version": "2.2.6",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
@@ -21,7 +21,7 @@
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
     "postinstall": "node dist/scripts/addToScripts || echo",
-    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@1.8.1) && cd ../watcher && (meteor publish --release=METEOR@1.8.1)",
+    "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@2.6) && cd ../watcher && (meteor publish --release=METEOR@2.6)",
     "prepublish": "npm run build || echo",
     "publish-all": "npm run publish-plugins && npm publish",
     "build": "babel lib --out-dir dist --source-maps inline --copy-files",
@@ -102,7 +102,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wojtkowiak/meteor-desktop"
+    "url": "https://github.com/Meteor-Community-Packages/meteor-desktop"
   },
   "keywords": [
     "electron",
@@ -129,7 +129,7 @@
     "all": true
   },
   "bugs": {
-    "url": "https://github.com/wojtkowiak/meteor-desktop/issues"
+    "url": "https://github.com/Meteor-Community-Packages/meteor-desktop/issues"
   },
-  "homepage": "https://github.com/wojtkowiak/meteor-desktop"
+  "homepage": "https://github.com/Meteor-Community-Packages/meteor-desktop"
 }

@@ -101,17 +101,41 @@ question('Do you want to use another path (yes/no)? ')
 
         if (!forks) {
             projects.forEach(function (project) {
-                exec('git clone https://github.com/wojtkowiak/' + project);
+                let projectRepo;
+                if (project === 'meteor-desktop') {
+                    // use Meteor-Community-Packages repo
+                    projectRepo = 'https://github.com/Meteor-Community-Packages/' + project;
+                } else {
+                    // use original wojtkowiak repo
+                    projectRepo = 'https://github.com/wojtkowiak/' + project;
+                }
+                exec('git clone ' + projectRepo);
             });
         } else {
             var code;
             projects.forEach(function (project) {
                 code = exec('git clone https://github.com/' + username + '/' + project).code;
                 if (code !== 0) {
-                    exec('git clone https://github.com/wojtkowiak/' + project);
+                    let projectRepo;
+                    if (project === 'meteor-desktop') {
+                        // use Meteor-Community-Packages repo
+                        projectRepo = 'https://github.com/Meteor-Community-Packages/' + project;
+                    } else {
+                        // use original wojtkowiak repo
+                        projectRepo = 'https://github.com/wojtkowiak/' + project;
+                    }
+                    exec('git clone ' + projectRepo);
                 } else {
                     console.log(project + ' fork not found, cloning main repo instead.');
-                    exec('git remote add upstream https://github.com/wojtkowiak/' + project, { cwd: path.join(resolvedPath, project) });
+                    let projectRepo;
+                    if (project === 'meteor-desktop') {
+                        // use Meteor-Community-Packages repo
+                        projectRepo = 'https://github.com/Meteor-Community-Packages/' + project;
+                    } else {
+                        // use original wojtkowiak repo
+                        projectRepo = 'https://github.com/wojtkowiak/' + project;
+                    }
+                    exec('git remote add upstream' + projectRepo, { cwd: path.join(resolvedPath, project) });
                 }
             });
         }

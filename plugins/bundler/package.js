@@ -1,9 +1,9 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
-    name: 'omega:meteor-desktop-bundler',
+    name: 'meteor-community:meteor-desktop-bundler',
     version: '2.2.6',
     summary: 'Bundles .desktop dir into desktop.asar.',
-    git: 'https://github.com/wojtkowiak/meteor-desktop',
+    git: 'https://github.com/Meteor-Community-Packages/meteor-desktop',
     documentation: 'README.md'
 });
 

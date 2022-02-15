@@ -215,20 +215,20 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     console.warn('[meteor-desktop] will not watch for changes is .desktop because there is no ' +
         '.desktop/settings.json or desktopHCP is set to false.  Remove this plugin if you do ' +
         'not want to use desktopHCP.');
-} else if ('omega:meteor-desktop-bundler' in Package) {
+} else if ('meteor-community:meteor-desktop-bundler' in Package) {
     const chokidar = Npm.require('chokidar');
     const versionFile = path.join(rootPath, 'version.desktop');
 
     const version =
-        typeof Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION === 'object' ?
-            Package['omega:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version : null;
+        typeof Package['meteor-community:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION === 'object' ?
+            Package['meteor-community:meteor-desktop-bundler'].METEOR_DESKTOP_VERSION.version : null;
 
     if (version) {
         try {
             fs.readFileSync(versionFile, 'UTF-8');
         } catch (e) {
             throw new Error('[meteor-desktop] there is no version.desktop file. Are you sure you ' +
-                'have omega:meteor-desktop-bundler package added to your project?');
+                'have meteor-community:meteor-desktop-bundler package added to your project?');
         }
 
         readFilesAndComputeDesktopHash(desktopPath)
@@ -275,5 +275,5 @@ if (!('desktopHCP' in settings) || !settings.desktopHCP) {
     }
 } else {
     throw new Error('[meteor-desktop] bundler plugin was not detected. Are you sure you have ' +
-        'omega:meteor-desktop-bundler package added to your project?');
+        'meteor-community:meteor-desktop-bundler package added to your project?');
 }
