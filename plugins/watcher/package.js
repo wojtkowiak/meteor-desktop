@@ -9,7 +9,7 @@ Package.describe({
 });
 
 Npm.depends({
-    chokidar: '2.0.2'
+    chokidar: '3.5.3'
 });
 
 Package.onUse(function onUse(api) {
