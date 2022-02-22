@@ -63,6 +63,7 @@
     "request": "2.88.0",
     "rewire": "3.0.2",
     "run-sequence": "1.2.2",
+    "semistandard": "^16.0.1",
     "send": "0.16.2",
     "serve-static": "1.13.2",
     "server-destroy": "1.0.1",
