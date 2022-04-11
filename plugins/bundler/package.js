@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
-    name: 'meteor-community:meteor-desktop-bundler',
-    version: '2.2.6',
+    name: 'communitypackages:meteor-desktop-bundler',
+    version: '3.0.0',
     summary: 'Bundles .desktop dir into desktop.asar.',
     git: 'https://github.com/Meteor-Community-Packages/meteor-desktop',
     documentation: 'README.md'

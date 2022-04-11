@@ -22,8 +22,8 @@ To migrate from the original `meteor-desktop`:
 1. Replace the npm package
    * Replace your package.json "devDependencies" entry for `"meteor-desktop"` to `"@meteor-community/meteor-desktop"`
 2. Replace the two Meteor Atmosphere packages
-   * Run `meteor remove omega:meteor-desktop-bundler` and `meteor add meteor-community:meteor-desktop-bundler`
-   * Run `meteor remove omega:meteor-desktop-watcher` and `meteor add meteor-community:meteor-desktop-watcher`
+   * Run `meteor remove omega:meteor-desktop-bundler` and `meteor add communitypackages:meteor-desktop-bundler`
+   * Run `meteor remove omega:meteor-desktop-watcher` and `meteor add communitypackages:meteor-desktop-watcher`
 
 ## Prerequisites
 
