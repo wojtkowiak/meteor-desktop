@@ -467,7 +467,7 @@ class MeteorDesktopBundler {
         //                    `require` to load things from app's node_modules
         files.forEach((file) => {
             if (file.getArch() === 'web.cordova') {
-                if (file.getPackageName() === 'meteor-community:meteor-desktop-bundler' &&
+                if (file.getPackageName() === 'communitypackages:meteor-desktop-bundler' &&
                     file.getPathInPackage() === 'version._desktop_.js'
                 ) {
                     versionFile = file;
