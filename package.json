@@ -1,11 +1,11 @@
 {
   "name": "@meteor-community/meteor-desktop",
-  "version": "2.2.6",
+  "version": "3.0.0",
   "bin": {
     "meteor-desktop": "dist/bin/cli.js"
   },
   "engines": {
-    "node": ">=4.0.0 <=12"
+    "node": ">=4.0.0 <=14"
   },
   "description": "Build a Meteor's desktop client with hot code push.",
   "main": "dist/index.js",
