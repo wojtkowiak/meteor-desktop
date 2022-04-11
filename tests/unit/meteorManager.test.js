@@ -106,7 +106,7 @@ describe('meteorManager', () => {
             expect(
                 instance.checkPackagesVersion([
                     'omega:meteor-desktop-localstorage@0.0.11',
-                    'omega:meteor-desktop-watcher@0.0.11'
+                    'meteor-community:meteor-desktop-watcher@0.0.11'
                 ])
             ).to.be.false();
         });

@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        meteor: [ '1.8.2', '1.9.3', '1.10.2' ]
+        meteor: [ '2.6', '1.10.2' ]
     name: Meteor ${{ matrix.meteor }} sample
 
     steps:

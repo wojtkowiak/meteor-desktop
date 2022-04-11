@@ -291,7 +291,7 @@ class MeteorDesktopBundler {
         let deps = Object.keys(dependencies).sort();
         deps = deps.map(dependency =>
             `${dependency}:${dependencies[dependency]}`);
-        const mainCompatibilityVersion = this.requireLocal('meteor-desktop/package.json')
+        const mainCompatibilityVersion = this.requireLocal('@meteor-community/meteor-desktop/package.json')
             .version
             .split('.');
         const desktopCompatibilityVersion = settings.version.split('.')[0];
@@ -332,7 +332,7 @@ class MeteorDesktopBundler {
         try {
             // Look for the dependency in meteor-desktop/node_modules.
             // No need to check the version, npm ensures that.
-            meteorDesktopScope = this.requireLocal(`meteor-desktop/node_modules/${dependency}`);
+            meteorDesktopScope = this.requireLocal(`@meteor-community/meteor-desktop/node_modules/${dependency}`);
             if (process.env.METEOR_DESKTOP_DEBUG) {
                 console.log(`found ${dependency} in meteor-desktop scope`);
             }
@@ -357,7 +357,7 @@ class MeteorDesktopBundler {
     getPackageJsonField(field) {
         if (!this.packageJson) {
             try {
-                this.packageJson = this.requireLocal('meteor-desktop/package.json');
+                this.packageJson = this.requireLocal('@meteor-community/meteor-desktop/package.json');
             } catch (e) {
                 throw new Error('could not load package.json from meteor-desktop, is meteor-desktop' +
                     ' installed?');
@@ -467,7 +467,7 @@ class MeteorDesktopBundler {
         //                    `require` to load things from app's node_modules
         files.forEach((file) => {
             if (file.getArch() === 'web.cordova') {
-                if (file.getPackageName() === 'omega:meteor-desktop-bundler' &&
+                if (file.getPackageName() === 'meteor-community:meteor-desktop-bundler' &&
                     file.getPathInPackage() === 'version._desktop_.js'
                 ) {
                     versionFile = file;
@@ -575,10 +575,10 @@ class MeteorDesktopBundler {
                     cacache
                 } = deps);
 
-                DependenciesManager = requireLocal('meteor-desktop/dist/dependenciesManager').default;
-                this.utils = requireLocal('meteor-desktop/dist/utils');
+                DependenciesManager = requireLocal('@meteor-community/meteor-desktop/dist/dependenciesManager').default;
+                this.utils = requireLocal('@meteor-community/meteor-desktop/dist/utils');
                 ElectronAppScaffold =
-                    requireLocal('meteor-desktop/dist/electronAppScaffold').default;
+                    requireLocal('@meteor-community/meteor-desktop/dist/electronAppScaffold').default;
             } catch (e) {
                 // Look at the declaration of StringPrototypeToOriginal for explanation.
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
@@ -614,7 +614,6 @@ class MeteorDesktopBundler {
                     version: desktopSettings.desktopVersion,
                     compatibilityVersion: desktopSettings.compatibilityVersion
                 };
-
                 self.stampPerformance('file add');
                 inputFile.addAsset({
                     path: 'version.desktop.json',
@@ -866,7 +865,9 @@ class MeteorDesktopBundler {
                                         if (error) {
                                             reject(error);
                                         } else {
-                                            fs.writeFileSync(filePath, uglifiedCode);
+                                            // in development mode, uglifiedCode will be undefined, which causes an error since fs.writeFileSync introduced type checking of the data parameter in Node 14.
+                                            // https://github.com/wojtkowiak/meteor-desktop/issues/303#issuecomment-1025337912
+                                            fs.writeFileSync(filePath, uglifiedCode || code);
                                             resolve();
                                         }
                                     }

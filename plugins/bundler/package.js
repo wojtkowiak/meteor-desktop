@@ -1,9 +1,9 @@
 /* eslint-disable prefer-arrow-callback */
 Package.describe({
-    name: 'omega:meteor-desktop-bundler',
-    version: '2.2.5',
+    name: 'meteor-community:meteor-desktop-bundler',
+    version: '2.2.6',
     summary: 'Bundles .desktop dir into desktop.asar.',
-    git: 'https://github.com/wojtkowiak/meteor-desktop',
+    git: 'https://github.com/Meteor-Community-Packages/meteor-desktop',
     documentation: 'README.md'
 });
 
@@ -11,7 +11,7 @@ Package.registerBuildPlugin({
     name: 'meteor-desktop-bundler',
     use: ['ecmascript@0.4.4'],
     sources: ['bundler.js'],
-    npmDependencies: { chokidar: '2.0.3' }
+    npmDependencies: { chokidar: '3.5.3' }
 });
 
 Package.onUse(function onUse(api) {

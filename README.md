@@ -4,12 +4,7 @@
 ###### aka Meteor Electron Desktop Client
 > Build desktop apps with Meteor & Electron. Full integration with hot code push implementation.
 
-[![npm version](https://img.shields.io/npm/v/meteor-desktop.svg)](https://npmjs.org/package/meteor-desktop)
-<sup>Travis</sup> [![Travis Build Status](https://travis-ci.org/wojtkowiak/meteor-desktop.svg?branch=master)](https://travis-ci.org/wojtkowiak/meteor-desktop)
-<sup>AppVeyor</sup> [![Build status](https://ci.appveyor.com/api/projects/status/mga230i3avit8ljv/branch/master?svg=true)](https://ci.appveyor.com/project/wojtkowiak/meteor-desktop)
-<sup>CircleCI</sup> [![CircleCI](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master.svg?style=svg)](https://circleci.com/gh/wojtkowiak/meteor-desktop/tree/master)
-
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/meteor-desktop/general)
+[![npm version](https://img.shields.io/npm/v/@meteor-community/meteor-desktop.svg)](https://npmjs.org/package/@meteor-community/meteor-desktop)
 
 ![Demo](docs/demo.gif)
 
@@ -18,7 +13,17 @@
 This is a complete implementation of integration between `Meteor` and `Electron` aiming to achieve the same level of developer experience like `Meteor` gives.
 To make it clear from the start, this is a **desktop client** - it is just like your mobile
 clients with `Cordova` - but this is for desktops with `Electron`. It also features a full hot code
-push implementation - which means you can release updates the same way you are used to.  
+push implementation - which means you can release updates the same way you are used to.
+
+## Migrating from `meteor-desktop` to `@meteor-community/meteor-desktop`
+This package was created by [wojtkowiak](https://github.com/wojtkowiak/) and was published under the name `meteor-desktop` up until version 2.2.5. After 2.2.6 it transitioned to being owned and published under the [Meteor-Community-Packages](https://github.com/Meteor-Community-Packages) GitHub and npm org.
+
+To migrate from the original `meteor-desktop`:
+1. Replace the npm package
+   * Replace your package.json "devDependencies" entry for `"meteor-desktop"` to `"@meteor-community/meteor-desktop"`
+2. Replace the two Meteor Atmosphere packages
+   * Run `meteor remove omega:meteor-desktop-bundler` and `meteor add meteor-community:meteor-desktop-bundler`
+   * Run `meteor remove omega:meteor-desktop-watcher` and `meteor add meteor-community:meteor-desktop-watcher`
 
 ## Prerequisites
 
@@ -31,7 +36,7 @@ push implementation - which means you can release updates the same way you are u
 ### Quick start
 ```bash
  cd /your/meteor/app
- meteor npm install --save-dev meteor-desktop
+ meteor npm install --save-dev @meteor-community/meteor-desktop
  # you need to have any mobile platform added (ios/android)
  meteor --mobile-server=127.0.0.1:3000
 
@@ -46,7 +51,7 @@ push implementation - which means you can release updates the same way you are u
 ## Usage `--help`
 
 ```
-// Assumming you have a `desktop` script in npm scripts that equals to "meteor-desktop"
+// Assumming you have a `desktop` script in npm scripts that equals to "@meteor-community/meteor-desktop"
 Usage: npm run desktop -- [command] [options]
 
   Commands:
@@ -596,26 +601,6 @@ Currently there are some defaults provided only for `Windows` and `Mac`. If you 
 Change `target: ["appx"]` in `win` section of `builderOptions`. In case of problems please refer to
 [electron-builder](https://github.com/electron-userland/electron-builder) documentation.
 
-## Roadmap
-This project recently hit `1.0.0` however you should still expect many breaking changes in the upcoming versions.
-Any feedback/feature requests/PR is highly welcomed and highly anticipated.  
-
-If you want to check what is planned and what I am working on, first you can check accepted
-issues on github [here](https://github.com/wojtkowiak/meteor-desktop/issues?q=is%3Aissue+is%3Aopen+label%3Aaccepted).
-You can see the backlog and roadmap in form of epics on Taiga
-[here](https://tree.taiga.io/project/wojtkowiak-meteor-desktop/kanban). The project is public so
-you can also comment and vote there.
-
-## Contribution
-
-PRs are always welcome and encouraged. If you need help at any stage of preparing a PR, just
-file an issue. It is also good, to file a feature request issue before you start working to
-discuss the need and implementation approach.
-
-If you want, you can always contribute by donating:
-
-<a href='https://pledgie.com/campaigns/33341'><img alt='Click here to lend your support to: meteor-desktop and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/33341.png?skin_name=chrome' border='0' ></a>
-
 ##### ! devEnvSetup.js !
 To help you contribute, there is a development environment setup script. If you have this repo
 cloned and already did a `npm install`, you can just run it with `node devEnvSetup.js`.
@@ -630,7 +615,7 @@ node devEnvSetup.js
 This script assumes you have `npm`, `git` and `meteor` available from the command line.
 
 Currently this package does not work when linked with `npm link`. To set up your dev environment
-it is best to create a clean `Meteor` project, add `meteor-desktop` to dependencies with a relative
+it is best to create a clean `Meteor` project, add `@meteor-community/meteor-desktop` to dependencies with a relative
  path to the place where you have cloned this repo and in scripts add `desktop` with `node
  ./path/to/meteor-desktop/dist/bin/cli.js`.  
  Also to make changes in the desktop HCP plugins run `Meteor` project with `METEOR_PACKAGE_DIRS`

@@ -1,3 +1,18 @@
+## v2.2.6 14.02.2020
+Fixed to work with Meteor 2.6+ Node 14+.
+* Updated `shelljs` to `0.8.5`.
+* Fix bundler plugin to pass non-uglified `code` instead of `undefined` to `fs.writeFileSync` in dev mode.
+* Updated build configs to use Meteor 2.6 when building + testing.
+* Updated `chokidar` dependency from 2.x to 3.x for `meteor-desktop-bundler` and `meteor-desktop-watcher` packages.
+
+Changes to publish packages under a new name.
+* `meteor-desktop` npm package renamed to `@meteor-community/meteor-desktop`
+* `omega:meteor-desktop-bundler` Atmosphere package renamed to `meteor-community:meteor-desktop-bundler`
+* `omega:meteor-desktop-watcher` Atmosphere package renamed to `meteor-community:meteor-desktop-watcher`
+* Updated all references to these package names in the code.
+* Removed old wojtkowiak build links in README.
+* Removed Contributing and Roadmap README entries.
+
 ## v2.2.5 <sup>24.01.2020</sup>
 
 * Fixed issue with packaging [`#248`](https://github.com/wojtkowiak/meteor-desktop/issues/248)
