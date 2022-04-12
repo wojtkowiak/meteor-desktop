@@ -1,3 +1,6 @@
+## v3.0.1 <sup>12.04.2022</sup>
+* Attempt to fix version constraint issue
+
 ## v3.0.0 <sup>11.04.2022</sup>
 Fixed to work with Meteor 2.6+ Node 14+.
 * Updated `shelljs` to `0.8.5`.
