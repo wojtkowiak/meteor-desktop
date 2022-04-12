@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:10.16.0-jessie-browsers
+      - image: circleci/node:12.22.7-bullseye-browsers
     steps:
       - checkout
       - run:
@@ -24,7 +24,7 @@ jobs:
           command: npm run test
   test-integration:
     docker:
-      - image: circleci/node:10.16.0-jessie-browsers
+      - image: circleci/node:12.22.7-bullseye-browsers
     steps:
       - checkout
       - run:
