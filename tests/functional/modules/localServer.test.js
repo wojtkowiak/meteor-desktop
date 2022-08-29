@@ -57,7 +57,7 @@ function getLocalServer(bundlePath, settings) {
 }
 
 // Takes a stream protocol response and wraps it into fetch like response object.
-// It only maps whatever is neccessary to run the tests.
+// It only maps whatever is necessary to run the tests.
 // https://github.com/electron/electron/blob/master/docs/api/structures/stream-protocol-response.md
 
 class FakeFetchResponse {
