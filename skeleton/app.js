@@ -128,7 +128,9 @@ export default class App {
     applySingleInstance() {
         if ('singleInstance' in this.settings && this.settings.singleInstance) {
             this.l.verbose('setting single instance mode');
-            const isSecondInstance = app.makeSingleInstance(() => {
+            const locked = app.requestSingleInstanceLock();
+
+            app.on('second-instance', () => {
                 // Someone tried to run a second instance, we should focus our window.
                 if (this.window) {
                     if (this.window.isMinimized()) {
@@ -138,7 +140,7 @@ export default class App {
                 }
             });
 
-            if (isSecondInstance) {
+            if (!locked) {
                 this.l.warn('current instance was terminated because another instance is running');
                 app.quit();
             }
