@@ -6,6 +6,6 @@
     "e": "node ../meteor-desktop-client/bin/cli.js"
   },
   "dependencies": {
-    "meteor-node-stubs": "~0.2.0"
+    "meteor-node-stubs": "1.2.5"
   }
 }
