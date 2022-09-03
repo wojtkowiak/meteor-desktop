@@ -1,3 +1,6 @@
+## v3.1.0 <sup>xx.xx.2022</sup>
+* Updated Electron to v11
+
 ## v3.0.1 <sup>12.04.2022</sup>
 * Attempt to fix version constraint issue
 
