@@ -1,0 +1,2103 @@
+[1661777526.663][INFO]: Starting ChromeDriver 87.0.4280.60 (576bd328218b853efa65e5424ba32a51053deb16-refs/heads/master@{#818831}) on port 9515
+[1661777526.663][INFO]: Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+[1661777526.755][INFO]: [c8fe47371c917529c5ca5e48d5b8739f] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777526.755][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777526.755][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777526.755][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.lnxVKA data:,
+[1661777527.057][DEBUG]: DevTools HTTP Request: http://localhost:40869/json/version
+[1661777527.219][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:40869/devtools/browser/c2992b05-492e-4d99-9a33-c1f1096eea07"
+}
+
+[1661777527.219][DEBUG]: DevTools HTTP Request: http://localhost:40869/json/list
+[1661777527.221][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777527.271][DEBUG]: DevTools HTTP Request: http://localhost:40869/json/list
+[1661777527.272][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777527.322][DEBUG]: DevTools HTTP Request: http://localhost:40869/json/list
+[1661777527.323][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40869/devtools/page/4C0F143BE7469CC095B3E6699C5AA23E",
+   "id": "4C0F143BE7469CC095B3E6699C5AA23E",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40869/devtools/page/4C0F143BE7469CC095B3E6699C5AA23E"
+} ]
+
+[1661777527.323][DEBUG]: DevTools HTTP Request: http://localhost:40869/json/list
+[1661777527.323][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40869/devtools/page/4C0F143BE7469CC095B3E6699C5AA23E",
+   "id": "4C0F143BE7469CC095B3E6699C5AA23E",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40869/devtools/page/4C0F143BE7469CC095B3E6699C5AA23E"
+} ]
+
+[1661777527.323][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.324][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "identifier": "1"
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 4C0F143BE7469CC095B3E6699C5AA23E {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777527.375][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 4C0F143BE7469CC095B3E6699C5AA23E {
+
+}
+[1661777528.243][SEVERE]: Unable to receive message from renderer
+[1661777528.294][INFO]: [c8fe47371c917529c5ca5e48d5b8739f] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777528.294][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777528.294][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777528.298][INFO]: [22f8dc35acdc8993f095b6ac06f617a8] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777528.298][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777528.298][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777528.298][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.VE8Ltj data:,
+[1661777528.599][DEBUG]: DevTools HTTP Request: http://localhost:37835/json/version
+[1661777528.725][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:37835/devtools/browser/409a092c-5dca-4e63-83dc-1a4e2b4a57d5"
+}
+
+[1661777528.725][DEBUG]: DevTools HTTP Request: http://localhost:37835/json/list
+[1661777528.726][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777528.776][DEBUG]: DevTools HTTP Request: http://localhost:37835/json/list
+[1661777528.777][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777528.827][DEBUG]: DevTools HTTP Request: http://localhost:37835/json/list
+[1661777528.829][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:37835/devtools/page/61BE8D5B747C632978AD20C7DFDE59A1",
+   "id": "61BE8D5B747C632978AD20C7DFDE59A1",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:37835/devtools/page/61BE8D5B747C632978AD20C7DFDE59A1"
+} ]
+
+[1661777528.829][DEBUG]: DevTools HTTP Request: http://localhost:37835/json/list
+[1661777528.831][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:37835/devtools/page/61BE8D5B747C632978AD20C7DFDE59A1",
+   "id": "61BE8D5B747C632978AD20C7DFDE59A1",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:37835/devtools/page/61BE8D5B747C632978AD20C7DFDE59A1"
+} ]
+
+[1661777528.831][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777528.831][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.832][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "identifier": "1"
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 61BE8D5B747C632978AD20C7DFDE59A1 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777528.888][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 61BE8D5B747C632978AD20C7DFDE59A1 {
+
+}
+[1661777529.777][SEVERE]: Unable to receive message from renderer
+[1661777529.828][INFO]: [22f8dc35acdc8993f095b6ac06f617a8] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777529.828][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777529.828][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777529.829][INFO]: [eefce18a4d7636a74d6c40c5442b451f] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777529.829][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777529.829][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777529.829][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.j48UWc data:,
+[1661777530.130][DEBUG]: DevTools HTTP Request: http://localhost:35853/json/version
+[1661777530.230][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:35853/devtools/browser/92ba312f-b0bf-4601-bd83-761896a4b656"
+}
+
+[1661777530.231][DEBUG]: DevTools HTTP Request: http://localhost:35853/json/list
+[1661777530.232][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777530.282][DEBUG]: DevTools HTTP Request: http://localhost:35853/json/list
+[1661777530.283][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777530.333][DEBUG]: DevTools HTTP Request: http://localhost:35853/json/list
+[1661777530.334][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:35853/devtools/page/39830B116E7A5AD9A577C292F69AD2D2",
+   "id": "39830B116E7A5AD9A577C292F69AD2D2",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:35853/devtools/page/39830B116E7A5AD9A577C292F69AD2D2"
+} ]
+
+[1661777530.334][DEBUG]: DevTools HTTP Request: http://localhost:35853/json/list
+[1661777530.335][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:35853/devtools/page/39830B116E7A5AD9A577C292F69AD2D2",
+   "id": "39830B116E7A5AD9A577C292F69AD2D2",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:35853/devtools/page/39830B116E7A5AD9A577C292F69AD2D2"
+} ]
+
+[1661777530.336][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.336][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "identifier": "1"
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 39830B116E7A5AD9A577C292F69AD2D2 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777530.389][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 39830B116E7A5AD9A577C292F69AD2D2 {
+
+}
+[1661777531.178][SEVERE]: Unable to receive message from renderer
+[1661777531.229][INFO]: [eefce18a4d7636a74d6c40c5442b451f] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777531.229][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777531.229][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777531.231][INFO]: [42c32345d4758ee42048612ef7cff9c4] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777531.231][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777531.231][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777531.232][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.otXMjb data:,
+[1661777531.533][DEBUG]: DevTools HTTP Request: http://localhost:39921/json/version
+[1661777531.634][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:39921/devtools/browser/f10e2e8f-702d-4b35-8fd0-e5d9a94a704f"
+}
+
+[1661777531.634][DEBUG]: DevTools HTTP Request: http://localhost:39921/json/list
+[1661777531.635][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777531.685][DEBUG]: DevTools HTTP Request: http://localhost:39921/json/list
+[1661777531.686][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777531.736][DEBUG]: DevTools HTTP Request: http://localhost:39921/json/list
+[1661777531.739][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:39921/devtools/page/434E532FF93C36C0ADA02333A4343E5E",
+   "id": "434E532FF93C36C0ADA02333A4343E5E",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:39921/devtools/page/434E532FF93C36C0ADA02333A4343E5E"
+} ]
+
+[1661777531.739][DEBUG]: DevTools HTTP Request: http://localhost:39921/json/list
+[1661777531.742][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:39921/devtools/page/434E532FF93C36C0ADA02333A4343E5E",
+   "id": "434E532FF93C36C0ADA02333A4343E5E",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:39921/devtools/page/434E532FF93C36C0ADA02333A4343E5E"
+} ]
+
+[1661777531.742][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 434E532FF93C36C0ADA02333A4343E5E {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 434E532FF93C36C0ADA02333A4343E5E {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 434E532FF93C36C0ADA02333A4343E5E {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.743][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.792][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 434E532FF93C36C0ADA02333A4343E5E {
+   "identifier": "1"
+}
+[1661777531.792][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 434E532FF93C36C0ADA02333A4343E5E {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777531.792][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.793][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 434E532FF93C36C0ADA02333A4343E5E {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777531.793][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.793][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.793][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777531.793][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 434E532FF93C36C0ADA02333A4343E5E {
+
+}
+[1661777532.550][SEVERE]: Unable to receive message from renderer
+[1661777532.600][INFO]: [42c32345d4758ee42048612ef7cff9c4] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777532.600][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777532.600][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777532.601][INFO]: [86e07248340e576ff08d5a8c78650a4c] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777532.601][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777532.602][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777532.602][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.G6gxBs data:,
+[1661777532.903][DEBUG]: DevTools HTTP Request: http://localhost:44471/json/version
+[1661777533.026][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:44471/devtools/browser/f115a2f2-d10e-45d1-8742-3805d969f1d8"
+}
+
+[1661777533.026][DEBUG]: DevTools HTTP Request: http://localhost:44471/json/list
+[1661777533.028][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777533.078][DEBUG]: DevTools HTTP Request: http://localhost:44471/json/list
+[1661777533.078][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777533.129][DEBUG]: DevTools HTTP Request: http://localhost:44471/json/list
+[1661777533.130][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:44471/devtools/page/53955BF6BD7E4E920320406B7702C1A0",
+   "id": "53955BF6BD7E4E920320406B7702C1A0",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:44471/devtools/page/53955BF6BD7E4E920320406B7702C1A0"
+} ]
+
+[1661777533.130][DEBUG]: DevTools HTTP Request: http://localhost:44471/json/list
+[1661777533.131][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:44471/devtools/page/53955BF6BD7E4E920320406B7702C1A0",
+   "id": "53955BF6BD7E4E920320406B7702C1A0",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:44471/devtools/page/53955BF6BD7E4E920320406B7702C1A0"
+} ]
+
+[1661777533.131][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 53955BF6BD7E4E920320406B7702C1A0 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 53955BF6BD7E4E920320406B7702C1A0 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 53955BF6BD7E4E920320406B7702C1A0 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.132][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.184][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 53955BF6BD7E4E920320406B7702C1A0 {
+   "identifier": "1"
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 53955BF6BD7E4E920320406B7702C1A0 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 53955BF6BD7E4E920320406B7702C1A0 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.185][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 53955BF6BD7E4E920320406B7702C1A0 {
+
+}
+[1661777533.918][SEVERE]: Unable to receive message from renderer
+[1661777533.968][INFO]: [86e07248340e576ff08d5a8c78650a4c] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777533.968][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777533.968][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777533.970][INFO]: [22d47b64d2aa3bef9c290e235d4aa32c] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777533.970][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777533.971][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777533.971][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.6T3UIB data:,
+[1661777534.272][DEBUG]: DevTools HTTP Request: http://localhost:40257/json/version
+[1661777534.382][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:40257/devtools/browser/e87c6364-2614-4011-be1d-45c6c5ce4f48"
+}
+
+[1661777534.382][DEBUG]: DevTools HTTP Request: http://localhost:40257/json/list
+[1661777534.384][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777534.434][DEBUG]: DevTools HTTP Request: http://localhost:40257/json/list
+[1661777534.435][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777534.485][DEBUG]: DevTools HTTP Request: http://localhost:40257/json/list
+[1661777534.486][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40257/devtools/page/AD7ABA797E3031C2CC5E9CCE55AAE8E6",
+   "id": "AD7ABA797E3031C2CC5E9CCE55AAE8E6",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40257/devtools/page/AD7ABA797E3031C2CC5E9CCE55AAE8E6"
+} ]
+
+[1661777534.486][DEBUG]: DevTools HTTP Request: http://localhost:40257/json/list
+[1661777534.487][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40257/devtools/page/AD7ABA797E3031C2CC5E9CCE55AAE8E6",
+   "id": "AD7ABA797E3031C2CC5E9CCE55AAE8E6",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40257/devtools/page/AD7ABA797E3031C2CC5E9CCE55AAE8E6"
+} ]
+
+[1661777534.487][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.487][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "identifier": "1"
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777534.541][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) AD7ABA797E3031C2CC5E9CCE55AAE8E6 {
+
+}
+[1661777535.277][SEVERE]: Unable to receive message from renderer
+[1661777535.328][INFO]: [22d47b64d2aa3bef9c290e235d4aa32c] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777535.328][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777535.328][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777535.329][INFO]: [f0a5914ddf26e8476d1f82cfb904a0b5] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777535.330][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777535.330][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777535.330][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.ZAIn7X data:,
+[1661777535.631][DEBUG]: DevTools HTTP Request: http://localhost:35201/json/version
+[1661777535.761][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:35201/devtools/browser/b36424a2-446c-489b-9a6e-03a414c3b567"
+}
+
+[1661777535.761][DEBUG]: DevTools HTTP Request: http://localhost:35201/json/list
+[1661777535.762][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777535.812][DEBUG]: DevTools HTTP Request: http://localhost:35201/json/list
+[1661777535.813][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777535.863][DEBUG]: DevTools HTTP Request: http://localhost:35201/json/list
+[1661777535.865][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:35201/devtools/page/5C8145C9253753765B7A0B6E3B1F45CC",
+   "id": "5C8145C9253753765B7A0B6E3B1F45CC",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:35201/devtools/page/5C8145C9253753765B7A0B6E3B1F45CC"
+} ]
+
+[1661777535.865][DEBUG]: DevTools HTTP Request: http://localhost:35201/json/list
+[1661777535.866][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:35201/devtools/page/5C8145C9253753765B7A0B6E3B1F45CC",
+   "id": "5C8145C9253753765B7A0B6E3B1F45CC",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:35201/devtools/page/5C8145C9253753765B7A0B6E3B1F45CC"
+} ]
+
+[1661777535.866][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777535.866][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777535.866][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777535.867][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.867][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.867][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777535.867][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.867][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.919][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "identifier": "1"
+}
+[1661777535.919][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777535.919][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.919][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 5C8145C9253753765B7A0B6E3B1F45CC {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777535.920][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.920][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.920][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777535.920][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 5C8145C9253753765B7A0B6E3B1F45CC {
+
+}
+[1661777536.766][SEVERE]: Unable to receive message from renderer
+[1661777536.816][INFO]: [f0a5914ddf26e8476d1f82cfb904a0b5] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777536.816][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777536.816][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777536.818][INFO]: [da09b165e6969b62c4b28ab37e599243] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777536.818][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777536.818][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777536.818][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.6RotK0 data:,
+[1661777537.119][DEBUG]: DevTools HTTP Request: http://localhost:34845/json/version
+[1661777537.251][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:34845/devtools/browser/64ef6815-132c-410e-9e30-38a72dfb98c6"
+}
+
+[1661777537.251][DEBUG]: DevTools HTTP Request: http://localhost:34845/json/list
+[1661777537.252][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777537.302][DEBUG]: DevTools HTTP Request: http://localhost:34845/json/list
+[1661777537.303][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777537.353][DEBUG]: DevTools HTTP Request: http://localhost:34845/json/list
+[1661777537.354][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:34845/devtools/page/7DD5411F8CE4DE725922EFCF5E84F207",
+   "id": "7DD5411F8CE4DE725922EFCF5E84F207",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:34845/devtools/page/7DD5411F8CE4DE725922EFCF5E84F207"
+} ]
+
+[1661777537.354][DEBUG]: DevTools HTTP Request: http://localhost:34845/json/list
+[1661777537.355][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:34845/devtools/page/7DD5411F8CE4DE725922EFCF5E84F207",
+   "id": "7DD5411F8CE4DE725922EFCF5E84F207",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:34845/devtools/page/7DD5411F8CE4DE725922EFCF5E84F207"
+} ]
+
+[1661777537.355][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.356][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.411][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "identifier": "1"
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 7DD5411F8CE4DE725922EFCF5E84F207 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777537.412][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 7DD5411F8CE4DE725922EFCF5E84F207 {
+
+}
+[1661777538.101][SEVERE]: Unable to receive message from renderer
+[1661777538.152][INFO]: [da09b165e6969b62c4b28ab37e599243] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777538.152][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777538.152][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777538.153][INFO]: [7fa459f441bd2fb916e658425a6a2273] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777538.153][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777538.153][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777538.154][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.C8yGGy data:,
+[1661777538.455][DEBUG]: DevTools HTTP Request: http://localhost:40347/json/version
+[1661777538.551][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:40347/devtools/browser/851e5e9d-0986-4e47-86da-996d58f511fb"
+}
+
+[1661777538.552][DEBUG]: DevTools HTTP Request: http://localhost:40347/json/list
+[1661777538.553][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777538.603][DEBUG]: DevTools HTTP Request: http://localhost:40347/json/list
+[1661777538.603][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777538.654][DEBUG]: DevTools HTTP Request: http://localhost:40347/json/list
+[1661777538.667][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40347/devtools/page/040B6F809A809CCABB0B13E1172764E8",
+   "id": "040B6F809A809CCABB0B13E1172764E8",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40347/devtools/page/040B6F809A809CCABB0B13E1172764E8"
+} ]
+
+[1661777538.667][DEBUG]: DevTools HTTP Request: http://localhost:40347/json/list
+[1661777538.668][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:40347/devtools/page/040B6F809A809CCABB0B13E1172764E8",
+   "id": "040B6F809A809CCABB0B13E1172764E8",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:40347/devtools/page/040B6F809A809CCABB0B13E1172764E8"
+} ]
+
+[1661777538.668][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777538.669][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 040B6F809A809CCABB0B13E1172764E8 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 040B6F809A809CCABB0B13E1172764E8 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 040B6F809A809CCABB0B13E1172764E8 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.670][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.726][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 040B6F809A809CCABB0B13E1172764E8 {
+   "identifier": "1"
+}
+[1661777538.726][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 040B6F809A809CCABB0B13E1172764E8 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777538.726][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.727][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 040B6F809A809CCABB0B13E1172764E8 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777538.727][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.727][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.727][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777538.727][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 040B6F809A809CCABB0B13E1172764E8 {
+
+}
+[1661777539.472][SEVERE]: Unable to receive message from renderer
+[1661777539.522][INFO]: [7fa459f441bd2fb916e658425a6a2273] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777539.522][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777539.522][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777539.524][INFO]: [4fe9b97b2d30798effc5b7a7e74a830c] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777539.524][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777539.524][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777539.524][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.sVM0NJ data:,
+[1661777539.825][DEBUG]: DevTools HTTP Request: http://localhost:34901/json/version
+[1661777539.938][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:34901/devtools/browser/4b39a4e8-0f34-4d59-9b38-ea22f168f00a"
+}
+
+[1661777539.938][DEBUG]: DevTools HTTP Request: http://localhost:34901/json/list
+[1661777539.939][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777539.989][DEBUG]: DevTools HTTP Request: http://localhost:34901/json/list
+[1661777539.990][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777540.040][DEBUG]: DevTools HTTP Request: http://localhost:34901/json/list
+[1661777540.041][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:34901/devtools/page/4242B2FDE59C9F28B68C5196CCC3DE10",
+   "id": "4242B2FDE59C9F28B68C5196CCC3DE10",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:34901/devtools/page/4242B2FDE59C9F28B68C5196CCC3DE10"
+} ]
+
+[1661777540.041][DEBUG]: DevTools HTTP Request: http://localhost:34901/json/list
+[1661777540.043][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:34901/devtools/page/4242B2FDE59C9F28B68C5196CCC3DE10",
+   "id": "4242B2FDE59C9F28B68C5196CCC3DE10",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:34901/devtools/page/4242B2FDE59C9F28B68C5196CCC3DE10"
+} ]
+
+[1661777540.043][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.043][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "identifier": "1"
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.098][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 4242B2FDE59C9F28B68C5196CCC3DE10 {
+
+}
+[1661777540.881][SEVERE]: Unable to receive message from renderer
+[1661777540.931][INFO]: [4fe9b97b2d30798effc5b7a7e74a830c] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777540.931][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777540.931][DEBUG]: Log type 'browser' lost 0 entries on destruction
+[1661777540.933][INFO]: [fceeb878c5c176b784b11dcfe91edc1a] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "goog:chromeOptions": {
+            "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+            "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+            "windowTypes": [ "app", "webview" ]
+         }
+      },
+      "firstMatch": [ {
+
+      } ]
+   },
+   "desiredCapabilities": {
+      "goog:chromeOptions": {
+         "args": [ "spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron", "spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build", "spectron-env-NODE_ENV=test", "spectron-env-ELECTRON_ENV=test", "spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1" ],
+         "binary": "/home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js",
+         "windowTypes": [ "app", "webview" ]
+      }
+   }
+}
+[1661777540.933][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1661777540.933][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1661777540.934][INFO]: Launching chrome: /home/storyteller/Web/meteor/community-packages/meteor-desktop/node_modules/spectron/lib/launcher.js --disable-background-networking --disable-client-side-phishing-detection --disable-default-apps --disable-hang-monitor --disable-popup-blocking --disable-prompt-on-repost --disable-sync --enable-automation --enable-blink-features=ShadowDOMV0 --enable-logging --log-level=0 --no-first-run --no-service-autorun --password-store=basic --remote-debugging-port=0 --spectron-arg0=/tmp/.__tmp_int/test-desktop/.meteor/desktop-build --spectron-env-ELECTRON_ENV=test --spectron-env-METEOR_DESKTOP_NO_SPLASH_SCREEN=1 --spectron-env-NODE_ENV=test --spectron-path=/tmp/.__tmp_int/test-desktop/node_modules/electron/dist/electron --test-type=webdriver --use-mock-keychain --user-data-dir=/tmp/.org.chromium.Chromium.ek2bye data:,
+[1661777541.235][DEBUG]: DevTools HTTP Request: http://localhost:39425/json/version
+[1661777541.331][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/87.0.4280.141",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) MyMeteorApp/0.0.1 Chrome/87.0.4280.141 Electron/11.5.0 Safari/537.36",
+   "V8-Version": "8.7.220.31",
+   "WebKit-Version": "537.36 (@95bdd3c7c06ac40f24025cdbd8eefc93f15f595e)",
+   "webSocketDebuggerUrl": "ws://localhost:39425/devtools/browser/cfa8af24-9213-4ca8-bb0c-7444f0b100da"
+}
+
+[1661777541.331][DEBUG]: DevTools HTTP Request: http://localhost:39425/json/list
+[1661777541.332][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777541.383][DEBUG]: DevTools HTTP Request: http://localhost:39425/json/list
+[1661777541.383][DEBUG]: DevTools HTTP Response: [  ]
+
+[1661777541.434][DEBUG]: DevTools HTTP Request: http://localhost:39425/json/list
+[1661777541.435][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:39425/devtools/page/0AB85ADEC9C342879999454AA99F60B4",
+   "id": "0AB85ADEC9C342879999454AA99F60B4",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:39425/devtools/page/0AB85ADEC9C342879999454AA99F60B4"
+} ]
+
+[1661777541.435][DEBUG]: DevTools HTTP Request: http://localhost:39425/json/list
+[1661777541.436][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:39425/devtools/page/0AB85ADEC9C342879999454AA99F60B4",
+   "id": "0AB85ADEC9C342879999454AA99F60B4",
+   "title": "",
+   "type": "page",
+   "url": "meteor://desktop/",
+   "webSocketDebuggerUrl": "ws://localhost:39425/devtools/page/0AB85ADEC9C342879999454AA99F60B4"
+} ]
+
+[1661777541.436][INFO]: resolved localhost to ["127.0.0.1"]
+[1661777541.436][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=1) 0AB85ADEC9C342879999454AA99F60B4 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777541.436][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=2) 0AB85ADEC9C342879999454AA99F60B4 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1661777541.436][DEBUG]: DevTools WebSocket Command: Log.enable (id=3) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.436][DEBUG]: DevTools WebSocket Command: DOM.getDocument (id=4) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.436][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=5) 0AB85ADEC9C342879999454AA99F60B4 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1661777541.437][DEBUG]: DevTools WebSocket Command: Page.enable (id=6) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.437][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Page.addScriptToEvaluateOnNewDocument (id=1) 0AB85ADEC9C342879999454AA99F60B4 {
+   "identifier": "1"
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Runtime.evaluate (id=2) 0AB85ADEC9C342879999454AA99F60B4 {
+   "result": {
+      "type": "undefined"
+   }
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Log.enable (id=3) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: DOM.getDocument (id=4) 0AB85ADEC9C342879999454AA99F60B4 {
+   "root": {
+      "backendNodeId": 2,
+      "baseURL": "meteor://desktop/",
+      "childNodeCount": 0,
+      "children": [  ],
+      "documentURL": "meteor://desktop/",
+      "localName": "",
+      "nodeId": 1,
+      "nodeName": "#document",
+      "nodeType": 9,
+      "nodeValue": "",
+      "xmlVersion": ""
+   }
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=5) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Page.enable (id=6) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Response: Page.enable (id=7) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777541.491][DEBUG]: DevTools WebSocket Command: Runtime.enable (id=8) 0AB85ADEC9C342879999454AA99F60B4 {
+
+}
+[1661777542.227][SEVERE]: Unable to receive message from renderer
+[1661777542.277][INFO]: [fceeb878c5c176b784b11dcfe91edc1a] RESPONSE InitSession ERROR session not created
+from disconnected: Unable to receive message from renderer
+  (Session info: chrome=87.0.4280.141)
+[1661777542.277][DEBUG]: Log type 'driver' lost 1 entries on destruction
+[1661777542.277][DEBUG]: Log type 'browser' lost 0 entries on destruction
