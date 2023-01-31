@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:14.18.2-bullseye-browsers
+      - image: circleci/node:12.22.7-bullseye-browsers
     steps:
       - checkout
       - run:
