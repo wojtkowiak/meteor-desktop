@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:12.22.7-bullseye-browsers
+      - image: cimg/node:14.21.1-browsers
     steps:
       - checkout
       - run:
@@ -24,12 +24,12 @@ jobs:
           command: npm run test
   test-integration:
     docker:
-      - image: circleci/node:12.22.7-bullseye-browsers
+      - image: cimg/node:14.21.1-browsers
     steps:
       - checkout
       - run:
           name: Update npm
-          command: 'sudo npm install -g npm@latest'
+          command: 'sudo npm install -g npm@6'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
       - run:
