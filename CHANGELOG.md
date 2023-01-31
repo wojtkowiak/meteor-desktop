@@ -50,7 +50,7 @@ Now you are free to use any version with your meteor project. Just add them to y
 If you will not, `meteor-desktop` adds the recommended versions automatically when needed.
 
 From now every `meteor-desktop` release will provide a recommended versions numbers of these dependencies.
-By default I will try to make `meteor-desktop` compatible within the compatibility version of the recommended version i.e. if the recommended electron version is `2.0.10` you should still be able to use any `2.x.x` version without problems.
+By default, I will try to make `meteor-desktop` compatible within the compatibility version of the recommended version i.e. if the recommended electron version is `2.0.10` you should still be able to use any `2.x.x` version without problems.
 
 **Recommended versions:**
 * [`electron`](https://github.com/electron/electron) -> `2.0.10`
@@ -58,7 +58,7 @@ By default I will try to make `meteor-desktop` compatible within the compatibili
 
 
 **BREAKING:**
-* support for Squirrel autoupdate mechanism ended, if you wish to continue with it, add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move it's settings to `squirrel` section in settings i.e.:
+* support for Squirrel autoupdate mechanism ended, if you wish to continue with it, add the `electron-builder-squirrel-windows` dependency to your `devDependencies` and move its settings to `squirrel` section in settings i.e.:
     ```
         "squirrel": {
             "autoUpdateFeedUrl": "http://127.0.0.1/update/:platform/:version",
@@ -112,7 +112,7 @@ You do not have to put the whole line, just any part of it that should only be f
 
 **FIXES**
 * fix [#165](https://github.com/wojtkowiak/meteor-desktop/issues/174) `meteor://` protocol is now registered as secure origin
-* `bundler` caching was disabled for production builds as you might have accidentally get a development `desktop.asar` build into your production build
+* `bundler` caching was disabled for production builds as you might have accidentally got a development `desktop.asar` build into your production build
 
 ## v1.0.0 <sup>21.05.2018</sup>
 Meteor App serving mechanism was changed to utilise `registerStreamProtocol` and serve
@@ -124,7 +124,7 @@ Please verify thoroughly if your app is working fine after this change and repor
 
 The localstorage contents will be migrated if you are updating your app from pre `1.0.0`.
 
-However if you are using the `meteor-desktop-localstorage` plugin you have to make a migration yourself. The easiest way is to copy the plugin desktop code as your module in `.desktop` and on your app start get the contents with `getAll` and save them to the browser's localstorage.     
+However, if you are using the `meteor-desktop-localstorage` plugin you have to make a migration yourself. The easiest way is to copy the plugin desktop code as your module in `.desktop` and on your app start get the contents with `getAll` and save them to the browser's localstorage.     
 
 * [`electron`](https://github.com/electron/electron) was updated to `2.0.1`
 * `MD_LOG_LEVEL` is now respected
@@ -226,7 +226,7 @@ However if you are using the `meteor-desktop-localstorage` plugin you have to ma
 * **DEPRECATIONS**:
     - building for `squirrel.windows` is not encouraged and from `1.0.0` the default Windows target will be `nsis`  
 
-it's more than sure that you will have to update your [`electron-builder`](https://github.com/electron-userland/electron-builder)/[`electron-packager`](https://github.com/electron-userland/electron-packager) configuration since it's a big shift from the old versions, create a new meteor project with blank scaffold (`npm run desktop -- init`) and take a look a the new `settings.json` as that might give you some hints
+it's more than sure that you will have to update your [`electron-builder`](https://github.com/electron-userland/electron-builder)/[`electron-packager`](https://github.com/electron-userland/electron-packager) configuration since it's a big shift from the old versions, create a new meteor project with blank scaffold (`npm run desktop -- init`) and take a look at the new `settings.json` as that might give you some hints
 
 #### v0.11.3 <sup>17.01.2018</sup>
 - added `desktopHCPCompatibilityVersion` setting to restore ability to override desktopHCP compatibility version
@@ -254,7 +254,7 @@ it's more than sure that you will have to update your [`electron-builder`](https
 
 ## v0.8.0 <sup>05.07.2017</sup>
 
-- added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g
+- added `builderCliOptions` that allow you to specify additional electron-builder CLI options e.g.
  for publishing artifacts (thanks to [ramijarrar](https://github.com/ramijarrar), related
  [PR](https://github.com/wojtkowiak/meteor-desktop/pull/112))
 
@@ -320,7 +320,7 @@ will be published in form of epics
 * `localServer` was rewritten to use `send` instead of `serve-static`
 [[5f084e6](https://github.com/wojtkowiak/meteor-desktop/commit/5f084e64fa11e4894e4c7c8d541b0b02a8676111)]
 * url aliases for local filesystem and `.desktop/assets` added
-([more](#accessing-local-filesystem-in-meteor))
+([more](README.md#accessing-local-filesystem-in-meteor))
 * building for Windows Store is now possible (thanks to hard work of
 [@develar](https://github.com/develar))
 * default dependencies for `Skeleton App` were updated
@@ -346,7 +346,7 @@ updates)
 - fixed [#33](https://github.com/wojtkowiak/meteor-desktop/issues/33)   
 
 #### v0.2.2 <sup>29.11.2016</sup>
-- republished `0.2.1` because of published plugins being in a unknown, erroneous
+- republished `0.2.1` because of published plugins being in an unknown, erroneous
 state [meteor#8113](https://github.com/meteor/meteor/issues/8113)   
 
 #### v0.2.1 <sup>23.11.2016</sup>
@@ -355,10 +355,10 @@ state [meteor#8113](https://github.com/meteor/meteor/issues/8113)
 
 ## v0.2.0 <sup>17.10.2016</sup>
 * several types of npm dependencies versions declarations are now supported i.e.: local paths,
-file protocol, github links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
+file protocol, GitHub links and http(s) links -> [npm documentation](https://docs.npmjs.com/files/package.json#dependencies)
 * development environment setup script was added
 * specifying target platforms for `build-installer` is now not restricted -
-check [Building installer](#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
+check [Building installer](README.md#building-installer), fixes [#14](https://github.com/wojtkowiak/meteor-desktop/issues/14)
 * [`electron`](https://github.com/electron/electron) was updated to `1.4.6`
 * [`electron-builder`](https://github.com/electron-userland/electron-builder) was updated to `8.6.0`
 
