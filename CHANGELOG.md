@@ -1,4 +1,7 @@
-## v3.1.0 <sup>xx.xx.2022</sup>
+## v3.1.1 <sup>xx.xx.2023</sup>
+* Fix issue with single instance, which causes error with opening already opened app on windows
+
+## v3.1.0 <sup>09.03.2022</sup>
 * Updated Electron to v11
 
 ## v3.0.1 <sup>12.04.2022</sup>
