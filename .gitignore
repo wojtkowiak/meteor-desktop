@@ -1,6 +1,5 @@
 node_modules
 .idea
-dist
 tests/_tmp_
 tests/.__tmp_int
 .npm

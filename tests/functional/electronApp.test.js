@@ -4,7 +4,7 @@ import sinonChai from 'sinon-chai';
 import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
-import asar from 'asar';
+import asar from '@electron/asar';
 
 import { createTestInstance, StubLog, getModuleJson, saveModuleJson } from '../helpers/meteorDesktop';
 import paths from '../helpers/paths';
