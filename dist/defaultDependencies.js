@@ -1,8 +1,0 @@
-"use strict";
-
-module.exports = {
-  electron: '11.5.0',
-  'electron-builder': '23.3.1',
-  'electron-packager': '15.4.0'
-};
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2R1bGUiLCJleHBvcnRzIiwiZWxlY3Ryb24iXSwic291cmNlcyI6WyIuLi9saWIvZGVmYXVsdERlcGVuZGVuY2llcy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJtb2R1bGUuZXhwb3J0cyA9IHtcbiAgICBlbGVjdHJvbjogJzExLjUuMCcsXG4gICAgJ2VsZWN0cm9uLWJ1aWxkZXInOiAnMjMuMy4xJyxcbiAgICAnZWxlY3Ryb24tcGFja2FnZXInOiAnMTUuNC4wJ1xufTtcbiJdLCJtYXBwaW5ncyI6Ijs7QUFBQUEsTUFBTSxDQUFDQyxPQUFQLEdBQWlCO0VBQ2JDLFFBQVEsRUFBRSxRQURHO0VBRWIsb0JBQW9CLFFBRlA7RUFHYixxQkFBcUI7QUFIUixDQUFqQiJ9
