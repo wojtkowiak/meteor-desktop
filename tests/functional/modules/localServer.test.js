@@ -198,7 +198,7 @@ function localServerTests(useStreams = false) {
 
         it('should set application/woff for a .woff file', async () => {
             const response = await fetchFromLocalServer('/some-font.woff');
-            expect(response.headers.get('Content-Type')).to.contain('application/font-woff');
+            expect(response.headers.get('Content-Type')).to.contain('font/woff');
         });
 
         it('should set application/octet-stream for files without an extension', async () => {
@@ -298,9 +298,9 @@ describe('localServer', () => {
         it('should server cordova.js file', async () => {
             const response =
                 await fetchFromLocalServer('/cordova.js');
-                const body = await response.text();
-                expect(body).to.contain('window.cordova');
-                expect(body).to.contain('module.exports = cordova;');
+            const body = await response.text();
+            expect(body).to.contain('window.cordova');
+            expect(body).to.contain('module.exports = cordova;');
         });
     });
 });
