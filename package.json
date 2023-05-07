@@ -79,6 +79,7 @@
     "@babel/preset-env": "7.21.5",
     "@babel/runtime": "7.21.5",
     "@electron/asar": "3.2.3",
+    "acorn": "8.8.2",
     "cacache": "17.0.5",
     "commander": "2.20.3",
     "cross-spawn": "5.0.1",
