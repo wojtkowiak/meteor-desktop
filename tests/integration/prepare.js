@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-require('reify');
+require('@meteorjs/reify');
 // CI cache version: 1
 
 const tempDir = require('temp-dir');

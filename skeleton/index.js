@@ -1,4 +1,4 @@
 // Init reify.
-require('reify');
+require('@meteorjs/reify');
 // Load the app.
 require('./app.js');
