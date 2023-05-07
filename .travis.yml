@@ -26,7 +26,7 @@ before_install:
             then
                 meteor --version;
             else
-                curl https://install.meteor.com/?release=2.6 | /bin/sh;
+                curl https://install.meteor.com/?release=2.6.1 | /bin/sh;
             fi;
       fi
 

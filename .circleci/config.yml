@@ -58,7 +58,7 @@ jobs:
           name: install Meteor
           command: |
             # only install meteor if bin isn't found
-            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=2.6 | /bin/sh
+            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=2.6.1 | /bin/sh
       - run:
           name: copy meteor bin to build cache
           command: |
