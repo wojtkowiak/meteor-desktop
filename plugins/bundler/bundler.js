@@ -68,7 +68,7 @@ class MeteorDesktopBundler {
             'cacache'
         ];
         this.buildDeps = [
-            'asar',
+            '@electron/asar',
             'shelljs',
             'del',
             '@babel/core',
@@ -509,7 +509,7 @@ class MeteorDesktopBundler {
 
             console.time('[meteor-desktop] preparing desktop.asar took');
 
-            let asar;
+            let electronAsar;
             let shelljs;
             let babelCore;
             let babelPresetEnv;
@@ -705,7 +705,7 @@ class MeteorDesktopBundler {
             try {
                 const deps = this.lookForAndRequireDependencies(this.buildDeps);
                 ({
-                    asar,
+                    electronAsar,
                     shelljs,
                     del,
                     babelCore,
@@ -713,6 +713,7 @@ class MeteorDesktopBundler {
                     terser,
                     md5
                 } = deps);
+                console.log(deps);
             } catch (e) {
                 // Look at the declaration of StringPrototypeToOriginal for explanation.
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
@@ -881,20 +882,20 @@ class MeteorDesktopBundler {
             all.wait();
             this.stampPerformance('babel/uglify');
 
-            this.stampPerformance('asar');
+            this.stampPerformance('@electron/asar');
 
             const future = new Future();
             const resolve = future.resolver();
             const asarPath = path.join(desktopTmpAsarPath, 'desktop.asar');
-            asar.createPackage(
+            electronAsar.createPackage(
                 desktopTmpPath,
-                asarPath,
-                () => {
+                asarPath
+            )
+                .then(() => {
                     resolve();
-                }
-            );
+                });
             future.wait();
-            this.stampPerformance('asar');
+            this.stampPerformance('@electron/asar');
 
             const contents = fs.readFileSync(asarPath);
 
