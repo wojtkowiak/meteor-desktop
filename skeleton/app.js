@@ -32,7 +32,7 @@ export default class App {
             electron.protocol.registerStandardSchemes(['meteor'], { secure: true });
         } else {
             electron.protocol.registerSchemesAsPrivileged([
-                { scheme: 'meteor', privileges: { standard: true, secure: true } }
+                { scheme: 'meteor', privileges: { standard: true, secure: true, supportFetchAPI: true } }
             ]);
         }
 

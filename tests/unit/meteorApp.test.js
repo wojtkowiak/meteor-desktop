@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import mockery from 'mockery';
 
 // need for running test
-import asar from 'asar'; // eslint-disable-line no-unused-vars
+import asar from '@electron/asar'; // eslint-disable-line no-unused-vars
 
 chai.use(sinonChai);
 chai.use(dirty);

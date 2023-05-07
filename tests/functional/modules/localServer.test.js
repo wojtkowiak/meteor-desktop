@@ -302,9 +302,9 @@ describe('localServer', () => {
         it('should server cordova.js file', async () => {
             const response =
                 await fetchFromLocalServer('/cordova.js');
-                const body = await response.text();
-                expect(body).to.contain('window.cordova');
-                expect(body).to.contain('module.exports = cordova;');
+            const body = await response.text();
+            expect(body).to.contain('window.cordova');
+            expect(body).to.contain('module.exports = cordova;');
         });
     });
 });
