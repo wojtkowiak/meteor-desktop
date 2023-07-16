@@ -3,23 +3,21 @@ name: Build and Test
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Update npm
-        run: sudo npm install -g npm@6
-      - uses: actions/cache@v2
-        key: dependency-cache-{{ checksum "package.json" }}
-        restore-keys: |
-          dependency-cache-{{ checksum "package.json" }}-
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
       - run: npm install
       - run: npm run test
 
@@ -27,18 +25,12 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Update npm
-        run: sudo npm install -g npm@6
-      - uses: actions/cache@v2
-        key: dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
-        restore-keys: |
-          dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
       - run: npm install
-      - uses: actions/cache@v2
-        key: meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}
-        restore-keys: |
-          meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}-
       - run: |
             if [ -e ~/.meteor/meteor-bin ]
             then
@@ -54,9 +46,11 @@ jobs:
             cp /usr/local/bin/meteor ~/.meteor/meteor-bin
       - run: npm run prepare-integration-tests
       - run: npm run test-integration
-
-workflows:
-  build_and_test:
-    jobs:
-      - test
-      - test-integration
+      - uses: actions/cache@v3
+        with:
+          key: meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}
+          restore-keys: |
+            meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}-
+          path: |
+            ~/.meteor
+            tests/.__tmp_int
