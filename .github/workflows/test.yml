@@ -1,0 +1,62 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update npm
+        run: sudo npm install -g npm@6
+      - uses: actions/cache@v2
+        key: dependency-cache-{{ checksum "package.json" }}
+        restore-keys: |
+          dependency-cache-{{ checksum "package.json" }}-
+      - run: npm install
+      - run: npm run test
+
+  test-integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update npm
+        run: sudo npm install -g npm@6
+      - uses: actions/cache@v2
+        key: dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+        restore-keys: |
+          dependency-cache-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-
+      - run: npm install
+      - uses: actions/cache@v2
+        key: meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}
+        restore-keys: |
+          meteor-cache-{{ checksum "tests/integration/prepare.js" }}-{{ checksum ".circleci/config.yml" }}-
+      - run: |
+            if [ -e ~/.meteor/meteor-bin ]
+            then
+                echo "Cached Meteor bin found, restoring it"
+                sudo cp ~/.meteor/meteor-bin /usr/local/bin/meteor
+            else
+                echo "No cached Meteor bin found."
+            fi
+      - run: |
+            # only install meteor if bin isn't found
+            command -v meteor >/dev/null 2>&1 || curl https://install.meteor.com/?release=2.6 | /bin/sh
+      - run: |
+            cp /usr/local/bin/meteor ~/.meteor/meteor-bin
+      - run: npm run prepare-integration-tests
+      - run: npm run test-integration
+
+workflows:
+  build_and_test:
+    jobs:
+      - test
+      - test-integration
