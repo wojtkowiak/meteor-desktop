@@ -24,13 +24,8 @@ jobs:
            /tmp/tests/.__tmp_int
          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       - name: Install/Retrieve Meteor
-        run: |
-              var="$(~/.meteor/meteor --version)"
-              if [[ $var =~ "Meteor 2.6" ]]; then
-                echo "Up-to-date"
-              else
-                curl https://install.meteor.com/?release=2.6 | /bin/sh
-              fi
+        if: steps.files-cache.outputs.cache-hit != 'true'
+        run: curl https://install.meteor.com/?release=2.6 | /bin/sh
       - name: Install NPM Dependencies
         if: steps.files-cache.outputs.cache-hit != 'true'
         run: meteor npm ci
