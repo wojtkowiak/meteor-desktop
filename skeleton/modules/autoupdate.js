@@ -107,8 +107,6 @@ export default class HCPClient {
      */
     init() {
         this.log.verbose('initializing autoupdate module');
-        this.log.verbose(`settings: ${JSON.stringify(this.settings)}`);
-        this.log.verbose(`appSettings: ${JSON.stringify(this.appSettings)}`);
         try {
             fs.accessSync(this.configFile, fs.F_OK);
         } catch (e) {
