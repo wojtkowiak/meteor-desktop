@@ -80,16 +80,16 @@ function exists(checkPath) {
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false
  * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
  *                                   when true, autoupdate does not fire the startup timer
- * @param {Object} [settings]      - additional properties pass as settings to HCPClient
+ * @param {Object} [appSettings]   - object pass as appSettings to HCPClient
  *
  * @returns {HCPClient}
  */
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
     errorCallback = Function.prototype, printErrorLogs = false,
-    testMode = true, settings = {}) {
+    testMode = true, appSettings = {}) {
     const autoupdate = new HCPClient({
         log: getFakeLogger(printLogs, printErrorLogs),
-        appSettings: {},
+        appSettings,
         // fake systemEvents
         eventsBus: {
             on() {
@@ -157,11 +157,11 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
  * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
  *                                   when true, autoupdate does not fire the startup timer.
- * @param {Object} [settings]      - additional properties pass as settings to HCPClient
+ * @param {Object} [appSettings]   - object pass as appSettings to HCPClient
  */
 async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
     versionExpectedBefore = 'version1', doNotCallDone = false,
-    printErrorLogs = showErrors, testMode = true, settings) {
+    printErrorLogs = showErrors, testMode = true, appSettings) {
     let autoupdate;
     try {
         autoupdate = await setUpAutoupdate(showLogs, async () => {
@@ -175,7 +175,7 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
             if (!doNotCallDone) {
                 done();
             }
-        }, versionExpectedBefore, undefined, printErrorLogs, testMode, settings);
+        }, versionExpectedBefore, undefined, printErrorLogs, testMode, appSettings);
     } catch (e) {
         done(e);
     }
