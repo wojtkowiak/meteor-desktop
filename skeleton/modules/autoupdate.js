@@ -107,6 +107,8 @@ export default class HCPClient {
      */
     init() {
         this.log.verbose('initializing autoupdate module');
+        this.log.verbose(`settings: ${JSON.stringify(this.settings)}`);
+        this.log.verbose(`appSettings: ${JSON.stringify(this.appSettings)}`);
         try {
             fs.accessSync(this.configFile, fs.F_OK);
         } catch (e) {
@@ -236,7 +238,7 @@ export default class HCPClient {
      * @private
      */
     checkForUpdates() {
-        if (('desktopHCP' in this.settings) && !this.settings.desktopHCP) {
+        if (('desktopHCP' in this.appSettings) && !this.appSettings.desktopHCP) {
             this.log.verbose(`Skipping checking for updates because desktopHCP is disabled`);
             return;
         }

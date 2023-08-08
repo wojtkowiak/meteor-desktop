@@ -952,15 +952,8 @@ describe('autoupdate', () => {
     });
 
     describe('when desktopHCP', () => {
-        // beforeEach(async (done) => {
-        //     await downloadAndServeVersionLocally('version2', 'version1', done);
-        // });
         beforeEach(async () => {
-            try {
-                meteorServer = await serveVersion('version2');
-            } catch (e) {
-                throw new Error(e);
-            }
+            meteorServer = await serveVersion('version2');
             cleanup();
         });
         afterEach(() => {
