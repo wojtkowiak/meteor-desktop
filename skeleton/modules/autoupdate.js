@@ -236,6 +236,10 @@ export default class HCPClient {
      * @private
      */
     checkForUpdates() {
+        if (('desktopHCP' in this.settings) && !this.settings.desktopHCP) {
+            this.log.verbose(`Skipping checking for updates because desktopHCP is disabled`);
+            return;
+        }
         const rootUrl = this.settings.customHCPUrl ?
             this.settings.customHCPUrl : this.currentAssetBundle.getRootUrlString();
 
