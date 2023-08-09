@@ -969,7 +969,6 @@ describe('autoupdate', () => {
         });
 
         it('is set to true then should emit new version', async (done) => {
-            //await downloadAndServeVersionLocally('version2', 'version1', done);
             await runAutoUpdateTests(done, Function.prototype, 'version2', 'version1', false, false, true, { desktopHCP: true });
         });
     });
