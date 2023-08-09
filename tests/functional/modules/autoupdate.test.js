@@ -106,8 +106,7 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
             bundleStorePath: paths.autoUpdateVersionsPath,
             initialBundlePath: paths.fixtures.bundledWww,
             test: testMode,
-            webAppStartupTimeout: 200,
-            ...settings
+            webAppStartupTimeout: 200
         },
         Module: class Module {
             constructor() {
