@@ -121,6 +121,16 @@ export default class MeteorServer {
 
         server.use(setETag);
 
+        function versionDesktop(req, res, next) {
+            const parsedUrl = url.parse(req.url);
+            if (parsedUrl.pathname.endsWith('version.desktop.json')) {
+                const manifest = require(path.join(serverPath, 'manifest.json'))
+                res.end(JSON.stringify(manifest.version));
+            }
+            next();
+        }
+        server.use(versionDesktop);
+
         // Serve files as static from the main directory.
         server.use(serveStatic(serverPath),
             {});

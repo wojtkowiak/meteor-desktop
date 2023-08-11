@@ -960,16 +960,16 @@ describe('autoupdate', () => {
             shutdownLocalServer();
         });
 
-        it('is set to false then should not emit new version', async (done) => {
+        it('is set to false then should not emit new version', (done) => {
             const timeout = waitForTestToFail(1000, done);
-            await runAutoUpdateTests(done, () => {
+            runAutoUpdateTests(done, () => {
                 clearTimeout(timeout);
                 done('onVersionReady invoked unexpectedly');
             }, 'version2', 'version1', true, false, true, { desktopHCP: false });
         });
 
-        it('is set to true then should emit new version', async (done) => {
-            await runAutoUpdateTests(done, Function.prototype, 'version2', 'version1', false, false, true, { desktopHCP: true });
+        it('is set to true then should emit new version', (done) => {
+            runAutoUpdateTests(done, Function.prototype, 'version2', 'version1', false, false, true, { desktopHCP: true });
         });
     });
 });
