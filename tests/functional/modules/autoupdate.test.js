@@ -80,14 +80,16 @@ function exists(checkPath) {
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false
  * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
  *                                   when true, autoupdate does not fire the startup timer
+ * @param {Object} [appSettings]   - object pass as appSettings to HCPClient
+ *
  * @returns {HCPClient}
  */
 async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVersion = 'version1',
     errorCallback = Function.prototype, printErrorLogs = false,
-    testMode = true) {
+    testMode = true, appSettings = {}) {
     const autoupdate = new HCPClient({
         log: getFakeLogger(printLogs, printErrorLogs),
-        appSettings: {},
+        appSettings,
         // fake systemEvents
         eventsBus: {
             on() {
@@ -154,10 +156,11 @@ async function setUpAutoupdate(printLogs = false, onNewVersionReady, expectedVer
  * @param {boolean} printErrorLogs - Whether to print errors even if `printLogs` is false.
  * @param {boolean} testMode       - Whether to inform autoupdate that this is a test run. Currently
  *                                   when true, autoupdate does not fire the startup timer.
+ * @param {Object} [appSettings]   - object pass as appSettings to HCPClient
  */
 async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
     versionExpectedBefore = 'version1', doNotCallDone = false,
-    printErrorLogs = showErrors, testMode = true) {
+    printErrorLogs = showErrors, testMode = true, appSettings) {
     let autoupdate;
     try {
         autoupdate = await setUpAutoupdate(showLogs, async () => {
@@ -171,7 +174,7 @@ async function runAutoUpdateTests(done, testCallback, versionExpectedAfter,
             if (!doNotCallDone) {
                 done();
             }
-        }, versionExpectedBefore, undefined, printErrorLogs, testMode);
+        }, versionExpectedBefore, undefined, printErrorLogs, testMode, appSettings);
     } catch (e) {
         done(e);
     }
@@ -236,7 +239,7 @@ function shutdownMeteorServer() {
 }
 
 function waitForTestToFail(delay, done) {
-    setTimeout(() => {
+    return setTimeout(() => {
         done();
     }, delay);
 }
@@ -944,6 +947,29 @@ describe('autoupdate', () => {
             }, false);
             autoupdate.config.blacklistedVersions = ['version2'];
             autoupdate.checkForUpdates();
+        });
+    });
+
+    describe('when desktopHCP', () => {
+        beforeEach(async () => {
+            meteorServer = await serveVersion('version2');
+            cleanup();
+        });
+        afterEach(() => {
+            shutdownMeteorServer();
+            shutdownLocalServer();
+        });
+
+        it('is set to false then should not emit new version', (done) => {
+            const timeout = waitForTestToFail(1000, done);
+            runAutoUpdateTests(done, () => {
+                clearTimeout(timeout);
+                done('onVersionReady invoked unexpectedly');
+            }, 'version2', 'version1', true, false, true, { desktopHCP: false });
+        });
+
+        it('is set to true then should emit new version', (done) => {
+            runAutoUpdateTests(done, Function.prototype, 'version2', 'version1', false, false, true, { desktopHCP: true });
         });
     });
 });
