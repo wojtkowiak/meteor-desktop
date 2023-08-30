@@ -1,0 +1,69 @@
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build and Install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: files-cache
+        with:
+         path: |
+           node_modules
+           dist/
+           ~/.meteor
+           /tmp/tests/.__tmp_int
+         key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - name: Install/Retrieve Meteor
+        if: steps.files-cache.outputs.cache-hit != 'true'
+        run: curl https://install.meteor.com/?release=2.6 | /bin/sh
+      - name: Install NPM Dependencies
+        if: steps.files-cache.outputs.cache-hit != 'true'
+        run: meteor npm ci
+
+  test:
+    needs: build
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v3
+     - name: Get Cache dependencies
+       uses: actions/cache@v3
+       id: files-cache
+       with:
+        path: |
+           node_modules
+           dist/
+           ~/.meteor
+           /tmp/tests/.__tmp_int
+        key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+     - name: Unit Tests
+       run: ~/.meteor/meteor npm run test
+
+  test-integration:
+    needs: build
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get Cache dependencies
+        uses: actions/cache@v3
+        id: files-cache
+        with:
+         path: |
+           node_modules
+           dist/
+           ~/.meteor
+           /tmp/tests/.__tmp_int
+         key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - run: ~/.meteor/meteor npm run prepare-integration-tests
+      - run: ~/.meteor/meteor npm run test-integration

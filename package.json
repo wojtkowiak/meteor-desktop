@@ -20,7 +20,7 @@
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "version": "node dist/scripts/propagateVersion.js && git add plugins",
     "postversion": "npm run publish-all",
-    "postinstall": "node dist/scripts/addToScripts || echo",
+    "postinstall": "npm run build && node dist/scripts/addToScripts || echo",
     "publish-plugins": "(cls || reset) && cd plugins/bundler && (meteor publish --release=METEOR@2.6.1) && cd ../watcher && (meteor publish --release=METEOR@2.6.1)",
     "prepublish": "npm run build || echo",
     "publish-all": "npm run publish-plugins && npm publish",
