@@ -27,7 +27,7 @@ To migrate from the original `meteor-desktop`:
 
 ## Prerequisites
 
- - Meteor >= `1.4`
+ - Meteor >= `1.12.1`
  - at least basic [Electron](http://electron.atom.io/) framework knowledge
  - mobile platform added to project<sup>__*1__</sup>  
 
