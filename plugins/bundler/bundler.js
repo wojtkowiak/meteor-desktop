@@ -814,7 +814,7 @@ class MeteorDesktopBundler {
                 babelPresetEnv = babelPresetEnv.default;
             }
             const preset = babelPresetEnv({
-                version: '7.22.14',
+                version: this.getPackageJsonField('dependencies')['@babel/preset-env'],
                 assertVersion: () => { }
             }, { targets: { node: '14' } });
 
