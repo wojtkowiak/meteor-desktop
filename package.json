@@ -88,7 +88,7 @@
     "isbinaryfile": "3.0.3",
     "lodash": "4.17.21",
     "md5": "2.3.0",
-    "node-fetch": "3.3.2",
+    "node-fetch": "^2.7.0",
     "regenerator-runtime": "0.14.0",
     "rimraf": "3.0.2",
     "semver": "5.7.2",
