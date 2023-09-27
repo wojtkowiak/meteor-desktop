@@ -713,7 +713,6 @@ class MeteorDesktopBundler {
                     terser,
                     md5
                 } = deps);
-                console.log(deps);
             } catch (e) {
                 // Look at the declaration of StringPrototypeToOriginal for explanation.
                 String.prototype.to = StringPrototypeToOriginal; // eslint-disable-line
@@ -814,7 +813,7 @@ class MeteorDesktopBundler {
                 babelPresetEnv = babelPresetEnv.default;
             }
             const preset = babelPresetEnv({
-                version: '7.22.14',
+                version: this.getPackageJsonField('dependencies')['@babel/preset-env'],
                 assertVersion: () => { }
             }, { targets: { node: '14' } });
 
